@@ -1,0 +1,14 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Richard Bultitude -- Lead Dev -- @pointbmusic
+
+# THANKS
+
+    Forecast.io
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3, Forecast.io, Node.js, Browserify, Gulp

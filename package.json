@@ -1,0 +1,42 @@
+{
+  "name": "musical-weathervane",
+  "title": "Musical Weathervane",
+  "version": "1.0.0",
+  "description": "App that takes real-time weather data and converts it to music",
+  "author": {
+    "name": "RB",
+    "url": "http://point-b.co.uk"
+  },
+  "contributors": [
+    "Richard Bultitude"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "tbc"
+  },
+  "scripts": {
+    "gulp": "gulp"
+  },
+  "devDependencies": {
+    "browserify": "^11.2.0",
+    "del": "^2.0.2",
+    "es6-promise": "^3.0.2",
+    "google-maps": "^3.2.1",
+    "gulp": "^3.8.10",
+    "gulp-autoprefixer": "^3.0.2",
+    "gulp-jscs": "^3.0.0",
+    "gulp-jshint": "^1.9.0",
+    "gulp-minify-css": "^1.1.6",
+    "gulp-sass": "^2.0.4",
+    "gulp-sourcemaps": "^1.5.0",
+    "gulp-strip-debug": "^1.0.2",
+    "gulp-uglify": "^1.1.0",
+    "gulp-util": "^3.0.2",
+    "jshint-stylish": "^2.0.1",
+    "moment": "^2.10.6",
+    "postal": "^1.0.8",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.2.1"
+  }
+}

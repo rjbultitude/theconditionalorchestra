@@ -1,0 +1,33 @@
+{   
+    "disallowEmptyBlocks": true,
+    "disallowImplicitTypeConversion": [ "string" ],
+    "disallowTrailingComma": true,
+    "maximumLineLength": 220,
+    "requireCamelCaseOrUpperCaseIdentifiers": true,
+    "requireCapitalizedConstructors": true,
+    "requireCommaBeforeLineBreak": true,
+    "requireCurlyBraces": [ "if", "else", "for", "while", "do", "try", "catch" ],
+    // "requireDollarBeforejQueryAssignment" : true,
+    "requireDotNotation": true,
+    "requireKeywordsOnNewLine": ["else", "catch"],
+    "disallowMultipleVarDecl": true,
+    "requireOperatorBeforeLineBreak": true,
+    "requireParenthesesAroundIIFE": true,
+    "requireSpaceAfterBinaryOperators": true,
+    //"requireSpaceAfterObjectKeys": true,
+    "requireSpaceBeforeBinaryOperators": true,
+    "requireSpaceBeforeBlockStatements": true,
+    "requireSpacesInConditionalExpression": true,
+    "requireSpacesInFunctionDeclaration": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "requireSpacesInFunctionExpression": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "requireSpacesInNamedFunctionExpression": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "validateIndentation": null,
+    "validateLineBreaks": "LF",
+    "validateQuoteMarks": "'"
+}
