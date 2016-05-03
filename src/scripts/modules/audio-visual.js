@@ -24,11 +24,7 @@ var postal = require('postal');
 var channel = postal.channel();
 
 module.exports = function() {
-	//Frequency of data polling
-	var polling = false;
 	var fetchingUsrLoc = false;
-	//String consts
-	var pollingMsgStr = 'Fetching new weather data';
 	//Els
 	var messageBlock = document.getElementById('message-block');
 
@@ -39,7 +35,7 @@ module.exports = function() {
 	var bearingMin = 0;
 	var bearingMax = 360;
 	//Pitch arbitary scale
-	var pitchMin = 0.1;
+	var pitchMin = 0.5;
 	var pitchMax = 2.0;
 	//Wind speed typically up to  32m/s
 	var speedMin = 0;
@@ -47,6 +43,9 @@ module.exports = function() {
 	//Volume arbitary scale
 	var volumeMin = 0.1;
 	var volumeMax = 1.0;
+	//Frequency
+	var freqMin = 320;
+	var freqMax = 5000;
 	//Ozone in Dobson units
 	var ozoneMin = 230;
 	var ozoneMax = 500;
@@ -80,11 +79,15 @@ module.exports = function() {
 	//line length
 	var bearingLineLength = 100;
 
+	var weatherSounds = [];
+
 	//main app init
 	function init(locationData) {
 
 		//TO DO store offline
 		//localStorage.setItem('locationData' , locationData);
+
+		var soundFilter = new P5.LowPass();
 
 		var myP5 = new P5(function(sketch) {
 
@@ -119,68 +122,61 @@ module.exports = function() {
 			 */
 			function mapPlaySounds() {
 					//Use math.abs for all pitch and volume values?
+					//cloud cover determines level of distorition
+					locationData.soundDistVolume = sketch.map(Math.round(locationData.cloudCover), cloudCoverMin, cloudCoverMax, volumeMin, volumeMax);
+					//Wind speed determines volume of all sounds
+					locationData.soundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax) - locationData.soundDistVolume/2;
+					//locationData.soundVolume = 0.1;
+					//Pressure determines root note
+					locationData.soundPitchRoot = sketch.map(Math.round(locationData.pressure), pressureMin, pressureMax, 0, 0.5);
+					//pitchMin = 0.5 + locationData.soundPitchRoot;
+					//pitchMax = 1.5 + locationData.soundPitchRoot;
+					//visibility is filter freq
+					soundFilter.freq(sketch.map(Math.round(locationData.visibility), visibilityMin, visibilityMax, freqMin, freqMax));
+					//soundFilter.freq(500);
+					soundFilter.res(20);
+					var weatherSoundMapVals = [];
 					//Wind Bearing
-					locationData.bearingSoundPitch = sketch.map(locationData.bearing, bearingMin, bearingMax, pitchMin, pitchMax);
-					locationData.bearingSoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.bearingSound.rate(locationData.bearingSoundPitch);
-					locationData.bearingSound.amp(locationData.bearingSoundVolume);
-					locationData.bearingSound.loop();
+					weatherSoundMapVals.push(sketch.map(locationData.bearing, bearingMin, bearingMax, pitchMin, pitchMax));
 					//Ozone
-					locationData.ozoneSoundPitch = sketch.map(locationData.ozone, ozoneMin, ozoneMax, pitchMin, pitchMax);
-					locationData.ozoneSoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.ozoneSound.rate(locationData.ozoneSoundPitch);
-					locationData.ozoneSound.amp(locationData.ozoneSoundVolume);
-					locationData.ozoneSound.loop();
-					//visibility
-					locationData.visibilitySoundPitch = sketch.map(locationData.visibility, visibilityMin, visibilityMax, pitchMin, pitchMax);
-					locationData.visibilitySoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.visibilitySound.rate(locationData.visibilitySoundPitch);
-					locationData.visibilitySound.amp(locationData.visibilitySoundVolume);
-					locationData.visibilitySound.loop();
-					//pressure
-					locationData.pressureSoundPitch = sketch.map(locationData.pressure, pressureMin, pressureMax, pitchMin, pitchMax);
-					locationData.pressureSoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.pressureSound.rate(locationData.pressureSoundPitch);
-					locationData.pressureSound.amp(locationData.pressureSoundVolume);
-					locationData.pressureSound.loop();
+					weatherSoundMapVals.push(sketch.map(locationData.ozone, ozoneMin, ozoneMax, pitchMin, pitchMax));
 					//humidity
-					locationData.humiditySoundPitch = sketch.map(locationData.humidity, humidityMin, humidityMax, pitchMin, pitchMax);
-					locationData.humiditySoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.humiditySound.rate(locationData.humiditySoundPitch);
-					locationData.humiditySound.amp(locationData.humiditySoundVolume);
-					locationData.humiditySound.loop();
-					//cloud cover
-					locationData.cloudCoverSoundPitch = sketch.map(locationData.cloudCover, cloudCoverMin, cloudCoverMax, pitchMin, pitchMax);
-					locationData.cloudCoverSoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.cloudCoverSound.rate(locationData.cloudCoverSoundPitch);
-					locationData.cloudCoverSound.amp(locationData.cloudCoverSoundVolume);
-					locationData.cloudCoverSound.loop();
+					//console.log(locationData.humidity);
+					weatherSoundMapVals.push(sketch.map(locationData.humidity, humidityMin, humidityMax, pitchMin, pitchMax));
 					//dew point
-					locationData.dewPointSoundPitch = sketch.map(locationData.dewPoint, dewPointMin, dewPointMax, pitchMin, pitchMax);
-					locationData.dewPointSoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.dewPointSound.rate(locationData.dewPointSoundPitch);
-					locationData.dewPointSound.amp(locationData.dewPointSoundVolume);
-					locationData.dewPointSound.loop();
+					//console.log(locationData.dewPoint);
+					weatherSoundMapVals.push(sketch.map(locationData.dewPoint, dewPointMin, dewPointMax, pitchMin, pitchMax));
 					//temperature
-					locationData.temperatureSoundPitch = sketch.map(locationData.temperature, temperatureMin, temperatureMax, pitchMin, pitchMax);
-					locationData.temperatureSoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.temperatureSound.rate(locationData.temperatureSoundPitch);
-					locationData.temperatureSound.amp(locationData.temperatureSoundVolume);
-					locationData.temperatureSound.loop();
+					//console.log(locationData.temperature);
+					weatherSoundMapVals.push(sketch.map(locationData.temperature, temperatureMin, temperatureMax, pitchMin, pitchMax));
 					//apparent temperature
-					locationData.apparentTempSoundPitch = sketch.map(locationData.apparentTemp, apparentTempMin, apparentTempMax, pitchMin, pitchMax);
-					locationData.apparentTempSoundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax);
-					locationData.apparentTempSound.rate(locationData.apparentTempSoundPitch);
-					locationData.apparentTempSound.amp(locationData.apparentTempSoundVolume);
-					locationData.apparentTempSound.loop();
+					//console.log(locationData.apparentTemp);
+					weatherSoundMapVals.push(sketch.map(locationData.apparentTemp, apparentTempMin, apparentTempMax, pitchMin, pitchMax));
 
-					//Wind Speed
-					//var radiusNum = sketch.map(Math.round(locationData.speed), speedMin, speedMax, radiusMin, radiusMax);
-					//locationData.radius = Math.round(radiusNum);
+					console.log('weatherSoundMapVals', weatherSoundMapVals);
+					console.log('weatherSounds', weatherSounds);
+
+					// for (var i = 0; i < weatherSounds.length; i++) {
+					// 	weatherSounds[i].organ.rate(weatherSoundMapVals[i]);
+					// 	weatherSounds[i].organDist.rate(weatherSoundMapVals[i]);
+					// 	weatherSounds[i].organ.amp(locationData.soundVolume);
+					// 	weatherSounds[i].organDist.amp(locationData.soundDistVolume);
+					// 	weatherSounds[i].organ.disconnect();
+					// 	weatherSounds[i].organDist.disconnect();
+					// 	weatherSounds[i].organ.connect(organFilter);
+					// 	weatherSounds[i].organDist.connect(organFilter);
+					// 	weatherSounds[i].organ.loop();
+					// 	weatherSounds[i].organDist.loop();
+					// }
 			}
 
-			function showPollingMessage() {
-				messageBlock.innerHTML = pollingMsgStr;
+			function mapDrawVisuals() {
+				var temperatureColour = sketch.map(locationData.temperature, temperatureMin, temperatureMax, 0, 255);
+				sketch.background(temperatureColour, 50, 255 - temperatureColour);
+				sketch.fill(0,0,0,255);
+				sketch.noStroke();
+				sketch.textAlign(sketch.CENTER);
+				sketch.text(locationData.name, sketch.width/2, 30);
 			}
 
 			//Location Class
@@ -271,15 +267,15 @@ module.exports = function() {
 			sketch.preload = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
-				locationData.bearingSound = sketch.loadSound('/audio/organ-C2.mp3');
-				locationData.ozoneSound = sketch.loadSound('/audio/organ-C2.mp3');
-				locationData.visibilitySound = sketch.loadSound('/audio/organ-C2.mp3');
-				locationData.pressureSound = sketch.loadSound('/audio/organ-C2.mp3');
-				locationData.humiditySound = sketch.loadSound('/audio/organ-C2.mp3');
-				locationData.cloudCoverSound = sketch.loadSound('/audio/organ-C2.mp3');
-				locationData.dewPointSound = sketch.loadSound('/audio/organ-C2.mp3');
-				locationData.temperatureSound = sketch.loadSound('/audio/organ-C2.mp3');
-				locationData.apparentTempSound = sketch.loadSound('/audio/organ-C2.mp3');
+				var locationDataLength = Object.keys(locationData).length;
+				for (var i = 0; i < locationDataLength; i++) {
+					weatherSounds[i] = {organ: null, organDist: null};
+				}
+				for (var j = 0; j < weatherSounds.length; j++) {
+					weatherSounds[j].organ = sketch.loadSound('/audio/organ-C2.mp3');
+					weatherSounds[j].organDist = sketch.loadSound('/audio/organ-C2d.mp3');
+				}
+				console.log('weatherSounds', weatherSounds);
 			};
 
 			sketch.setup = function setup() {
@@ -292,16 +288,9 @@ module.exports = function() {
 			};
 
 			sketch.draw = function draw() {
-				sketch.background(255, 255, 255);
-				sketch.fill(0,0,0,255);
-				sketch.noStroke();
-				sketch.textAlign(sketch.CENTER);
-				sketch.text(locationData.name, sketch.width/2, 30);
+				mapDrawVisuals();
 				// locationData.shapePaint();
 				// locationData.shapeUpdate();
-				// locationData.angleUpdate();
-				// locationData.nameUpdate();
-				// locationData.soundUpdate();
 			};
 
 		}, 'canvas-container');

@@ -38,7 +38,10 @@ module.exports = function() {
 				var apparentTemp = conditions[0].getApparentTemperature();
 				//TO DO get correct name
 				var name = newLocation.name;
-				var userLocConditions = new ConditionsValues(speed, bearing, ozone, visibility, pressure, humidity, cloudCover, dewPoint, temperature, apparentTemp, name);
+				//need to pass two objects
+				//one for the notes
+				//one for the controllers
+				var userLocConditions = new ConditionsValues(name, cloudCover, speed, pressure, visibility, bearing, ozone, humidity, dewPoint, temperature, apparentTemp);
 				console.log('userLocConditions', userLocConditions);
 				channel.publish('userUpdate', userLocConditions);
 			}
@@ -136,7 +139,7 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing
-		//getPlaces(19.896766, -155.582782);
-		getGeo();
+		getPlaces(39.952584, -75.165222);
+		//getGeo();
 	});
 };
