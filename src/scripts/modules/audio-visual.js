@@ -31,36 +31,39 @@ module.exports = function() {
 	/*
 		Ranges to be mapped
 	 */
-	//Wind Bearing in degrees
-	var bearingMin = 0;
-	var bearingMax = 360;
 	//Pitch arbitary scale
 	var pitchMin = 0.5;
 	var pitchMax = 2.0;
-	//Wind speed typically up to  32m/s
-	var speedMin = 0;
-	var speedMax = 32;
 	//Volume arbitary scale
-	var volumeMin = 0.1;
+	var volumeMin = 0.0;
 	var volumeMax = 1.0;
+	//Distorted volume arbitary scale
+	var distVolumeMin = 0.0;
+	var distVolumeMax = 0.6;
 	//Frequency
 	var freqMin = 320;
 	var freqMax = 5000;
-	//Ozone in Dobson units
-	var ozoneMin = 230;
-	var ozoneMax = 500;
-	//visibility in metres
-	var visibilityMin = 0.1;
-	var visibilityMax = 10;
-	//pressure in millibars
-	var pressureMin = 980;
-	var pressureMax = 1050;
-	//humidity as a percentage
-	var humidityMin = 0;
-	var humidityMax = 1;
 	//Cloud cover as a percentage
 	var cloudCoverMin = 0;
 	var cloudCoverMax = 1;
+	//Wind speed typically up to  32m/s
+	var speedMin = 0;
+	var speedMax = 32;
+	//pressure in millibars
+	var pressureMin = 980;
+	var pressureMax = 1050;
+	//visibility in metres
+	var visibilityMin = 0.1;
+	var visibilityMax = 10;
+	//Wind Bearing in degrees
+	var bearingMin = 0;
+	var bearingMax = 360;
+	//Ozone in Dobson units
+	var ozoneMin = 230;
+	var ozoneMax = 500;
+	//humidity as a percentage
+	var humidityMin = 0;
+	var humidityMax = 1;
 	//dew point in farenheit
 	var dewPointMin = 20;
 	var dewPointMax = 72;
@@ -122,61 +125,60 @@ module.exports = function() {
 			 */
 			function mapPlaySounds() {
 					//Use math.abs for all pitch and volume values?
+					//Add global values to the main data object
+
 					//cloud cover determines level of distorition
-					locationData.soundDistVolume = sketch.map(Math.round(locationData.cloudCover), cloudCoverMin, cloudCoverMax, volumeMin, volumeMax);
+					locationData.soundDistVolume = sketch.map(Math.round(locationData.characterValues.cloudCover), cloudCoverMin, cloudCoverMax, distVolumeMin, distVolumeMax);
 					//Wind speed determines volume of all sounds
-					locationData.soundVolume = sketch.map(Math.round(locationData.speed), speedMin, speedMax, volumeMin, volumeMax) - locationData.soundDistVolume/2;
+					locationData.soundVolume = sketch.map(Math.round(locationData.characterValues.speed), speedMin, speedMax, volumeMin, volumeMax) - locationData.soundDistVolume/3;
 					//locationData.soundVolume = 0.1;
 					//Pressure determines root note
-					locationData.soundPitchRoot = sketch.map(Math.round(locationData.pressure), pressureMin, pressureMax, 0, 0.5);
-					//pitchMin = 0.5 + locationData.soundPitchRoot;
-					//pitchMax = 1.5 + locationData.soundPitchRoot;
+					locationData.soundPitchRoot = sketch.map(Math.round(locationData.characterValues.pressure), pressureMin, pressureMax, 0, 0.5);
+					pitchMin = 0.5 + locationData.soundPitchRoot;
+					pitchMax = 1.5 + locationData.soundPitchRoot;
 					//visibility is filter freq
-					soundFilter.freq(sketch.map(Math.round(locationData.visibility), visibilityMin, visibilityMax, freqMin, freqMax));
+					soundFilter.freq(sketch.map(Math.round(locationData.characterValues.visibility), visibilityMin, visibilityMax, freqMin, freqMax));
 					//soundFilter.freq(500);
 					soundFilter.res(20);
-					var weatherSoundMapVals = [];
+					//Store pitches in array
+					var pitchValuesMapped = [];
 					//Wind Bearing
-					weatherSoundMapVals.push(sketch.map(locationData.bearing, bearingMin, bearingMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.bearing, bearingMin, bearingMax, pitchMin, pitchMax));
 					//Ozone
-					weatherSoundMapVals.push(sketch.map(locationData.ozone, ozoneMin, ozoneMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.ozone, ozoneMin, ozoneMax, pitchMin, pitchMax));
 					//humidity
-					//console.log(locationData.humidity);
-					weatherSoundMapVals.push(sketch.map(locationData.humidity, humidityMin, humidityMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.humidity, humidityMin, humidityMax, pitchMin, pitchMax));
 					//dew point
-					//console.log(locationData.dewPoint);
-					weatherSoundMapVals.push(sketch.map(locationData.dewPoint, dewPointMin, dewPointMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.dewPoint, dewPointMin, dewPointMax, pitchMin, pitchMax));
 					//temperature
-					//console.log(locationData.temperature);
-					weatherSoundMapVals.push(sketch.map(locationData.temperature, temperatureMin, temperatureMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, pitchMin, pitchMax));
 					//apparent temperature
-					//console.log(locationData.apparentTemp);
-					weatherSoundMapVals.push(sketch.map(locationData.apparentTemp, apparentTempMin, apparentTempMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.apparentTemp, apparentTempMin, apparentTempMax, pitchMin, pitchMax));
 
-					console.log('weatherSoundMapVals', weatherSoundMapVals);
-					console.log('weatherSounds', weatherSounds);
+					console.log('pitchValuesMapped', pitchValuesMapped);
+					console.log('locationData', locationData);
 
-					// for (var i = 0; i < weatherSounds.length; i++) {
-					// 	weatherSounds[i].organ.rate(weatherSoundMapVals[i]);
-					// 	weatherSounds[i].organDist.rate(weatherSoundMapVals[i]);
-					// 	weatherSounds[i].organ.amp(locationData.soundVolume);
-					// 	weatherSounds[i].organDist.amp(locationData.soundDistVolume);
-					// 	weatherSounds[i].organ.disconnect();
-					// 	weatherSounds[i].organDist.disconnect();
-					// 	weatherSounds[i].organ.connect(organFilter);
-					// 	weatherSounds[i].organDist.connect(organFilter);
-					// 	weatherSounds[i].organ.loop();
-					// 	weatherSounds[i].organDist.loop();
-					// }
+					for (var i = 0; i < weatherSounds.length; i++) {
+						weatherSounds[i].organ.disconnect();
+						weatherSounds[i].organDist.disconnect();
+						weatherSounds[i].organ.connect(soundFilter);
+						weatherSounds[i].organDist.connect(soundFilter);
+						weatherSounds[i].organ.rate(pitchValuesMapped[i]);
+						weatherSounds[i].organDist.rate(pitchValuesMapped[i]);
+						weatherSounds[i].organ.amp(locationData.soundVolume);
+						weatherSounds[i].organDist.amp(locationData.soundDistVolume);
+						weatherSounds[i].organ.loop();
+						weatherSounds[i].organDist.loop();
+					}
 			}
 
 			function mapDrawVisuals() {
-				var temperatureColour = sketch.map(locationData.temperature, temperatureMin, temperatureMax, 0, 255);
+				var temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 0, 255);
 				sketch.background(temperatureColour, 50, 255 - temperatureColour);
 				sketch.fill(0,0,0,255);
 				sketch.noStroke();
 				sketch.textAlign(sketch.CENTER);
-				sketch.text(locationData.name, sketch.width/2, 30);
+				sketch.text(locationData.characterValues.name, sketch.width/2, 30);
 			}
 
 			//Location Class
@@ -264,13 +266,20 @@ module.exports = function() {
 				}
 			};
 
+			function WeatherSound(organ, organDist) {
+				this.organ = organ;
+				this.organDist = organDist;
+			}
+
 			sketch.preload = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
-				var locationDataLength = Object.keys(locationData).length;
-				for (var i = 0; i < locationDataLength; i++) {
-					weatherSounds[i] = {organ: null, organDist: null};
+				var pitchDataLength = Object.keys(locationData.pitchValues).length;
+				//create an empty object for each sound
+				for (var i = 0; i < pitchDataLength; i++) {
+					weatherSounds[i] = new WeatherSound(null, null);
 				}
+				//populate with preloaded sounds
 				for (var j = 0; j < weatherSounds.length; j++) {
 					weatherSounds[j].organ = sketch.loadSound('/audio/organ-C2.mp3');
 					weatherSounds[j].organDist = sketch.loadSound('/audio/organ-C2d.mp3');

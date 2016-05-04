@@ -2,7 +2,8 @@
 
 var Forecastio = require('../libs/forecast.io');
 var audioVisual = require('./audio-visual');
-var ConditionsValues = require('./cond-cnstrctr');
+var PitchValues = require('./pitch-cnstrctr');
+var CharacterValues = require('./character-cnstrctr');
 var Nll = require('./nll-cnstrctr');
 var GoogleMapsLoader = require('google-maps');
 var makeRequest = require('./make-request');
@@ -26,22 +27,23 @@ module.exports = function() {
 
 		forecast.getCurrentConditions(newLocation, function(conditions) {
 			if (conditions.length === 1) {
+				var cloudCover = conditions[0].getCloudCover();
 				var speed = conditions[0].getWindSpeed();
+				var pressure = conditions[0].getPressure();
+				var visibility = conditions[0].getVisibility();
 				var bearing = conditions[0].getWindBearing();
 				var ozone = conditions[0].getOzone();
-				var visibility = conditions[0].getVisibility();
-				var pressure = conditions[0].getPressure();
 				var humidity = conditions[0].getHumidity();
-				var cloudCover = conditions[0].getCloudCover();
 				var dewPoint = conditions[0].getDewPoint();
 				var temperature = conditions[0].getTemperature();
 				var apparentTemp = conditions[0].getApparentTemperature();
-				//TO DO get correct name
 				var name = newLocation.name;
 				//need to pass two objects
 				//one for the notes
 				//one for the controllers
-				var userLocConditions = new ConditionsValues(name, cloudCover, speed, pressure, visibility, bearing, ozone, humidity, dewPoint, temperature, apparentTemp);
+				var characterValues = new CharacterValues(name, cloudCover, speed, pressure, visibility);
+				var pitchValues = new PitchValues(bearing, ozone, humidity, dewPoint, temperature, apparentTemp);
+				var userLocConditions = {characterValues: characterValues, pitchValues: pitchValues};
 				console.log('userLocConditions', userLocConditions);
 				channel.publish('userUpdate', userLocConditions);
 			}
