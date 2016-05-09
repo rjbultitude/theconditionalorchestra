@@ -94,6 +94,12 @@ module.exports = function() {
 
 		var myP5 = new P5(function(sketch) {
 
+			//Visuals
+			var sqSize = 30;
+			var hSquares = 0;
+			var vSquares = 0;
+			var noiseVal = 0.0;
+			var temperatureColour = 0;
 			//The rate at which to detune
 			//TO DO Needs to be refactored to be
 			//independant of the processor speed
@@ -172,13 +178,29 @@ module.exports = function() {
 					}
 			}
 
-			function mapDrawVisuals() {
-				var temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 0, 255);
+			function mapDrawBg() {
 				sketch.background(temperatureColour, 50, 255 - temperatureColour);
 				sketch.fill(0,0,0,255);
 				sketch.noStroke();
 				sketch.textAlign(sketch.CENTER);
 				sketch.text(locationData.characterValues.name, sketch.width/2, 30);
+			}
+
+			function mapDrawGrid() {
+				sketch.background(0, 0, 0);
+				for (var i = 0; i < hSquares; i++) {
+					for (var j = 0; j < vSquares; j++) {
+						//noiseVal += 0.01;
+						noiseVal += i/100;
+						var noiseAmt = sketch.noise(noiseVal);
+						sketch.noStroke();
+						sketch.fill(temperatureColour, sketch.random(0,100), 255 - temperatureColour);
+						var xPos = i * sqSize;
+						var yPos = j * sqSize;
+						var sqS =  sqSize - 1 + noiseAmt;
+						sketch.rect(xPos, yPos, sqS, sqS);
+					}
+				}
 			}
 
 			//Location Class
@@ -199,48 +221,6 @@ module.exports = function() {
 				this.soundSame = false;
 			}
 
-			LocationObj.prototype.shapePaint = function() {
-				sketch.noStroke();
-				sketch.fill(0, 0, 0, 100);
-				sketch.ellipse(this.xPos, this.yPos, this.radius, this.radius);
-				sketch.stroke(0, 0, 0);
-				sketch.line(this.xPos, this.yPos, this.xPos + (sketch.sin(sketch.radians(this.bearing)) * bearingLineLength), this.yPos + (sketch.cos(sketch.radians(this.bearing)) * bearingLineLength));
-				sketch.textSize(18);
-				sketch.textAlign(sketch.CENTER);
-				sketch.noStroke();
-				sketch.fill(0, 0, 0, 255);
-				sketch.text(this.name, this.xPos, this.yPos - radiusMax);
-				sketch.text('Speed', this.xPos, this.yPos + lowerTextPos);
-				sketch.text(this.radius.toFixed(2), this.xPos, this.yPos + lowerTextPos + radiusMax/4);
-				sketch.text('Bearing', this.xPos, this.yPos + lowerTextPos + radiusMax/2);
-				sketch.text(this.bearing, this.xPos, this.yPos + lowerTextPos + (radiusMax/4 * 3));
-			};
-
-			LocationObj.prototype.shapeUpdate = function() {
-				if (this.newRadius !== undefined) {
-					var factor = 1;
-					if (this.radius > this.newRadius) {
-						this.radius -= 1 / factor;
-					} else if (this.radius < this.newRadius) {
-						this.radius += 1 / factor;
-					} else if (this.radius === this.newRadius) {
-						//console.log('same');
-					}
-				}
-			};
-
-			LocationObj.prototype.angleUpdate = function() {
-				if (this.newBearing !== undefined) {
-					if (this.bearing > this.newBearing) {
-						this.bearing -= 1;
-					} else if (this.bearing < this.newBearing) {
-						this.bearing += 1;
-					} else if (this.bearing === this.newBearing) {
-						//console.log('same');
-					}
-				}
-			};
-
 			LocationObj.prototype.soundUpdate = function() {
 				//TO DO
 				//locationData[i].sound.amp();
@@ -257,12 +237,6 @@ module.exports = function() {
 				//might have to use a range here
 				else if (this.pitch.toFixed(2) / 1 === this.newPitch.toFixed(2) / 1) {
 					this.soundSame = true;
-				}
-			};
-
-			LocationObj.prototype.nameUpdate = function() {
-				if (this.newName !== undefined) {
-					this.name = this.newName;
 				}
 			};
 
@@ -293,13 +267,14 @@ module.exports = function() {
 				myCanvas.parent('canvas-container');
 				sketch.frameRate(25);
 				sketch.background(0, 0, 0);
+				hSquares = Math.round(sketch.width/sqSize);
+				vSquares = Math.round(sketch.height/sqSize);
+				temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 0, 255);
 				mapPlaySounds();
 			};
 
 			sketch.draw = function draw() {
-				mapDrawVisuals();
-				// locationData.shapePaint();
-				// locationData.shapeUpdate();
+				mapDrawGrid();
 			};
 
 		}, 'canvas-container');
