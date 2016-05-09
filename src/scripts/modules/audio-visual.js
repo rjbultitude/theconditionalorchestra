@@ -27,6 +27,7 @@ module.exports = function() {
 	var fetchingUsrLoc = false;
 	//Els
 	var messageBlock = document.getElementById('message-block');
+	var locBlock = document.getElementById('loc-block');
 
 	/*
 		Ranges to be mapped
@@ -183,7 +184,6 @@ module.exports = function() {
 				sketch.fill(0,0,0,255);
 				sketch.noStroke();
 				sketch.textAlign(sketch.CENTER);
-				sketch.text(locationData.characterValues.name, sketch.width/2, 30);
 			}
 
 			function mapDrawGrid() {
@@ -270,6 +270,7 @@ module.exports = function() {
 				hSquares = Math.round(sketch.width/sqSize);
 				vSquares = Math.round(sketch.height/sqSize);
 				temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 0, 255);
+				locBlock.innerHTML = locationData.characterValues.name;
 				mapPlaySounds();
 			};
 
