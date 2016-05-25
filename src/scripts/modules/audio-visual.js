@@ -24,10 +24,8 @@ var postal = require('postal');
 var channel = postal.channel();
 
 module.exports = function() {
-	var fetchingUsrLoc = false;
 	//Els
 	var messageBlock = document.getElementById('message-block');
-	var locBlock = document.getElementById('loc-block');
 
 	/*
 		Ranges to be mapped
@@ -74,16 +72,12 @@ module.exports = function() {
 	//apparent temperature in farenheit
 	var apparentTempMin = -20;
 	var apparentTempMax = 120;
-	//Shape size
-	var radiusMin = 40;
-	var radiusMax = 100;
-	var lowerTextPos = radiusMax + 36;
-	//Pitch diffs global
-	var pitchDiffArr = [];
-	//line length
-	var bearingLineLength = 100;
-
+	//animation speed
+	var animSpeed = 1;
+	//Array for all sounds
 	var weatherSounds = [];
+	//Array for all visual shapes
+	var shapeSet = [];
 
 	//main app init
 	function init(locationData) {
@@ -96,7 +90,7 @@ module.exports = function() {
 		var myP5 = new P5(function(sketch) {
 
 			//Visuals
-			var sqSize = 30;
+			var sqSize = 25;
 			var hSquares = 0;
 			var vSquares = 0;
 			var noiseVal = 0.0;
@@ -107,25 +101,6 @@ module.exports = function() {
 			//The higher the number the bigger the loop
 			//amend with caution
 			var factor = 20;
-
-			function updateSingleLoc(newData) {
-				locationData.newBearing = newData.bearing;
-				locationData.newSpeed = newData.speed;
-				locationData.newName = newData.name;
-				//Manage audio/visual facets
-				locationData.newPitch = sketch.map(locationData.newBearing, bearingMin, bearingMax, pitchMin, pitchMax);
-				locationData.newVolume = sketch.map(Math.round(locationData.newSpeed), speedMin, speedMax, volumeMin, volumeMax);
-				var newRadiusNum = sketch.map(Math.round(locationData.newSpeed), speedMin, speedMax, radiusMin, radiusMax);
-				locationData.newRadius = Math.round(newRadiusNum);
-
-				//calculate differences
-				//and ensure it's a positive number
-				locationData.pitchDiff = Math.abs(locationData.pitch - locationData.newPitch);
-				pitchDiffArr.push(locationData.pitchDiff);
-				locationData.shapeDiff = Math.abs(locationData.radius - locationData.newRadius);
-				locationData.incAmt = locationData.pitchDiff / factor;
-				fetchingUsrLoc = false;
-			}
 
 			/*
 				Main Object config
@@ -179,13 +154,6 @@ module.exports = function() {
 					}
 			}
 
-			function mapDrawBg() {
-				sketch.background(temperatureColour, 50, 255 - temperatureColour);
-				sketch.fill(0,0,0,255);
-				sketch.noStroke();
-				sketch.textAlign(sketch.CENTER);
-			}
-
 			function mapDrawGrid() {
 				sketch.background(0, 0, 0);
 				for (var i = 0; i < hSquares; i++) {
@@ -195,10 +163,40 @@ module.exports = function() {
 						var noiseAmt = sketch.noise(noiseVal);
 						sketch.noStroke();
 						sketch.fill(temperatureColour, sketch.random(0,100), 255 - temperatureColour);
-						var xPos = i * sqSize;
-						var yPos = j * sqSize;
-						var sqS =  sqSize - 1 + noiseAmt;
+						var xPos = i * sqSize + 2;
+						var yPos = j * sqSize + 2;
+						var sqS =  sqSize - 5 + noiseAmt * animSpeed;
 						sketch.rect(xPos, yPos, sqS, sqS);
+					}
+				}
+			}
+
+			function SingleShape(xPos, yPos, size, colour, index) {
+				this.xPos = xPos;
+				this.yPos = yPos;
+				this.size = size;
+				this.colour = colour;
+				this.noiseStart = 0.0;
+				this.noiseAmt = 0;
+			}
+
+			SingleShape.prototype.paint = function() {
+				sketch.noStroke();
+				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
+				sketch.rect(this.xPos, this.yPos, this.size, this.size);
+			};
+
+			SingleShape.prototype.update = function(i, frameCount) {
+				this.noiseStart += (i * frameCount)/100000;
+				this.noiseAmt = sketch.noise(this.noiseStart);
+				this.size = sqSize - this.noiseAmt * animSpeed;
+			};
+
+			function createShapeSet() {
+				for (var i = 0; i < hSquares; i++) {
+					for (var j = 0; j < vSquares; j++) {
+						var shape = new SingleShape(i * sqSize, j * sqSize, sqSize - 1, sketch.random(0,100));
+						shapeSet.push(shape);
 					}
 				}
 			}
@@ -267,15 +265,23 @@ module.exports = function() {
 				myCanvas.parent('canvas-container');
 				sketch.frameRate(25);
 				sketch.background(0, 0, 0);
+				//set runtime constants
 				hSquares = Math.round(sketch.width/sqSize);
 				vSquares = Math.round(sketch.height/sqSize);
+				animSpeed = Math.round(locationData.characterValues.speed);
+				createShapeSet();
 				temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 0, 255);
-				locBlock.innerHTML = locationData.characterValues.name;
+				messageBlock.innerHTML = locationData.characterValues.name;
 				mapPlaySounds();
 			};
 
 			sketch.draw = function draw() {
-				mapDrawGrid();
+				//mapDrawGrid();
+				sketch.background(0, 0, 0);
+				for (var i = 0; i < shapeSet.length; i++) {
+					shapeSet[i].update(i, sketch.frameCount);
+					shapeSet[i].paint();
+				}
 			};
 
 		}, 'canvas-container');

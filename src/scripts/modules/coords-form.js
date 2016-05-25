@@ -140,8 +140,9 @@ module.exports = function() {
 	useLocBtn.addEventListener('click', function(e) {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
-		//For testing
-		getPlaces(39.952584, -75.165222);
-		//getGeo();
+		//For testing:
+		//getPlaces(39.952584, -75.165222);
+		//For live:
+		getGeo();
 	});
 };
