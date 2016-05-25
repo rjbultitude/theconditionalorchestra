@@ -67,7 +67,7 @@ module.exports = function() {
 	var dewPointMin = 20;
 	var dewPointMax = 72;
 	//temperature in farenheit
-	var temperatureMin = -20;
+	var temperatureMin = -12;
 	var temperatureMax = 120;
 	//apparent temperature in farenheit
 	var apparentTempMin = -20;
@@ -154,23 +154,6 @@ module.exports = function() {
 					}
 			}
 
-			function mapDrawGrid() {
-				sketch.background(0, 0, 0);
-				for (var i = 0; i < hSquares; i++) {
-					for (var j = 0; j < vSquares; j++) {
-						//noiseVal += 0.01;
-						noiseVal += i/100;
-						var noiseAmt = sketch.noise(noiseVal);
-						sketch.noStroke();
-						sketch.fill(temperatureColour, sketch.random(0,100), 255 - temperatureColour);
-						var xPos = i * sqSize + 2;
-						var yPos = j * sqSize + 2;
-						var sqS =  sqSize - 5 + noiseAmt * animSpeed;
-						sketch.rect(xPos, yPos, sqS, sqS);
-					}
-				}
-			}
-
 			function SingleShape(xPos, yPos, size, colour, index) {
 				this.xPos = xPos;
 				this.yPos = yPos;
@@ -195,7 +178,7 @@ module.exports = function() {
 			function createShapeSet() {
 				for (var i = 0; i < hSquares; i++) {
 					for (var j = 0; j < vSquares; j++) {
-						var shape = new SingleShape(i * sqSize, j * sqSize, sqSize - 1, sketch.random(0,100));
+						var shape = new SingleShape(i * sqSize, j * sqSize, sqSize - 1, sketch.random(70,130));
 						shapeSet.push(shape);
 					}
 				}
@@ -270,7 +253,8 @@ module.exports = function() {
 				vSquares = Math.round(sketch.height/sqSize);
 				animSpeed = Math.round(locationData.characterValues.speed);
 				createShapeSet();
-				temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 0, 255);
+				temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 25, 255);
+				console.log('temperatureColour', temperatureColour);
 				messageBlock.innerHTML = locationData.characterValues.name;
 				mapPlaySounds();
 			};
