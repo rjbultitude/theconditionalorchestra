@@ -73,11 +73,14 @@ module.exports = function() {
 	var apparentTempMin = -20;
 	var apparentTempMax = 120;
 	//animation speed
-	var animSpeed = 1;
+	var animAmount = 1;
 	//Array for all sounds
 	var weatherSounds = [];
 	//Array for all visual shapes
 	var shapeSet = [];
+	//noise factor
+	var noiseFactor = 1000000;
+	var noiseInc = 0.01;
 
 	//main app init
 	function init(locationData) {
@@ -159,7 +162,7 @@ module.exports = function() {
 				this.yPos = yPos;
 				this.size = size;
 				this.colour = colour;
-				this.noiseStart = 0.0;
+				this.noiseStart = index/100;
 				this.noiseAmt = 0;
 			}
 
@@ -169,16 +172,19 @@ module.exports = function() {
 				sketch.rect(this.xPos, this.yPos, this.size, this.size);
 			};
 
-			SingleShape.prototype.update = function(i, frameCount) {
-				this.noiseStart += (i * frameCount)/100000;
+			SingleShape.prototype.update = function() {
+				//this.noiseStart += (i * frameCount)/noiseFactor;
+				this.noiseStart += noiseInc;
 				this.noiseAmt = sketch.noise(this.noiseStart);
-				this.size = sqSize - this.noiseAmt * animSpeed;
+				this.size = sqSize - this.noiseAmt * animAmount;
 			};
 
 			function createShapeSet() {
+				var index = 0;
 				for (var i = 0; i < hSquares; i++) {
 					for (var j = 0; j < vSquares; j++) {
-						var shape = new SingleShape(i * sqSize, j * sqSize, sqSize - 1, sketch.random(70,130));
+						index++;
+						var shape = new SingleShape(i * sqSize, j * sqSize, sqSize - 1, sketch.random(70,130), index);
 						shapeSet.push(shape);
 					}
 				}
@@ -251,7 +257,8 @@ module.exports = function() {
 				//set runtime constants
 				hSquares = Math.round(sketch.width/sqSize);
 				vSquares = Math.round(sketch.height/sqSize);
-				animSpeed = Math.round(locationData.characterValues.speed);
+				animAmount = Math.round(locationData.characterValues.speed);
+				console.log('animAmount', animAmount);
 				createShapeSet();
 				temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 25, 255);
 				console.log('temperatureColour', temperatureColour);
@@ -263,7 +270,7 @@ module.exports = function() {
 				//mapDrawGrid();
 				sketch.background(0, 0, 0);
 				for (var i = 0; i < shapeSet.length; i++) {
-					shapeSet[i].update(i, sketch.frameCount);
+					shapeSet[i].update();
 					shapeSet[i].paint();
 				}
 			};

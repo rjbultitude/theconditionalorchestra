@@ -50,21 +50,6 @@ module.exports = function() {
 		});
 	}
 
-	coordsSubmitBtn.addEventListener('click', function (e) {
-		e.preventDefault();
-		var lat = parseInt(document.getElementById('lat').value, 10);
-		var long = parseInt(document.getElementById('long').value, 10);
-		console.log('lat', typeof lat);
-		console.log('lat', lat);
-		console.log('long', typeof long);
-		console.log('long', long);
-		if (typeof lat !== 'number' || typeof long !== 'number') {
-			messageBlock.innerHTML = 'please enter a number';
-		}
-		else {
-			getPlaces(lat, long);
-		}
-	});
 
 	function getPlaces(lat, long) {
 		var gpKey = makeRequest('GET', '/gm-key.php');
@@ -145,12 +130,29 @@ module.exports = function() {
 		navigator.geolocation.getCurrentPosition(success, failure);
 	}
 
+	coordsSubmitBtn.addEventListener('click', function (e) {
+		e.preventDefault();
+		var lat = parseInt(document.getElementById('lat').value, 10);
+		var long = parseInt(document.getElementById('long').value, 10);
+		console.log('lat', typeof lat);
+		console.log('lat', lat);
+		console.log('long', typeof long);
+		console.log('long', long);
+		if (typeof lat !== 'number' || typeof long !== 'number') {
+			messageBlock.innerHTML = 'please enter a number';
+		}
+		else {
+			getPlaces(lat, long);
+		}
+	});
+
 	useLocBtn.addEventListener('click', function(e) {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		//getPlaces(39.952584, -75.165222);
+		getPlaces(39.952584, -75.165222);
+		console.log('Using static data');
 		//For live:
-		getGeo();
+		//getGeo();
 	});
 };
