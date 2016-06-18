@@ -257,8 +257,10 @@ module.exports = function() {
 				//set runtime constants
 				hSquares = Math.round(sketch.width/sqSize);
 				vSquares = Math.round(sketch.height/sqSize);
-				animAmount = Math.round(locationData.characterValues.speed);
-				console.log('animAmount', animAmount);
+				//animAmount = Math.round(locationData.characterValues.speed);
+				animAmount = 14;
+				noiseInc = sketch.map(animAmount, speedMin, speedMax, 0.01, 0.05);
+				//create shapes in grid
 				createShapeSet();
 				temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 25, 255);
 				console.log('temperatureColour', temperatureColour);

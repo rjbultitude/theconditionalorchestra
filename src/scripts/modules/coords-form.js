@@ -150,9 +150,9 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		getPlaces(39.952584, -75.165222);
-		console.log('Using static data');
+		// getPlaces(39.952584, -75.165222);
+		// console.log('Using static data');
 		//For live:
-		//getGeo();
+		getGeo();
 	});
 };
