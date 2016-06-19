@@ -159,11 +159,12 @@ module.exports = function() {
 
 			function makeTriangle(_x, _y, size) {
 				var points = 3;
+				var startingAngle = 45;
 				var arc = sketch.TWO_PI / points;//Triangle
 				sketch.beginShape();
 				for ( var i = 0; i < points; i++ ) {
-				    var x = _x + sketch.cos( arc * i ) * size;
-				    var y = _y + sketch.sin( arc * i ) * size;
+				    var x = _x + sketch.cos( arc * i + startingAngle) * size;
+				    var y = _y + sketch.sin( arc * i + startingAngle) * size;
 		        sketch.vertex( x, y );
 				}
 				sketch.endShape(sketch.CLOSE);
@@ -195,8 +196,10 @@ module.exports = function() {
 			SingleShape.prototype.paint = function() {
 				sketch.noStroke();
 				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
-				makeTriangle(this.xPos, this.yPos, this.size);
+				//makeTriangle(this.xPos, this.yPos, this.size);
 				//sketch.rect(this.xPos, this.yPos, this.size, this.size);
+				sketch.triangle(this.xPos, this.yPos, this.xPos, this.yPos + sqSize, this.xPos + sqSize, this.yPos);
+				sketch.triangle(this.xPos, this.yPos, this.xPos + this.size, this.yPos - this.size, this.xPos + this.size, this.yPos);
 			};
 
 			SingleShape.prototype.update = function() {
