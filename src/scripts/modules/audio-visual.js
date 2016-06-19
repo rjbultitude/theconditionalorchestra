@@ -166,6 +166,22 @@ module.exports = function() {
 				this.noiseAmt = 0;
 			}
 
+			SingleShape.prototype.makeTriangle = function(x,y) {
+				var points = 3;
+				var arc = sketch.TWO_PI / points;//Triangle
+				sketch.beginShape();
+				sketch.translate(x,y);
+				fill(255, 255, 255);
+				noStroke();
+
+				for ( var i = 0; i < points; i++ ) {
+				    x = sketch.cos( arc * i ) * sqSize;
+				    y = sketch.sin( arc * i ) * sqSize;
+		        sketch.vertex( x, y );
+				}
+				sketch.endShape(sketch.CLOSE);
+			};
+
 			SingleShape.prototype.paint = function() {
 				sketch.noStroke();
 				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
