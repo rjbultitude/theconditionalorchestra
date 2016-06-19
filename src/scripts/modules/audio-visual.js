@@ -157,6 +157,18 @@ module.exports = function() {
 					}
 			}
 
+			function makeTriangle(_x, _y, size) {
+				var points = 3;
+				var arc = sketch.TWO_PI / points;//Triangle
+				sketch.beginShape();
+				for ( var i = 0; i < points; i++ ) {
+				    var x = _x + sketch.cos( arc * i ) * size;
+				    var y = _y + sketch.sin( arc * i ) * size;
+		        sketch.vertex( x, y );
+				}
+				sketch.endShape(sketch.CLOSE);
+			};
+
 			function SingleShape(xPos, yPos, size, colour, index) {
 				this.xPos = xPos;
 				this.yPos = yPos;
@@ -166,17 +178,15 @@ module.exports = function() {
 				this.noiseAmt = 0;
 			}
 
-			SingleShape.prototype.makeTriangle = function(x,y) {
+			SingleShape.prototype.makeTriangle = function() {
 				var points = 3;
 				var arc = sketch.TWO_PI / points;//Triangle
 				sketch.beginShape();
-				sketch.translate(x,y);
-				fill(255, 255, 255);
-				noStroke();
+				sketch.translate(this.xPos + 50, this.yPos);
 
 				for ( var i = 0; i < points; i++ ) {
-				    x = sketch.cos( arc * i ) * sqSize;
-				    y = sketch.sin( arc * i ) * sqSize;
+				    var x = sketch.cos( arc * i ) * sqSize;
+				    var y = sketch.sin( arc * i ) * sqSize;
 		        sketch.vertex( x, y );
 				}
 				sketch.endShape(sketch.CLOSE);
@@ -185,7 +195,8 @@ module.exports = function() {
 			SingleShape.prototype.paint = function() {
 				sketch.noStroke();
 				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
-				sketch.rect(this.xPos, this.yPos, this.size, this.size);
+				makeTriangle(this.xPos, this.yPos, this.size);
+				//sketch.rect(this.xPos, this.yPos, this.size, this.size);
 			};
 
 			SingleShape.prototype.update = function() {
