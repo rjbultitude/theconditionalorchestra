@@ -62,6 +62,7 @@ module.exports = function() {
 
 			//Visuals
 			var sqSize = 25;
+			var pointDist = 13;
 			var hSquares = 0;
 			var vSquares = 0;
 			var noiseVal = 0.0;
@@ -131,6 +132,8 @@ module.exports = function() {
 				this.xPos = xPos;
 				this.yPos = yPos;
 				this.size = size;
+				this.xNew = xPos;
+				this.yNew = yPos;
 				this.colour = colour;
 				this.noiseStart = index/100;
 				this.noiseAmt = 0;
@@ -140,13 +143,15 @@ module.exports = function() {
 				sketch.noStroke();
 				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
 				sketch.triangle(this.xPos, this.yPos, this.xPos, this.yPos + sqSize, this.xPos + sqSize, this.yPos);
-				sketch.triangle(this.xPos, this.yPos, this.xPos + this.size, this.yPos - this.size, this.xPos + this.size, this.yPos);
+				sketch.triangle(this.xPos, this.yPos, this.xPos + this.size, this.yPos - this.size, this.xNew, this.yNew);
 			};
 
 			SingleShape.prototype.update = function() {
 				this.noiseStart += noiseInc;
 				this.noiseAmt = sketch.noise(this.noiseStart);
-				this.size = sqSize - this.noiseAmt * animAmount;
+				//this.size = sqSize - this.noiseAmt * animAmount;
+				this.xNew = this.xPos + this.size - this.noiseAmt * animAmount;
+				this.yNew = this.yPos - this.noiseAmt * animAmount;
 			};
 
 			function createShapeSet() {
