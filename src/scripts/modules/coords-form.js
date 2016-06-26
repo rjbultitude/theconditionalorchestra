@@ -7,6 +7,7 @@ var CharacterValues = require('./character-cnstrctr');
 var Nll = require('./nll-cnstrctr');
 var GoogleMapsLoader = require('google-maps');
 var makeRequest = require('./make-request');
+var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
 
@@ -27,16 +28,16 @@ module.exports = function() {
 
 		forecast.getCurrentConditions(newLocation, function(conditions) {
 			if (conditions.length === 1) {
-				var cloudCover = conditions[0].getCloudCover();
-				var speed = conditions[0].getWindSpeed();
-				var pressure = conditions[0].getPressure();
-				var visibility = conditions[0].getVisibility();
-				var bearing = conditions[0].getWindBearing();
-				var ozone = conditions[0].getOzone();
-				var humidity = conditions[0].getHumidity();
-				var dewPoint = conditions[0].getDewPoint();
-				var temperature = conditions[0].getTemperature();
-				var apparentTemp = conditions[0].getApparentTemperature();
+				var cloudCover = conditions[0].getCloudCover() || maxMinVals.getMean(maxMinVals.cloudCoverMax, maxMinVals.cloudCoverMin, 'cloudCover');
+				var speed = conditions[0].getWindSpeed() || maxMinVals.getMean(maxMinVals.windSpeedMax, maxMinVals.windSpeedMin, 'windSpeed');
+				var pressure = conditions[0].getPressure() || maxMinVals.getMean(maxMinVals.pressureMax, maxMinVals.pressureMin, 'pressure');
+				var visibility = conditions[0].getVisibility() || maxMinVals.getMean(maxMinVals.visibilityMax, maxMinVals.visibilityMin, 'visibility');
+				var bearing = conditions[0].getWindBearing() || maxMinVals.getMean(maxMinVals.windBearingMax, maxMinVals.windBearingMin, 'windBearing');
+				var ozone = conditions[0].getOzone() || maxMinVals.getMean(maxMinVals.ozoneMax, maxMinVals.ozoneMin, 'ozone');
+				var humidity = conditions[0].getHumidity() || maxMinVals.getMean(maxMinVals.humidityMax, maxMinVals.humidityMin, 'humidity');
+				var dewPoint = conditions[0].getDewPoint() || maxMinVals.getMean(maxMinVals.dewPointMax, maxMinVals.dewPointMin, 'dewPoint');
+				var temperature = conditions[0].getTemperature() || maxMinVals.getMean(maxMinVals.temperatureMax, maxMinVals.temperatureMin, 'temperature');
+				var apparentTemp = conditions[0].getApparentTemperature() || maxMinVals.getMean(maxMinVals.apparentTempMax, maxMinVals.apparentTempMin, 'apparentTemp');
 				var name = newLocation.name;
 				//need to pass two objects
 				//one for the notes
@@ -87,7 +88,7 @@ module.exports = function() {
 						else {
 							console.log('Geocoder failed due to: ' + status);
 						}
-						messageBlock.innerHTML = '';
+						messageBlock.innerHTML = locName;
 						updateApp(lat, long, locName);
 					}
 				);
@@ -108,10 +109,10 @@ module.exports = function() {
 	}
 
 	function getGeo() {
-		//if (!navigator.geolocation) {
-		showForm();
-			//return;
-		//}
+		if (!navigator.geolocation) {
+			showForm();
+			return;
+		}
 
 		function success(position) {
 			messageBlock.innerHTML = 'Looking up name';
@@ -146,13 +147,25 @@ module.exports = function() {
 		}
 	});
 
+	var staticPlaces = [
+		{
+			name: 'philedelphia', lat: 39.952584, long: -75.165222
+		},
+		{
+			name: 'Ho Chi', lat: 10.754727, long: 106.550903
+		},
+		{
+			name: 'alberto de agostini', lat: -54.646128, long: -70.029602
+		}
+	];
+
 	useLocBtn.addEventListener('click', function(e) {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		// getPlaces(39.952584, -75.165222);
-		// console.log('Using static data');
+		getPlaces(staticPlaces[1].lat, staticPlaces[1].long);
+		console.log('Using static data');
 		//For live:
-		getGeo();
+		//getGeo();
 	});
 };

@@ -1,12 +1,46 @@
 /*! HTML5 Boilerplate v5.0 | MIT License | http://h5bp.com/ */
-@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,600);
+@import 'https://fonts.googleapis.com/css?family=Libre+Baskerville';
+@import 'https://fonts.googleapis.com/css?family=Lora';
 
 html {
     color: #ffffff;
     background-color: #000000;
-    font-size: 18px;
-    line-height: 1.4;
-    font-family: 'Source Sans Pro', sans-serif;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  font-size: 17px;
+  line-height: 1.4;
+  font-family: 'Lora', serif;
+}
+
+h1,
+h2,
+h3,
+.cta button {
+  font-family: 'Libre Baskerville', serif;
+  -webkit-font-variant-ligatures: common-ligatures;
+  -o-font-feature-settings: "liga", "dlig";
+  -webkit-font-feature-settings: "liga", "dlig";
+  font-feature-settings: "liga", "dlig";
+  /*letter-spacing: 0.075em;*/
+  /* for iOS and Safari 6 */
+  font-variant-ligatures: common-ligatures;
+}
+
+h1 {
+  text-align: center;
+  padding-top: 32px;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+a {
+  color: white;
 }
 
 ::-moz-selection {
@@ -58,6 +92,7 @@ button {
     text-align: center;
     font-size: 20px;
     display: inline-block;
+    color: black;
 }
 
 textarea {
@@ -71,11 +106,6 @@ textarea {
     padding: 0.2em 0;
 }
 
-
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-
 .wrapper {
     max-width: 800px;
     margin: 0 auto;
@@ -85,8 +115,29 @@ textarea {
     display: inline-block;
     width: 100% !important;
     height: auto !important;
-    max-width: 800px;
-    max-height: 600px;
+    /*max-width: 800px;
+    max-height: 600px;*/
+}
+
+.canvas-container {
+  padding-bottom: 50%;
+  position: relative;
+  height: 0;
+  margin-bottom: 36px;
+}
+
+/*@media all and (max-width: 640px) {
+  .canvas-container {
+    padding-bottom: 150%;
+  }
+}*/
+
+.canvas-container canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }
 
 article {
@@ -100,14 +151,14 @@ article {
 
 .cta p {
     width: 50%;
-    margin: 0 auto;
+    margin: 0 auto 12px;
     display: block;
 }
 
 .status-bar {
-    padding: 8px;
-    min-height: 20px;
+    padding: 0;
     text-align: center;
+    margin-top: 0;
 }
 
 .inactive {
@@ -124,6 +175,14 @@ article {
     background-color: rgba(255,255,255,0.8);
 }
 
+.footer {
+  background-color: #454545;
+  padding: 12px;
+}
+
+.footer p {
+  margin: 0.1rem 0;
+}
 
 /* ==========================================================================
    Media Queries
@@ -186,68 +245,4 @@ article {
 
 .clearfix {
     *zoom: 1;
-}
-
-/* ==========================================================================
-   Print styles
-   ========================================================================== */
-
-@media print {
-    *,
-    *:before,
-    *:after {
-        background: transparent !important;
-        color: #000 !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-    }
-
-    a,
-    a:visited {
-        text-decoration: underline;
-    }
-
-    a[href]:after {
-        content: " (" attr(href) ")";
-    }
-
-    abbr[title]:after {
-        content: " (" attr(title) ")";
-    }
-
-    a[href^="#"]:after,
-    a[href^="javascript:"]:after {
-        content: "";
-    }
-
-    pre,
-    blockquote {
-        border: 1px solid #999;
-        page-break-inside: avoid;
-    }
-
-    thead {
-        display: table-header-group;
-    }
-
-    tr,
-    img {
-        page-break-inside: avoid;
-    }
-
-    img {
-        max-width: 100% !important;
-    }
-
-    p,
-    h2,
-    h3 {
-        orphans: 3;
-        widows: 3;
-    }
-
-    h2,
-    h3 {
-        page-break-after: avoid;
-    }
 }

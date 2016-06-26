@@ -10,34 +10,34 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="stylesheet" href="src/styles/normalize.css">
         <link rel="stylesheet" href="src/styles/main.css">
     </head>
     <body>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        <main aria-role="main" class="wrapper">
-        <article>
-            <h1>The Conditional Orchestra</h1>
-            <p>By using the weather conditions in your local area The Conditional Orchestra plays unique and delightful compositions all day every day.</p>
-            <div class="cta" id="cta-user-location">
-                <p>Play the sound of your location too:</p>
-                <button id="use-location-btn">Play my weather</button>
-            </div>
-        </article>
-            <p id="message-block" class="status-bar">Loading</p>
-            <div id="canvas-container">
-            </div>
-            <form id="form-coords" style="display: none">
+        <main aria-role="main">
+          <article class="wrapper">
+              <h1>The Conditional Orchestra</h1>
+              <p>By using the weather conditions in your local area The Conditional Orchestra plays original compositions all day every day. Play the sound of your location too:</p>
+              <div class="cta" id="cta-user-location">
+                  <button id="use-location-btn">Play my weather</button>
+              </div>
+              <p id="message-block" class="status-bar"></p>
+              <div id="canvas-container" class="canvas-container">
+              </div>
+              <form id="form-coords" style="display: none">
                 <h2>Enter your coordinates</h2>
                 <label for="lat">Lattiude</label>
                 <input type="text" id="lat">
                 <label for="long">Longitude</label>
                 <input type="text" id="long">
                 <button id="form-coords-btn">Submit</button>
-            </form>
+              </form>
+          </article>
         </main>
-        <footer>
+        <footer class="footer wrapper">
             <h2>Credits</h2>
             <p>This project uses <a href="http://forecast.io/">Forecast.io</a> to obtain the weather data.</p>
             <p>The JavaScript library used to access the API can be found on <a href="https://github.com/iantearle/forecast.io-javascript-api">GitHub here</a>.</p>

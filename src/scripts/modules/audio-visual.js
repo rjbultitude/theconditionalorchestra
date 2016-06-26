@@ -20,6 +20,7 @@
 
 var P5 = require('../libs/p5');
 require('../libs/p5.sound');
+var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
 
@@ -27,51 +28,6 @@ module.exports = function() {
 	//Els
 	var messageBlock = document.getElementById('message-block');
 
-	/*
-		Ranges to be mapped
-	 */
-	//Pitch arbitary scale
-	var pitchMin = 0.5;
-	var pitchMax = 2.0;
-	//Volume arbitary scale
-	var volumeMin = 0.0;
-	var volumeMax = 1.0;
-	//Distorted volume arbitary scale
-	var distVolumeMin = 0.0;
-	var distVolumeMax = 0.6;
-	//Frequency
-	var freqMin = 320;
-	var freqMax = 5000;
-	//Cloud cover as a percentage
-	var cloudCoverMin = 0;
-	var cloudCoverMax = 1;
-	//Wind speed typically up to  32m/s
-	var speedMin = 0;
-	var speedMax = 32;
-	//pressure in millibars
-	var pressureMin = 980;
-	var pressureMax = 1050;
-	//visibility in metres
-	var visibilityMin = 0.1;
-	var visibilityMax = 10;
-	//Wind Bearing in degrees
-	var bearingMin = 0;
-	var bearingMax = 360;
-	//Ozone in Dobson units
-	var ozoneMin = 230;
-	var ozoneMax = 500;
-	//humidity as a percentage
-	var humidityMin = 0;
-	var humidityMax = 1;
-	//dew point in farenheit
-	var dewPointMin = 20;
-	var dewPointMax = 72;
-	//temperature in farenheit
-	var temperatureMin = -12;
-	var temperatureMax = 120;
-	//apparent temperature in farenheit
-	var apparentTempMin = -20;
-	var apparentTempMax = 120;
 	//animation speed
 	var animAmount = 1;
 	//Array for all sounds
@@ -81,6 +37,17 @@ module.exports = function() {
 	//noise factor
 	var noiseFactor = 1000000;
 	var noiseInc = 0.01;
+	//Canvas size
+	var cWidth = 800;
+	var cHeight = 400;
+	var cPadding = '50%';
+	//DOM
+	var cContainerName = 'canvas-container';
+
+	//Is this size or smaller
+	function matchMediaMaxWidth(maxWidthVal) {
+    return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
+  }
 
 	//main app init
 	function init(locationData) {
@@ -88,6 +55,7 @@ module.exports = function() {
 		//TO DO store offline
 		//localStorage.setItem('locationData' , locationData);
 
+		//Create filter
 		var soundFilter = new P5.LowPass();
 
 		var myP5 = new P5(function(sketch) {
@@ -113,35 +81,38 @@ module.exports = function() {
 					//Add global values to the main data object
 
 					//cloud cover determines level of distorition
-					locationData.soundDistVolume = sketch.map(Math.round(locationData.characterValues.cloudCover), cloudCoverMin, cloudCoverMax, distVolumeMin, distVolumeMax);
+					locationData.soundDistVolume = sketch.map(Math.round(locationData.characterValues.cloudCover), maxMinVals.cloudCoverMin, maxMinVals.cloudCoverMax, maxMinVals.distVolumeMin, maxMinVals.distVolumeMax);
+					console.log('locationData.soundDistVolume', locationData.soundDistVolume);
 					//Wind speed determines volume of all sounds
-					locationData.soundVolume = sketch.map(Math.round(locationData.characterValues.speed), speedMin, speedMax, volumeMin, volumeMax) - locationData.soundDistVolume/3;
-					//locationData.soundVolume = 0.1;
+					locationData.soundVolume = sketch.map(Math.round(locationData.characterValues.speed), maxMinVals.speedMin, maxMinVals.speedMax, maxMinVals.volumeMin, maxMinVals.volumeMax) - locationData.soundDistVolume/3;
+					console.log('locationData.soundVolume', locationData.soundVolume);
 					//Pressure determines root note
-					locationData.soundPitchRoot = sketch.map(Math.round(locationData.characterValues.pressure), pressureMin, pressureMax, 0, 0.5);
-					pitchMin = 0.5 + locationData.soundPitchRoot;
-					pitchMax = 1.5 + locationData.soundPitchRoot;
+					locationData.soundPitchRoot = sketch.map(Math.round(locationData.characterValues.pressure), maxMinVals.pressureMin, maxMinVals.pressureMax, 0, 0.5);
+					//pitch range
+					maxMinVals.pitchMin = 0.5 + locationData.soundPitchRoot;
+					maxMinVals.pitchMax = 1.5 + locationData.soundPitchRoot;
 					//visibility is filter freq
-					soundFilter.freq(sketch.map(Math.round(locationData.characterValues.visibility), visibilityMin, visibilityMax, freqMin, freqMax));
-					//soundFilter.freq(500);
+					console.log('locationData.characterValues.visibility', locationData.characterValues.visibility);
+					//soundFilter.freq(sketch.map(Math.round(locationData.characterValues.visibility), visibilityMin, visibilityMax, freqMin, freqMax));
+					soundFilter.freq(500);
 					soundFilter.res(20);
 					//Store pitches in array
 					var pitchValuesMapped = [];
 					//Wind Bearing
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.bearing, bearingMin, bearingMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.bearing, maxMinVals.bearingMin, maxMinVals.bearingMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 					//Ozone
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.ozone, ozoneMin, ozoneMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.ozone, maxMinVals.ozoneMin, maxMinVals.ozoneMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 					//humidity
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.humidity, humidityMin, humidityMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.humidity, maxMinVals.humidityMin, maxMinVals.humidityMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 					//dew point
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.dewPoint, dewPointMin, dewPointMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.dewPoint, maxMinVals.dewPointMin, maxMinVals.dewPointMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 					//temperature
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.temperature, maxMinVals.temperatureMin, maxMinVals.temperatureMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 					//apparent temperature
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.apparentTemp, apparentTempMin, apparentTempMax, pitchMin, pitchMax));
+					pitchValuesMapped.push(sketch.map(locationData.pitchValues.apparentTemp, maxMinVals.apparentTempMin, maxMinVals.apparentTempMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 
 					console.log('pitchValuesMapped', pitchValuesMapped);
-					console.log('locationData', locationData);
+					//console.log('locationData', locationData);
 
 					for (var i = 0; i < weatherSounds.length; i++) {
 						weatherSounds[i].organ.disconnect();
@@ -250,9 +221,17 @@ module.exports = function() {
 			};
 
 			sketch.setup = function setup() {
+				//If this size or smaller
+				if (matchMediaMaxWidth(540).matches) {
+						cWidth = 400;
+						cHeight = 800;
+						cPadding = '200%';
+				}
 				//Canvas setup
-				var myCanvas = sketch.createCanvas(800, 400);
-				myCanvas.parent('canvas-container');
+				var myCanvas = sketch.createCanvas(cWidth, cHeight);
+				myCanvas.parent(cContainerName);
+				var cContainer = document.getElementById(cContainerName);
+				cContainer.style.paddingBottom = cPadding;
 				sketch.frameRate(25);
 				sketch.background(0, 0, 0);
 				//set runtime constants
@@ -260,10 +239,10 @@ module.exports = function() {
 				vSquares = Math.round(sketch.height/sqSize);
 				//animAmount = Math.round(locationData.characterValues.speed);
 				animAmount = 14;
-				noiseInc = sketch.map(animAmount, speedMin, speedMax, 0.01, 0.05);
+				noiseInc = sketch.map(animAmount, maxMinVals.speedMin, maxMinVals.speedMax, 0.01, 0.05);
 				//create shapes in grid
 				createShapeSet();
-				temperatureColour = sketch.map(locationData.pitchValues.temperature, temperatureMin, temperatureMax, 25, 255);
+				temperatureColour = sketch.map(locationData.pitchValues.temperature, maxMinVals.temperatureMin, maxMinVals.temperatureMax, 25, 255);
 				console.log('temperatureColour', temperatureColour);
 				messageBlock.innerHTML = locationData.characterValues.name;
 				mapPlaySounds();
