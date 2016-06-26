@@ -20,7 +20,7 @@
         <main aria-role="main">
           <article class="wrapper">
               <h1>The Conditional Orchestra</h1>
-              <p>By using the weather conditions in your local area The Conditional Orchestra plays original compositions all day every day. Play the sound of your location too:</p>
+              <p class="intro">By using the weather conditions in your local area The Conditional Orchestra plays original compositions all day every day. Play the sound of your location too:</p>
               <div class="cta" id="cta-user-location">
                   <button id="use-location-btn">Play my weather</button>
               </div>

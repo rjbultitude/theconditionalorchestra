@@ -28,16 +28,16 @@ module.exports = function() {
 
 		forecast.getCurrentConditions(newLocation, function(conditions) {
 			if (conditions.length === 1) {
-				var cloudCover = conditions[0].getCloudCover() || maxMinVals.getMean(maxMinVals.cloudCoverMax, maxMinVals.cloudCoverMin, 'cloudCover');
-				var speed = conditions[0].getWindSpeed() || maxMinVals.getMean(maxMinVals.windSpeedMax, maxMinVals.windSpeedMin, 'windSpeed');
-				var pressure = conditions[0].getPressure() || maxMinVals.getMean(maxMinVals.pressureMax, maxMinVals.pressureMin, 'pressure');
-				var visibility = conditions[0].getVisibility() || maxMinVals.getMean(maxMinVals.visibilityMax, maxMinVals.visibilityMin, 'visibility');
-				var bearing = conditions[0].getWindBearing() || maxMinVals.getMean(maxMinVals.windBearingMax, maxMinVals.windBearingMin, 'windBearing');
-				var ozone = conditions[0].getOzone() || maxMinVals.getMean(maxMinVals.ozoneMax, maxMinVals.ozoneMin, 'ozone');
-				var humidity = conditions[0].getHumidity() || maxMinVals.getMean(maxMinVals.humidityMax, maxMinVals.humidityMin, 'humidity');
-				var dewPoint = conditions[0].getDewPoint() || maxMinVals.getMean(maxMinVals.dewPointMax, maxMinVals.dewPointMin, 'dewPoint');
-				var temperature = conditions[0].getTemperature() || maxMinVals.getMean(maxMinVals.temperatureMax, maxMinVals.temperatureMin, 'temperature');
-				var apparentTemp = conditions[0].getApparentTemperature() || maxMinVals.getMean(maxMinVals.apparentTempMax, maxMinVals.apparentTempMin, 'apparentTemp');
+				var cloudCover = conditions[0].getCloudCover() === undefined ? maxMinVals.getMean(maxMinVals.cloudCoverMax, maxMinVals.cloudCoverMin, 'cloudCover') : conditions[0].getCloudCover();
+				var speed = conditions[0].getWindSpeed() === undefined ? maxMinVals.getMean(maxMinVals.windSpeedMax, maxMinVals.windSpeedMin, 'windSpeed') : conditions[0].getWindSpeed();
+				var pressure = conditions[0].getPressure() === undefined ? maxMinVals.getMean(maxMinVals.pressureMax, maxMinVals.pressureMin, 'pressure') : conditions[0].getPressure();
+				var visibility = conditions[0].getVisibility() === undefined ? maxMinVals.getMean(maxMinVals.visibilityMax, maxMinVals.visibilityMin, 'visibility') : conditions[0].getVisibility();
+				var bearing = conditions[0].getWindBearing() === undefined ? maxMinVals.getMean(maxMinVals.windBearingMax, maxMinVals.windBearingMin, 'windBearing') : conditions[0].getWindBearing();
+				var ozone = conditions[0].getOzone() === undefined ? maxMinVals.getMean(maxMinVals.ozoneMax, maxMinVals.ozoneMin, 'ozone') : conditions[0].getOzone();
+				var humidity = conditions[0].getHumidity() === undefined ? maxMinVals.getMean(maxMinVals.humidityMax, maxMinVals.humidityMin, 'humidity') : conditions[0].getHumidity();
+				var dewPoint = conditions[0].getDewPoint() === undefined ? maxMinVals.getMean(maxMinVals.dewPointMax, maxMinVals.dewPointMin, 'dewPoint') : conditions[0].getDewPoint();
+				var temperature = conditions[0].getTemperature() === undefined ? maxMinVals.getMean(maxMinVals.temperatureMax, maxMinVals.temperatureMin, 'temperature') : conditions[0].getTemperature();
+				var apparentTemp = conditions[0].getApparentTemperature() === undefined ? maxMinVals.getMean(maxMinVals.apparentTempMax, maxMinVals.apparentTempMin, 'apparentTemp') : conditions[0].getApparentTemperature();
 				var name = newLocation.name;
 				//need to pass two objects
 				//one for the notes
@@ -73,13 +73,17 @@ module.exports = function() {
 									locName = cityCountry;
 									//else use the city & postcode
 								} else {
-									var add = results[0].formatted_address;
-									var value = add.split(',');
+									var address = results[0].formatted_address;
+									var value = address.split(',');
 									var count = value.length;
-									var cityPc = value[count - 2];
-									var cityArr = cityPc.split(',');
-									var city = cityArr[0];
-									locName = city;
+									if (count === 1) {
+										locName = address;
+									} else {
+										var cityPc = value[count - 2];
+										var cityArr = cityPc.split(',');
+										var city = cityArr[0];
+										locName = city;
+									}
 								}
 							} else {
 								console.log('address not found');
@@ -89,6 +93,7 @@ module.exports = function() {
 							console.log('Geocoder failed due to: ' + status);
 						}
 						messageBlock.innerHTML = locName;
+						useLocBtn.disabled = false;
 						updateApp(lat, long, locName);
 					}
 				);
@@ -102,8 +107,8 @@ module.exports = function() {
 	}
 
 	function showForm() {
-		// messageBlock.innerHTML = 'Geolocation is not supported by your browser \n' +
-		// 	'Try searching';
+		messageBlock.innerHTML = 'Geolocation is not supported by your browser \n' +
+			'Try searching';
 		var formEl = document.getElementById('form-coords');
 		formEl.style.display = 'block';
 	}
@@ -135,10 +140,6 @@ module.exports = function() {
 		e.preventDefault();
 		var lat = parseInt(document.getElementById('lat').value, 10);
 		var long = parseInt(document.getElementById('long').value, 10);
-		console.log('lat', typeof lat);
-		console.log('lat', lat);
-		console.log('long', typeof long);
-		console.log('long', long);
 		if (typeof lat !== 'number' || typeof long !== 'number') {
 			messageBlock.innerHTML = 'please enter a number';
 		}
@@ -155,7 +156,10 @@ module.exports = function() {
 			name: 'Ho Chi', lat: 10.754727, long: 106.550903
 		},
 		{
-			name: 'alberto de agostini', lat: -54.646128, long: -70.029602
+			name: 'Alberto de Agostini', lat: -54.646128, long: -70.029602
+		},
+		{
+			name: 'Commonwealth Bay', lat: -67.006549, long: 142.657298
 		}
 	];
 
@@ -163,9 +167,10 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		getPlaces(staticPlaces[1].lat, staticPlaces[1].long);
+		getPlaces(staticPlaces[3].lat, staticPlaces[3].long);
 		console.log('Using static data');
 		//For live:
 		//getGeo();
+		useLocBtn.disabled = true;
 	});
 };

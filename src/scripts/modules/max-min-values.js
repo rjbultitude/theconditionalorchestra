@@ -35,7 +35,7 @@ module.exports = {
     humidityMin: 0,
     humidityMax: 1,
     //dew point in farenheit
-    dewPointMin: 20,
+    dewPointMin: -20,
     dewPointMax: 72,
     //temperature in farenheit
     temperatureMin: -35,
@@ -44,7 +44,7 @@ module.exports = {
     apparentTempMin: -20,
     apparentTempMax: 120,
     getMean: function getMeanFn(min, max, name) {
-      console.log('The value of ' + name + ' was undefined, null or false');
+      console.log('The value of ' + name + ' was undefined');
       return (max - min) / 2;
     }
   };

@@ -92,9 +92,8 @@ module.exports = function() {
 					maxMinVals.pitchMin = 0.5 + locationData.soundPitchRoot;
 					maxMinVals.pitchMax = 1.5 + locationData.soundPitchRoot;
 					//visibility is filter freq
-					console.log('locationData.characterValues.visibility', locationData.characterValues.visibility);
-					//soundFilter.freq(sketch.map(Math.round(locationData.characterValues.visibility), visibilityMin, visibilityMax, freqMin, freqMax));
-					soundFilter.freq(500);
+					soundFilter.freq(sketch.map(Math.round(locationData.characterValues.visibility), maxMinVals.visibilityMin, maxMinVals.visibilityMax, maxMinVals.freqMin, maxMinVals.freqMax));
+					//soundFilter.freq(500); //Debug
 					soundFilter.res(20);
 					//Store pitches in array
 					var pitchValuesMapped = [];
@@ -112,7 +111,6 @@ module.exports = function() {
 					pitchValuesMapped.push(sketch.map(locationData.pitchValues.apparentTemp, maxMinVals.apparentTempMin, maxMinVals.apparentTempMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 
 					console.log('pitchValuesMapped', pitchValuesMapped);
-					//console.log('locationData', locationData);
 
 					for (var i = 0; i < weatherSounds.length; i++) {
 						weatherSounds[i].organ.disconnect();
@@ -125,6 +123,7 @@ module.exports = function() {
 						weatherSounds[i].organDist.amp(locationData.soundDistVolume);
 						weatherSounds[i].organ.loop();
 						weatherSounds[i].organDist.loop();
+						console.log('weatherSounds[i]', weatherSounds[i]);
 					}
 			}
 
@@ -145,7 +144,6 @@ module.exports = function() {
 			};
 
 			SingleShape.prototype.update = function() {
-				//this.noiseStart += (i * frameCount)/noiseFactor;
 				this.noiseStart += noiseInc;
 				this.noiseAmt = sketch.noise(this.noiseStart);
 				this.size = sqSize - this.noiseAmt * animAmount;
@@ -217,7 +215,6 @@ module.exports = function() {
 					weatherSounds[j].organ = sketch.loadSound('/audio/organ-C2.mp3');
 					weatherSounds[j].organDist = sketch.loadSound('/audio/organ-C2d.mp3');
 				}
-				console.log('weatherSounds', weatherSounds);
 			};
 
 			sketch.setup = function setup() {

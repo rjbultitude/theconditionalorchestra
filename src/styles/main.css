@@ -29,8 +29,12 @@ h3,
 }
 
 h1 {
-  text-align: center;
   padding-top: 32px;
+}
+
+h1,
+.intro {
+  text-align: center;
 }
 
 h1,
