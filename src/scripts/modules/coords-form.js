@@ -169,7 +169,7 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		getPlaces(staticPlaces[3].lat, staticPlaces[3].long);
+		getPlaces(staticPlaces[1].lat, staticPlaces[1].long);
 		console.log('Using static data');
 		//For live:
 		//getGeo();

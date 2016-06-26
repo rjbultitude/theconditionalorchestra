@@ -143,7 +143,7 @@ module.exports = function() {
 				sketch.noStroke();
 				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
 				sketch.triangle(this.xPos, this.yPos, this.xPos, this.yPos + sqSize, this.xPos + sqSize, this.yPos);
-				sketch.triangle(this.xPos, this.yPos, this.xPos + this.size, this.yPos - this.size, this.xNew, this.yNew);
+				sketch.triangle(this.xPos, this.yPos + sqSize, this.xPos + this.size, this.yPos - this.size + sqSize, this.xNew, this.yNew + sqSize);
 			};
 
 			SingleShape.prototype.update = function() {
