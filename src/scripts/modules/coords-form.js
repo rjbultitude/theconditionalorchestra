@@ -45,7 +45,9 @@ module.exports = function() {
 				var characterValues = new CharacterValues(name, cloudCover, speed, pressure, visibility);
 				var pitchValues = new PitchValues(bearing, ozone, humidity, dewPoint, temperature, apparentTemp);
 				var userLocConditions = {characterValues: characterValues, pitchValues: pitchValues};
-				console.log('userLocConditions', userLocConditions);
+				// console.log('characterValues', characterValues);
+				// console.log('pitchValues', pitchValues);
+				// console.log('userLocConditions', userLocConditions);
 				channel.publish('userUpdate', userLocConditions);
 			}
 		});

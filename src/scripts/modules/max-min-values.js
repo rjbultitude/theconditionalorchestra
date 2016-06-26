@@ -45,6 +45,6 @@ module.exports = {
     apparentTempMax: 120,
     getMean: function getMeanFn(min, max, name) {
       console.log('The value of ' + name + ' was undefined');
-      return (max - min) / 2;
+      return (min + max) / 2;
     }
   };

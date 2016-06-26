@@ -123,7 +123,7 @@ module.exports = function() {
 						weatherSounds[i].organDist.amp(locationData.soundDistVolume);
 						weatherSounds[i].organ.loop();
 						weatherSounds[i].organDist.loop();
-						console.log('weatherSounds[i]', weatherSounds[i]);
+						// console.log('weatherSounds[i]', weatherSounds[i]);
 					}
 			}
 
