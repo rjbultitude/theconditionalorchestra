@@ -5,6 +5,6 @@ var gulp = require('gulp');
 
 gulp.task('clean', function(cb) {
 
-    return del('dist', cb);
+    return del('dist/scripts', cb);
 
 });

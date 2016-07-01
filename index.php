@@ -10,8 +10,8 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-        <link rel="stylesheet" href="src/styles/normalize.css">
-        <link rel="stylesheet" href="src/styles/main.css">
+        <link rel="stylesheet" href="dist/styles/normalize.css">
+        <link rel="stylesheet" href="dist/styles/main.css">
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -25,6 +25,7 @@
                   <button id="use-location-btn">Play my weather</button>
               </div>
               <p id="message-block" class="status-bar"></p>
+              <button id="full-screen">Full screen</button>
               <div id="canvas-container" class="canvas-container">
               </div>
               <form id="form-coords" style="display: none">

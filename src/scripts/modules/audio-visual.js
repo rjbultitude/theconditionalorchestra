@@ -41,6 +41,8 @@ module.exports = function() {
 	var cWidth = 800;
 	var cHeight = 400;
 	var cPadding = '50%';
+	//Colour offset
+	var colourDim = 18;
 	//DOM
 	var cContainerName = 'canvas-container';
 
@@ -143,6 +145,7 @@ module.exports = function() {
 				sketch.noStroke();
 				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
 				sketch.triangle(this.xPos, this.yPos, this.xPos, this.yPos + sqSize, this.xPos + sqSize, this.yPos);
+				sketch.fill(temperatureColour - colourDim, this.colour - colourDim, 255 - temperatureColour - colourDim);
 				sketch.triangle(this.xPos, this.yPos + sqSize, this.xPos + this.size, this.yPos - this.size + sqSize, this.xNew, this.yNew + sqSize);
 			};
 

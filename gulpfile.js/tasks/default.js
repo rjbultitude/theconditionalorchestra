@@ -5,6 +5,6 @@ var gulp    = require('gulp');
 
 gulp.task('default', ['clean'], function() {
 
-    return gulp.start(config.production ? ['scripts', 'styles'] : ['jshint', 'jscs', 'scripts', 'styles', 'watch']);
+    return gulp.start(config.production ? ['scripts'] : ['jshint', 'jscs', 'scripts', 'watch']);
 
 });

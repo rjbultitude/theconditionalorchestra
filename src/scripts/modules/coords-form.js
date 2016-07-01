@@ -129,10 +129,11 @@ module.exports = function() {
 		function failure(failure) {
 			messageBlock.innerHTML = 'Unable to retrieve your location \n' +
 			'Try again in a minute';
+			useLocBtn.disabled = false;
+			//console.log('failure.message', failure.message);
 			if(failure.message.indexOf('Only secure origins are allowed') === 0) {
       	console.log('Only secure origins are allowed');
     	}
-			console.log('Unable to retrieve your location');
 		}
 
 		navigator.geolocation.getCurrentPosition(success, failure);
@@ -169,7 +170,7 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		getPlaces(staticPlaces[1].lat, staticPlaces[1].long);
+		getPlaces(staticPlaces[0].lat, staticPlaces[0].long);
 		console.log('Using static data');
 		//For live:
 		//getGeo();
