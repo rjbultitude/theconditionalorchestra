@@ -10,8 +10,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-        <link rel="stylesheet" href="dist/styles/normalize.css">
-        <link rel="stylesheet" href="dist/styles/main.css">
+        <link rel="stylesheet" href="dist/styles/global.css">
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -20,13 +19,22 @@
         <main aria-role="main">
           <article class="wrapper">
               <h1>The Conditional Orchestra</h1>
-              <p class="intro">By using the weather conditions in your local area The Conditional Orchestra plays original compositions all day every day. Play the sound of your location too:</p>
+              <p class="intro">Using the weather conditions in your local area The Conditional Orchestra plays unique compositions all day every day.</p>
               <div class="cta" id="cta-user-location">
                   <button id="use-location-btn">Play my weather</button>
               </div>
-              <p id="message-block" class="status-bar"></p>
-              <button id="full-screen">Full screen</button>
-              <div id="canvas-container" class="canvas-container">
+              <main id="main-section" class="main-section">
+                <p id="message-block" class="status-bar"></p>
+                <div id="canvas-container" class="canvas-container">
+                </div>
+                <div class="controls">
+                  <button id="full-screen">
+                    <span class="icon">
+                      <?php echo file_get_contents("img/full-screen.svg"); ?>
+                    </span>
+                    Full screen
+                  </button>
+                </div>
               </div>
               <form id="form-coords" style="display: none">
                 <h2>Enter your coordinates</h2>

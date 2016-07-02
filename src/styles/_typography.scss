@@ -1,0 +1,52 @@
+@import 'https://fonts.googleapis.com/css?family=Libre+Baskerville';
+@import 'https://fonts.googleapis.com/css?family=Lora';
+
+body {
+  text-rendering: optimizeLegibility;
+  font-size: 17px;
+  line-height: 1.4;
+  font-family: 'Lora', serif;
+}
+
+h1,
+h2,
+h3,
+button {
+  font-family: 'Libre Baskerville', serif;
+  -webkit-font-variant-ligatures: common-ligatures;
+  -o-font-feature-settings: "liga", "dlig";
+  -webkit-font-feature-settings: "liga", "dlig";
+  font-feature-settings: "liga", "dlig";
+  /*letter-spacing: 0.075em;*/
+  /* for iOS and Safari 6 */
+  font-variant-ligatures: common-ligatures;
+}
+
+h1 {
+  padding-top: 32px;
+}
+
+h1,
+.intro {
+  text-align: center;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+a {
+  color: white;
+}
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}

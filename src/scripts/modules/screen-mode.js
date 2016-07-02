@@ -3,7 +3,7 @@ var Promise = require('es6-promise').Promise;
 
 module.exports = function() {
 	var scnBtn = document.getElementById('full-screen');
-	var containerEl = document.getElementById('canvas-container');
+	var containerEl = document.getElementById('main-section');
 	console.log('containerEl', containerEl);
 
 	function toggleFullScreen() {

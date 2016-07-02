@@ -1,0 +1,27 @@
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+label {
+    font-size: 1.4rem;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+input[type="text"] {
+    padding: 4px;
+}
+
+button {
+    padding: 12px;
+    text-align: center;
+    font-size: 20px;
+    display: inline-block;
+    color: black;
+}
+
+textarea {
+    resize: vertical;
+}

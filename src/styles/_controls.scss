@@ -1,0 +1,31 @@
+.controls {
+  button {
+    background-color: black;
+    border: 0 none;
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      display: block;
+      background-color: white;
+
+      path {
+        fill: black;
+      }
+    }
+  }
+}
+
+.inactive {
+    position: relative;
+
+    &:after {
+        position: absolute;
+        content: "";
+        left:0;
+        top:0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255,255,255,0.8);
+    }
+}

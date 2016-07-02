@@ -1,0 +1,48 @@
+
+html {
+    color: #ffffff;
+    background-color: #000000;
+}
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+.wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+article {
+    margin: 0 auto;
+}
+
+.cta {
+    text-align: center;
+    padding: 0 0 20px 0;
+
+    p {
+      width: 50%;
+      margin: 0 auto 12px;
+      display: block;
+    }
+}
+
+@import 'helpers.scss';
+@import 'typography.scss';
+@import 'footer.scss';
+@import 'canvas.scss';
+@import 'forms.scss';
+@import 'controls.scss';
