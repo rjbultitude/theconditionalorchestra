@@ -43,6 +43,8 @@ module.exports = function() {
 	var cPadding = '50%';
 	//Colour offset
 	var colourDim = 18;
+	//Pitch / rate
+	var semitone = 0.0833;
 	//DOM
 	var cContainerName = 'canvas-container';
 
@@ -242,14 +244,16 @@ module.exports = function() {
 				//set runtime constants
 				hSquares = Math.round(sketch.width/sqSize);
 				vSquares = Math.round(sketch.height/sqSize);
-				//animAmount = Math.round(locationData.characterValues.speed);
-				animAmount = 14;
+				animAmount = Math.round(locationData.characterValues.speed);
+				//animAmount = 14;
 				noiseInc = sketch.map(animAmount, maxMinVals.speedMin, maxMinVals.speedMax, 0.01, 0.05);
 				//create shapes in grid
 				createShapeSet();
 				temperatureColour = sketch.map(locationData.pitchValues.temperature, maxMinVals.temperatureMin, maxMinVals.temperatureMax, 25, 255);
 				console.log('temperatureColour', temperatureColour);
+				//Update view with place name
 				messageBlock.innerHTML = locationData.characterValues.name;
+				//map sounds
 				mapPlaySounds();
 			};
 

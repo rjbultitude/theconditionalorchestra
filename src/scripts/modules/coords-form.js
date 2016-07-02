@@ -170,7 +170,7 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		getPlaces(staticPlaces[0].lat, staticPlaces[0].long);
+		getPlaces(staticPlaces[3].lat, staticPlaces[3].long);
 		console.log('Using static data');
 		//For live:
 		//getGeo();
