@@ -18,21 +18,24 @@
         <![endif]-->
         <main aria-role="main">
           <article class="wrapper">
-              <h1>The Conditional Orchestra</h1>
+              <h1 class="page-heading">The Conditional Orchestra</h1>
               <p class="intro">Using the weather conditions in your local area The Conditional Orchestra plays unique compositions all day every day.</p>
               <div class="cta" id="cta-user-location">
                   <button id="use-location-btn">Play my weather</button>
               </div>
-              <main id="main-section" class="main-section">
-                <p id="message-block" class="status-bar"></p>
-                <div id="canvas-container" class="canvas-container">
+              <div id="main-section" class="main-section">
+                <div id="core-content">
+                  <p id="message-block" class="status-bar"></p>
+                  <div id="canvas-container" class="canvas-container"></div>
                 </div>
                 <div class="controls">
                   <button id="full-screen">
                     <span class="icon">
                       <?php echo file_get_contents("img/full-screen.svg"); ?>
                     </span>
-                    Full screen
+                    <span class="text">
+                      Full screen
+                    </span>
                   </button>
                 </div>
               </div>

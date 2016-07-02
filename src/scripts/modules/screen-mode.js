@@ -1,9 +1,8 @@
 'use strict';
-var Promise = require('es6-promise').Promise;
 
 module.exports = function() {
 	var scnBtn = document.getElementById('full-screen');
-	var containerEl = document.getElementById('main-section');
+	var containerEl = document.getElementById('core-content');
 	console.log('containerEl', containerEl);
 
 	function toggleFullScreen() {
@@ -17,12 +16,12 @@ module.exports = function() {
 			} else if(containerEl.msRequestFullscreen) {
 				containerEl.msRequestFullscreen();
 			}
-			containerEl.classList.add('active');
+			containerEl.classList.add('active', 'wrapper');
 			containerEl.style.paddingBottom = '0';
 	  } else {
 	    if (document.exitFullscreen) {
 	      document.exitFullscreen();
-				containerEl.classList.remove('active');
+				containerEl.classList.remove('active', 'wrapper');
 				containerEl.style.paddingBottom = '50%';
 	    }
 	  }

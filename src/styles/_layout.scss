@@ -1,0 +1,45 @@
+
+html {
+    color: #ffffff;
+    background-color: #000000;
+}
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+div,
+section,
+article,
+main,
+aside,
+header,
+footer {
+  box-sizing: border-box;
+}
+
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+.wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    background-color: transparent;
+}
+
+article {
+    margin: 0 auto;
+}
+
+// ::webkit-full-screen {
+// }

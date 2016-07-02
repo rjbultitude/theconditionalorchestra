@@ -1,3 +1,51 @@
+.main-section {
+  position: relative;
+
+  &:hover .controls {
+    display: block;
+  }
+
+  .controls {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: $color-trans-grey;
+
+    button {
+      background-color: transparent;
+      border: 0 none;
+      float: right;
+      padding: 6px;
+
+      .text {
+        position: absolute;
+        left: -999em;
+      }
+
+      .icon {
+        width: 28px;
+        height: 28px;
+        display: block;
+        padding: 5px;
+        border: 1px solid darken($color-light-grey, 45%);
+        //background-color: $color-light-grey;
+
+        path {
+          fill: white;
+        }
+      }
+    }
+  }
+
+  .status-bar {
+      padding: 0;
+      text-align: center;
+      margin-top: 0;
+      font-size: 22px;
+  }
+}
+
 .canvas-container {
   padding-bottom: 50%;
   position: relative;
@@ -11,26 +59,4 @@
     width: 100%;
     height: 100%;
   }
-}
-
-.main-section {
-  position: relative;
-
-  .controls {
-    display: none;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-  }
-
-  &:hover .controls {
-    display: block;
-  }
-}
-
-.status-bar {
-    padding: 0;
-    text-align: center;
-    margin-top: 0;
 }

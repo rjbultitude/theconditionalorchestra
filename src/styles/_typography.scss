@@ -22,13 +22,18 @@ button {
   font-variant-ligatures: common-ligatures;
 }
 
-h1 {
+.page-heading {
   padding-top: 32px;
+  font-size: 32px;
 }
 
 h1,
 .intro {
   text-align: center;
+}
+
+.intro {
+  margin-bottom: 12px;
 }
 
 h1,
