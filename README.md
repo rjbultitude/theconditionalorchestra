@@ -73,13 +73,12 @@ Styles and scripts will be processed and minified. Modernizr will be custom buil
 ##To do
 
 * Remove unused code from Forecast.io JS API
-* Add loading message for pre-js state
 
 ##Business logic
 2 objects are composed from the data:
- * characterValues
+ * `characterValues`
  	* name, cloudCover, speed, pressure, visibility
- * pitchValues
+ * `pitchValues`
  	* bearing, ozone, humidity, dewPoint, temperature, apparentTemp
 
 visibility - Filter freq  

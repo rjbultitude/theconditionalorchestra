@@ -1,3 +1,11 @@
+/* Contains all value ranges
+  for reference and application usage
+  also includes a method that returns
+  the mean value -
+  for cases where no condition data
+  is available
+  */
+
 'use strict';
 
 module.exports = {

@@ -34,8 +34,6 @@ module.exports = function() {
 	var weatherSounds = [];
 	//Array for all visual shapes
 	var shapeSet = [];
-	//noise factor
-	var noiseFactor = 1000000;
 	var noiseInc = 0.01;
 	//Canvas size
 	var cWidth = 800;
@@ -66,10 +64,6 @@ module.exports = function() {
 
 			//Visuals
 			var sqSize = 25;
-			var pointDist = 13;
-			var hSquares = 0;
-			var vSquares = 0;
-			var noiseVal = 0.0;
 			var temperatureColour = 0;
 			//The rate at which to detune
 			//TO DO Needs to be refactored to be
@@ -78,19 +72,21 @@ module.exports = function() {
 			//amend with caution
 			var factor = 20;
 
+			function checkClemency(locationData) {
+				return locationData.characterValues.cloudCover < 0.5 && locationData.characterValues.speed < 16 && locationData.pitchValues.temperature > 20;
+			}
+
 			/*
 				Main Object config
 			 */
-			function mapPlaySounds() {
+			function mapPlaySounds(locationData) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
 
 					//cloud cover determines level of distorition
 					locationData.soundDistVolume = sketch.map(Math.round(locationData.characterValues.cloudCover), maxMinVals.cloudCoverMin, maxMinVals.cloudCoverMax, maxMinVals.distVolumeMin, maxMinVals.distVolumeMax);
-					console.log('locationData.soundDistVolume', locationData.soundDistVolume);
 					//Wind speed determines volume of all sounds
 					locationData.soundVolume = sketch.map(Math.round(locationData.characterValues.speed), maxMinVals.speedMin, maxMinVals.speedMax, maxMinVals.volumeMin, maxMinVals.volumeMax) - locationData.soundDistVolume/3;
-					console.log('locationData.soundVolume', locationData.soundVolume);
 					//Pressure determines root note
 					locationData.soundPitchRoot = sketch.map(Math.round(locationData.characterValues.pressure), maxMinVals.pressureMin, maxMinVals.pressureMax, 0, 0.5);
 					//pitch range
@@ -102,6 +98,9 @@ module.exports = function() {
 					soundFilter.res(20);
 					//Store pitches in array
 					var pitchValuesMapped = [];
+					// if (checkClemency(locationData)) {
+					// 	console.log('the weather is clement');
+					// }
 					//Wind Bearing
 					pitchValuesMapped.push(sketch.map(locationData.pitchValues.bearing, maxMinVals.bearingMin, maxMinVals.bearingMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 					//Ozone
@@ -114,8 +113,6 @@ module.exports = function() {
 					pitchValuesMapped.push(sketch.map(locationData.pitchValues.temperature, maxMinVals.temperatureMin, maxMinVals.temperatureMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 					//apparent temperature
 					pitchValuesMapped.push(sketch.map(locationData.pitchValues.apparentTemp, maxMinVals.apparentTempMin, maxMinVals.apparentTempMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
-
-					console.log('pitchValuesMapped', pitchValuesMapped);
 
 					for (var i = 0; i < weatherSounds.length; i++) {
 						weatherSounds[i].organ.disconnect();
@@ -132,6 +129,7 @@ module.exports = function() {
 					}
 			}
 
+			//Indiviual shape constructor
 			function SingleShape(xPos, yPos, size, colour, index) {
 				this.xPos = xPos;
 				this.yPos = yPos;
@@ -159,7 +157,8 @@ module.exports = function() {
 				this.yNew = this.yPos - this.noiseAmt * animAmount;
 			};
 
-			function createShapeSet() {
+			//Accepts number of horizontal and vertical squares to draw
+			function createShapeSet(hSquares, vSquares) {
 				var index = 0;
 				for (var i = 0; i < hSquares; i++) {
 					for (var j = 0; j < vSquares; j++) {
@@ -170,43 +169,7 @@ module.exports = function() {
 				}
 			}
 
-			//Location Class
-			function LocationObj(speed, bearing, pitch, volume, newPitch, newVolume, pitchDiff, incAmt, name, radius, xPos, yPos, sound) {
-				this.speed = speed;
-				this.bearing = bearing;
-				this.name = name;
-				this.radius = radius;
-				this.pitch = pitch;
-				this.newPitch = newPitch;
-				this.volume = volume;
-				this.newVolume = newVolume;
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.pitchDiff = pitchDiff;
-				this.incAmt = incAmt;
-				this.sound = sound;
-				this.soundSame = false;
-			}
-
-			LocationObj.prototype.soundUpdate = function() {
-				//TO DO
-				//locationData[i].sound.amp();
-				// Use approximate values
-				if (this.pitch.toFixed(2) / 1 > this.newPitch.toFixed(2) / 1) {
-					this.pitch -= this.incAmt;
-					this.sound.rate(this.pitch);
-					//console.log('this.pitch', this.pitch);
-				} else if (this.pitch.toFixed(2) / 1 < this.newPitch.toFixed(2) / 1) {
-					this.pitch += this.incAmt;
-					this.sound.rate(this.pitch);
-					//console.log('this.pitch', this.pitch);
-				}
-				//might have to use a range here
-				else if (this.pitch.toFixed(2) / 1 === this.newPitch.toFixed(2) / 1) {
-					this.soundSame = true;
-				}
-			};
-
+			//Sound constructor
 			function WeatherSound(organ, organDist) {
 				this.organ = organ;
 				this.organDist = organDist;
@@ -242,19 +205,20 @@ module.exports = function() {
 				sketch.frameRate(25);
 				sketch.background(0, 0, 0);
 				//set runtime constants
-				hSquares = Math.round(sketch.width/sqSize);
-				vSquares = Math.round(sketch.height/sqSize);
+				var hSquares = Math.round(sketch.width/sqSize);
+				var vSquares = Math.round(sketch.height/sqSize);
 				animAmount = Math.round(locationData.characterValues.speed);
 				//animAmount = 14;
 				noiseInc = sketch.map(animAmount, maxMinVals.speedMin, maxMinVals.speedMax, 0.01, 0.05);
 				//create shapes in grid
-				createShapeSet();
+				createShapeSet(hSquares, vSquares);
 				temperatureColour = sketch.map(locationData.pitchValues.temperature, maxMinVals.temperatureMin, maxMinVals.temperatureMax, 25, 255);
 				console.log('temperatureColour', temperatureColour);
 				//Update view with place name
 				messageBlock.innerHTML = locationData.characterValues.name;
+
 				//map sounds
-				mapPlaySounds();
+				mapPlaySounds(locationData);
 			};
 
 			sketch.draw = function draw() {

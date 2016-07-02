@@ -3,7 +3,6 @@
 module.exports = function() {
 	var scnBtn = document.getElementById('full-screen');
 	var containerEl = document.getElementById('core-content');
-	console.log('containerEl', containerEl);
 
 	function toggleFullScreen() {
 	  if (!document.fullscreenElement) {
