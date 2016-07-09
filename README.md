@@ -57,7 +57,7 @@ Styles and scripts will be processed and watched for changes. Scripts will be li
 
 ### Production
 
-Styles and scripts will be processed and minified. Modernizr will be custom built based on features used in the Sass and JavaScript.
+Styles and scripts will be processed and minified.
 
 *Run (in this directory):*
 
@@ -75,11 +75,12 @@ Styles and scripts will be processed and minified. Modernizr will be custom buil
 * Remove unused code from Forecast.io JS API
 
 ##Business logic
-2 objects are composed from the data:
+2 objects are composed from the weather data:
  * `characterValues`
  	* name, cloudCover, speed, pressure, visibility
  * `pitchValues`
  	* bearing, ozone, humidity, dewPoint, temperature, apparentTemp
+
 
 visibility - Filter freq  
 Cloud cover - sound dist volume

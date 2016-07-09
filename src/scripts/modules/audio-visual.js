@@ -12,10 +12,6 @@
 	This flaw needs addressing
  */
 
-/*
-	Location Harminiser
- */
-
 'use strict';
 
 var P5 = require('../libs/p5');
@@ -65,12 +61,6 @@ module.exports = function() {
 			//Visuals
 			var sqSize = 25;
 			var temperatureColour = 0;
-			//The rate at which to detune
-			//TO DO Needs to be refactored to be
-			//independant of the processor speed
-			//The higher the number the bigger the loop
-			//amend with caution
-			var factor = 20;
 
 			function checkClemency(locationData) {
 				return locationData.characterValues.cloudCover < 0.5 && locationData.characterValues.speed < 16 && locationData.pitchValues.temperature > 20;
@@ -98,9 +88,7 @@ module.exports = function() {
 					soundFilter.res(20);
 					//Store pitches in array
 					var pitchValuesMapped = [];
-					// if (checkClemency(locationData)) {
-					// 	console.log('the weather is clement');
-					// }
+
 					//Wind Bearing
 					pitchValuesMapped.push(sketch.map(locationData.pitchValues.bearing, maxMinVals.bearingMin, maxMinVals.bearingMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 					//Ozone
