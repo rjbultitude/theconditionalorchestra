@@ -66,10 +66,17 @@ module.exports = function() {
 				return locationData.characterValues.cloudCover < 0.5 && locationData.characterValues.speed < 16 && locationData.pitchValues.temperature > 20;
 			}
 
+			function mapPitchValues(locationData) {
+				for (var i = 0; i < locationData.pitchValues.length; i++) {
+					locationData.pitchValues[i].mappedValue = sketch.map(locationData.pitchValues[i].value, locationData.pitchValues[i].min, locationData.pitchValues[i].max, maxMinVals.pitch.min, maxMinVals.pitch.max);
+				}
+				return true;
+			}
+
 			/*
 				Main Object config
 			 */
-			function mapPlaySounds(locationData) {
+			function playSounds(locationData) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
 
@@ -80,37 +87,27 @@ module.exports = function() {
 					//Pressure determines root note
 					locationData.soundPitchRoot = sketch.map(Math.round(locationData.characterValues.pressure), maxMinVals.pressureMin, maxMinVals.pressureMax, 0, 0.5);
 					//pitch range
-					maxMinVals.pitchMin = 0.5 + locationData.soundPitchRoot;
-					maxMinVals.pitchMax = 1.5 + locationData.soundPitchRoot;
+					maxMinVals.pitch.min = 0.5 + locationData.soundPitchRoot;
+					maxMinVals.pitch.max = 1.5 + locationData.soundPitchRoot;
 					//visibility is filter freq
 					soundFilter.freq(sketch.map(Math.round(locationData.characterValues.visibility), maxMinVals.visibilityMin, maxMinVals.visibilityMax, maxMinVals.freqMin, maxMinVals.freqMax));
 					//soundFilter.freq(500); //Debug
 					soundFilter.res(20);
-					//Store pitches in array
-					var pitchValuesMapped = [];
-
-					//Wind Bearing
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.bearing, maxMinVals.bearingMin, maxMinVals.bearingMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
-					//Ozone
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.ozone, maxMinVals.ozoneMin, maxMinVals.ozoneMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
-					//humidity
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.humidity, maxMinVals.humidityMin, maxMinVals.humidityMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
-					//dew point
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.dewPoint, maxMinVals.dewPointMin, maxMinVals.dewPointMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
-					//temperature
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.temperature, maxMinVals.temperatureMin, maxMinVals.temperatureMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
-					//apparent temperature
-					pitchValuesMapped.push(sketch.map(locationData.pitchValues.apparentTemp, maxMinVals.apparentTempMin, maxMinVals.apparentTempMax, maxMinVals.pitchMin, maxMinVals.pitchMax));
 
 					for (var i = 0; i < weatherSounds.length; i++) {
 						weatherSounds[i].organ.disconnect();
 						weatherSounds[i].organDist.disconnect();
 						weatherSounds[i].organ.connect(soundFilter);
 						weatherSounds[i].organDist.connect(soundFilter);
-						weatherSounds[i].organ.rate(pitchValuesMapped[i]);
-						weatherSounds[i].organDist.rate(pitchValuesMapped[i]);
-						weatherSounds[i].organ.amp(locationData.soundVolume);
-						weatherSounds[i].organDist.amp(locationData.soundDistVolume);
+						weatherSounds[i].organ.rate(pitchValues[i].mappedValue);
+						weatherSounds[i].organDist.rate(pitchValues[i].mappedValue);
+						if (pitchValues[i].name === 'apparentTemp' && checkClemency()) {
+								weatherSounds[i].organ.amp(0);
+								weatherSounds[i].organDist.amp(0);
+						} else {
+								weatherSounds[i].organ.amp(locationData.soundVolume);
+								weatherSounds[i].organDist.amp(locationData.soundDistVolume);
+						}
 						weatherSounds[i].organ.loop();
 						weatherSounds[i].organDist.loop();
 						// console.log('weatherSounds[i]', weatherSounds[i]);
@@ -166,9 +163,8 @@ module.exports = function() {
 			sketch.preload = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
-				var pitchDataLength = Object.keys(locationData.pitchValues).length;
 				//create an empty object for each sound
-				for (var i = 0; i < pitchDataLength; i++) {
+				for (var i = 0; i < locationData.pitchValues.length; i++) {
 					weatherSounds[i] = new WeatherSound(null, null);
 				}
 				//populate with preloaded sounds
@@ -205,8 +201,10 @@ module.exports = function() {
 				//Update view with place name
 				messageBlock.innerHTML = locationData.characterValues.name;
 
-				//map sounds
-				mapPlaySounds(locationData);
+				//When values are mapped
+				if (mapPitchValues(locationData)) {
+					playSounds(locationData);
+				}
 			};
 
 			sketch.draw = function draw() {

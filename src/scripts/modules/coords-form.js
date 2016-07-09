@@ -2,7 +2,7 @@
 
 var Forecastio = require('../libs/forecast.io');
 var audioVisual = require('./audio-visual');
-var PitchValues = require('./pitch-cnstrctr');
+var CondPitchValue = require('./pitch-cnstrctr');
 var CharacterValues = require('./character-cnstrctr');
 var Nll = require('./nll-cnstrctr');
 var GoogleMapsLoader = require('google-maps');
@@ -28,23 +28,29 @@ module.exports = function() {
 
 		forecast.getCurrentConditions(newLocation, function(conditions) {
 			if (conditions.length === 1) {
-				var cloudCover = conditions[0].getCloudCover() === undefined ? maxMinVals.getMean(maxMinVals.cloudCoverMax, maxMinVals.cloudCoverMin, 'cloudCover') : conditions[0].getCloudCover();
-				var speed = conditions[0].getWindSpeed() === undefined ? maxMinVals.getMean(maxMinVals.windSpeedMax, maxMinVals.windSpeedMin, 'windSpeed') : conditions[0].getWindSpeed();
-				var pressure = conditions[0].getPressure() === undefined ? maxMinVals.getMean(maxMinVals.pressureMax, maxMinVals.pressureMin, 'pressure') : conditions[0].getPressure();
-				var visibility = conditions[0].getVisibility() === undefined ? maxMinVals.getMean(maxMinVals.visibilityMax, maxMinVals.visibilityMin, 'visibility') : conditions[0].getVisibility();
-				var bearing = conditions[0].getWindBearing() === undefined ? maxMinVals.getMean(maxMinVals.windBearingMax, maxMinVals.windBearingMin, 'windBearing') : conditions[0].getWindBearing();
-				var ozone = conditions[0].getOzone() === undefined ? maxMinVals.getMean(maxMinVals.ozoneMax, maxMinVals.ozoneMin, 'ozone') : conditions[0].getOzone();
-				var humidity = conditions[0].getHumidity() === undefined ? maxMinVals.getMean(maxMinVals.humidityMax, maxMinVals.humidityMin, 'humidity') : conditions[0].getHumidity();
-				var dewPoint = conditions[0].getDewPoint() === undefined ? maxMinVals.getMean(maxMinVals.dewPointMax, maxMinVals.dewPointMin, 'dewPoint') : conditions[0].getDewPoint();
-				var temperature = conditions[0].getTemperature() === undefined ? maxMinVals.getMean(maxMinVals.temperatureMax, maxMinVals.temperatureMin, 'temperature') : conditions[0].getTemperature();
-				var apparentTemp = conditions[0].getApparentTemperature() === undefined ? maxMinVals.getMean(maxMinVals.apparentTempMax, maxMinVals.apparentTempMin, 'apparentTemp') : conditions[0].getApparentTemperature();
+				var cloudCover = conditions[0].getCloudCover() === undefined ? maxMinVals.getMean(maxMinVals.cloudCover.max, maxMinVals.cloudCover.min, 'cloudCover') : conditions[0].getCloudCover();
+				var speed = conditions[0].getWindSpeed() === undefined ? maxMinVals.getMean(maxMinVals.windSpeed.max, maxMinVals.windSpeed.min, 'windSpeed') : conditions[0].getWindSpeed();
+				var pressure = conditions[0].getPressure() === undefined ? maxMinVals.getMean(maxMinVals.pressure.max, maxMinVals.pressure.min, 'pressure') : conditions[0].getPressure();
+				var visibility = conditions[0].getVisibility() === undefined ? maxMinVals.getMean(maxMinVals.visibility.max, maxMinVals.visibility.min, 'visibility') : conditions[0].getVisibility();
+				var bearing = conditions[0].getWindBearing() === undefined ? maxMinVals.getMean(maxMinVals.windBearing.max, maxMinVals.windBearing.min, 'windBearing') : conditions[0].getWindBearing();
+				var ozone = conditions[0].getOzone() === undefined ? maxMinVals.getMean(maxMinVals.ozone.max, maxMinVals.ozone.min, 'ozone') : conditions[0].getOzone();
+				var humidity = conditions[0].getHumidity() === undefined ? maxMinVals.getMean(maxMinVals.humidity.max, maxMinVals.humidity.min, 'humidity') : conditions[0].getHumidity();
+				var dewPoint = conditions[0].getDewPoint() === undefined ? maxMinVals.getMean(maxMinVals.dewPoint.max, maxMinVals.dewPoint.min, 'dewPoint') : conditions[0].getDewPoint();
+				var temperature = conditions[0].getTemperature() === undefined ? maxMinVals.getMean(maxMinVals.temperature.max, maxMinVals.temperature.min, 'temperature') : conditions[0].getTemperature();
+				var apparentTemp = conditions[0].getApparentTemperature() === undefined ? maxMinVals.getMean(maxMinVals.apparentTemp.max, maxMinVals.apparentTemp.min, 'apparentTemp') : conditions[0].getApparentTemperature();
 				var name = newLocation.name;
 				//need to pass two objects
 				//one for the notes
 				//one for the controllers
+				var pitchConditions = [];
+				var pitchValues = {bearing: bearing, ozone: ozone, humidity: humidity, dewPoint: dewPoint, temperature: temperature, apparentTemp: apparentTemp};
+				for (var key in pitchValues) {
+					if (pitchValues.hasOwnProperty(key)) {
+						pitchConditions.push(new CondPitchValue(key, pitchValues[key], maxMinVals[key].min, maxMinVals[key].max, null));
+					}
+				}
 				var characterValues = new CharacterValues(name, cloudCover, speed, pressure, visibility);
-				var pitchValues = new PitchValues(bearing, ozone, humidity, dewPoint, temperature, apparentTemp);
-				var userLocConditions = {characterValues: characterValues, pitchValues: pitchValues};
+				var userLocConditions = {characterValues: characterValues, pitchConditions: pitchConditions};
 				// console.log('characterValues', characterValues);
 				// console.log('pitchValues', pitchValues);
 				// console.log('userLocConditions', userLocConditions);

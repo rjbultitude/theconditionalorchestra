@@ -9,48 +9,75 @@
 'use strict';
 
 module.exports = {
-    //Pitch arbitary scale
-    pitchMin: 0.5,
-    pitchMax: 2.0,
+    pitch: {
+      min: 0.5,
+      max: 2.0
+    },
     //Volume arbitary scale
-    volumeMin: 0.2,
-    volumeMax: 1.0,
+    volume: {
+      min: 0.2,
+      max: 1.0,
+    },
     //Distorted volume arbitary scale
-    distVolumeMin: 0.0,
-    distVolumeMax: 0.6,
+    distVolume: {
+      min: 0.0,
+      max: 0.6,
+    },
     //Frequency
-    freqMin: 320,
-    freqMax: 5000,
+    freq: {
+      min: 320,
+      freqmax: 5000,
+    },
     //Cloud cover as a percentage
-    cloudCoverMin: 0,
-    cloudCoverMax: 1,
+    cloudCover: {
+      min: 0,
+      cloudCovermax: 1,
+    },
     //Wind speed typically up to  32m/s
-    speedMin: 0,
-    speedMax: 32,
+    speed: {
+      min: 0,
+      speedmax: 32,
+    },
     //pressure in millibars
-    pressureMin: 980,
-    pressureMax: 1050,
+    pressure: {
+      min: 980,
+      max: 1050,
+    },
     //visibility in metres
-    visibilityMin: 0.1,
-    visibilityMax: 10,
+    visibility: {
+      min: 0.1,
+      visibilitymax: 10,
+    },
     //Wind Bearing in degrees
-    bearingMin: 0,
-    bearingMax: 360,
+    bearing: {
+      min: 0,
+      bearingmax: 360,
+    },
     //Ozone in Dobson units
-    ozoneMin: 230,
-    ozoneMax: 500,
+    ozone: {
+      min: 230,
+      ozonemax: 500
+    },
     //humidity as a percentage
-    humidityMin: 0,
-    humidityMax: 1,
+    humidity: {
+      min: 0,
+      humiditymax: 1
+    },
     //dew point in farenheit
-    dewPointMin: -20,
-    dewPointMax: 72,
+    dewPoint: {
+      min: -20,
+      dewPointmax: 72
+    },
     //temperature in farenheit
-    temperatureMin: -35,
-    temperatureMax: 120,
+    temperature: {
+      min: -35,
+      temperaturemax: 120
+    },
     //apparent temperature in farenheit
-    apparentTempMin: -20,
-    apparentTempMax: 120,
+    apparentTemp: {
+      min: -20,
+      max: 120
+    },
     getMean: function getMeanFn(min, max, name) {
       console.log('The value of ' + name + ' was undefined');
       return (min + max) / 2;
