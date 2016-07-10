@@ -42,17 +42,17 @@ module.exports = function() {
 				//need to pass two objects
 				//one for the notes
 				//one for the controllers
-				var pitchConditions = [];
-				var pitchValues = {bearing: bearing, ozone: ozone, humidity: humidity, dewPoint: dewPoint, temperature: temperature, apparentTemp: apparentTemp};
-				for (var key in pitchValues) {
-					if (pitchValues.hasOwnProperty(key)) {
-						pitchConditions.push(new CondPitchValue(key, pitchValues[key], maxMinVals[key].min, maxMinVals[key].max, null));
+				var pitchValues = [];
+				var pitchConditionValues = {bearing: bearing, ozone: ozone, humidity: humidity, dewPoint: dewPoint, temperature: temperature, apparentTemp: apparentTemp};
+				for (var key in pitchConditionValues) {
+					if (pitchConditionValues.hasOwnProperty(key)) {
+						pitchValues.push(new CondPitchValue(key, pitchConditionValues[key], maxMinVals[key].min, maxMinVals[key].max, null));
 					}
 				}
 				var characterValues = new CharacterValues(name, cloudCover, speed, pressure, visibility);
-				var userLocConditions = {characterValues: characterValues, pitchConditions: pitchConditions};
+				var userLocConditions = {characterValues: characterValues, pitchValues: pitchValues};
 				// console.log('characterValues', characterValues);
-				// console.log('pitchValues', pitchValues);
+				// console.log('pitchConditionValues', pitchConditionValues);
 				// console.log('userLocConditions', userLocConditions);
 				channel.publish('userUpdate', userLocConditions);
 			}

@@ -67,10 +67,21 @@ module.exports = function() {
 			}
 
 			function mapPitchValues(locationData) {
+				console.log('locationData', locationData);
 				for (var i = 0; i < locationData.pitchValues.length; i++) {
 					locationData.pitchValues[i].mappedValue = sketch.map(locationData.pitchValues[i].value, locationData.pitchValues[i].min, locationData.pitchValues[i].max, maxMinVals.pitch.min, maxMinVals.pitch.max);
 				}
 				return true;
+			}
+
+			function getTemperatureColour(locationData) {
+				var temperatureValue = null;
+				for (var i = 0; i < locationData.pitchValues.length; i++) {
+					if (locationData.pitchValues[i].name === 'temperature') {
+						temperatureValue = locationData.pitchValues[i].value;
+					}
+				}
+				return sketch.map(temperatureValue, maxMinVals.temperature.min, maxMinVals.temperature.max, 25, 255);
 			}
 
 			/*
@@ -81,16 +92,16 @@ module.exports = function() {
 					//Add global values to the main data object
 
 					//cloud cover determines level of distorition
-					locationData.soundDistVolume = sketch.map(Math.round(locationData.characterValues.cloudCover), maxMinVals.cloudCoverMin, maxMinVals.cloudCoverMax, maxMinVals.distVolumeMin, maxMinVals.distVolumeMax);
+					locationData.soundDistVolume = sketch.map(Math.round(locationData.characterValues.cloudCover), maxMinVals.cloudCover.min, maxMinVals.cloudCover.max, maxMinVals.distVolume.min, maxMinVals.distVolume.max);
 					//Wind speed determines volume of all sounds
-					locationData.soundVolume = sketch.map(Math.round(locationData.characterValues.speed), maxMinVals.speedMin, maxMinVals.speedMax, maxMinVals.volumeMin, maxMinVals.volumeMax) - locationData.soundDistVolume/3;
+					locationData.soundVolume = sketch.map(Math.round(locationData.characterValues.speed), maxMinVals.speed.min, maxMinVals.speed.max, maxMinVals.volume.min, maxMinVals.volume.max) - locationData.soundDistVolume/3;
 					//Pressure determines root note
-					locationData.soundPitchRoot = sketch.map(Math.round(locationData.characterValues.pressure), maxMinVals.pressureMin, maxMinVals.pressureMax, 0, 0.5);
+					locationData.soundPitchRoot = sketch.map(Math.round(locationData.characterValues.pressure), maxMinVals.pressure.min, maxMinVals.pressure.max, 0, 0.5);
 					//pitch range
 					maxMinVals.pitch.min = 0.5 + locationData.soundPitchRoot;
 					maxMinVals.pitch.max = 1.5 + locationData.soundPitchRoot;
 					//visibility is filter freq
-					soundFilter.freq(sketch.map(Math.round(locationData.characterValues.visibility), maxMinVals.visibilityMin, maxMinVals.visibilityMax, maxMinVals.freqMin, maxMinVals.freqMax));
+					soundFilter.freq(sketch.map(Math.round(locationData.characterValues.visibility), maxMinVals.visibility.min, maxMinVals.visibility.max, maxMinVals.freq.min, maxMinVals.freq.max));
 					//soundFilter.freq(500); //Debug
 					soundFilter.res(20);
 
@@ -99,9 +110,9 @@ module.exports = function() {
 						weatherSounds[i].organDist.disconnect();
 						weatherSounds[i].organ.connect(soundFilter);
 						weatherSounds[i].organDist.connect(soundFilter);
-						weatherSounds[i].organ.rate(pitchValues[i].mappedValue);
-						weatherSounds[i].organDist.rate(pitchValues[i].mappedValue);
-						if (pitchValues[i].name === 'apparentTemp' && checkClemency()) {
+						weatherSounds[i].organ.rate(locationData.pitchValues[i].mappedValue);
+						weatherSounds[i].organDist.rate(locationData.pitchValues[i].mappedValue);
+						if (locationData.pitchValues[i].name === 'apparentTemp' && checkClemency()) {
 								weatherSounds[i].organ.amp(0);
 								weatherSounds[i].organDist.amp(0);
 						} else {
@@ -193,10 +204,10 @@ module.exports = function() {
 				var vSquares = Math.round(sketch.height/sqSize);
 				animAmount = Math.round(locationData.characterValues.speed);
 				//animAmount = 14;
-				noiseInc = sketch.map(animAmount, maxMinVals.speedMin, maxMinVals.speedMax, 0.01, 0.05);
+				noiseInc = sketch.map(animAmount, maxMinVals.speed.min, maxMinVals.speed.max, 0.01, 0.05);
 				//create shapes in grid
 				createShapeSet(hSquares, vSquares);
-				temperatureColour = sketch.map(locationData.pitchValues.temperature, maxMinVals.temperatureMin, maxMinVals.temperatureMax, 25, 255);
+				temperatureColour = getTemperatureColour(locationData);
 				console.log('temperatureColour', temperatureColour);
 				//Update view with place name
 				messageBlock.innerHTML = locationData.characterValues.name;

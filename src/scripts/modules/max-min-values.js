@@ -26,17 +26,17 @@ module.exports = {
     //Frequency
     freq: {
       min: 320,
-      freqmax: 5000,
+      max: 5000,
     },
     //Cloud cover as a percentage
     cloudCover: {
       min: 0,
-      cloudCovermax: 1,
+      max: 1,
     },
     //Wind speed typically up to  32m/s
     speed: {
       min: 0,
-      speedmax: 32,
+      max: 32,
     },
     //pressure in millibars
     pressure: {
@@ -46,32 +46,32 @@ module.exports = {
     //visibility in metres
     visibility: {
       min: 0.1,
-      visibilitymax: 10,
+      max: 10,
     },
     //Wind Bearing in degrees
     bearing: {
       min: 0,
-      bearingmax: 360,
+      max: 360,
     },
     //Ozone in Dobson units
     ozone: {
       min: 230,
-      ozonemax: 500
+      max: 500
     },
     //humidity as a percentage
     humidity: {
       min: 0,
-      humiditymax: 1
+      max: 1
     },
     //dew point in farenheit
     dewPoint: {
       min: -20,
-      dewPointmax: 72
+      max: 72
     },
     //temperature in farenheit
     temperature: {
       min: -35,
-      temperaturemax: 120
+      max: 120
     },
     //apparent temperature in farenheit
     apparentTemp: {
