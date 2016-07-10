@@ -179,10 +179,10 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		getPlaces(staticPlaces[2].lat, staticPlaces[2].long);
-		console.log('Using static data');
+		// getPlaces(staticPlaces[2].lat, staticPlaces[2].long);
+		// console.log('Using static data');
 		//For live:
-		//getGeo();
+		getGeo();
 		useLocBtn.disabled = true;
 	});
 };
