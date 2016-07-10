@@ -63,7 +63,7 @@ module.exports = function() {
 			var temperatureColour = 0;
 
 			function checkClemency(locationData) {
-				return locationData.characterValues.cloudCover < 0.5 && locationData.characterValues.speed < 16 && locationData.pitchValues.temperature > 20;
+				return locationData.characterValues.cloudCover < 0.5 && locationData.characterValues.speed < 16 && locationData.characterValues.temperature > 20;
 			}
 
 			function mapPitchValues(locationData) {
@@ -112,7 +112,7 @@ module.exports = function() {
 						weatherSounds[i].organDist.connect(soundFilter);
 						weatherSounds[i].organ.rate(locationData.pitchValues[i].mappedValue);
 						weatherSounds[i].organDist.rate(locationData.pitchValues[i].mappedValue);
-						if (locationData.pitchValues[i].name === 'apparentTemp' && checkClemency()) {
+						if (locationData.pitchValues[i].name === 'apparentTemp' && checkClemency(locationData)) {
 								weatherSounds[i].organ.amp(0);
 								weatherSounds[i].organDist.amp(0);
 						} else {

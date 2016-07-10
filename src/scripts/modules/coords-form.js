@@ -28,6 +28,7 @@ module.exports = function() {
 
 		forecast.getCurrentConditions(newLocation, function(conditions) {
 			if (conditions.length === 1) {
+				//TODO use one object to rule them all
 				var cloudCover = conditions[0].getCloudCover() === undefined ? maxMinVals.getMean(maxMinVals.cloudCover.max, maxMinVals.cloudCover.min, 'cloudCover') : conditions[0].getCloudCover();
 				var speed = conditions[0].getWindSpeed() === undefined ? maxMinVals.getMean(maxMinVals.windSpeed.max, maxMinVals.windSpeed.min, 'windSpeed') : conditions[0].getWindSpeed();
 				var pressure = conditions[0].getPressure() === undefined ? maxMinVals.getMean(maxMinVals.pressure.max, maxMinVals.pressure.min, 'pressure') : conditions[0].getPressure();
@@ -49,12 +50,14 @@ module.exports = function() {
 						pitchValues.push(new CondPitchValue(key, pitchConditionValues[key], maxMinVals[key].min, maxMinVals[key].max, null));
 					}
 				}
-				var characterValues = new CharacterValues(name, cloudCover, speed, pressure, visibility);
+				var characterValues = new CharacterValues(name, cloudCover, speed, pressure, visibility, temperature);
 				var userLocConditions = {characterValues: characterValues, pitchValues: pitchValues};
 				// console.log('characterValues', characterValues);
 				// console.log('pitchConditionValues', pitchConditionValues);
 				// console.log('userLocConditions', userLocConditions);
 				channel.publish('userUpdate', userLocConditions);
+			} else {
+				console.log('conditions.length is ', conditions.length);
 			}
 		});
 	}
