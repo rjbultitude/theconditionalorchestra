@@ -41,16 +41,19 @@ module.exports = function() {
 					name: newLocation.name
 				};
 				//Add the max & min vals
+				addMinMaxLoop:
 				for (var key in locationData) {
 					if (locationData.hasOwnProperty(key)) {
-						Object.defineProperty(locationData[key], 'min', {});
-						Object.defineProperty(locationData[key], 'max', {});
-						locationData[key].min = maxMinVals[key].min;
-						locationData[key].max = maxMinVals[key].max;
+						//Only add condition values
+						if (key === 'name') {
+							continue addMinMaxLoop;
+						}
+						Object.defineProperty(locationData[key], 'min', {writable: true, value: maxMinVals[key].min});
+						Object.defineProperty(locationData[key], 'max', {writable: true, value: maxMinVals[key].max});
 					}
 				}
 				//Post the data to rest of app
-				channel.publish('userUpdate', userLocConditions);
+				channel.publish('userUpdate', locationData);
 			} else {
 				console.log('conditions.length is ', conditions.length);
 			}
@@ -134,7 +137,7 @@ module.exports = function() {
 			messageBlock.innerHTML = 'Unable to retrieve your location \n' +
 			'Try again in a minute';
 			useLocBtn.disabled = false;
-			//console.log('failure.message', failure.message);
+			console.log('failure.message', failure.message);
 			if(failure.message.indexOf('Only secure origins are allowed') === 0) {
       	console.log('Only secure origins are allowed');
     	}
@@ -174,10 +177,10 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		getPlaces(staticPlaces[2].lat, staticPlaces[2].long);
-		console.log('Using static data');
+		// getPlaces(staticPlaces[2].lat, staticPlaces[2].long);
+		// console.log('Using static data');
 		//For live:
-		//getGeo();
+		getGeo();
 		useLocBtn.disabled = true;
 	});
 };

@@ -90,7 +90,8 @@ module.exports = function() {
 			function playSounds(locationData) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
-
+					console.log('locationData.cloudCover.min', locationData.cloudCover.min);
+					console.log('locationData.distVolume.min', locationData.distVolume.min);
 					//cloud cover determines level of distorition
 					locationData.soundDistVolume = sketch.map(Math.round(locationData.cloudCover), locationData.cloudCover.min, locationData.cloudCover.max, locationData.distVolume.min, locationData.distVolume.max);
 					//Wind speed determines volume of all sounds
