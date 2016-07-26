@@ -5,11 +5,6 @@
 	Each location's properties are used to inform the shape of the sounds
 	Wind bearing is mapped to used for the pitch
 	Wind speed for volume
-
-	When new data is loaded the pitch of each note is retuned
-	This is done by ensuring the loop is re-entered after each pass of all three objects
-	However it relies on a for loop, which is run at the speed of the client's computer
-	This flaw needs addressing
  */
 
 'use strict';
@@ -47,7 +42,7 @@ module.exports = function() {
   }
 
 	//main app init
-	function init(locationData, restored) {
+	function init(locationData, restoredData, staticData) {
 
 		//Create filter
 		var soundFilter = new P5.LowPass();
@@ -66,6 +61,9 @@ module.exports = function() {
 				mappedValsLoop:
 				for (var condition in locationData) {
 					if (locationData.hasOwnProperty(condition)) {
+						if (condition === 'name' || condition === 'soundParams') {
+							continue mappedValsLoop;
+						}
 						locationData[condition].mappedValue = sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max);
 					}
 				}
@@ -208,8 +206,10 @@ module.exports = function() {
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
 				console.log('locationData', locationData);
 				//Update view with place name
-				if (restored) {
+				if (restoredData) {
 						messageBlock.innerHTML = 'You appear to be offline. Using last location: ' + locationData.name;
+				} else if (staticData) {
+						messageBlock.innerHTML = 'You appear to be offline. Using default location: ' + locationData.name;
 				} else {
 					messageBlock.innerHTML = locationData.name;
 				}
@@ -236,11 +236,15 @@ module.exports = function() {
 
 	channel.subscribe('userUpdate', function(data) {
 		messageBlock.innerHTML = 'Success';
-		init(data, false);
+		init(data, false, false);
 	});
 	channel.subscribe('restoreUserData', function(data) {
 		messageBlock.innerHTML = 'Success';
-		init(data, true);
+		init(data, true, false);
+	});
+	channel.subscribe('staticData', function(data) {
+		messageBlock.innerHTML = 'Success';
+		init(data, false, true);
 	});
 
 	return true;

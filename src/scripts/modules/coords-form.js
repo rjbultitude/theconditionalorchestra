@@ -5,11 +5,15 @@ var audioVisual = require('./audio-visual');
 var Nll = require('./nll-cnstrctr');
 var GoogleMapsLoader = require('google-maps');
 var makeRequest = require('./make-request');
+var loadJSON = require('./load-json');
 var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
 
 module.exports = function() {
+	//Debug
+	localStorage.clear();
+	//Vars
 	var coordsSubmitBtn = document.getElementById('form-coords-btn');
 	var useLocBtn = document.getElementById('use-location-btn');
 	var messageBlock = document.getElementById('message-block');
@@ -56,6 +60,7 @@ module.exports = function() {
 				//Keep last state for next time
 				//in case user should be offline
 				var locationDataString = JSON.stringify(locationData);
+				console.log('locationDataString', locationDataString);
 				localStorage.setItem('locationData', locationDataString);
 				//Post the data to rest of app
 				channel.publish('userUpdate', locationData);
@@ -114,11 +119,11 @@ module.exports = function() {
 				);
 			});
 		}, function(rejectObj) {
-			console.log(rejectObj.status);
-			console.log(rejectObj.statusText);
-			messageBlock.innerHTML = 'Error getting your location';
-			updateApp(lat, long, 'unknown');
-		});
+				console.log(rejectObj.status);
+				console.log(rejectObj.statusText);
+				messageBlock.innerHTML = 'Error getting your location';
+				updateApp(lat, long, 'unknown');
+			});
 	}
 
 	function showForm() {
@@ -151,8 +156,18 @@ module.exports = function() {
 			if(Object.keys(window.localStorage).length > 0) {
 				var restoredData = localStorage.getItem('locationData');
 				channel.publish('restoreUserData', JSON.parse(restoredData));
-			} else {
-				console.log('attempt to use localStorage', window.localStorage);
+			}
+			//Else use static location data
+			else {
+				console.log('no data in localStorage');
+				var fetchStaticData = makeRequest('GET', 'data/static-data.json');
+				fetchStaticData.then(function success(staticData) {
+					staticData = JSON.parse(staticData);
+					channel.publish('staticData', staticData);
+				},
+				function failure() {
+					console.log('failed to load static data');
+				});
 			}
 		}
 
@@ -171,21 +186,6 @@ module.exports = function() {
 		}
 	});
 
-	var staticPlaces = [
-		{
-			name: 'philedelphia', lat: 39.952584, long: -75.165222
-		},
-		{
-			name: 'Ho Chi', lat: 10.754727, long: 106.550903
-		},
-		{
-			name: 'Alberto de Agostini', lat: -54.646128, long: -70.029602
-		},
-		{
-			name: 'Commonwealth Bay', lat: -67.006549, long: 142.657298
-		}
-	];
-
 	//TODO use completely static data
 	//for first time users with bad connection
 	var staticLocationData = {};
@@ -194,8 +194,15 @@ module.exports = function() {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		// getPlaces(staticPlaces[2].lat, staticPlaces[2].long);
-		// console.log('Using static data');
+		// var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
+		// fetchStaticPlaces.then(function (staticPlaces) {
+		// 	var staticPlacesJSON = JSON.parse(staticPlaces);
+		// 	console.log('staticPlacesJSON', staticPlacesJSON);
+		// 	//getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
+		// 	console.log('Using static data');
+		// }, function (status) {
+		// 	console.log(status.statusText);
+		// });
 		//For live:
 		getGeo();
 		useLocBtn.disabled = true;
