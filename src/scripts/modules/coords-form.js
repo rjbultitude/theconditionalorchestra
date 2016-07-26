@@ -37,26 +37,26 @@ module.exports = function() {
 					humidity: {value: conditions[0].getHumidity() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.humidity.max, maxMinVals.forecastParams.humidity.min, 'humidity') : conditions[0].getHumidity() },
 					dewPoint: {value: conditions[0].getDewPoint() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.dewPoint.max, maxMinVals.forecastParams.dewPoint.min, 'dewPoint') : conditions[0].getDewPoint() },
 					temperature: {value: conditions[0].getTemperature() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.temperature.max, maxMinVals.forecastParams.temperature.min, 'temperature') : conditions[0].getTemperature() },
-					apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp') : conditions[0].getApparentTemperature() },
-					name: newLocation.name
+					apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp') : conditions[0].getApparentTemperature() }
+					//name: newLocation.name
 				};
+				//Add the location name
+				//Ensure it's not enumerable
+				Object.defineProperty( locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: false});
 				//Add the max & min condition vals
 				addMinMaxLoop:
 				for (var key in locationData) {
 					if (locationData.hasOwnProperty(key)) {
-						//Only add condition values
-						if (key === 'name') {
-							continue addMinMaxLoop;
-						}
-						Object.defineProperty(locationData[key], 'min', {writable: true, value: maxMinVals.forecastParams[key].min});
-						Object.defineProperty(locationData[key], 'max', {writable: true, value: maxMinVals.forecastParams[key].max});
+						Object.defineProperty(locationData[key], 'min', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].min});
+						Object.defineProperty(locationData[key], 'max', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].max});
 					}
 				}
         //Add max & min sound values
-        Object.defineProperty(locationData, 'soundParams', {writable: false, value: maxMinVals.soundParams});
+        Object.defineProperty(locationData, 'soundParams', {writable: false, enumerable: true, value: maxMinVals.soundParams});
 				//Keep last state for next time
 				//in case user should be offline
-				localStorage.setItem('locationData', locationData);
+				var locationDataString = JSON.stringify(locationData);
+				localStorage.setItem('locationData', locationDataString);
 				//Post the data to rest of app
 				channel.publish('userUpdate', locationData);
 			} else {
@@ -149,7 +149,8 @@ module.exports = function() {
     	}
 			//Use previous state to run app
 			if(Object.keys(window.localStorage).length > 0) {
-				channel.publish('userUpdate', localStorage.getItem('locationData'));
+				var restoredData = localStorage.getItem('locationData');
+				channel.publish('restoreUserData', JSON.parse(restoredData));
 			} else {
 				console.log('attempt to use localStorage', window.localStorage);
 			}

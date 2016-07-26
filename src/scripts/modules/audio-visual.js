@@ -47,7 +47,7 @@ module.exports = function() {
   }
 
 	//main app init
-	function init(locationData) {
+	function init(locationData, restored) {
 
 		//Create filter
 		var soundFilter = new P5.LowPass();
@@ -66,9 +66,9 @@ module.exports = function() {
 				mappedValsLoop:
 				for (var condition in locationData) {
 					if (locationData.hasOwnProperty(condition)) {
-						if (condition === 'name') {
-							continue mappedValsLoop;
-						}
+						// if (condition === 'name') {
+						// 	continue mappedValsLoop;
+						// }
 						locationData[condition].mappedValue = sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max);
 					}
 				}
@@ -130,7 +130,6 @@ module.exports = function() {
 				this.xPos = xPos;
 				this.yPos = yPos;
 				this.size = size;
-				console.log('this.size', this.size);
 				this.xNew = xPos;
 				this.yNew = yPos;
 				this.colour = colour;
@@ -212,7 +211,11 @@ module.exports = function() {
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
 				console.log('locationData', locationData);
 				//Update view with place name
-				messageBlock.innerHTML = locationData.name;
+				if (restored) {
+						messageBlock.innerHTML = 'You appear to be offline. Using last location: ' + locationData.name;
+				} else {
+					messageBlock.innerHTML = locationData.name;
+				}
 
 				//When values are mapped
 				if (mapPitchValues(locationData)) {
@@ -236,7 +239,11 @@ module.exports = function() {
 
 	channel.subscribe('userUpdate', function(data) {
 		messageBlock.innerHTML = 'Success';
-		init(data);
+		init(data, false);
+	});
+	channel.subscribe('restoreUserData', function(data) {
+		messageBlock.innerHTML = 'Success';
+		init(data, true);
 	});
 
 	return true;
