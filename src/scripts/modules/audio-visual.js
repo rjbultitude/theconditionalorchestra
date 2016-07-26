@@ -66,9 +66,6 @@ module.exports = function() {
 				mappedValsLoop:
 				for (var condition in locationData) {
 					if (locationData.hasOwnProperty(condition)) {
-						// if (condition === 'name') {
-						// 	continue mappedValsLoop;
-						// }
 						locationData[condition].mappedValue = sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max);
 					}
 				}
