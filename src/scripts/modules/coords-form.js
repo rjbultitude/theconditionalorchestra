@@ -13,6 +13,7 @@ module.exports = function() {
 	var coordsSubmitBtn = document.getElementById('form-coords-btn');
 	var useLocBtn = document.getElementById('use-location-btn');
 	var messageBlock = document.getElementById('message-block');
+	var noAddressMsg = 'address not found';
 
 	//start app
 	audioVisual();
@@ -26,21 +27,20 @@ module.exports = function() {
 
 		forecast.getCurrentConditions(newLocation, function(conditions) {
 			if (conditions.length === 1) {
-				//TODO use one object to rule them all
 				var locationData = {
-					cloudCover: {value: conditions[0].getCloudCover() === undefined ? maxMinVals.getMean(maxMinVals.cloudCover.max, maxMinVals.cloudCover.min, 'cloudCover') : conditions[0].getCloudCover() },
-					speed: {value: conditions[0].getWindSpeed() === undefined ? maxMinVals.getMean(maxMinVals.windSpeed.max, maxMinVals.windSpeed.min, 'windSpeed') : conditions[0].getWindSpeed() },
-					pressure: {value: conditions[0].getPressure() === undefined ? maxMinVals.getMean(maxMinVals.pressure.max, maxMinVals.pressure.min, 'pressure') : conditions[0].getPressure() },
-					visibility: {value: conditions[0].getVisibility() === undefined ? maxMinVals.getMean(maxMinVals.visibility.max, maxMinVals.visibility.min, 'visibility') : conditions[0].getVisibility() },
-					bearing: {value: conditions[0].getWindBearing() === undefined ? maxMinVals.getMean(maxMinVals.windBearing.max, maxMinVals.windBearing.min, 'windBearing') : conditions[0].getWindBearing() },
-					ozone: {value: conditions[0].getOzone() === undefined ? maxMinVals.getMean(maxMinVals.ozone.max, maxMinVals.ozone.min, 'ozone') : conditions[0].getOzone() },
-					humidity: {value: conditions[0].getHumidity() === undefined ? maxMinVals.getMean(maxMinVals.humidity.max, maxMinVals.humidity.min, 'humidity') : conditions[0].getHumidity() },
-					dewPoint: {value: conditions[0].getDewPoint() === undefined ? maxMinVals.getMean(maxMinVals.dewPoint.max, maxMinVals.dewPoint.min, 'dewPoint') : conditions[0].getDewPoint() },
-					temperature: {value: conditions[0].getTemperature() === undefined ? maxMinVals.getMean(maxMinVals.temperature.max, maxMinVals.temperature.min, 'temperature') : conditions[0].getTemperature() },
-					apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? maxMinVals.getMean(maxMinVals.apparentTemp.max, maxMinVals.apparentTemp.min, 'apparentTemp') : conditions[0].getApparentTemperature() },
+					cloudCover: {value: conditions[0].getCloudCover() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.cloudCover.max, maxMinVals.forecastParams.cloudCover.min, 'cloudCover') : conditions[0].getCloudCover() },
+					speed: {value: conditions[0].getWindSpeed() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.windSpeed.max, maxMinVals.forecastParams.windSpeed.min, 'windSpeed') : conditions[0].getWindSpeed() },
+					pressure: {value: conditions[0].getPressure() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.pressure.max, maxMinVals.forecastParams.pressure.min, 'pressure') : conditions[0].getPressure() },
+					visibility: {value: conditions[0].getVisibility() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.visibility.max, maxMinVals.forecastParams.visibility.min, 'visibility') : conditions[0].getVisibility() },
+					bearing: {value: conditions[0].getWindBearing() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.windBearing.max, maxMinVals.forecastParams.windBearing.min, 'windBearing') : conditions[0].getWindBearing() },
+					ozone: {value: conditions[0].getOzone() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.ozone.max, maxMinVals.forecastParams.ozone.min, 'ozone') : conditions[0].getOzone() },
+					humidity: {value: conditions[0].getHumidity() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.humidity.max, maxMinVals.forecastParams.humidity.min, 'humidity') : conditions[0].getHumidity() },
+					dewPoint: {value: conditions[0].getDewPoint() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.dewPoint.max, maxMinVals.forecastParams.dewPoint.min, 'dewPoint') : conditions[0].getDewPoint() },
+					temperature: {value: conditions[0].getTemperature() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.temperature.max, maxMinVals.forecastParams.temperature.min, 'temperature') : conditions[0].getTemperature() },
+					apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp') : conditions[0].getApparentTemperature() },
 					name: newLocation.name
 				};
-				//Add the max & min vals
+				//Add the max & min condition vals
 				addMinMaxLoop:
 				for (var key in locationData) {
 					if (locationData.hasOwnProperty(key)) {
@@ -48,10 +48,15 @@ module.exports = function() {
 						if (key === 'name') {
 							continue addMinMaxLoop;
 						}
-						Object.defineProperty(locationData[key], 'min', {writable: true, value: maxMinVals[key].min});
-						Object.defineProperty(locationData[key], 'max', {writable: true, value: maxMinVals[key].max});
+						Object.defineProperty(locationData[key], 'min', {writable: true, value: maxMinVals.forecastParams[key].min});
+						Object.defineProperty(locationData[key], 'max', {writable: true, value: maxMinVals.forecastParams[key].max});
 					}
 				}
+        //Add max & min sound values
+        Object.defineProperty(locationData, 'soundParams', {writable: false, value: maxMinVals.soundParams});
+				//Keep last state for next time
+				//in case user should be offline
+				localStorage.setItem('locationData', locationData);
 				//Post the data to rest of app
 				channel.publish('userUpdate', locationData);
 			} else {
@@ -95,11 +100,12 @@ module.exports = function() {
 									}
 								}
 							} else {
-								console.log('address not found');
+								locName = noAddressMsg;
 							}
 						}
 						else {
 							console.log('Geocoder failed due to: ' + status);
+							locName = noAddressMsg;
 						}
 						messageBlock.innerHTML = locName;
 						useLocBtn.disabled = false;
@@ -135,12 +141,18 @@ module.exports = function() {
 
 		function failure(failure) {
 			messageBlock.innerHTML = 'Unable to retrieve your location \n' +
-			'Try again in a minute';
+			'perhaps you have no connection';
 			useLocBtn.disabled = false;
-			console.log('failure.message', failure.message);
+			//Ensure we're on https or localhost
 			if(failure.message.indexOf('Only secure origins are allowed') === 0) {
       	console.log('Only secure origins are allowed');
     	}
+			//Use previous state to run app
+			if(Object.keys(window.localStorage).length > 0) {
+				channel.publish('userUpdate', localStorage.getItem('locationData'));
+			} else {
+				console.log('attempt to use localStorage', window.localStorage);
+			}
 		}
 
 		navigator.geolocation.getCurrentPosition(success, failure);
@@ -172,6 +184,10 @@ module.exports = function() {
 			name: 'Commonwealth Bay', lat: -67.006549, long: 142.657298
 		}
 	];
+
+	//TODO use completely static data
+	//for first time users with bad connection
+	var staticLocationData = {};
 
 	useLocBtn.addEventListener('click', function(e) {
 		e.preventDefault();

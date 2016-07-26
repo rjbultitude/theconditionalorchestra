@@ -9,25 +9,7 @@
 'use strict';
 
 module.exports = {
-    pitch: {
-      min: 0.5,
-      max: 2.0
-    },
-    //Volume arbitary scale
-    volume: {
-      min: 0.2,
-      max: 1.0,
-    },
-    //Distorted volume arbitary scale
-    distVolume: {
-      min: 0.0,
-      max: 0.6,
-    },
-    //Frequency
-    freq: {
-      min: 320,
-      max: 5000,
-    },
+  forecastParams: {
     //Cloud cover as a percentage
     cloudCover: {
       min: 0,
@@ -77,9 +59,31 @@ module.exports = {
     apparentTemp: {
       min: -20,
       max: 120
-    },
-    getMean: function getMeanFn(min, max, name) {
-      console.log('The value of ' + name + ' was undefined');
-      return (min + max) / 2;
     }
-  };
+  },
+  soundParams: {
+    pitch: {
+      min: 0.5,
+      max: 2.0
+    },
+    //Volume arbitary scale
+    volume: {
+      min: 0.2,
+      max: 1.0,
+    },
+    //Distorted volume arbitary scale
+    distVolume: {
+      min: 0.0,
+      max: 0.6,
+    },
+    //Frequency
+    freq: {
+      min: 320,
+      max: 5000,
+    }
+  },
+  getMean: function getMeanFn(min, max, name) {
+    console.log('The value of ' + name + ' was undefined');
+    return (min + max) / 2;
+  }
+};

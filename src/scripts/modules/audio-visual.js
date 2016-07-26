@@ -16,7 +16,6 @@
 
 var P5 = require('../libs/p5');
 require('../libs/p5.sound');
-var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
 
@@ -50,12 +49,9 @@ module.exports = function() {
 	//main app init
 	function init(locationData) {
 
-		//TO DO store offline
-		//localStorage.setItem('locationData' , locationData);
-
 		//Create filter
 		var soundFilter = new P5.LowPass();
-
+		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
 
 			//Visuals
@@ -63,46 +59,47 @@ module.exports = function() {
 			var temperatureColour = 0;
 
 			function checkClemency(locationData) {
-				return locationData.cloudCover < 0.5 && locationData.speed < 16 && locationData.temperature > 20;
+				return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16 && locationData.temperature.value > 20;
 			}
 
 			function mapPitchValues(locationData) {
-				console.log('locationData', locationData);
-				for (var i = 0; i < locationData.length; i++) {
-					locationData.pitchValues[i].mappedValue = sketch.map(locationData.pitchValues[i].value, locationData.pitchValues[i].min, locationData.pitchValues[i].max, maxMinVals.pitch.min, maxMinVals.pitch.max);
+				mappedValsLoop:
+				for (var condition in locationData) {
+					if (locationData.hasOwnProperty(condition)) {
+						if (condition === 'name') {
+							continue mappedValsLoop;
+						}
+						locationData[condition].mappedValue = sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max);
+					}
 				}
 				return true;
 			}
 
-			function getTemperatureColour(locationData) {
-				var temperatureValue = null;
-				for (var i = 0; i < locationData.length; i++) {
-					if (locationData.pitchValues[i].name === 'temperature') {
-						temperatureValue = locationData.pitchValues[i].value;
-					}
-				}
-				return sketch.map(locationData.temperature, locationData.temperature.min, locationData.temperature.max, 25, 255);
-			}
-
 			/*
-				Main Object config
+				Sound algorithm
+				---------------
+				Currently it pitches the notes arbitarily
+				using 'character' values
+				The distorition is set by cloud cover
+				The note volume is set by wind speed
+				The root key is set by the air pressure
+				The filter frequenct is set by visibility
 			 */
 			function playSounds(locationData) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
-					console.log('locationData.cloudCover.min', locationData.cloudCover.min);
-					console.log('locationData.distVolume.min', locationData.distVolume.min);
+
 					//cloud cover determines level of distorition
-					locationData.soundDistVolume = sketch.map(Math.round(locationData.cloudCover), locationData.cloudCover.min, locationData.cloudCover.max, locationData.distVolume.min, locationData.distVolume.max);
+					locationData.soundParams.distVolume = sketch.map(Math.round(locationData.cloudCover.value), locationData.cloudCover.min, locationData.cloudCover.max, locationData.soundParams.distVolume.min, locationData.soundParams.distVolume.max);
 					//Wind speed determines volume of all sounds
-					locationData.soundVolume = sketch.map(Math.round(locationData.speed), locationData.speed.min, locationData.speed.max, locationData.volume.min, locationData.volume.max) - locationData.soundDistVolume/3;
+					locationData.soundParams.volume = sketch.map(Math.round(locationData.speed.value), locationData.speed.min, locationData.speed.max, locationData.soundParams.volume.min, locationData.soundParams.volume.max) - locationData.soundParams.distVolume/3;
 					//Pressure determines root note
-					locationData.soundPitchRoot = sketch.map(Math.round(locationData.pressure), locationData.pressure.min, locationData.pressure.max, 0, 0.5);
+					locationData.soundParams.soundPitchRoot = sketch.map(Math.round(locationData.pressure.value), locationData.pressure.min, locationData.pressure.max, 0, 0.5);
 					//pitch range
-					maxMinVals.pitch.min = 0.5 + locationData.soundPitchRoot;
-					maxMinVals.pitch.max = 1.5 + locationData.soundPitchRoot;
+					locationData.soundParams.pitch.min = 0.5 + locationData.soundParams.soundPitchRoot;
+					locationData.soundParams.pitch.max = 1.5 + locationData.soundParams.soundPitchRoot;
 					//visibility is filter freq
-					soundFilter.freq(sketch.map(Math.round(locationData.visibility), maxMinVals.visibility.min, maxMinVals.visibility.max, maxMinVals.freq.min, maxMinVals.freq.max));
+					soundFilter.freq(sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max));
 					//soundFilter.freq(500); //Debug
 					soundFilter.res(20);
 
@@ -119,8 +116,8 @@ module.exports = function() {
 								weatherSounds[i].organ.amp(0);
 								weatherSounds[i].organDist.amp(0);
 						} else {
-								weatherSounds[i].organ.amp(locationData.soundVolume);
-								weatherSounds[i].organDist.amp(locationData.soundDistVolume);
+								weatherSounds[i].organ.amp(locationData.soundParams.soundVolume);
+								weatherSounds[i].organDist.amp(locationData.soundParams.soundDistVolume);
 						}
 						weatherSounds[i].organ.loop();
 						weatherSounds[i].organDist.loop();
@@ -133,6 +130,7 @@ module.exports = function() {
 				this.xPos = xPos;
 				this.yPos = yPos;
 				this.size = size;
+				console.log('this.size', this.size);
 				this.xNew = xPos;
 				this.yNew = yPos;
 				this.colour = colour;
@@ -143,17 +141,22 @@ module.exports = function() {
 			SingleShape.prototype.paint = function() {
 				sketch.noStroke();
 				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
-				sketch.triangle(this.xPos, this.yPos, this.xPos, this.yPos + sqSize, this.xPos + sqSize, this.yPos);
+				//Upper triangle
+				//top left, bottom left, top right
+				sketch.triangle(this.xPos, this.yPos, this.xPos, this.yPos + this.size, this.xPos + this.size, this.yPos);
 				sketch.fill(temperatureColour - colourDim, this.colour - colourDim, 255 - temperatureColour - colourDim);
-				sketch.triangle(this.xPos, this.yPos + sqSize, this.xPos + this.size, this.yPos - this.size + sqSize, this.xNew, this.yNew + sqSize);
+				//Lower triangle
+				//bottom left, bottom right,
+				sketch.triangle(this.xPos, this.yPos + this.size, this.xNew, this.yNew, this.xPos + this.size, this.yPos);
 			};
 
 			SingleShape.prototype.update = function() {
 				this.noiseStart += noiseInc;
 				this.noiseAmt = sketch.noise(this.noiseStart);
-				//this.size = sqSize - this.noiseAmt * animAmount;
 				this.xNew = this.xPos + this.size - this.noiseAmt * animAmount;
-				this.yNew = this.yPos - this.noiseAmt * animAmount;
+				//this.xNew = this.xPos + this.size;
+				this.yNew = this.yPos + this.size - this.noiseAmt * animAmount;
+				//this.yNew = this.yPos + this.size;
 			};
 
 			//Accepts number of horizontal and vertical squares to draw
@@ -202,13 +205,12 @@ module.exports = function() {
 				//set runtime constants
 				var hSquares = Math.round(sketch.width/sqSize);
 				var vSquares = Math.round(sketch.height/sqSize);
-				animAmount = Math.round(locationData.speed);
-				//animAmount = 14;
-				noiseInc = sketch.map(animAmount, maxMinVals.speed.min, maxMinVals.speed.max, 0.01, 0.05);
+				animAmount = Math.round(locationData.speed.value);
+				noiseInc = sketch.map(animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
 				//create shapes in grid
 				createShapeSet(hSquares, vSquares);
-				temperatureColour = getTemperatureColour(locationData);
-				console.log('temperatureColour', temperatureColour);
+				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
+				console.log('locationData', locationData);
 				//Update view with place name
 				messageBlock.innerHTML = locationData.name;
 
