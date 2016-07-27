@@ -54,9 +54,9 @@ module.exports = function() {
 			var sqSize = 25;
 			var temperatureColour = 0;
 
-			// function checkClemency(locationData) {
-			// 	return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16 && locationData.temperature.value > 20;
-			// }
+			function checkClemency(locationData) {
+				return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16 && locationData.temperature.value > 20;
+			}
 
 			function playSounds(locationData, notesArray) {
 				//Set filter
@@ -83,8 +83,14 @@ module.exports = function() {
 			function assignPitches(locationData) {
 				var centreNote = (locationData.soundParams.pitch.min + locationData.soundParams.pitch.max) / 2;
 				var notesArray = [];
-				for (var i = 0; i < intervals.majorIntervals.length; i++) {
-					notesArray.push(centreNote + intervals.majorIntervals[i] * semitone);
+				if (checkClemency(locationData)) {
+					for (var i = 0; i < intervals.majorIntervals.length; i++) {
+						notesArray.push(centreNote + intervals.majorIntervals[i] * semitone);
+					}
+				} else {
+					for (var j = 0; j < intervals.minorOctave.length; j++) {
+						notesArray.push(centreNote + intervals.minorOctave[j] * semitone);
+					}
 				}
 				playSounds(locationData, notesArray);
 			}

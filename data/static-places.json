@@ -18,5 +18,10 @@
     "name": "Commonwealth Bay",
     "lat": -67.006549,
     "long": 142.657298
+  },
+  {
+    "name": "Viet Nam",
+    "lat": 21.5,
+    "long": -103.9
   }
 ]

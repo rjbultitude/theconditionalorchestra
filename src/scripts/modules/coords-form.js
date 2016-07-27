@@ -191,7 +191,7 @@ module.exports = function() {
 		var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
 		fetchStaticPlaces.then(function (staticPlaces) {
 			var staticPlacesJSON = JSON.parse(staticPlaces);
-			getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
+			getPlaces(staticPlacesJSON[3].lat, staticPlacesJSON[3].long);
 			console.log('Using static data');
 		}, function (status) {
 			console.log(status.statusText);
