@@ -13,6 +13,7 @@ var P5 = require('../libs/p5');
 require('../libs/p5.sound');
 var postal = require('postal');
 var channel = postal.channel();
+var intervals = require('./intervals');
 
 module.exports = function() {
 	//Els
@@ -53,35 +54,39 @@ module.exports = function() {
 			var sqSize = 25;
 			var temperatureColour = 0;
 
-			function checkClemency(locationData) {
-				return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16 && locationData.temperature.value > 20;
-			}
+			// function checkClemency(locationData) {
+			// 	return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16 && locationData.temperature.value > 20;
+			// }
 
-			function playSounds(locationData) {
+			function playSounds(locationData, notesArray) {
 				//Set filter
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
-
-				var locationDataKeysArr = Object.keys(locationData);
 
 				for (var i = 0; i < weatherSounds.length; i++) {
 					weatherSounds[i].organ.disconnect();
 					weatherSounds[i].organDist.disconnect();
 					weatherSounds[i].organ.connect(soundFilter);
 					weatherSounds[i].organDist.connect(soundFilter);
-					weatherSounds[i].organ.rate(locationData[locationDataKeysArr[i]].mappedValue);
-					console.log('pitch value', locationData[locationDataKeysArr[i]].mappedValue);
-					weatherSounds[i].organDist.rate(locationData[locationDataKeysArr[i]].mappedValue);
-					if (locationData.name === 'apparentTemp' && checkClemency(locationData) === true) {
-							weatherSounds[i].organ.amp(0);
-							weatherSounds[i].organDist.amp(0);
-					} else {
-							weatherSounds[i].organ.amp(locationData.soundParams.soundVolume);
-							weatherSounds[i].organDist.amp(locationData.soundParams.soundDistVolume);
-					}
+					weatherSounds[i].organ.rate(notesArray[i]);
+					weatherSounds[i].organDist.rate(notesArray[i]);
+					weatherSounds[i].organ.amp(locationData.soundParams.soundVolume);
+					weatherSounds[i].organDist.amp(locationData.soundParams.soundDistVolume);
 					weatherSounds[i].organ.loop();
 					weatherSounds[i].organDist.loop();
 				}
+			}
+
+			/*
+				A static chord
+			*/
+			function assignPitches(locationData) {
+				var centreNote = (locationData.soundParams.pitch.min + locationData.soundParams.pitch.max) / 2;
+				var notesArray = [];
+				for (var i = 0; i < intervals.majorIntervals.length; i++) {
+					notesArray.push(centreNote + intervals.majorIntervals[i] * semitone);
+				}
+				playSounds(locationData, notesArray);
 			}
 
 			/*
@@ -129,21 +134,9 @@ module.exports = function() {
 					//visibility is filter freq
 					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
 					//continue with sound processing
-					mapPitchValues(locationData);
-					//assignPitches(locationData);
+					//mapPitchValues(locationData);
+					assignPitches(locationData);
 			}
-
-			/*
-				A static chord
-			*/
-			function assignPitches(locationData) {
-				locationData.ozone.mappedValue = locationData.soundParams.soundPitchOffset;
-				locationData.dewPoint.mappedValue = locationData.soundParams.soundPitchOffset + semitone * 2;
-				locationData.bearing.mappedValue = locationData.soundParams.soundPitchOffset + semitone * 3;
-				locationData.humidity.mappedValue = locationData.soundParams.soundPitchOffset + semitone * 5;
-				playSounds(locationData);
-			}
-
 
 			//Indiviual shape constructor
 			//TODO store in external module
