@@ -5,7 +5,6 @@ var audioVisual = require('./audio-visual');
 var Nll = require('./nll-cnstrctr');
 var GoogleMapsLoader = require('google-maps');
 var makeRequest = require('./make-request');
-var loadJSON = require('./load-json');
 var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
@@ -60,12 +59,11 @@ module.exports = function() {
 				//Keep last state for next time
 				//in case user should be offline
 				var locationDataString = JSON.stringify(locationData);
-				console.log('locationDataString', locationDataString);
 				localStorage.setItem('locationData', locationDataString);
 				//Post the data to rest of app
 				channel.publish('userUpdate', locationData);
 			} else {
-				console.log('conditions.length is ', conditions.length);
+				console.log('There seems to be more than one location: ', conditions.length);
 			}
 		});
 	}
