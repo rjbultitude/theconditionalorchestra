@@ -7,7 +7,6 @@ module.exports = function makeRequest(method, url) {
 		xhr.open(method, url);
 		xhr.onload = function() {
 			if (this.status >= 200 && this.status < 300) {
-				console.log('xhr.response', xhr.response);
 				resolve(xhr.response);
 			} else {
 				reject({

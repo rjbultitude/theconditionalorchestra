@@ -186,25 +186,20 @@ module.exports = function() {
 		}
 	});
 
-	//TODO use completely static data
-	//for first time users with bad connection
-	var staticLocationData = {};
-
 	useLocBtn.addEventListener('click', function(e) {
 		e.preventDefault();
 		messageBlock.innerHTML = 'Getting your location';
 		//For testing:
-		// var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
-		// fetchStaticPlaces.then(function (staticPlaces) {
-		// 	var staticPlacesJSON = JSON.parse(staticPlaces);
-		// 	console.log('staticPlacesJSON', staticPlacesJSON);
-		// 	//getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
-		// 	console.log('Using static data');
-		// }, function (status) {
-		// 	console.log(status.statusText);
-		// });
+		var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
+		fetchStaticPlaces.then(function (staticPlaces) {
+			var staticPlacesJSON = JSON.parse(staticPlaces);
+			getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
+			console.log('Using static data');
+		}, function (status) {
+			console.log(status.statusText);
+		});
 		//For live:
-		getGeo();
+		//getGeo();
 		useLocBtn.disabled = true;
 	});
 };
