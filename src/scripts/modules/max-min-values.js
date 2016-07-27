@@ -13,27 +13,27 @@ module.exports = {
     //Cloud cover as a percentage
     cloudCover: {
       min: 0,
-      max: 1,
+      max: 1
     },
     //Wind speed typically up to  32m/s
     speed: {
       min: 0,
-      max: 32,
+      max: 32
     },
     //pressure in millibars
     pressure: {
       min: 980,
-      max: 1050,
+      max: 1050
     },
     //visibility in metres
     visibility: {
       min: 0.1,
-      max: 10,
+      max: 10
     },
     //Wind Bearing in degrees
     bearing: {
       min: 0,
-      max: 360,
+      max: 360
     },
     //Ozone in Dobson units
     ozone: {
@@ -66,20 +66,21 @@ module.exports = {
       min: 0.5,
       max: 2.0
     },
-    //Volume arbitary scale
+    //Volume arbitary scale (0 - 1)
     volume: {
       min: 0.2,
-      max: 1.0,
+      max: 1.0
     },
-    //Distorted volume arbitary scale
+    //Distorted volume arbitary scale (0 - 1)
     distVolume: {
       min: 0.0,
-      max: 0.6,
+      max: 0.6
     },
     //Frequency
+    //Lowest (10Hz) to highest (22050Hz)
     freq: {
       min: 320,
-      max: 5000,
+      max: 5000
     }
   },
   getMean: function getMeanFn(min, max, name) {

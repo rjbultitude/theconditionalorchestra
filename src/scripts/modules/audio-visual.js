@@ -60,6 +60,7 @@ module.exports = function() {
 
 			function playSounds(locationData, notesArray) {
 				//Set filter
+				console.log('locationData.soundParams.freq.value', locationData.soundParams.freq.value);
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
 
@@ -78,7 +79,8 @@ module.exports = function() {
 			}
 
 			/*
-				A static chord
+				Major scale for clement weather
+				Minor octave for anything else
 			*/
 			function assignPitches(locationData) {
 				var centreNote = (locationData.soundParams.pitch.min + locationData.soundParams.pitch.max) / 2;
