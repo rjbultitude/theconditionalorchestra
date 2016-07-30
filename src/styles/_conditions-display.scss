@@ -12,6 +12,10 @@
     color: $color-blue-pale;
   }
 
+  .conditions-display-item__value {
+    font-size: 32px;
+  }
+
   .icon {
     svg > * {
       fill: white;

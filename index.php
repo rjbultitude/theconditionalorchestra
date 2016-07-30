@@ -61,26 +61,32 @@
                 </div>
                 <div class="conditions-display">
                   <ul>
-                    <li class="conditions-display-item" data-ref="temperature">
+                    <li class="conditions-display-item">
                       <h2 class="conditions-display-item__heading">Temperature</h2>
                       <div class="icon">
                         <?php echo file_get_contents("img/temperature-icon.svg"); ?>
                       </div>
-                      <p><span class="unit">C&deg;</span></p>
+                      <p class="conditions-display-item__value" data-ref="temperature">
+                        <span class="conditions-display-item__unit">C&deg;</span>
+                      </p>
                     </li>
-                    <li class="conditions-display-item" data-ref="cloudCover">
+                    <li class="conditions-display-item">
                       <h2 class="conditions-display-item__heading">Cloud cover</h2>
                       <div class="icon">
                         <?php echo file_get_contents("img/cloud-cover-icon.svg"); ?>
                       </div>
-                      <p><span class="unit">&percnt;</span></p>
+                      <p class="conditions-display-item__value" data-ref="cloudCover">
+                        <span class="conditions-display-item__unit">&percnt;</span>
+                      </p>
                     </li>
-                    <li class="conditions-display-item" data-ref="airPressure">
+                    <li class="conditions-display-item">
                       <h2 class="conditions-display-item__heading">Air pressure</h2>
                       <div class="icon">
                         <?php echo file_get_contents("img/pressure-icon.svg"); ?>
                       </div>
-                      <p><span class="unit">Mbs</span></p>
+                      <p class="conditions-display-item__value" data-ref="airPressure">
+                        <span class="conditions-display-item__unit">Mbs</span>
+                      </p>
                     </li>
                   </ul>
                 </div>
@@ -90,9 +96,20 @@
         </main>
         <footer class="footer">
           <div class="wrapper">
-            <a href="#help">Help</a>
-            <a href="#credits">Credits</a>
-            <a href="#source">Source</a>
+            <ul class="tabs" data-directive="tabs">
+              <li class="tabs_item">
+                <a href="#help" data-behaviour="tab">Help</a>
+              </li>
+              <li class="tabs_item">
+                <a href="#credits" data-behaviour="tab">Credits</a>
+              </li>
+              <li class="tabs_item">
+                <a href="#source" data-behaviour="tab">Source</a>
+              </li>
+            </ul>
+            <div class="tab" id="help">
+              <p>If it can't find your location and you've not visited before nothing will play until you select "choose location"</p>
+            </div>
             <div class="tab" id="credits">
               <h2>Credits</h2>
               <p>This project uses <a href="http://forecast.io/">Forecast.io</a> to obtain the weather data.</p>
@@ -100,6 +117,9 @@
               <p><a href="http://p5js.org/">P5.js</a> is used to generate the graphical interface and audio.</p>
               <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html">Google maps</a> is used to reverse Geocode the location information</p>
               <p>Musical Weathervane is written and maintained by <a href="https://github.com/rjbultitude">R.Bultitude</a></p>
+            </div>
+            <div class="tab" id="source">
+              <p>This is an open source project. Download, fork or view the code here: </p>
             </div>
           </div>
         </footer>

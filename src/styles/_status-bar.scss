@@ -1,8 +1,9 @@
 .status-bar {
-  display: none;
   text-align: center;
+  padding: $padding/2 0;
 
   .icon {
+    display: none;
     display: inline-block;
   }
 }

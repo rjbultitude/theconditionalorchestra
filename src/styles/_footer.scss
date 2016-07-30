@@ -4,31 +4,37 @@
   width: 100%;
   text-align: center;
 
+  .no-js & {
+    position: static;
+  }
+
   .wrapper {
     padding: 12px;
     background-color: $color-purple-darkest;
   }
-
-  a {
-    color: white;
-    padding-right: $padding/3;
-    margin-right: $padding/2;
-    position: relative;
+  .tabs_item {
     display: inline-block;
 
-    &:after {
-      position: absolute;
-      content: "/";
-      left: 100%;
+    a {
+      color: white;
+      padding-right: $padding/3;
+      margin-right: $padding/2;
+      position: relative;
+
+      &:after {
+        position: absolute;
+        content: "/";
+        left: 100%;
+      }
     }
-  }
 
-  a:last-of-type {
-    padding: 0;
-    margin: 0;
+    a:last-of-type {
+      padding: 0;
+      margin: 0;
 
-    &:after {
-      display: none;
+      &:after {
+        display: none;
+      }
     }
   }
 
@@ -39,5 +45,10 @@
 
   .tab {
     display: none;
+
+    .no-js & {
+      display: block;
+    }
   }
+
 }
