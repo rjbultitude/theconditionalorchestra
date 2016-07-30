@@ -37,8 +37,32 @@ footer {
     background-color: transparent;
 }
 
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(to bottom, $color-purple-dark 37%, $color-purple-light 100%);
+}
+
 article {
     margin: 0 auto;
+}
+
+.article-header {
+  background-color: white;
+  padding: $padding 0;
+
+  .page-heading,
+  .intro {
+    color: black;
+    text-align: center;
+  }
+}
+
+.article-body {
+  padding: $padding 0;
 }
 
 // ::webkit-full-screen {

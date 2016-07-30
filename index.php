@@ -17,45 +17,63 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         <main aria-role="main">
-          <article class="wrapper">
-              <h1 class="page-heading">The Conditional Orchestra</h1>
-              <p class="intro">Using the weather conditions in your local area The Conditional Orchestra plays unique compositions all day every day.</p>
-              <div class="cta" id="cta-user-location">
-                  <button id="use-location-btn">Play my weather</button>
-              </div>
-              <div id="main-section" class="main-section">
-                <div id="core-content">
-                  <p id="message-block" class="status-bar"></p>
-                  <div id="canvas-container" class="canvas-container"></div>
+          <article>
+              <!-- begin header -->
+              <header class="article-header">
+                <div class="wrapper">
+                  <h1 class="page-heading">The Conditional Orchestra</h1>
+                  <p class="intro">Using the weather conditions in your local area The Conditional Orchestra plays unique compositions all day every day.</p>
                 </div>
-                <div class="controls">
-                  <button id="full-screen">
-                    <span class="icon">
-                      <?php echo file_get_contents("img/full-screen.svg"); ?>
-                    </span>
-                    <span class="text">
-                      Full screen
-                    </span>
-                  </button>
+              </header>
+              <!-- end header -->
+
+              <!-- begin body -->
+              <div class="article-body">
+                <div class="cta" id="cta-user-location">
+                    <button id="use-location-btn">Play my weather</button>
                 </div>
+                <div id="main-section" class="main-section">
+                  <div id="core-content">
+                    <p id="message-block" class="status-bar"></p>
+                    <div id="canvas-container" class="canvas-container"></div>
+                  </div>
+                  <div class="controls">
+                    <button id="full-screen">
+                      <span class="icon">
+                        <?php echo file_get_contents("img/full-screen.svg"); ?>
+                      </span>
+                      <span class="text">
+                        Full screen
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <form id="form-coords" style="display: none">
+                  <h2>Enter your coordinates</h2>
+                  <label for="lat">Lattiude</label>
+                  <input type="text" id="lat">
+                  <label for="long">Longitude</label>
+                  <input type="text" id="long">
+                  <button id="form-coords-btn">Submit</button>
+                </form>
               </div>
-              <form id="form-coords" style="display: none">
-                <h2>Enter your coordinates</h2>
-                <label for="lat">Lattiude</label>
-                <input type="text" id="lat">
-                <label for="long">Longitude</label>
-                <input type="text" id="long">
-                <button id="form-coords-btn">Submit</button>
-              </form>
+              <!-- end body -->
           </article>
         </main>
-        <footer class="footer wrapper">
-            <h2>Credits</h2>
-            <p>This project uses <a href="http://forecast.io/">Forecast.io</a> to obtain the weather data.</p>
-            <p>The JavaScript library used to access the API can be found on <a href="https://github.com/iantearle/forecast.io-javascript-api">GitHub here</a>.</p>
-            <p><a href="http://p5js.org/">P5.js</a> is used to generate the graphical interface and audio.</p>
-            <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html">Google maps</a> is used to reverse Geocode the location information</p>
-            <p>Musical Weathervane is written and maintained by <a href="https://github.com/rjbultitude">R.Bultitude</a></p>
+        <footer class="footer">
+          <div class="wrapper">
+            <a href="#help">Help</a>
+            <a href="#credits">Credits</a>
+            <a href="#source">Source</a>
+            <div class="tab" id="credits">
+              <h2>Credits</h2>
+              <p>This project uses <a href="http://forecast.io/">Forecast.io</a> to obtain the weather data.</p>
+              <p>The JavaScript library used to access the API can be found on <a href="https://github.com/iantearle/forecast.io-javascript-api">GitHub here</a>.</p>
+              <p><a href="http://p5js.org/">P5.js</a> is used to generate the graphical interface and audio.</p>
+              <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html">Google maps</a> is used to reverse Geocode the location information</p>
+              <p>Musical Weathervane is written and maintained by <a href="https://github.com/rjbultitude">R.Bultitude</a></p>
+            </div>
+          </div>
         </footer>
         <script src="dist/scripts/app.js"></script>
     </body>

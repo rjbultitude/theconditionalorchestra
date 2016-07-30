@@ -1,10 +1,43 @@
 .footer {
-  background-color: $color-trans-grey;
-  padding: 12px;
-  margin-top: 60px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+
+  .wrapper {
+    padding: 12px;
+    background-color: $color-purple-darkest;
+  }
+
+  a {
+    color: white;
+    padding-right: $padding/3;
+    margin-right: $padding/2;
+    position: relative;
+    display: inline-block;
+
+    &:after {
+      position: absolute;
+      content: "/";
+      left: 100%;
+    }
+  }
+
+  a:last-of-type {
+    padding: 0;
+    margin: 0;
+
+    &:after {
+      display: none;
+    }
+  }
 
   p {
     margin: 0.1rem 0;
     font-size: 15px;
+  }
+
+  .tab {
+    display: none;
   }
 }
