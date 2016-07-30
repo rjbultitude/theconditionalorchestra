@@ -124,7 +124,7 @@ module.exports = function() {
 				The distorition is set by cloud cover
 				The note volume is set by wind speed
 				The root key is set by the air pressure
-				The filter frequenct is set by visibility
+				The filter frequency is set by visibility
 			 */
 			function configureSounds(locationData) {
 					//Use math.abs for all pitch and volume values?
