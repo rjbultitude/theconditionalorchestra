@@ -34,6 +34,9 @@
                 </div>
                 <div id="main-section" class="main-section">
                   <div id="core-content">
+                    <div class="icon-block">
+                      <?php include('includes/status-icons.php'); ?>
+                    </div>
                     <p id="message-block" class="status-bar"></p>
                     <div id="canvas-container" class="canvas-container"></div>
                   </div>
