@@ -10,24 +10,13 @@ label {
     margin-right: 8px;
 }
 
-input[type="text"] {
-    padding: 4px;
+button {
+  background-color: transparent;
+  border: 0 none;
 }
 
-button {
-    background-color: $color-cyan;
-    padding: 22px;
-    text-align: center;
-    font-size: 20px;
-    display: inline-block;
-    color: white;
-    border: 3px solid white;
-    //text-transform: uppercase;
-
-    &:hover {
-      cursor: pointer;
-      background-color: $color-purple-dark;
-    }
+input[type="text"] {
+    padding: 4px;
 }
 
 textarea {

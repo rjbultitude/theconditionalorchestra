@@ -1,18 +1,14 @@
 .main-section {
   position: relative;
 
-  &:hover .controls {
-    display: block;
+  .status-bar {
+      padding: 0;
+      text-align: center;
+      margin-top: 0;
+      font-size: 22px;
   }
 
-  .controls {
-    display: none;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background-color: $color-trans-grey;
-
-    button {
+  button {
       background-color: transparent;
       border: 0 none;
       float: right;
@@ -36,14 +32,6 @@
         }
       }
     }
-  }
-
-  .status-bar {
-      padding: 0;
-      text-align: center;
-      margin-top: 0;
-      font-size: 22px;
-  }
 }
 
 .canvas-container {

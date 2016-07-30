@@ -1,0 +1,19 @@
+article {
+    margin: 0 auto;
+}
+
+.article-header {
+  background-color: white;
+  padding: $padding 0;
+
+  .page-heading,
+  .intro {
+    color: black;
+    text-align: center;
+  }
+}
+
+.article-body {
+  padding: $padding 0;
+  text-align: center;
+}

@@ -1,5 +1,5 @@
 <div class="icon" id="location">
-  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
   	 width="76.9px" height="83.1px" viewBox="0 0 76.9 83.1" enable-background="new 0 0 76.9 83.1" xml:space="preserve">
   <g>
   	<path fill="#FFFFFF" d="M70.4,38h-8.4C60.7,26,52,17.6,41,16.4V7.7C41,6.2,40,5,38.5,5C37,5,36,6.2,36,7.7v8.7
@@ -11,7 +11,7 @@
   </svg>
 </div>
 <div class="icon" id="weather">
-  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
   	 width="101px" height="67.2px" viewBox="0 0 101 67.2" enable-background="new 0 0 101 67.2" xml:space="preserve">
   <g id="_x30_3">
   	<path fill="#FFFFFF" d="M68.2,18.1c1.4,0,2.5-1.1,2.5-2.5v-5.5c0-1.4-1.1-2.5-2.5-2.5c-1.4,0-2.5,1.1-2.5,2.5l0,5.5
@@ -32,7 +32,7 @@
   </svg>
 </div>
 <div class="icon" id="playing">
-  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
   	 width="81.7px" height="72.1px" viewBox="0 0 81.7 72.1" enable-background="new 0 0 81.7 72.1" xml:space="preserve">
   <g>
   	<path fill="#FFFFFF" d="M60.8,35.7c0-0.5,0-1.2-0.1-1.9c-0.5-4.1-2.3-7.6-5.2-10.4c-1.2-1.2-2.6-2.1-4-3c-0.9-0.6-2.2-0.3-2.9,0.5

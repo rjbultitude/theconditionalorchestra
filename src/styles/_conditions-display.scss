@@ -1,0 +1,20 @@
+.conditions-display {
+  text-align: center;
+}
+
+.conditions-display-item {
+  display: inline-block;
+  width: 33.3%;
+  margin-right: -4px;
+  min-height: 200px;
+
+  .conditions-display-item__heading {
+    color: $color-blue-pale;
+  }
+
+  .icon {
+    svg > * {
+      fill: white;
+    }
+  }
+}

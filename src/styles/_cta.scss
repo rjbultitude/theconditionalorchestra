@@ -1,10 +1,20 @@
 .cta {
+    background-color: $color-cyan;
+    padding: 22px;
     text-align: center;
-    padding: 0 0 20px 0;
-
+    font-size: 20px;
+    display: inline-block;
+    color: white;
+    border: 3px solid white;
+    //text-transform: uppercase;
     p {
       width: 50%;
       margin: 0 auto 12px;
       display: block;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: $color-purple-dark;
     }
 }
