@@ -4,9 +4,9 @@ var postal = require('postal');
 var channel = postal.channel();
 
 module.exports = function() {
-	var tempEls = document.querySelectorAll('[data-ref="temperature"]');
-	var cCoverEls = document.querySelectorAll('[data-ref="cloudCover"]');
-	var aPressureEls = document.querySelectorAll('[data-ref="airPressure"]');
+	var tempEl = document.querySelector('[data-ref="temperature"]').querySelector('[data-ref="value"]');
+	var cCoverEl = document.querySelector('[data-ref="cloudCover"]').querySelector('[data-ref="value"]');
+	var aPressureEl = document.querySelector('[data-ref="airPressure"]').querySelector('[data-ref="value"]');
 
 	function ConditionValues(locationData) {
 		this.temperature = locationData.temperature.value - 32 / 1.8;
@@ -16,16 +16,8 @@ module.exports = function() {
 
 	channel.subscribe('userUpdate', function(locationData) {
 		var conditionValues = new ConditionValues(locationData);
-
-		for (var i = 0; i < tempEls.length; i++) {
-			tempEls[i].insertAdjacentHTML('afterbegin', conditionValues.temperature.toFixed() + '');
-		}
-		for (var j = 0; j < cCoverEls.length; j++) {
-			cCoverEls[j].insertAdjacentHTML('afterbegin', conditionValues.cloudCover.toFixed() + '');
-		}
-		for (var k = 0; k < aPressureEls.length; k++) {
-			aPressureEls[k].insertAdjacentHTML('afterbegin', conditionValues.airPressure.toFixed() + '');
-		}
-
+		tempEl.innerHTML = conditionValues.temperature.toFixed() + '';
+		cCoverEl.innerHTML = conditionValues.cloudCover.toFixed() + '';
+		aPressureEl.innerHTML = conditionValues.airPressure.toFixed() + '';
 	});
 };

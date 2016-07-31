@@ -27,7 +27,18 @@
               <!-- begin body -->
               <div class="article-body">
                 <div class="wrapper">
-                  <button id="use-location-btn" class="cta">Play my weather</button>
+                  <div class="options">
+                    <button id="use-location-btn" class="cta">Play my weather</button>
+                    <a href="#form-coords" id="link-location-select">Or choose another location</a>
+                  </div>
+                  <form class="form-coords" id="form-coords" style="display: none">
+                    <h2 class="form-coords__legend">Enter your coordinates</h2>
+                    <label for="lat">Lattiude</label>
+                    <input type="text" id="lat">
+                    <label for="long">Longitude</label>
+                    <input type="text" id="long">
+                    <button class="cta" id="form-coords-btn">Submit</button>
+                  </form>
                   <div id="main-section" class="main-section">
                     <div id="core-content">
                       <div class="status-bar">
@@ -47,14 +58,6 @@
                       </button>
                     </div>
                   </div>
-                  <form id="form-coords" style="display: none">
-                    <h2>Enter your coordinates</h2>
-                    <label for="lat">Lattiude</label>
-                    <input type="text" id="lat">
-                    <label for="long">Longitude</label>
-                    <input type="text" id="long">
-                    <button id="form-coords-btn">Submit</button>
-                  </form>
                   <div class="controls">
                     <button class="cta" id="full-screen">
                       <span class="text">
@@ -73,6 +76,7 @@
                           <?php echo file_get_contents("img/temperature-icon.svg"); ?>
                         </div>
                         <p class="conditions-display__value" data-ref="temperature">
+                          <span data-ref="value"></span>
                           <span class="conditions-display__unit">C&deg;</span>
                         </p>
                       </li>
@@ -82,6 +86,7 @@
                           <?php echo file_get_contents("img/cloud-cover-icon.svg"); ?>
                         </div>
                         <p class="conditions-display__value" data-ref="cloudCover">
+                          <span data-ref="value"></span>
                           <span class="conditions-display__unit">&percnt;</span>
                         </p>
                       </li>
@@ -91,6 +96,7 @@
                           <?php echo file_get_contents("img/pressure-icon.svg"); ?>
                         </div>
                         <p class="conditions-display__value" data-ref="airPressure">
+                          <span data-ref="value"></span>
                           <span class="conditions-display__unit">Mbs</span>
                         </p>
                       </li>

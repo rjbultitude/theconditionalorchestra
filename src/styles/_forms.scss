@@ -22,3 +22,14 @@ input[type="text"] {
 textarea {
     resize: vertical;
 }
+
+.form-coords {
+
+  .form-coords__legend {
+    font-size: 22px;
+    margin-bottom: $padding/4;
+  }
+
+  background-color: $color-purple-dark;
+  padding: $padding/2;
+}

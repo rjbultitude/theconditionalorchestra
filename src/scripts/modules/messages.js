@@ -9,7 +9,7 @@ module.exports = {
     connection: 'Unable to retrieve your location perhaps you have no connection',
     number: 'please enter a number',
     success: 'it worked :]',
-    address: 'address not found',
+    address: 'could not find that place...perhaps it\'s just the ocean',
     defaultData: 'You appear to be offline. Using default location: ',
     lastKnown: 'You appear to be offline. Using last location: '
 };

@@ -16,6 +16,7 @@ module.exports = function() {
 	//Vars
 	var coordsSubmitBtn = document.getElementById('form-coords-btn');
 	var useLocBtn = document.getElementById('use-location-btn');
+	var linkLocationSelect = document.getElementById('link-location-select');
 
 	//start app
 	audioVisual();
@@ -109,6 +110,7 @@ module.exports = function() {
 						}
 						else {
 							console.log('Geocoder failed due to: ' + status);
+							locName = 'somewhere in the ocean?';
 							updateStatus('address');
 						}
 						updateStatus('location');
@@ -173,6 +175,10 @@ module.exports = function() {
 		navigator.geolocation.getCurrentPosition(success, failure);
 	}
 
+	linkLocationSelect.addEventListener('click', function() {
+		showForm();
+	}, false);
+
 	coordsSubmitBtn.addEventListener('click', function (e) {
 		e.preventDefault();
 		var lat = parseInt(document.getElementById('lat').value, 10);
@@ -181,6 +187,8 @@ module.exports = function() {
 			updateStatus('number');
 		}
 		else {
+			console.log(lat);
+			console.log(long);
 			getPlaces(lat, long);
 		}
 	});
