@@ -54,20 +54,6 @@
     .no-js & {
       display: none;
     }
-
-    .tab__close {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-
-      .text {
-        @extend %hidden;
-      }
-
-      .icon {
-        display: block;
-      }
-    }
   }
 
   p {

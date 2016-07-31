@@ -1,7 +1,39 @@
 .controls {
   display: none;
-  
+
   button {
     display: inline-block;
+    cursor: pointer;
+
+    .text {
+      display: inline-block;
+      color: white;
+      font-size: 22px;
+    }
+
+    .icon {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+
+      svg > * {
+        fill: white;
+      }
+    }
+  }
+}
+
+.button-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border: 0 none;
+
+  .text {
+    @extend %hidden;
+  }
+
+  .icon {
+    display: block;
   }
 }

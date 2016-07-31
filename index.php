@@ -40,6 +40,14 @@
                         <p id="message-block"></p>
                       </div>
                       <div id="canvas-container" class="canvas-container"></div>
+                      <button class="button-close" id="close-full-screen">
+                        <span class="text">
+                          Close
+                        </span>
+                        <span class="icon">
+                          <?php echo file_get_contents("img/close-icon.svg"); ?>
+                        </span>
+                      </button>
                     </div>
                   </div>
                   <form id="form-coords" style="display: none">
@@ -52,11 +60,11 @@
                   </form>
                   <div class="controls">
                     <button id="full-screen">
+                      <span class="text">
+                        Show visualiser
+                      </span>
                       <span class="icon">
                         <?php echo file_get_contents("img/full-screen.svg"); ?>
-                      </span>
-                      <span class="text">
-                        View visuals
                       </span>
                     </button>
                   </div>

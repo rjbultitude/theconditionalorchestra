@@ -1,32 +1,3 @@
-.main-section {
-  position: relative;
-
-  button {
-      background-color: transparent;
-      border: 0 none;
-      float: right;
-      padding: 6px;
-
-      .text {
-        position: absolute;
-        left: -999em;
-      }
-
-      .icon {
-        width: 28px;
-        height: 28px;
-        display: block;
-        padding: 5px;
-        border: 1px solid darken($color-light-grey, 45%);
-        //background-color: $color-light-grey;
-
-        path {
-          fill: white;
-        }
-      }
-    }
-}
-
 .canvas-container {
   display: none;
   padding-bottom: 50%;

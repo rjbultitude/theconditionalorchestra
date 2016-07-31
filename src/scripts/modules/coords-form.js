@@ -62,6 +62,7 @@ module.exports = function() {
 				//Post the data to rest of app
 				channel.publish('userUpdate', locationData);
 				updateStatus('playing', locationData.name);
+				document.querySelector('.controls').style.display = 'block';
 			} else {
 				console.log('There seems to be more than one location: ', conditions.length);
 			}
