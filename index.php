@@ -150,7 +150,7 @@
             <div class="tab__panel" id="source" data-ref="tab-panel">
               <h2 class="tab__heading">Source</h2>
               <p>This is an open source project. Download, fork or view the code here: </p>
-              <button class="tab__close" data-ref="tab-close">
+              <button class="button-close" data-ref="tab-close">
                 <span class="text">
                   Close
                 </span>
