@@ -28,17 +28,15 @@
               <div class="article-body">
                 <div class="wrapper">
                   <!-- begin forms -->
-                  <div class="form-wrapper">
+                  <div class="form-section section">
                     <div class="form-user-location" data-ref="form-user-location">
                       <button id="use-location-btn" class="cta">Play my weather</button>
                       <a href="#form-coords" id="link-location-select">Or choose another location</a>
                     </div>
                     <form class="form-coords inactive" id="form-coords" data-ref="form-coords">
-                      <h2 class="form-coords__legend">Enter your coordinates</h2>
-                      <label for="lat">Lattiude</label>
-                      <input type="text" id="lat">
-                      <label for="long">Longitude</label>
-                      <input type="text" id="long">
+                      <h2 class="form-coords__legend">Enter a place</h2>
+                      <label for="place">place</label>
+                      <input type="text" id="place">
                       <button class="cta" id="form-coords-btn">Submit</button>
                       <button class="button-close">
                         <span class="text">
@@ -51,7 +49,7 @@
                     </form>
                   </div>
                   <!-- end forms -->
-                  <div id="main-section" class="main-section">
+                  <section id="main-section" class="main-section section">
                     <div id="core-content">
                       <div class="status-bar">
                         <div class="icons-block">
@@ -69,8 +67,8 @@
                         </span>
                       </button>
                     </div>
-                  </div>
-                  <div class="controls">
+                  </section>
+                  <div class="controls-section section" data-ref="controls">
                     <button class="cta" id="full-screen">
                       <span class="text">
                         Show visualiser
@@ -80,7 +78,7 @@
                       </span>
                     </button>
                   </div>
-                  <div class="conditions-display">
+                  <div class="conditions-display section">
                     <ul>
                       <li class="conditions-display__item">
                         <h2 class="conditions-display__heading">Temperature</h2>

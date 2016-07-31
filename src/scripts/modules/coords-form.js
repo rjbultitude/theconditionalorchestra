@@ -20,6 +20,8 @@ module.exports = function() {
 	var linkLocationSelect = document.getElementById('link-location-select');
 	var formEl = document.querySelector('[data-ref="form-coords"');
 	var optionsEl = document.querySelector('[data-ref="form-user-location"]');
+	var formButtonCloseEl = formEl.querySelector('.button-close');
+	var controlsEl = document.querySelector('[data-ref="controls"]');
 
 	//start app
 	audioVisual();
@@ -66,10 +68,32 @@ module.exports = function() {
 				//Post the data to rest of app
 				channel.publish('userUpdate', locationData);
 				updateStatus('playing', locationData.name);
-				document.querySelector('.controls').style.display = 'block';
+				controlsEl.style.display = 'block';
 			} else {
 				console.log('There seems to be more than one location: ', conditions.length);
 			}
+		});
+	}
+
+	function getLatLong(placeString) {
+		var gpKey = makeRequest('GET', '/gm-key.php');
+		gpKey.then(function(key) {
+			GoogleMapsLoader.KEY = key;
+			GoogleMapsLoader.load(function(google) {
+				var geocoder = new google.maps.Geocoder();
+
+				geocoder.geocode( { 'address' : placeString }, function( results, status ) {
+	        if( status === google.maps.GeocoderStatus.OK ) {
+							console.log('results', results);
+	            var lat = results[0].geometry.location.lat();
+	            var long = results[0].geometry.location.lng();
+							var address = results[0].formatted_address;
+							updateApp(lat, long, address);
+	        } else {
+	            console.log('Geocode was not successful for the following reason: ' + status );
+	        }
+		    });
+			});
 		});
 	}
 
@@ -132,12 +156,10 @@ module.exports = function() {
 
 	function showForm() {
 		classListChain(formEl).remove('inactive').add('active');
-		//classListChain(optionsEl).remove('active').add('inactive');
 	}
 
-	function hideOptions() {
-		classListChain(optionsEl).remove('active').add('inactive');
-		classListChain(formEl).remove('inactive').add('active');
+	function hideForm() {
+		classListChain(formEl).remove('active').add('inactive');
 	}
 
 	function getGeo() {
@@ -183,6 +205,11 @@ module.exports = function() {
 		navigator.geolocation.getCurrentPosition(success, failure);
 	}
 
+	formButtonCloseEl.addEventListener('click', function(e) {
+		e.preventDefault();
+		hideForm();
+	});
+
 	linkLocationSelect.addEventListener('click', function(e) {
 		e.preventDefault();
 		//hideOptions();
@@ -191,15 +218,12 @@ module.exports = function() {
 
 	coordsSubmitBtn.addEventListener('click', function (e) {
 		e.preventDefault();
-		var lat = parseInt(document.getElementById('lat').value, 10);
-		var long = parseInt(document.getElementById('long').value, 10);
-		if (typeof lat !== 'number' || typeof long !== 'number') {
-			updateStatus('number');
+		var placeInput = document.getElementById('place').value;
+		if (typeof placeInput !== 'string') {
+			updateStatus('string');
 		}
 		else {
-			console.log(lat);
-			console.log(long);
-			getPlaces(lat, long);
+			getLatLong(placeInput);
 		}
 	});
 
