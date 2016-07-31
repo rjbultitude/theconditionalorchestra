@@ -26,7 +26,6 @@
 }
 
 .button-close {
-  display: none;
   position: absolute;
   top: 5px;
   right: 5px;
@@ -39,4 +38,8 @@
   .icon {
     display: block;
   }
+}
+
+#close-full-screen {
+  display: none;
 }

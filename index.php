@@ -27,18 +27,30 @@
               <!-- begin body -->
               <div class="article-body">
                 <div class="wrapper">
-                  <div class="options">
-                    <button id="use-location-btn" class="cta">Play my weather</button>
-                    <a href="#form-coords" id="link-location-select">Or choose another location</a>
+                  <!-- begin forms -->
+                  <div class="form-wrapper">
+                    <div class="form-user-location" data-ref="form-user-location">
+                      <button id="use-location-btn" class="cta">Play my weather</button>
+                      <a href="#form-coords" id="link-location-select">Or choose another location</a>
+                    </div>
+                    <form class="form-coords inactive" id="form-coords" data-ref="form-coords">
+                      <h2 class="form-coords__legend">Enter your coordinates</h2>
+                      <label for="lat">Lattiude</label>
+                      <input type="text" id="lat">
+                      <label for="long">Longitude</label>
+                      <input type="text" id="long">
+                      <button class="cta" id="form-coords-btn">Submit</button>
+                      <button class="button-close">
+                        <span class="text">
+                          Close
+                        </span>
+                        <span class="icon">
+                          <?php echo file_get_contents("img/close-icon.svg"); ?>
+                        </span>
+                      </button>
+                    </form>
                   </div>
-                  <form class="form-coords" id="form-coords" style="display: none">
-                    <h2 class="form-coords__legend">Enter your coordinates</h2>
-                    <label for="lat">Lattiude</label>
-                    <input type="text" id="lat">
-                    <label for="long">Longitude</label>
-                    <input type="text" id="long">
-                    <button class="cta" id="form-coords-btn">Submit</button>
-                  </form>
+                  <!-- end forms -->
                   <div id="main-section" class="main-section">
                     <div id="core-content">
                       <div class="status-bar">

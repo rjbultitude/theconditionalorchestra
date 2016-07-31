@@ -9,6 +9,7 @@ var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
 var updateStatus = require('./update-status');
+var classListChain = require('./class-list-chain');
 
 module.exports = function() {
 	//Debug
@@ -17,6 +18,8 @@ module.exports = function() {
 	var coordsSubmitBtn = document.getElementById('form-coords-btn');
 	var useLocBtn = document.getElementById('use-location-btn');
 	var linkLocationSelect = document.getElementById('link-location-select');
+	var formEl = document.querySelector('[data-ref="form-coords"');
+	var optionsEl = document.querySelector('[data-ref="form-user-location"]');
 
 	//start app
 	audioVisual();
@@ -128,13 +131,18 @@ module.exports = function() {
 	}
 
 	function showForm() {
-		updateStatus('geo');
-		var formEl = document.getElementById('form-coords');
-		formEl.style.display = 'block';
+		classListChain(formEl).remove('inactive').add('active');
+		classListChain(optionsEl).remove('active').add('inactive');
+	}
+
+	function hideOptions() {
+		classListChain(optionsEl).remove('active').add('inactive');
+		classListChain(formEl).remove('inactive').add('active');
 	}
 
 	function getGeo() {
 		if (!navigator.geolocation) {
+			updateStatus('geo');
 			showForm();
 			return;
 		}
@@ -175,7 +183,9 @@ module.exports = function() {
 		navigator.geolocation.getCurrentPosition(success, failure);
 	}
 
-	linkLocationSelect.addEventListener('click', function() {
+	linkLocationSelect.addEventListener('click', function(e) {
+		e.preventDefault();
+		hideOptions();
 		showForm();
 	}, false);
 

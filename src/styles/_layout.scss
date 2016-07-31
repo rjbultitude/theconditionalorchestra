@@ -40,5 +40,16 @@ body {
   position: relative;
 }
 
-// ::webkit-full-screen {
-// }
+.active {
+  z-index: 1;
+  position: absolute;
+  left: 0;
+}
+
+.inactive {
+  position: absolute;;
+  z-index: 0;
+  top:0;
+  left:-999em;
+  transition: left;
+}

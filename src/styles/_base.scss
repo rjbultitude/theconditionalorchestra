@@ -4,13 +4,31 @@ $color-trans-grey: rgba(50, 50, 50, 0.8);
 $color-purple-darkest: #312775;
 $color-purple-dark: #38308c;
 $color-purple-light: #574bdb;
+$color-purple-lightest: #7371d8;
 $color-cyan: #0f9cbc;
 $color-blue-pale: #aecef4;
 
 //Sizes
 $padding: 40px;
+$max-width: 600px;
 
 %hidden {
   position: absolute;
   left: -999em;
+}
+
+%clearfix {
+  *zoom: 1;
+
+  &:before,
+  &:after {
+      content: "";
+      display: table;
+
+      line-height: 0;
+  }
+
+  &:after {
+      clear: both;
+  }
 }
