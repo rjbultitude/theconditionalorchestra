@@ -2,18 +2,29 @@
   text-align: center;
 }
 
-.conditions-display-item {
+.conditions-display__item {
   display: inline-block;
   width: 33.3%;
   margin-right: -8px;
   min-height: 200px;
 
-  .conditions-display-item__heading {
+  .conditions-display__heading {
     color: $color-blue-pale;
+    padding-bottom: $padding/2;
   }
 
-  .conditions-display-item__value {
-    font-size: 32px;
+  .conditions-display__value {
+    font-size: 28px;
+  }
+
+  .conditions-display__icon {
+    min-height: 66px;
+    vertical-align: middle;
+    display: inline-block;
+
+    svg {
+      display: inline-block;
+    }
   }
 
   .icon {

@@ -58,6 +58,7 @@
         for (i = this.tabs.length - 1; i >= 0; i--) {
             var tab = this.tabs[i];
             var panel = this.panels[i];
+            var panelClose = this.panels[i];
             var preSelected = tab.className.match(/\bis-selected\b/);
             var selected = i === 0 || preSelected || window.location.hash.replace('#', '') === panel.id;
 
@@ -183,6 +184,10 @@
         }
 
         delete this.selectedIndex;
+    };
+
+    Tabs.prototype.closeTab = function closeTab() {
+
     };
 
     return Tabs;

@@ -12,23 +12,25 @@
     padding: 12px;
     background-color: $color-purple-darkest;
   }
-  .tabs_item {
+
+  .tabs__item {
     display: inline-block;
+    padding-right: $padding/3;
+    margin-right: $padding/2;
+    position: relative;
+
+    &:after {
+      position: absolute;
+      content: "/";
+      left: 100%;
+      top: 0;
+    }
 
     a {
       color: white;
-      padding-right: $padding/3;
-      margin-right: $padding/2;
-      position: relative;
-
-      &:after {
-        position: absolute;
-        content: "/";
-        left: 100%;
-      }
     }
 
-    a:last-of-type {
+    &:last-of-type {
       padding: 0;
       margin: 0;
 
@@ -41,14 +43,6 @@
   p {
     margin: 0.1rem 0;
     font-size: 15px;
-  }
-
-  .tab {
-    display: none;
-
-    .no-js & {
-      display: block;
-    }
   }
 
 }
