@@ -19,7 +19,6 @@ module.exports = function() {
 	var useLocBtn = document.getElementById('use-location-btn');
 	var linkLocationSelect = document.getElementById('link-location-select');
 	var formEl = document.querySelector('[data-ref="form-coords"');
-	var optionsEl = document.querySelector('[data-ref="form-user-location"]');
 	var formButtonCloseEl = formEl.querySelector('.button-close');
 	var controlsEl = document.querySelector('[data-ref="controls"]');
 
@@ -231,16 +230,16 @@ module.exports = function() {
 		e.preventDefault();
 		updateStatus('location');
 		//For testing:
-		var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
-		fetchStaticPlaces.then(function (staticPlaces) {
-			var staticPlacesJSON = JSON.parse(staticPlaces);
-			getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
-			console.log('Using static data');
-		}, function (status) {
-			console.log(status.statusText);
-		});
+		// var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
+		// fetchStaticPlaces.then(function (staticPlaces) {
+		// 	var staticPlacesJSON = JSON.parse(staticPlaces);
+		// 	getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
+		// 	console.log('Using static data');
+		// }, function (status) {
+		// 	console.log(status.statusText);
+		// });
 		//For live:
-		//getGeo();
+		getGeo();
 		useLocBtn.disabled = true;
 	});
 };
