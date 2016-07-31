@@ -26,8 +26,7 @@ textarea {
     resize: vertical;
 }
 
-.form-wrapper {
-  overflow: hidden;
+.form-section {
   position: relative;
 }
 
@@ -37,20 +36,61 @@ textarea {
 
   a {
     display: inline-block;
-    padding: $padding/4 0;
+    padding: $padding/4 0 0;
   }
 }
 
 .form-coords {
   background-color: $color-purple-dark;
-  padding: $padding/2;
+  padding: $padding;
   text-align: left;
-  margin: $padding/2 auto;
   position: relative;
+  width: 100%;
+  max-width: $max-width;
+
+  .cta {
+    @extend %cta-base;
+    padding: 11px;
+    font-size: 16px;
+  }
 
   .form-coords__legend {
     font-size: 22px;
     margin-bottom: $padding/4;
+  }
+
+  label {
+    @extend %hidden;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    width: 65%;
+    height: 30px;
+    font-size: 20px;
+    color: $color-dark-grey;
+    margin-right: $padding/4;
+  }
+
+  .button-close {
+    top: $padding/2;
+    right: $padding/2;
+  }
+
+  &.active {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    //top: -$padding/2;
+  }
+
+  &.inactive {
+    position: absolute;;
+    z-index: 0;
+    top:-400px;
+    left:0;
+    transition: left;
   }
 
 }

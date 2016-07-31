@@ -1,4 +1,5 @@
 //Colours
+$color-dark-grey: #404040;
 $color-light-grey: #C7D0D4;
 $color-trans-grey: rgba(50, 50, 50, 0.8);
 $color-purple-darkest: #312775;
@@ -11,6 +12,15 @@ $color-blue-pale: #aecef4;
 //Sizes
 $padding: 40px;
 $max-width: 600px;
+
+//Placeholders
+%cta-base {
+  background-color: $color-cyan;
+  text-align: center;
+  color: white;
+  display: inline-block;
+  border: 3px solid white;
+}
 
 %hidden {
   position: absolute;

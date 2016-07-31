@@ -7,13 +7,14 @@ video {
     vertical-align: middle;
 }
 
-div,
-section,
 article,
-main,
 aside,
+div,
+footer,
+form,
 header,
-footer {
+main,
+section {
   box-sizing: border-box;
 }
 
@@ -30,7 +31,7 @@ html {
 }
 
 body {
-  background: linear-gradient(to bottom, $color-purple-dark 37%, $color-purple-light 100%);
+  background: linear-gradient(to bottom, $color-purple-dark 20%, $color-purple-light 100%);
   min-height: 100%;
   margin: 0;
   background-attachment: fixed;
@@ -40,17 +41,6 @@ body {
   position: relative;
 }
 
-.active {
-  z-index: 1;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.inactive {
-  position: absolute;;
-  z-index: 0;
-  top:-400px;
-  left:0;
-  transition: left;
+.section {
+  padding: $padding 0 0;
 }
