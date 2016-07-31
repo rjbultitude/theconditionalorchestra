@@ -8,6 +8,8 @@ var makeRequest = require('./make-request');
 var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
+var updateStatus = require('./update-status');
+var classListChain = require('./class-list-chain');
 
 module.exports = function() {
 	//Debug
@@ -15,15 +17,16 @@ module.exports = function() {
 	//Vars
 	var coordsSubmitBtn = document.getElementById('form-coords-btn');
 	var useLocBtn = document.getElementById('use-location-btn');
-	var messageBlock = document.getElementById('message-block');
-	var noAddressMsg = 'address not found';
+	var linkLocationSelect = document.getElementById('link-location-select');
+	var formEl = document.querySelector('[data-ref="form-coords"');
+	var optionsEl = document.querySelector('[data-ref="form-user-location"]');
 
 	//start app
 	audioVisual();
 
 	function updateApp(lat, long, name) {
 		var newLocation = new Nll(lat, long, name);
-		messageBlock.innerHTML = 'Fetching weather data';
+		updateStatus('weather');
 		var forecast = new Forecastio({
 			PROXY_SCRIPT: '/proxy.php'
 		});
@@ -62,6 +65,8 @@ module.exports = function() {
 				localStorage.setItem('locationData', locationDataString);
 				//Post the data to rest of app
 				channel.publish('userUpdate', locationData);
+				updateStatus('playing', locationData.name);
+				document.querySelector('.controls').style.display = 'block';
 			} else {
 				console.log('There seems to be more than one location: ', conditions.length);
 			}
@@ -103,14 +108,15 @@ module.exports = function() {
 									}
 								}
 							} else {
-								locName = noAddressMsg;
+								updateStatus('address');
 							}
 						}
 						else {
 							console.log('Geocoder failed due to: ' + status);
-							locName = noAddressMsg;
+							locName = 'somewhere in the ocean?';
+							updateStatus('address');
 						}
-						messageBlock.innerHTML = locName;
+						updateStatus('location');
 						useLocBtn.disabled = false;
 						updateApp(lat, long, locName);
 					}
@@ -119,32 +125,35 @@ module.exports = function() {
 		}, function(rejectObj) {
 				console.log(rejectObj.status);
 				console.log(rejectObj.statusText);
-				messageBlock.innerHTML = 'Error getting your location';
+				updateStatus('error');
 				updateApp(lat, long, 'unknown');
 			});
 	}
 
 	function showForm() {
-		messageBlock.innerHTML = 'Geolocation is not supported by your browser \n' +
-			'Try searching';
-		var formEl = document.getElementById('form-coords');
-		formEl.style.display = 'block';
+		classListChain(formEl).remove('inactive').add('active');
+		//classListChain(optionsEl).remove('active').add('inactive');
+	}
+
+	function hideOptions() {
+		classListChain(optionsEl).remove('active').add('inactive');
+		classListChain(formEl).remove('inactive').add('active');
 	}
 
 	function getGeo() {
 		if (!navigator.geolocation) {
+			updateStatus('geo');
 			showForm();
 			return;
 		}
 
 		function success(position) {
-			messageBlock.innerHTML = 'Looking up name';
+			updateStatus('success');
 			getPlaces(position.coords.latitude, position.coords.longitude);
 		}
 
 		function failure(failure) {
-			messageBlock.innerHTML = 'Unable to retrieve your location \n' +
-			'perhaps you have no connection';
+			updateStatus('connection');
 			useLocBtn.disabled = false;
 			//Ensure we're on https or localhost
 			if(failure.message.indexOf('Only secure origins are allowed') === 0) {
@@ -153,6 +162,7 @@ module.exports = function() {
 			//Use previous state to run app
 			if(Object.keys(window.localStorage).length > 0) {
 				var restoredData = localStorage.getItem('locationData');
+				updateStatus('lastKnown', restoredData.name);
 				channel.publish('restoreUserData', JSON.parse(restoredData));
 			}
 			//Else use static location data
@@ -161,6 +171,7 @@ module.exports = function() {
 				var fetchStaticData = makeRequest('GET', 'data/static-data.json');
 				fetchStaticData.then(function success(staticData) {
 					staticData = JSON.parse(staticData);
+					updateStatus('defaultData', staticData.name);
 					channel.publish('staticData', staticData);
 				},
 				function failure() {
@@ -172,21 +183,29 @@ module.exports = function() {
 		navigator.geolocation.getCurrentPosition(success, failure);
 	}
 
+	linkLocationSelect.addEventListener('click', function(e) {
+		e.preventDefault();
+		//hideOptions();
+		showForm();
+	}, false);
+
 	coordsSubmitBtn.addEventListener('click', function (e) {
 		e.preventDefault();
 		var lat = parseInt(document.getElementById('lat').value, 10);
 		var long = parseInt(document.getElementById('long').value, 10);
 		if (typeof lat !== 'number' || typeof long !== 'number') {
-			messageBlock.innerHTML = 'please enter a number';
+			updateStatus('number');
 		}
 		else {
+			console.log(lat);
+			console.log(long);
 			getPlaces(lat, long);
 		}
 	});
 
 	useLocBtn.addEventListener('click', function(e) {
 		e.preventDefault();
-		messageBlock.innerHTML = 'Getting your location';
+		updateStatus('location');
 		//For testing:
 		var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
 		fetchStaticPlaces.then(function (staticPlaces) {

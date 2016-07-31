@@ -1,0 +1,45 @@
+.controls {
+  display: none;
+  padding: $padding/2 0;
+
+  button {
+    display: inline-block;
+    cursor: pointer;
+
+    .text {
+      display: inline-block;
+      color: white;
+      font-size: 22px;
+    }
+
+    .icon {
+      //display: inline-block;
+      display: none;
+      width: 20px;
+      height: 20px;
+
+      svg > * {
+        fill: white;
+      }
+    }
+  }
+}
+
+.button-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border: 0 none;
+
+  .text {
+    @extend %hidden;
+  }
+
+  .icon {
+    display: block;
+  }
+}
+
+#close-full-screen {
+  display: none;
+}

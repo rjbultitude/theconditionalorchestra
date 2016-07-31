@@ -10,22 +10,47 @@ label {
     margin-right: 8px;
 }
 
-input[type="text"] {
-    padding: 4px;
+button {
+  background-color: transparent;
+  border: 0 none;
 }
 
-button {
-    padding: 12px;
-    text-align: center;
-    font-size: 20px;
-    display: inline-block;
-    color: black;
-
-    &:hover {
-      cursor: pointer;
-    }
+input[type="text"],
+input[type="number"] {
+    padding: 6px;
+    border: 0 none;
+    border-radius: 3px;
 }
 
 textarea {
     resize: vertical;
+}
+
+.form-wrapper {
+  overflow: hidden;
+  position: relative;
+}
+
+.form-user-location {
+  white-space: pre-line;
+  position: relative;
+
+  a {
+    display: inline-block;
+    padding: $padding/4 0;
+  }
+}
+
+.form-coords {
+  background-color: $color-purple-dark;
+  padding: $padding/2;
+  text-align: left;
+  margin: $padding/2 auto;
+  position: relative;
+
+  .form-coords__legend {
+    font-size: 22px;
+    margin-bottom: $padding/4;
+  }
+
 }

@@ -16,9 +16,6 @@ var channel = postal.channel();
 var intervals = require('./intervals');
 
 module.exports = function() {
-	//Els
-	var messageBlock = document.getElementById('message-block');
-
 	//animation speed
 	var animAmount = 1;
 	//Array for all sounds
@@ -43,7 +40,7 @@ module.exports = function() {
   }
 
 	//main app init
-	function init(locationData, restoredData, staticData) {
+	function init(locationData) {
 
 		//Create filter
 		var soundFilter = new P5.LowPass();
@@ -230,14 +227,6 @@ module.exports = function() {
 				createShapeSet(hSquares, vSquares);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
 				console.log('locationData', locationData);
-				//Update view with place name
-				if (restoredData) {
-						messageBlock.innerHTML = 'You appear to be offline. Using last location: ' + locationData.name;
-				} else if (staticData) {
-						messageBlock.innerHTML = 'You appear to be offline. Using default location: ' + locationData.name;
-				} else {
-					messageBlock.innerHTML = locationData.name;
-				}
 				//handle sounds
 				configureSounds(locationData);
 			};
@@ -257,15 +246,12 @@ module.exports = function() {
 	}
 
 	channel.subscribe('userUpdate', function(data) {
-		messageBlock.innerHTML = 'Success';
 		init(data, false, false);
 	});
 	channel.subscribe('restoreUserData', function(data) {
-		messageBlock.innerHTML = 'Success';
 		init(data, true, false);
 	});
 	channel.subscribe('staticData', function(data) {
-		messageBlock.innerHTML = 'Success';
 		init(data, false, true);
 	});
 

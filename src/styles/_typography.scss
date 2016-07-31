@@ -23,17 +23,8 @@ button {
 }
 
 .page-heading {
-  padding-top: 32px;
   font-size: 32px;
-}
-
-h1,
-.intro {
-  text-align: center;
-}
-
-.intro {
-  margin-bottom: 12px;
+  margin-bottom: $padding/2;
 }
 
 h1,
