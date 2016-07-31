@@ -1,8 +1,17 @@
 .status-bar {
   text-align: center;
   padding: $padding/2 0;
+  min-height: 164px;
+
+  .icons-block {
+    min-height: 88px;
+  }
 
   .icon {
     display: none;
+  }
+
+  #start {
+    display: block;
   }
 }
