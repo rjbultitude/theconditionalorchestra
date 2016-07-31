@@ -1,5 +1,6 @@
 .controls {
   display: none;
+  padding: $padding/2 0;
 
   button {
     display: inline-block;
@@ -13,8 +14,8 @@
 
     .icon {
       display: inline-block;
-      width: 40px;
-      height: 40px;
+      width: 20px;
+      height: 20px;
 
       svg > * {
         fill: white;
@@ -24,6 +25,7 @@
 }
 
 .button-close {
+  display: none;
   position: absolute;
   top: 5px;
   right: 5px;

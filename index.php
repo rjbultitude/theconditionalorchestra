@@ -13,9 +13,6 @@
         <link rel="stylesheet" href="dist/styles/global.css">
     </head>
     <body>
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
         <main aria-role="main">
           <article>
               <!-- begin header -->
@@ -59,7 +56,7 @@
                     <button id="form-coords-btn">Submit</button>
                   </form>
                   <div class="controls">
-                    <button id="full-screen">
+                    <button class="cta" id="full-screen">
                       <span class="text">
                         Show visualiser
                       </span>

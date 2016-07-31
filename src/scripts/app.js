@@ -8,6 +8,6 @@ var Tabs = require('./modules/tabs');
 //start app
 coordsForm();
 conditionsDisplay();
-screenMode();
+//screenMode();
 jsLoad();
 new Tabs( document.querySelector('[data-directive=tabs]') );

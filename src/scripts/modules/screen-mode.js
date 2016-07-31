@@ -8,8 +8,9 @@ module.exports = function() {
 
 	function exitFullScreen(event) {
 		//Avoid keyboard trap
-		console.log('event', event);
-		if (event.keyCode === 27 || event.target === closeButton) {
+		console.log('event.target', event.target);
+		console.log('event.keyCode', event.keyCode);
+		if (event.keyCode === 27 || event.target.parentNode === closeButton) {
 				if(document.exitFullscreen) {
 					document.exitFullscreen();
 				} else if(document.mozCancelFullScreen) {
@@ -21,6 +22,7 @@ module.exports = function() {
 				event.stopPropagation();
 				containerEl.classList.remove('active', 'wrapper');
 				canvasContainerEl.style.display = 'none';
+				closeButton.style.display = 'none';
 				return false;
 		}
 	}
@@ -36,15 +38,17 @@ module.exports = function() {
 			} else if(containerEl.msRequestFullscreen) {
 				containerEl.msRequestFullscreen();
 			}
+			closeButton.style.display = 'block';
 			containerEl.classList.add('active', 'wrapper');
 			containerEl.style.paddingBottom = '0';
 			canvasContainerEl.style.display = 'block';
 		}
 	}
 
+	//Open FS
 	scnBtn.addEventListener('click', launchFullScreen, false);
+	//Close FS
 	closeButton.addEventListener('click', exitFullScreen, true);
-
 	window.addEventListener('keypress', exitFullScreen, true);
   window.addEventListener('keydown', exitFullScreen, true);
 };
