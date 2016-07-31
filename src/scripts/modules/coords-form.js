@@ -132,7 +132,7 @@ module.exports = function() {
 
 	function showForm() {
 		classListChain(formEl).remove('inactive').add('active');
-		classListChain(optionsEl).remove('active').add('inactive');
+		//classListChain(optionsEl).remove('active').add('inactive');
 	}
 
 	function hideOptions() {
@@ -185,7 +185,7 @@ module.exports = function() {
 
 	linkLocationSelect.addEventListener('click', function(e) {
 		e.preventDefault();
-		hideOptions();
+		//hideOptions();
 		showForm();
 	}, false);
 

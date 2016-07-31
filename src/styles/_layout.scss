@@ -44,12 +44,13 @@ body {
   z-index: 1;
   position: absolute;
   left: 0;
+  top: 0;
 }
 
 .inactive {
   position: absolute;;
   z-index: 0;
-  top:0;
-  left:-999em;
+  top:-400px;
+  left:0;
   transition: left;
 }
