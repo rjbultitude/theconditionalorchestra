@@ -9,7 +9,7 @@ module.exports = function updateStatus(status, locationAddress) {
   console.log('status', status);
   console.log('locationAddress', locationAddress);
 
-  if (statusMsgs[status] === undefined || statusMsgs[status] === NaN) {
+  if (statusMsgs[status] === undefined || isNaN(statusMsgs[status])) {
     console.log('status errors. cannot find key ', status);
   } else {
     messageBlock.innerHTML = statusMsgs[status];

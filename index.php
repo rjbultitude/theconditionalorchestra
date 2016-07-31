@@ -98,6 +98,46 @@
         </main>
         <footer class="footer">
           <div class="wrapper">
+            <div class="tab__panel" id="help" data-ref="tab-panel">
+              <h2 class="tab__heading">Help</h2>
+              <p>If it can't find your location and you've not visited before nothing will play until you select "choose location"</p>
+              <button class="tab__close" data-ref="tab-close">
+                <span class="text">
+                  Close
+                </span>
+                <span class="icon">
+                  <?php echo file_get_contents("img/close-icon.svg"); ?>
+                </span>
+              </button>
+            </div>
+            <div class="tab__panel" id="credits" data-ref="tab-panel">
+              <h2 class="tab__heading">Credits</h2>
+              <p>This project uses <a href="http://forecast.io/">Forecast.io</a> to obtain the weather data.</p>
+              <p>The JavaScript library used to access the API can be found on <a href="https://github.com/iantearle/forecast.io-javascript-api">GitHub here</a>.</p>
+              <p><a href="http://p5js.org/">P5.js</a> is used to generate the graphical interface and audio.</p>
+              <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html">Google maps</a> is used to reverse Geocode the location information</p>
+              <p>Musical Weathervane is written and maintained by <a href="https://github.com/rjbultitude">R.Bultitude</a></p>
+              <button class="tab__close" data-ref="tab-close">
+                <span class="text">
+                  Close
+                </span>
+                <span class="icon">
+                  <?php echo file_get_contents("img/close-icon.svg"); ?>
+                </span>
+              </button>
+            </div>
+            <div class="tab__panel" id="source" data-ref="tab-panel">
+              <h2 class="tab__heading">Source</h2>
+              <p>This is an open source project. Download, fork or view the code here: </p>
+              <button class="tab__close" data-ref="tab-close">
+                <span class="text">
+                  Close
+                </span>
+                <span class="icon">
+                  <?php echo file_get_contents("img/close-icon.svg"); ?>
+                </span>
+              </button>
+            </div>
             <ul class="tabs" data-directive="tabs">
               <li class="tabs__item">
                 <a href="#help" data-behaviour="tab">Help</a>
@@ -109,29 +149,6 @@
                 <a href="#source" data-behaviour="tab">Source</a>
               </li>
             </ul>
-            <div class="tab__panel" id="help">
-              <p>If it can't find your location and you've not visited before nothing will play until you select "choose location"</p>
-              <button class="tab__close">
-                Close
-              </button>
-            </div>
-            <div class="tab__panel" id="credits">
-              <h2>Credits</h2>
-              <p>This project uses <a href="http://forecast.io/">Forecast.io</a> to obtain the weather data.</p>
-              <p>The JavaScript library used to access the API can be found on <a href="https://github.com/iantearle/forecast.io-javascript-api">GitHub here</a>.</p>
-              <p><a href="http://p5js.org/">P5.js</a> is used to generate the graphical interface and audio.</p>
-              <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html">Google maps</a> is used to reverse Geocode the location information</p>
-              <p>Musical Weathervane is written and maintained by <a href="https://github.com/rjbultitude">R.Bultitude</a></p>
-              <button class="tab__close">
-                Close
-              </button>
-            </div>
-            <div class="tab__panel" id="source">
-              <p>This is an open source project. Download, fork or view the code here: </p>
-              <button class="tab__close">
-                Close
-              </button>
-            </div>
           </div>
         </footer>
         <script src="dist/scripts/app.js"></script>

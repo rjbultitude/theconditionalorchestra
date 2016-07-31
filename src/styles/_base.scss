@@ -9,3 +9,8 @@ $color-blue-pale: #aecef4;
 
 //Sizes
 $padding: 40px;
+
+%hidden {
+  position: absolute;
+  left: -999em;
+}

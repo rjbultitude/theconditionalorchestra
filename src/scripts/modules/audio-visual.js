@@ -15,9 +15,6 @@ var postal = require('postal');
 var channel = postal.channel();
 
 module.exports = function() {
-	//Els
-	var messageBlock = document.getElementById('message-block');
-
 	//animation speed
 	var animAmount = 1;
 	//Array for all sounds
@@ -42,7 +39,7 @@ module.exports = function() {
   }
 
 	//main app init
-	function init(locationData, restoredData, staticData) {
+	function init(locationData) {
 
 		//Create filter
 		var soundFilter = new P5.LowPass();

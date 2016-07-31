@@ -29,11 +29,13 @@
         this.target = element;
         this.tabs = element.querySelectorAll('[data-behaviour="tab"]');
         this.panels = [];
+        this.panelCloseButtons = [];
 
         for (i = 0, len = this.tabs.length; i < len; i++) {
             var panel = document.getElementById(this.tabs[i].hash.replace('#', ''));
             if (panel !== null) {
               this.panels.push(panel);
+              this.panelCloseButtons.push(panel.querySelector('[data-ref="tab-close"]'));
             } else {
               console.log('Cannot find element. Check the links and panels match');
               return;
@@ -44,6 +46,13 @@
             this._init();
         }
     }
+
+    Tabs.prototype._findAncestor = function(el, sel) {
+        while ((el = el.parentElement) && !((el.matches || el.matchesSelector).call(el,sel))) {
+          //keep looping
+        }
+        return el;
+    };
 
     /**
      * Init
@@ -58,7 +67,6 @@
         for (i = this.tabs.length - 1; i >= 0; i--) {
             var tab = this.tabs[i];
             var panel = this.panels[i];
-            var panelClose = this.panels[i];
             var preSelected = tab.className.match(/\bis-selected\b/);
             var selected = i === 0 || preSelected || window.location.hash.replace('#', '') === panel.id;
 
@@ -78,6 +86,16 @@
             else {
                 panel.style.display = 'none';
             }
+        }
+
+        this.closeHandler = function(e) {
+          var target = e.srcElement || e.target;
+          var targetPanel = self._findAncestor(target, '[data-ref="tab-panel"]');
+          targetPanel.style.display = 'none';
+        };
+
+        for (var j = 0; j < this.panelCloseButtons.length; j++) {
+          this.panelCloseButtons[j].addEventListener('click', this.closeHandler, false);
         }
 
         this.clickHandler = function(e) {
@@ -141,7 +159,7 @@
         tab.className+= ' is-selected ';
         tab.setAttribute('aria-selected', true);
 
-        panel.style.display = '';
+        panel.style.display = 'block';
 
         // Find tab index
         for (i = 0, len = this.tabs.length; i < len; i++) {
@@ -184,10 +202,6 @@
         }
 
         delete this.selectedIndex;
-    };
-
-    Tabs.prototype.closeTab = function closeTab() {
-
     };
 
     return Tabs;
