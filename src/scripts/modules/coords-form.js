@@ -151,6 +151,7 @@ module.exports = function() {
 			//Use previous state to run app
 			if(Object.keys(window.localStorage).length > 0) {
 				var restoredData = localStorage.getItem('locationData');
+				updateStatus('lastKnown', restoredData.name);
 				channel.publish('restoreUserData', JSON.parse(restoredData));
 			}
 			//Else use static location data
@@ -159,6 +160,7 @@ module.exports = function() {
 				var fetchStaticData = makeRequest('GET', 'data/static-data.json');
 				fetchStaticData.then(function success(staticData) {
 					staticData = JSON.parse(staticData);
+					updateStatus('defaultData', staticData.name);
 					channel.publish('staticData', staticData);
 				},
 				function failure() {

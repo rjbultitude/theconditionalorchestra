@@ -64,3 +64,7 @@
 </div>
 <div class="icon" id="success" data-ref="status-icon">
 </div>
+<div class="icon" id="lastKnown" data-ref="status-icon">
+</div>
+<div class="icon" id="defaultData" data-ref="status-icon">
+</div>

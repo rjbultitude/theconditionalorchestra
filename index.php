@@ -29,66 +29,68 @@
 
               <!-- begin body -->
               <div class="article-body">
-                <button id="use-location-btn" class="cta">Play my weather</button>
-                <div id="main-section" class="main-section">
-                  <div id="core-content">
-                    <div class="status-bar">
-                      <div class="icons-block">
-                        <?php include('includes/status-icons.php'); ?>
+                <div class="wrapper">
+                  <button id="use-location-btn" class="cta">Play my weather</button>
+                  <div id="main-section" class="main-section">
+                    <div id="core-content">
+                      <div class="status-bar">
+                        <div class="icons-block">
+                          <?php include('includes/status-icons.php'); ?>
+                        </div>
+                        <p id="message-block"></p>
                       </div>
-                      <p id="message-block"></p>
+                      <div id="canvas-container" class="canvas-container"></div>
                     </div>
-                    <div id="canvas-container" class="canvas-container"></div>
                   </div>
-                </div>
-                <form id="form-coords" style="display: none">
-                  <h2>Enter your coordinates</h2>
-                  <label for="lat">Lattiude</label>
-                  <input type="text" id="lat">
-                  <label for="long">Longitude</label>
-                  <input type="text" id="long">
-                  <button id="form-coords-btn">Submit</button>
-                </form>
-                <div class="controls">
-                  <button id="full-screen">
-                    <span class="icon">
-                      <?php echo file_get_contents("img/full-screen.svg"); ?>
-                    </span>
-                    <span class="text">
-                      View visuals
-                    </span>
-                  </button>
-                </div>
-                <div class="conditions-display">
-                  <ul>
-                    <li class="conditions-display-item">
-                      <h2 class="conditions-display-item__heading">Temperature</h2>
-                      <div class="icon">
-                        <?php echo file_get_contents("img/temperature-icon.svg"); ?>
-                      </div>
-                      <p class="conditions-display-item__value" data-ref="temperature">
-                        <span class="conditions-display-item__unit">C&deg;</span>
-                      </p>
-                    </li>
-                    <li class="conditions-display-item">
-                      <h2 class="conditions-display-item__heading">Cloud cover</h2>
-                      <div class="icon">
-                        <?php echo file_get_contents("img/cloud-cover-icon.svg"); ?>
-                      </div>
-                      <p class="conditions-display-item__value" data-ref="cloudCover">
-                        <span class="conditions-display-item__unit">&percnt;</span>
-                      </p>
-                    </li>
-                    <li class="conditions-display-item">
-                      <h2 class="conditions-display-item__heading">Air pressure</h2>
-                      <div class="icon">
-                        <?php echo file_get_contents("img/pressure-icon.svg"); ?>
-                      </div>
-                      <p class="conditions-display-item__value" data-ref="airPressure">
-                        <span class="conditions-display-item__unit">Mbs</span>
-                      </p>
-                    </li>
-                  </ul>
+                  <form id="form-coords" style="display: none">
+                    <h2>Enter your coordinates</h2>
+                    <label for="lat">Lattiude</label>
+                    <input type="text" id="lat">
+                    <label for="long">Longitude</label>
+                    <input type="text" id="long">
+                    <button id="form-coords-btn">Submit</button>
+                  </form>
+                  <div class="controls">
+                    <button id="full-screen">
+                      <span class="icon">
+                        <?php echo file_get_contents("img/full-screen.svg"); ?>
+                      </span>
+                      <span class="text">
+                        View visuals
+                      </span>
+                    </button>
+                  </div>
+                  <div class="conditions-display">
+                    <ul>
+                      <li class="conditions-display-item">
+                        <h2 class="conditions-display-item__heading">Temperature</h2>
+                        <div class="icon">
+                          <?php echo file_get_contents("img/temperature-icon.svg"); ?>
+                        </div>
+                        <p class="conditions-display-item__value" data-ref="temperature">
+                          <span class="conditions-display-item__unit">C&deg;</span>
+                        </p>
+                      </li>
+                      <li class="conditions-display-item">
+                        <h2 class="conditions-display-item__heading">Cloud cover</h2>
+                        <div class="icon">
+                          <?php echo file_get_contents("img/cloud-cover-icon.svg"); ?>
+                        </div>
+                        <p class="conditions-display-item__value" data-ref="cloudCover">
+                          <span class="conditions-display-item__unit">&percnt;</span>
+                        </p>
+                      </li>
+                      <li class="conditions-display-item">
+                        <h2 class="conditions-display-item__heading">Air pressure</h2>
+                        <div class="icon">
+                          <?php echo file_get_contents("img/pressure-icon.svg"); ?>
+                        </div>
+                        <p class="conditions-display-item__value" data-ref="airPressure">
+                          <span class="conditions-display-item__unit">Mbs</span>
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
               <!-- end body -->

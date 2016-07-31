@@ -13,7 +13,6 @@ var P5 = require('../libs/p5');
 require('../libs/p5.sound');
 var postal = require('postal');
 var channel = postal.channel();
-var updateStatus = require('./update-status');
 
 module.exports = function() {
 	//Els
@@ -230,14 +229,6 @@ module.exports = function() {
 				createShapeSet(hSquares, vSquares);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
 				console.log('locationData', locationData);
-				//Update view with place name
-				if (restoredData) {
-						messageBlock.innerHTML = 'You appear to be offline. Using last location: ' + locationData.name;
-				} else if (staticData) {
-						messageBlock.innerHTML = 'You appear to be offline. Using default location: ' + locationData.name;
-				} else {
-					messageBlock.innerHTML = locationData.name;
-				}
 				//handle sounds
 				configureSounds(locationData);
 			};
