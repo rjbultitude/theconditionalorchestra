@@ -13,6 +13,7 @@ var P5 = require('../libs/p5');
 require('../libs/p5.sound');
 var postal = require('postal');
 var channel = postal.channel();
+var updateStatus = require('./update-status');
 
 module.exports = function() {
 	//Els
@@ -256,15 +257,12 @@ module.exports = function() {
 	}
 
 	channel.subscribe('userUpdate', function(data) {
-		messageBlock.innerHTML = 'Success';
 		init(data, false, false);
 	});
 	channel.subscribe('restoreUserData', function(data) {
-		messageBlock.innerHTML = 'Success';
 		init(data, true, false);
 	});
 	channel.subscribe('staticData', function(data) {
-		messageBlock.innerHTML = 'Success';
 		init(data, false, true);
 	});
 

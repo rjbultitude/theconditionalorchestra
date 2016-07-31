@@ -1,4 +1,4 @@
-<div class="icon" id="location">
+<div class="icon" id="location" data-ref="status-icon">
   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
   	 width="76.9px" height="83.1px" viewBox="0 0 76.9 83.1" enable-background="new 0 0 76.9 83.1" xml:space="preserve">
   <g>
@@ -10,7 +10,7 @@
   </g>
   </svg>
 </div>
-<div class="icon" id="weather">
+<div class="icon" id="weather" data-ref="status-icon">
   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
   	 width="101px" height="67.2px" viewBox="0 0 101 67.2" enable-background="new 0 0 101 67.2" xml:space="preserve">
   <g id="_x30_3">
@@ -31,7 +31,7 @@
   </g>
   </svg>
 </div>
-<div class="icon" id="playing">
+<div class="icon" id="playing" data-ref="status-icon">
   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
   	 width="81.7px" height="72.1px" viewBox="0 0 81.7 72.1" enable-background="new 0 0 81.7 72.1" xml:space="preserve">
   <g>
@@ -51,4 +51,16 @@
   		c-0.6-0.9-0.4-2.2,0.4-2.9c0.7-0.8,2-1.1,2.9-0.5c1.4,0.9,2.8,1.9,4,3c2.9,2.9,4.7,6.3,5.2,10.4C60.8,34.5,60.8,35.1,60.8,35.7z"/>
   </g>
   </svg>
+</div>
+<div class="icon" id="error" data-ref="status-icon">
+</div>
+<div class="icon" id="geo" data-ref="status-icon">
+</div>
+<div class="icon" id="connection" data-ref="status-icon">
+</div>
+<div class="icon" id="number" data-ref="status-icon">
+</div>
+<div class="icon" id="address" data-ref="status-icon">
+</div>
+<div class="icon" id="success" data-ref="status-icon">
 </div>

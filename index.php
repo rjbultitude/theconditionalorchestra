@@ -33,7 +33,7 @@
                 <div id="main-section" class="main-section">
                   <div id="core-content">
                     <div class="status-bar">
-                      <div class="icon">
+                      <div class="icons-block">
                         <?php include('includes/status-icons.php'); ?>
                       </div>
                       <p id="message-block"></p>

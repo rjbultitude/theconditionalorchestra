@@ -8,5 +8,4 @@ module.exports = function classList(el) {
       add:    function(classString) { classlist.add   (classString); return this; },
       remove: function(classString) { classlist.remove(classString); return this; }
   };
-
-}
+};
