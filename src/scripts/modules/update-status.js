@@ -3,7 +3,7 @@
 var statusMsgs = require('./messages');
 
 module.exports = function updateStatus(status, locationAddress) {
-  var icons = document.querySelectorAll('[data-ref="status-icon"]');
+  var icons = document.querySelectorAll('[data-ref=status-icon]');
   var messageBlock = document.getElementById('message-block');
 
   // console.log('status', status);

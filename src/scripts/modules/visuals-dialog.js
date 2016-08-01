@@ -1,5 +1,5 @@
 'use strict';
-const A11yDialog = require('a11y-dialog');
+var A11yDialog = require('a11y-dialog');
 
 module.exports = function() {
   // Get the dialog element (with the accessor method you want)

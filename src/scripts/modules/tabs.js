@@ -27,7 +27,7 @@
         var len;
 
         this.target = element;
-        this.tabs = element.querySelectorAll('[data-behaviour="tab"]');
+        this.tabs = element.querySelectorAll('[data-behaviour=tab]');
         this.panels = [];
         this.panelCloseButtons = [];
 
@@ -35,7 +35,7 @@
             var panel = document.getElementById(this.tabs[i].hash.replace('#', ''));
             if (panel !== null) {
               this.panels.push(panel);
-              this.panelCloseButtons.push(panel.querySelector('[data-ref="tab-close"]'));
+              this.panelCloseButtons.push(panel.querySelector('[data-ref=tab-close]'));
             } else {
               console.log('Cannot find element. Check the links and panels match');
               return;

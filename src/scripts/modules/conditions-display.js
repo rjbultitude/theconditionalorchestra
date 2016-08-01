@@ -4,9 +4,9 @@ var postal = require('postal');
 var channel = postal.channel();
 
 module.exports = function() {
-	var tempEl = document.querySelector('[data-ref="temperature"]').querySelector('[data-ref="value"]');
-	var cCoverEl = document.querySelector('[data-ref="cloudCover"]').querySelector('[data-ref="value"]');
-	var aPressureEl = document.querySelector('[data-ref="airPressure"]').querySelector('[data-ref="value"]');
+	var tempEl = document.querySelector('[data-ref=temperature]').querySelector('[data-ref=value]');
+	var cCoverEl = document.querySelector('[data-ref=cloudCover]').querySelector('[data-ref=value]');
+	var aPressureEl = document.querySelector('[data-ref=airPressure]').querySelector('[data-ref=value]');
 
 	function ConditionValues(locationData) {
 		console.log('locationData.temperature.value farenheight', locationData.temperature.value);
