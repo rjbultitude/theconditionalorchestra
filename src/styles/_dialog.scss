@@ -1,0 +1,32 @@
+.dialog[aria-hidden="true"] {
+  display: none;
+}
+
+.dialog {
+  .dialog-overlay {
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.78);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+
+  .dialog-content {
+    position: fixed;
+    width: 100%;
+    max-width: $max-width;
+    margin: 0 auto;
+    height: auto;
+    top: 20%;
+    left: 0;
+    right: 0;
+    z-index: 3;
+  }
+
+  .button-close {
+    position: fixed;
+    z-index: 4;
+  }
+}

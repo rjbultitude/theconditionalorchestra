@@ -33,6 +33,8 @@ module.exports = function() {
 	var semitone = 0.0833;
 	//DOM
 	var cContainerName = 'canvas-container';
+  //dialog
+  var dialogIsOpen = false;
 
 	//Is this size or smaller
 	function matchMediaMaxWidth(maxWidthVal) {
@@ -232,12 +234,13 @@ module.exports = function() {
 			};
 
 			sketch.draw = function draw() {
-				//mapDrawGrid();
-				sketch.background(0, 0, 0);
-				for (var i = 0; i < shapeSet.length; i++) {
-					shapeSet[i].update();
-					shapeSet[i].paint();
-				}
+				sketch.background(0, 0, 0, 0);
+        if (dialogIsOpen) {
+          for (var i = 0; i < shapeSet.length; i++) {
+            shapeSet[i].update();
+            shapeSet[i].paint();
+          }
+        }
 			};
 
 		}, 'canvas-container');
@@ -248,12 +251,14 @@ module.exports = function() {
 	channel.subscribe('userUpdate', function(data) {
 		init(data, false, false);
 	});
-	channel.subscribe('restoreUserData', function(data) {
-		init(data, true, false);
-	});
-	channel.subscribe('staticData', function(data) {
-		init(data, false, true);
-	});
+
+  channel.subscribe('dialogOpen', function() {
+    dialogIsOpen = true;
+  });
+
+  channel.subscribe('dialogClosed', function() {
+    dialogIsOpen = false;
+  });
 
 	return true;
 };

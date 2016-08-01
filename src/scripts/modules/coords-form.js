@@ -18,8 +18,8 @@ module.exports = function() {
 	var coordsSubmitBtn = document.getElementById('form-coords-btn');
 	var useLocBtn = document.getElementById('use-location-btn');
 	var linkLocationSelect = document.getElementById('link-location-select');
-	var formEl = document.querySelector('[data-ref="form-coords"');
-	var formButtonCloseEl = formEl.querySelector('.button-close');
+  var formEl = document.querySelector('[data-ref="form-coords"]');
+  var formButtonCloseEl = formEl.querySelector('.button-close');
 	var controlsEl = document.querySelector('[data-ref="controls"]');
 
 	//start app
