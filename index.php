@@ -13,7 +13,9 @@
         <link rel="stylesheet" href="dist/styles/global.css">
     </head>
     <body>
-        <main aria-role="main">
+        <!-- begin main -->
+        <main id="main" aria-role="main" aria-label="Content">
+          <!-- begin article -->
           <article>
               <!-- begin header -->
               <header class="article-header">
@@ -57,19 +59,10 @@
                         </div>
                         <p id="message-block"></p>
                       </div>
-                      <div id="canvas-container" class="canvas-container"></div>
-                      <button class="button-close" id="close-full-screen">
-                        <span class="text">
-                          Close
-                        </span>
-                        <span class="icon">
-                          <?php echo file_get_contents("img/close-icon.svg"); ?>
-                        </span>
-                      </button>
                     </div>
                   </section>
                   <div class="controls-section section" data-ref="controls">
-                    <button class="cta" id="full-screen">
+                    <button class="cta" type="button" data-a11y-dialog-show="visuals-dialog">
                       <span class="text">
                         Show visualiser
                       </span>
@@ -116,7 +109,10 @@
               </div>
               <!-- end body -->
           </article>
+          <!-- end article -->
         </main>
+        <!-- end main -->
+        <!-- begin footer -->
         <footer class="footer">
           <div class="wrapper">
             <div class="tab__panel" id="help" data-ref="tab-panel">
@@ -172,6 +168,24 @@
             </ul>
           </div>
         </footer>
+        <!-- end footer -->
+
+        <!-- Begin modal/dialog box -->
+        <section id="visuals-dialog" aria-hidden="true" class="dialog">
+          <div tabindex="-1" data-a11y-dialog-hide class="dialog-overlay"></div>
+          <div role="dialog" class="dialog-content">
+            <div id="canvas-container" class="canvas-container" role="document"></div>
+            <button class="button-close" id="close-full-screen" type="button" data-a11y-dialog-hide aria-label="Close this dialog window">
+              <span class="text">
+                Close
+              </span>
+              <span class="icon">
+                <?php echo file_get_contents("img/close-icon.svg"); ?>
+              </span>
+            </button>
+          </div>
+        </section>
+        <!-- end modal/dialog box -->
         <script src="dist/scripts/app.js"></script>
     </body>
 </html>
