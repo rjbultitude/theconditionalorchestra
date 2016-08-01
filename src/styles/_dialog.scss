@@ -5,7 +5,7 @@
 .dialog {
   .dialog-overlay {
     z-index: 2;
-    background-color: rgba(0, 0, 0, 0.66);
+    background-color: rgba(0, 0, 0, 0.78);
     position: fixed;
     top: 0;
     left: 0;
@@ -26,6 +26,7 @@
   }
 
   .close-button {
+    position: fixed;
     z-index: 4;
   }
 }

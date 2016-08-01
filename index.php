@@ -14,7 +14,7 @@
     </head>
     <body>
         <!-- begin main -->
-        <main id="main" aria-role="main" aria-label="Content">
+        <main id="main" aria-label="Content">
           <!-- begin article -->
           <article>
               <!-- begin header -->

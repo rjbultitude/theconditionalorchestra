@@ -33,7 +33,7 @@ module.exports = function() {
 	//DOM
 	var cContainerName = 'canvas-container';
   //dialog
-  var dialogIsOpen = false
+  var dialogIsOpen = false;
 
 	//Is this size or smaller
 	function matchMediaMaxWidth(maxWidthVal) {
@@ -251,11 +251,11 @@ module.exports = function() {
 		init(data, false, false);
 	});
 
-  channel.subscribe('dialogOpen', function(el) {
+  channel.subscribe('dialogOpen', function() {
     dialogIsOpen = true;
   });
 
-  channel.subscribe('dialogClosed', function(el) {
+  channel.subscribe('dialogClosed', function() {
     dialogIsOpen = false;
   });
 
