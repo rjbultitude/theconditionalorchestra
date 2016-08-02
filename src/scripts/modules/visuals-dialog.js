@@ -8,7 +8,7 @@ module.exports = function() {
   var dialogEl = document.getElementById('visuals-dialog');
 
   // Instanciate a new A11yDialog module
-  var dialog = new A11yDialog(dialogEl);
+  new A11yDialog(dialogEl);
 
   dialogEl.addEventListener('dialog:show', function (e) {
     channel.publish('dialogOpen', e.target);

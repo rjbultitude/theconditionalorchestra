@@ -9,9 +9,10 @@
   <?php echo file_get_contents("img/weather-icon.svg"); ?>
 </div>
 <div class="icon" id="playing" data-ref="status-icon">
-  <?php echo file_get_contents("img/weather-icon.svg"); ?>
+  <?php echo file_get_contents("img/playing-icon.svg"); ?>
 </div>
-<div class="icon" id="error" data-ref="status-icon">
+<div class="icon" id="noAudio" data-ref="status-icon">
+  <?php echo file_get_contents("img/error-icon.svg"); ?>
 </div>
 <div class="icon" id="geo" data-ref="status-icon">
 </div>

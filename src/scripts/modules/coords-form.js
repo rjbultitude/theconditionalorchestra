@@ -64,9 +64,9 @@ module.exports = function() {
 				//in case user should be offline
 				var locationDataString = JSON.stringify(locationData);
 				localStorage.setItem('locationData', locationDataString);
+        console.log('local storage set');
 				//Post the data to rest of app
 				channel.publish('userUpdate', locationData);
-				updateStatus('playing', locationData.name);
 				controlsEl.style.display = 'block';
 			} else {
 				console.log('There seems to be more than one location: ', conditions.length);

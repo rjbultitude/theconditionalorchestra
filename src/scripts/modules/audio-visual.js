@@ -10,10 +10,19 @@
 'use strict';
 
 var P5 = require('../libs/p5');
-require('../libs/p5.sound');
+//handle AudioContext
+var audioSupported = true;
+if (window.AudioContext) {
+  require('../libs/p5.sound');
+}
+else {
+  audioSupported = false;
+  console.log('No web Audio API');
+}
 var postal = require('postal');
 var channel = postal.channel();
 var intervals = require('./intervals');
+var updateStatus = require('./update-status');
 
 module.exports = function() {
 	//animation speed
@@ -43,9 +52,11 @@ module.exports = function() {
 
 	//main app init
 	function init(locationData) {
-
 		//Create filter
-		var soundFilter = new P5.LowPass();
+    var soundFilter = null;
+    if (audioSupported) {
+      soundFilter = new P5.LowPass();
+    }
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
 
@@ -59,7 +70,7 @@ module.exports = function() {
 
 			function playSounds(locationData, notesArray) {
 				//Set filter
-				console.log('locationData.soundParams.freq.value', locationData.soundParams.freq.value);
+				console.log('filter frequency: ', locationData.soundParams.freq.value);
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
 
@@ -75,6 +86,7 @@ module.exports = function() {
 					weatherSounds[i].organ.loop();
 					weatherSounds[i].organDist.loop();
 				}
+        updateStatus('playing');
 			}
 
 			/*
@@ -198,12 +210,14 @@ module.exports = function() {
 			sketch.preload = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
-				for (var i = 0; i < 4; i++) {
-					weatherSounds[i] = new WeatherSound(
-						sketch.loadSound('/audio/organ-C2.mp3'),
-						sketch.loadSound('/audio/organ-C2d.mp3')
-					);
-				}
+        if (audioSupported) {
+          for (var i = 0; i < 4; i++) {
+            weatherSounds[i] = new WeatherSound(
+              sketch.loadSound('/audio/organ-C2.mp3'),
+              sketch.loadSound('/audio/organ-C2d.mp3')
+            );
+          }
+        }
 			};
 
 			sketch.setup = function setup() {
@@ -220,17 +234,21 @@ module.exports = function() {
 				cContainer.style.paddingBottom = cPadding;
 				sketch.frameRate(25);
 				sketch.background(0, 0, 0);
-				//set runtime constants
+        //create shapes in grid
 				var hSquares = Math.round(sketch.width/sqSize);
 				var vSquares = Math.round(sketch.height/sqSize);
+        createShapeSet(hSquares, vSquares);
+        //set runtime constants
 				animAmount = Math.round(locationData.speed.value);
 				noiseInc = sketch.map(animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
-				//create shapes in grid
-				createShapeSet(hSquares, vSquares);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
 				console.log('locationData', locationData);
 				//handle sounds
-				configureSounds(locationData);
+        if (audioSupported) {
+          configureSounds(locationData);
+        } else {
+          updateStatus('noAudio');
+        }
 			};
 
 			sketch.draw = function draw() {
@@ -249,7 +267,7 @@ module.exports = function() {
 	}
 
 	channel.subscribe('userUpdate', function(data) {
-		init(data, false, false);
+		init(data);
 	});
 
   channel.subscribe('dialogOpen', function() {

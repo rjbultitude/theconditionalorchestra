@@ -12,5 +12,6 @@ module.exports = {
     success: 'it worked :]',
     address: 'could not find that place...perhaps it\'s just the ocean',
     defaultData: 'You appear to be offline. Using default location: ',
-    lastKnown: 'You appear to be offline. Using last location: '
+    lastKnown: 'You appear to be offline. Using last location: ',
+    noAudio: 'Your browser doesn\'t support web audio. Try using Chrome or Firefox'
 };
