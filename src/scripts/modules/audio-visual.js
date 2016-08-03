@@ -50,13 +50,25 @@ module.exports = function() {
     return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
   }
 
+  function killCurrentSounds(isRunning) {
+    if (isRunning) {
+      for (var i = 0; i < weatherSounds.length; i++) {
+        weatherSounds[i].organ.stop();
+        weatherSounds[i].organDist.stop();
+      }
+      weatherSounds = [];
+    }
+  }
+
 	//main app init
-	function init(locationData) {
+	function init(locationData, isRunning) {
 		//Create filter
     var soundFilter = null;
     if (audioSupported) {
       soundFilter = new P5.LowPass();
     }
+    // Kill playing sounds
+    killCurrentSounds(isRunning);
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
 
@@ -74,6 +86,9 @@ module.exports = function() {
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
 
+        console.log('weatherSounds.length', weatherSounds.length);
+        console.log('weatherSounds', weatherSounds);
+
 				for (var i = 0; i < weatherSounds.length; i++) {
 					weatherSounds[i].organ.disconnect();
 					weatherSounds[i].organDist.disconnect();
@@ -86,7 +101,7 @@ module.exports = function() {
 					weatherSounds[i].organ.loop();
 					weatherSounds[i].organDist.loop();
 				}
-        updateStatus('playing');
+        updateStatus('playing', locationData.name);
 			}
 
 			/*
@@ -267,7 +282,14 @@ module.exports = function() {
 	}
 
 	channel.subscribe('userUpdate', function(data) {
-		init(data);
+    // If app is already running
+    if (weatherSounds.length > 0) {
+      init(data, true);
+    }
+    // If running for the first time
+    else if (weatherSounds.length === 0) {
+      init(data, false);
+    }
 	});
 
   channel.subscribe('dialogOpen', function() {
