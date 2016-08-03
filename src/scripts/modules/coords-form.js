@@ -20,6 +20,7 @@ module.exports = function() {
 	var linkLocationSelect = document.getElementById('link-location-select');
   var formEl = document.querySelector('[data-ref="form-coords"]');
   var formButtonCloseEl = formEl.querySelector('.button-close');
+  var formInputEl = formEl.querySelector('[data-ref="place-field"]');
 	var controlsEl = document.querySelector('[data-ref="controls"]');
 
 	//start app
@@ -170,6 +171,7 @@ module.exports = function() {
 
 	function showForm() {
 		classListChain(formEl).remove('inactive').add('active');
+    formInputEl.focus();
 	}
 
 	function hideForm() {

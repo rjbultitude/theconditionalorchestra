@@ -53,8 +53,8 @@ module.exports = function() {
   function killCurrentSounds(isRunning) {
     if (isRunning) {
       for (var i = 0; i < weatherSounds.length; i++) {
-        weatherSounds[i].organ.stop();
-        weatherSounds[i].organDist.stop();
+        weatherSounds[i].organ.fade(0,1);
+        weatherSounds[i].organDist.fade(0,1);
       }
       weatherSounds = [];
     }
