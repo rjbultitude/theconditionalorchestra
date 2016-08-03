@@ -3,7 +3,9 @@
     padding: 22px;
     font-size: 20px;
 
-    &:hover {
+    &:hover,
+    &:focus,
+    &:active {
       cursor: pointer;
       background-color: $color-purple-dark;
     }

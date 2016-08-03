@@ -41,6 +41,12 @@ textarea {
   a {
     display: inline-block;
     padding: $padding/4 0 0;
+
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: none;
+    }
   }
 }
 

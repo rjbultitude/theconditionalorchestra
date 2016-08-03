@@ -118,7 +118,7 @@
             <div class="tab__panel" id="help" data-ref="tab-panel">
               <h2 class="tab__heading">Help</h2>
               <p>If it can't find your location and you've not visited before nothing will play until you select "choose location"</p>
-              <button class="tab__close" data-ref="tab-close">
+              <button class="button-close" data-ref="tab-close">
                 <span class="text">
                   Close
                 </span>
@@ -133,8 +133,8 @@
               <p>The JavaScript library used to access the API can be found on <a href="https://github.com/iantearle/forecast.io-javascript-api">GitHub here</a>.</p>
               <p><a href="http://p5js.org/">P5.js</a> is used to generate the graphical interface and audio.</p>
               <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html">Google maps</a> is used to reverse Geocode the location information</p>
-              <p>Musical Weathervane is written and maintained by <a href="https://github.com/rjbultitude">R.Bultitude</a></p>
-              <button class="tab__close" data-ref="tab-close">
+              <p>The Conditional Orchestra is written and maintained by <a href="https://github.com/rjbultitude">R.Bultitude</a></p>
+              <button class="button-close" data-ref="tab-close">
                 <span class="text">
                   Close
                 </span>
@@ -145,7 +145,7 @@
             </div>
             <div class="tab__panel" id="source" data-ref="tab-panel">
               <h2 class="tab__heading">Source</h2>
-              <p>This is an open source project. Download, fork or view the code here: </p>
+              <p>This is an open source project. Download, fork or view the code here: <a href="https://github.com/rjbultitude/theconditionalorchestra">github.com/rjbultitude/theconditionalorchestra</a></p>
               <button class="button-close" data-ref="tab-close">
                 <span class="text">
                   Close

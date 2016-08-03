@@ -33,6 +33,12 @@
 
     a {
       color: white;
+
+      &:hover,
+      &:focus,
+      &:active {
+        text-decoration: none;
+      }
     }
 
     &:last-of-type {
@@ -57,7 +63,7 @@
   }
 
   p {
-    margin: 0.1rem 0;
+    margin: 0.1rem 0 16px;
     font-size: 15px;
   }
 
