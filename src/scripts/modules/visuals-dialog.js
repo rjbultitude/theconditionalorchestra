@@ -1,5 +1,5 @@
 'use strict';
-var A11yDialog = require('a11y-dialog');
+var A11yDialog = require('../libs/a11y-dialog');
 var postal = require('postal');
 var channel = postal.channel();
 

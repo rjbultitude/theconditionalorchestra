@@ -20,7 +20,17 @@
 </div>
 <div class="icon" id="number" data-ref="status-icon">
 </div>
-<div class="icon" id="address" data-ref="status-icon">
+<div class="icon" id="error" data-ref="status-icon">
+  <?php echo file_get_contents("img/error-icon.svg"); ?>
+</div>
+<div class="icon" id="errorData" data-ref="status-icon">
+  <?php echo file_get_contents("img/error-icon.svg"); ?>
+</div>
+<div class="icon" id="noAddress" data-ref="status-icon">
+  <?php echo file_get_contents("img/error-icon.svg"); ?>
+</div>
+<div class="icon" id="badPlaceName" data-ref="status-icon">
+  <?php echo file_get_contents("img/error-icon.svg"); ?>
 </div>
 <div class="icon" id="success" data-ref="status-icon">
 </div>

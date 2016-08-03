@@ -74,7 +74,20 @@ module.exports = function() {
 		});
 	}
 
-	function getLatLong(placeString) {
+  function useStaticData() {
+    var fetchStaticData = makeRequest('GET', 'data/static-data.json');
+    fetchStaticData.then(function success(staticData) {
+      staticData = JSON.parse(staticData);
+      updateStatus('defaultData', staticData.name);
+      channel.publish('staticData', staticData);
+    },
+    function failure() {
+      updateStatus('errorData');
+      console.log('failed to load static data');
+    });
+  }
+
+  function getLatLong(placeString) {
 		var gpKey = makeRequest('GET', '/gm-key.php');
 		gpKey.then(function(key) {
 			GoogleMapsLoader.KEY = key;
@@ -89,7 +102,9 @@ module.exports = function() {
 							var address = results[0].formatted_address;
 							updateApp(lat, long, address);
 	        } else {
-	            console.log('Geocode was not successful for the following reason: ' + status );
+              updateStatus('badPlaceName');
+	            console.log('Geocode failed due to: ' + status );
+              useStaticData();
 	        }
 		    });
 			});
@@ -135,9 +150,9 @@ module.exports = function() {
 							}
 						}
 						else {
-							console.log('Geocoder failed due to: ' + status);
+							console.log('Reverse Geocoder failed due to: ' + status);
 							locName = 'somewhere in the ocean?';
-							updateStatus('address');
+							updateStatus('noAddress');
 						}
 						updateStatus('location');
 						useLocBtn.disabled = false;
@@ -189,15 +204,7 @@ module.exports = function() {
 			//Else use static location data
 			else {
 				console.log('no data in localStorage');
-				var fetchStaticData = makeRequest('GET', 'data/static-data.json');
-				fetchStaticData.then(function success(staticData) {
-					staticData = JSON.parse(staticData);
-					updateStatus('defaultData', staticData.name);
-					channel.publish('staticData', staticData);
-				},
-				function failure() {
-					console.log('failed to load static data');
-				});
+				useStaticData();
 			}
 		}
 
