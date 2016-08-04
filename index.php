@@ -72,7 +72,7 @@
                     </button>
                   </div>
                   <div class="conditions-display section">
-                    <ul>
+                    <ul class="conditions-display__list">
                       <li class="conditions-display__item">
                         <h2 class="conditions-display__heading">Temperature</h2>
                         <div class="conditions-display__icon">
@@ -117,7 +117,8 @@
           <div class="wrapper">
             <div class="tab__panel" id="help" data-ref="tab-panel">
               <h2 class="tab__heading">Help</h2>
-              <p>If it can't find your location and you've not visited before nothing will play until you select "choose location"</p>
+              <p>If it can't find your location ensure you've clicked 'allow' when the browser asks to use your location".</p>
+              <p>If it still doesn't work try using the "choose another location form where youcan enter any location you like.</p>
               <button class="button-close" data-ref="tab-close">
                 <span class="text">
                   Close
