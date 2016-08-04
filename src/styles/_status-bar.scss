@@ -17,5 +17,6 @@
   //Show first icon until app starts
   #start {
     display: block;
+    animation: rotating 7s linear infinite;
   }
 }
