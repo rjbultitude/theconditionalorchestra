@@ -20,7 +20,7 @@ gulp.task('styles', function() {
             .pipe(autoprefixer(config.autoprefixer))
                 .on('error', errorHandler)
         .pipe(config.production ? util.noop() : sourcemaps.write())
-        .pipe(config.production ? minifyCss() : util.noop())
+        .pipe(config.production ? minifyCss({processImport: false}) : util.noop())
         .pipe(gulp.dest(path.join(config.styles.dist)));
 
 });
