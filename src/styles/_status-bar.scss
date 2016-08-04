@@ -10,6 +10,11 @@
     display: none;
   }
 
+  p {
+    padding: 0 $padding/4;
+  }
+
+  //Show first icon until app starts
   #start {
     display: block;
   }

@@ -14,11 +14,19 @@
   margin-right: -8px;
   min-height: 200px;
 
+  & + .conditions-display__item {
+    @media all and (max-width: 500px) {
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 1px solid $color-purple-dark;
+    }
+  }
+
   @media all and (max-width: 500px) {
-    width: 100%;
+    width: 76%;
     min-height: 0;
-    margin-right: 0;
-    margin-bottom: 12px;
+    margin-right: 12%;
+    margin-left: 12%;
   }
 
   .conditions-display__heading {
