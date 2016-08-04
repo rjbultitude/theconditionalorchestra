@@ -12,7 +12,7 @@
 var P5 = require('../libs/p5');
 //handle AudioContext
 var audioSupported = true;
-if (window.AudioContext) {
+if (window.AudioContext || window.webkitAudioContext) {
   require('../libs/p5.sound');
 }
 else {

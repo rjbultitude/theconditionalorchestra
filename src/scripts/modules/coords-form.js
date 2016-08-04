@@ -180,7 +180,7 @@ module.exports = function() {
 
 	function getGeo() {
 		if (!navigator.geolocation) {
-			updateStatus('geo');
+			updateStatus('noGeo');
 			showForm();
 			return;
 		}
@@ -191,7 +191,7 @@ module.exports = function() {
 		}
 
 		function failure(failure) {
-			updateStatus('connection');
+			updateStatus('badConnection');
 			useLocBtn.disabled = false;
 			//Ensure we're on https or localhost
 			if(failure.message.indexOf('Only secure origins are allowed') === 0) {
