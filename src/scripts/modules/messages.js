@@ -1,3 +1,8 @@
+/*
+  Any changes? Remember to update
+  the status icons too
+*/
+
 'use strict';
 
 module.exports = {
@@ -6,8 +11,8 @@ module.exports = {
     playing: 'You are listening to the weather of ',
     error: 'Error getting your location',
     errorData: 'Error getting weather data, sorry',
-    geo: 'Geolocation is not supported by your browser Try searching',
-    connection: 'Unable to retrieve your location perhaps you have no connection',
+    noGeo: 'Geolocation is not supported by your browser Try searching',
+    badConnection: 'Unable to retrieve your location perhaps you have no connection',
     number: 'please enter a number',
     string: 'please enter text',
     success: 'it worked :]',
