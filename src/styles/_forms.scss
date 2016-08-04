@@ -98,8 +98,8 @@ textarea {
   &.inactive {
     position: absolute;;
     z-index: 0;
-    top:-400px;
-    left:0;
+    top: 0;
+    left: -999em;
     transition: left;
   }
 
