@@ -21,4 +21,10 @@ module.exports = function() {
 		cCoverEl.innerHTML = conditionValues.cloudCover.toFixed() + '';
 		aPressureEl.innerHTML = conditionValues.airPressure.toFixed() + '';
 	});
+
+  channel.subscribe('stop', function(locationData) {
+		tempEl.innerHTML = '';
+		cCoverEl.innerHTML = '';
+		aPressureEl.innerHTML = '';
+	});
 };

@@ -83,12 +83,12 @@ module.exports = function() {
 
 			function playSounds(locationData, notesArray) {
 				//Set filter
-				console.log('filter frequency: ', locationData.soundParams.freq.value);
+				//console.log('filter frequency: ', locationData.soundParams.freq.value);
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
 
-        console.log('weatherSounds.length', weatherSounds.length);
-        console.log('weatherSounds', weatherSounds);
+        //console.log('weatherSounds.length', weatherSounds.length);
+        //console.log('weatherSounds', weatherSounds);
 
 				for (var i = 0; i < weatherSounds.length; i++) {
 					weatherSounds[i].organ.disconnect();
@@ -259,7 +259,7 @@ module.exports = function() {
 				animAmount = Math.round(locationData.speed.value);
 				noiseInc = sketch.map(animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
-				console.log('locationData', locationData);
+				//console.log('locationData', locationData);
 				//handle sounds
         if (audioSupported) {
           configureSounds(locationData);

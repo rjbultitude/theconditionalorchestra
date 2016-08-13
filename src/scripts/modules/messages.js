@@ -6,7 +6,7 @@
 'use strict';
 
 module.exports = {
-    start: '',
+    start: 'Ready...',
     weather: 'Fetching weather data',
     location: 'Looking up name',
     playing: 'You are listening to the weather of ',

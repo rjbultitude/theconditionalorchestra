@@ -70,6 +70,7 @@ module.exports = function() {
 			} else {
 				console.log('There seems to be more than one location: ', conditions.length);
 			}
+      useLocBtn.disabled = false;
 		});
 	}
 
@@ -93,9 +94,8 @@ module.exports = function() {
 			GoogleMapsLoader.load(function(google) {
 				var geocoder = new google.maps.Geocoder();
 
-				geocoder.geocode( { 'address' : placeString }, function( results, status ) {
+				geocoder.geocode( { 'address' : placeString }, function(results, status) {
 	        if( status === google.maps.GeocoderStatus.OK ) {
-							console.log('results', results);
 	            var lat = results[0].geometry.location.lat();
 	            var long = results[0].geometry.location.lng();
 							var address = results[0].formatted_address;
@@ -177,7 +177,6 @@ module.exports = function() {
 
 	function getGeo() {
     updateStatus('location');
-    useLocBtn.disabled = true;
 
 		if (!navigator.geolocation) {
 			updateStatus('noGeo');
@@ -192,7 +191,6 @@ module.exports = function() {
 
 		function failure(failure) {
 			updateStatus('badConnection');
-			useLocBtn.disabled = false;
 			//Ensure we're on https or localhost
 			if(failure.message.indexOf('Only secure origins are allowed') === 0) {
       	console.log('Only secure origins are allowed');
@@ -213,33 +211,52 @@ module.exports = function() {
 		navigator.geolocation.getCurrentPosition(success, failure);
 	}
 
-  function startApp() {
-		//For tests:
+  function getTestLocation(index) {
 		var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
 		fetchStaticPlaces.then(function (staticPlaces) {
 			var staticPlacesJSON = JSON.parse(staticPlaces);
-			getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
+			getPlaces(staticPlacesJSON[index].lat, staticPlacesJSON[index].long);
 			console.log('Using static data');
 		}, function (status) {
 			console.log(status.statusText);
 		});
-
-		//For live:
-		//getGeo();
   }
 
-  function startStopApp() {
-    if (isPlaying) {
-      channel.publish('stop');
-      updateStatus('start');
-      isPlaying = false;
-      useLocBtn.innerHTML = 'Play my weather';
-      controlsEl.style.display = 'none';
-    } else {
-      startApp();
-      useLocBtn.disabled = false;
-      useLocBtn.innerHTML = 'Stop orchestra';
+  function useCustomLocation() {
+    var placeInput = document.getElementById('place').value;
+    if (typeof placeInput !== 'string') {
+      updateStatus('string');
+    }
+    else {
+      startApp('customLocation', placeInput);
+    }
+  }
 
+  function setStartState() {
+    channel.publish('stop');
+    isPlaying = false;
+    updateStatus('start');
+    useLocBtn.innerHTML = 'Play my weather';
+    controlsEl.style.display = 'none';
+  }
+
+  function setStopState() {
+    isPlaying = true;
+    useLocBtn.innerHTML = 'Stop orchestra';
+  }
+
+  function startApp(inputType, placeInput) {
+    if (inputType === 'userLocation') {
+      useLocBtn.disabled = true;
+      //Test
+      getTestLocation(0);
+      //Live
+      //getGeo();
+    } else if (inputType === 'customLocation') {
+      useLocBtn.disabled = true;
+      getLatLong(placeInput);
+    } else {
+      console.log('inputType error ', inputType);
     }
   }
 
@@ -254,20 +271,25 @@ module.exports = function() {
 		showForm();
 	}, false);
 
-	coordsSubmitBtn.addEventListener('click', function (e) {
-		e.preventDefault();
-		var placeInput = document.getElementById('place').value;
-		if (typeof placeInput !== 'string') {
-			updateStatus('string');
-		}
-		else {
-			getLatLong(placeInput);
-		}
-	});
+	coordsSubmitBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (isPlaying) {
+      setStartState();
+    } else {
+      useCustomLocation();
+    }
+  }, false);
 
-	useLocBtn.addEventListener('click', startStopApp, false);
+	useLocBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (isPlaying) {
+      setStartState();
+    } else {
+      startApp('userLocation', null);
+    }
+  }, false);
 
   channel.subscribe('play', function(){
-    isPlaying = true;
+    setStopState();
   });
 };
