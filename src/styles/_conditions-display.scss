@@ -3,7 +3,7 @@
 }
 
 .conditions-display__list {
-  @media all and (max-width: 500px) {
+  @media all and (max-width: $bp-mobile) {
     padding-bottom: 60px;
   }
 }
@@ -12,17 +12,17 @@
   display: inline-block;
   width: 33.3%;
   margin-right: -8px;
-  min-height: 200px;
+  //min-height: 200px;
 
   & + .conditions-display__item {
-    @media all and (max-width: 500px) {
+    @media all and (max-width: $bp-mobile) {
       margin-top: 8px;
       padding-top: 12px;
       border-top: 1px solid $color-purple-dark;
     }
   }
 
-  @media all and (max-width: 500px) {
+  @media all and (max-width: $bp-mobile) {
     width: 76%;
     min-height: 0;
     margin-right: 12%;
@@ -33,7 +33,7 @@
     color: $color-blue-pale;
     padding-bottom: $padding/4;
 
-    @media all and (max-width: 500px) {
+    @media all and (max-width: $bp-mobile) {
       padding-bottom: 2px;
     }
   }
@@ -47,7 +47,7 @@
     vertical-align: middle;
     display: inline-block;
 
-    @media all and (max-width: 500px) {
+    @media all and (max-width: $bp-mobile) {
       min-height: 0;
     }
 

@@ -44,3 +44,7 @@ body {
 .section {
   padding: $padding - 6 0 0;
 }
+
+.section:last-of-type {
+  padding-bottom: 60px;
+}

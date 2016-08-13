@@ -22,7 +22,7 @@ module.exports = function() {
 		aPressureEl.innerHTML = conditionValues.airPressure.toFixed() + '';
 	});
 
-  channel.subscribe('stop', function(locationData) {
+  channel.subscribe('stop', function() {
 		tempEl.innerHTML = '';
 		cCoverEl.innerHTML = '';
 		aPressureEl.innerHTML = '';

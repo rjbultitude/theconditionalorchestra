@@ -39,8 +39,8 @@
                       <h2 class="form-coords__legend">Enter a place</h2>
                       <label for="place">place</label>
                       <input type="text" id="place" data-ref="place-field">
-                      <button class="cta" id="form-coords-btn">Submit</button>
-                      <button class="button-close">
+                      <button class="cta" id="form-coords-btn" data-ref="submit">Submit</button>
+                      <button class="button-close" data-ref="close">
                         <span class="text">
                           Close
                         </span>
@@ -51,26 +51,21 @@
                     </form>
                   </div>
                   <!-- end forms -->
+
+                  <!-- Begin message & icon block -->
                   <section id="main-section" class="main-section section">
                     <div id="core-content">
                       <div class="status-bar">
                         <div class="icons-block">
                           <?php include('includes/status-icons.php'); ?>
                         </div>
-                        <p id="message-block"></p>
+                        <p id="message-block">Loading...</p>
                       </div>
                     </div>
                   </section>
-                  <div class="controls-section section" data-ref="controls">
-                    <button class="cta" type="button" data-a11y-dialog-show="visuals-dialog">
-                      <span class="text">
-                        Show visualiser
-                      </span>
-                      <span class="icon">
-                        <?php echo file_get_contents("img/full-screen.svg"); ?>
-                      </span>
-                    </button>
-                  </div>
+                  <!-- End message & icon block -->
+
+                  <!-- Begin conditions display -->
                   <div class="conditions-display section">
                     <ul class="conditions-display__list">
                       <li class="conditions-display__item">
@@ -105,6 +100,20 @@
                       </li>
                     </ul>
                   </div>
+                  <!-- End conditions display -->
+
+                  <!-- Begin controls -->
+                  <div class="controls-section section" data-ref="controls">
+                    <button class="cta" type="button" data-a11y-dialog-show="visuals-dialog">
+                      <span class="text">
+                        Show visualiser
+                      </span>
+                      <span class="icon">
+                        <?php echo file_get_contents("img/full-screen.svg"); ?>
+                      </span>
+                    </button>
+                  </div>
+                  <!-- End controls -->
                 </div>
               </div>
               <!-- end body -->

@@ -59,6 +59,10 @@ textarea {
   width: 100%;
   max-width: $max-width;
 
+  @media all and (max-width: $bp-mobile) {
+    padding: $padding/1.5;
+  }
+
   .cta {
     @extend %cta-base;
     padding: 11px;
@@ -82,8 +86,10 @@ textarea {
     color: $color-dark-grey;
     margin-right: $padding/4;
 
-    @media all and (max-width: 500px) {
+    @media all and (max-width: $bp-mobile) {
       width: 100%;
+      height: 41px;
+      font-size: 18px;
       margin-right: 0;
       margin-bottom: $padding/4;
     }
@@ -92,6 +98,11 @@ textarea {
   .button-close {
     top: $padding/2;
     right: $padding/2;
+
+    @media all and (max-width: $bp-mobile) {
+      top: $padding/3;
+      right: $padding/3;
+    }
   }
 
   &.active {
