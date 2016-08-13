@@ -1,7 +1,6 @@
 'use strict';
 
 var Forecastio = require('../libs/forecast.io');
-var audioVisual = require('./audio-visual');
 var Nll = require('./nll-cnstrctr');
 var GoogleMapsLoader = require('google-maps');
 var makeRequest = require('./make-request');
@@ -22,9 +21,8 @@ module.exports = function() {
   var formButtonCloseEl = formEl.querySelector('.button-close');
   var formInputEl = formEl.querySelector('[data-ref="place-field"]');
 	var controlsEl = document.querySelector('[data-ref="controls"]');
-
-	//start app
-	audioVisual();
+  //logic
+  var isPlaying = false;
 
 	function updateApp(lat, long, name) {
 		var newLocation = new Nll(lat, long, name);
@@ -115,7 +113,7 @@ module.exports = function() {
 
 	function getPlaces(lat, long) {
 		var gpKey = makeRequest('GET', '/gm-key.php');
-		gpKey.then(function(key) {
+		gpKey.then(function success(key) {
 			GoogleMapsLoader.KEY = key;
 			GoogleMapsLoader.load(function(google) {
 				var geocoder = new google.maps.Geocoder();
@@ -156,12 +154,11 @@ module.exports = function() {
 							updateStatus('noAddress');
 						}
 						updateStatus('location');
-						useLocBtn.disabled = false;
 						updateApp(lat, long, locName);
 					}
 				);
 			});
-		}, function(rejectObj) {
+		}, function failure(rejectObj) {
 				console.log(rejectObj.status);
 				console.log(rejectObj.statusText);
 				updateStatus('error');
@@ -179,6 +176,9 @@ module.exports = function() {
 	}
 
 	function getGeo() {
+    updateStatus('location');
+    useLocBtn.disabled = true;
+
 		if (!navigator.geolocation) {
 			updateStatus('noGeo');
 			showForm();
@@ -213,6 +213,36 @@ module.exports = function() {
 		navigator.geolocation.getCurrentPosition(success, failure);
 	}
 
+  function startApp() {
+		//For tests:
+		var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
+		fetchStaticPlaces.then(function (staticPlaces) {
+			var staticPlacesJSON = JSON.parse(staticPlaces);
+			getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
+			console.log('Using static data');
+		}, function (status) {
+			console.log(status.statusText);
+		});
+
+		//For live:
+		//getGeo();
+  }
+
+  function startStopApp() {
+    if (isPlaying) {
+      channel.publish('stop');
+      updateStatus('start');
+      isPlaying = false;
+      useLocBtn.innerHTML = 'Play my weather';
+      controlsEl.style.display = 'none';
+    } else {
+      startApp();
+      useLocBtn.disabled = false;
+      useLocBtn.innerHTML = 'Stop orchestra';
+
+    }
+  }
+
 	formButtonCloseEl.addEventListener('click', function(e) {
 		e.preventDefault();
 		hideForm();
@@ -235,20 +265,9 @@ module.exports = function() {
 		}
 	});
 
-	useLocBtn.addEventListener('click', function(e) {
-		e.preventDefault();
-		updateStatus('location');
-		//For testing:
-		// var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
-		// fetchStaticPlaces.then(function (staticPlaces) {
-		// 	var staticPlacesJSON = JSON.parse(staticPlaces);
-		// 	getPlaces(staticPlacesJSON[2].lat, staticPlacesJSON[2].long);
-		// 	console.log('Using static data');
-		// }, function (status) {
-		// 	console.log(status.statusText);
-		// });
-		//For live:
-		getGeo();
-		useLocBtn.disabled = true;
-	});
+	useLocBtn.addEventListener('click', startStopApp, false);
+
+  channel.subscribe('play', function(){
+    isPlaying = true;
+  });
 };

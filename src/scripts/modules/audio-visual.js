@@ -57,6 +57,7 @@ module.exports = function() {
         weatherSounds[i].organDist.fade(0,1);
       }
       weatherSounds = [];
+      isRunning = false;
     }
   }
 
@@ -102,6 +103,7 @@ module.exports = function() {
 					weatherSounds[i].organDist.loop();
 				}
         updateStatus('playing', locationData.name);
+        channel.publish('play');
 			}
 
 			/*
@@ -298,6 +300,10 @@ module.exports = function() {
 
   channel.subscribe('dialogClosed', function() {
     dialogIsOpen = false;
+  });
+
+  channel.subscribe('stop', function() {
+    killCurrentSounds(true);
   });
 
 	return true;
