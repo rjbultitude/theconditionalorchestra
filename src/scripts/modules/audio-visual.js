@@ -92,7 +92,7 @@ module.exports = function() {
 			var temperatureColour = 0;
 
       function isPrecip(locationData) {
-        if (locationData.precipIntensity.value !== undefined) {
+        if (locationData.precipType.value !== undefined) {
           return locationData.precipIntensity.value >= 0;
         } else {
           console.log('No precipitation value');
@@ -141,12 +141,15 @@ module.exports = function() {
         return newNotesArray;
       }
 
-      function playArp(arpeggioType, notesArray) {
+      function playArp(arpeggioType, notesArray, soundFilter) {
         //Overwrite sequence with new notes
         var newNotesArray = addRandomStops(notesArray);
         arpPhrase.sequence = newNotesArray;
         arpPart.addPhrase(arpPhrase);
-        //Type logic
+        // Set filter
+        dropSound.disconnect();
+        dropSound.connect(soundFilter);
+        // Type logic
         if (arpeggioType === 'hard') {
           arpPart.setBPM(200);
           dropSound.amp(0.8);
@@ -171,8 +174,12 @@ module.exports = function() {
 
         // Handle precipitation
         if (isPrecip(locationData)) {
-          playArp(precipCategory(locationData), notesArray);
+          playArp(precipCategory(locationData), notesArray, soundFilter);
+        } else {
+          arpPart.stop(0);
+          console.log('no rain');
         }
+        console.log('isPrecip(locationData)', isPrecip(locationData));
 
 				for (var i = 0; i < organSounds.length; i++) {
 					organSounds[i].organ.disconnect();
@@ -198,6 +205,7 @@ module.exports = function() {
 				var centreNote = (locationData.soundParams.pitch.min + locationData.soundParams.pitch.max) / 2;
 				var notesArray = [];
 				if (isClement(locationData)) {
+          console.log('isClement');
 					for (var i = 0; i < intervals.majorIntervals.length; i++) {
 						notesArray.push(centreNote + intervals.majorIntervals[i] * avSettings.semitone);
 					}
@@ -256,6 +264,7 @@ module.exports = function() {
 					// continue with sound processing
           // use arbitrary scale for cold places
           if (isCold(locationData)) {
+            console.log('isCold');
             mapPitchValues(locationData);
           }
           // and heptatonic for warm weather
