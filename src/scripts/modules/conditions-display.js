@@ -2,6 +2,7 @@
 
 var postal = require('postal');
 var channel = postal.channel();
+var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 
 module.exports = function() {
 	var tempEl = document.querySelector('[data-ref=temperature]').querySelector('[data-ref=value]');
@@ -9,7 +10,8 @@ module.exports = function() {
 	var aPressureEl = document.querySelector('[data-ref=airPressure]').querySelector('[data-ref=value]');
 
 	function ConditionValues(locationData) {
-		this.temperature = (locationData.temperature.value - 32) * 5/9;
+		this.temperature = frnhtToCelcius(locationData.temperature.value);
+		//this.temperature = (locationData.temperature.value - 32) * 5/9;
 		this.cloudCover = locationData.cloudCover.value * 100;
 		this.airPressure = locationData.pressure.value;
 	}

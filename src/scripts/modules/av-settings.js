@@ -1,5 +1,6 @@
 //Audio Visual Settings
 module.exports = {
+  numNotes: 6,
   animAmount: 1,
   noiseInc: 0.01,
 	//Canvas size

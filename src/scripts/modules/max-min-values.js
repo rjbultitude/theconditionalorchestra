@@ -57,7 +57,7 @@ module.exports = {
     },
     //apparent temperature in farenheit
     apparentTemp: {
-      min: -20,
+      min: -35,
       max: 120
     },
     precipIntensity: {

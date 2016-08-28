@@ -8,7 +8,7 @@ var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
 var updateStatus = require('./update-status');
-var classListChain = require('./class-list-chain');
+var classListChain = require('../utilities/class-list-chain');
 
 module.exports = function() {
 	//Debug

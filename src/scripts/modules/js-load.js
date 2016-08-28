@@ -1,6 +1,6 @@
 'use strict';
 
-var classListChainable = require('./class-list-chain');
+var classListChainable = require('../utilities/class-list-chain');
 
 module.exports = function() {
   window.onload = function() {

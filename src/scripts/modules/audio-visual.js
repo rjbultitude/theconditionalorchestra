@@ -26,6 +26,8 @@ var intervals = require('./intervals');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
 var avSettings = require('./av-settings');
+var frnhtToCelcius = require('../utilities/frnht-to-celcius');
+var duplicateArray = require('../utilities/duplicate-array-vals');
 
 module.exports = function() {
 	// sounds
@@ -101,7 +103,7 @@ module.exports = function() {
       }
 
       function isCold(locationData) {
-        return locationData.apparentTemp.value < 8;
+        return frnhtToCelcius(locationData.temperature.value) < 8;
       }
 
 			function isClement(locationData) {
@@ -119,13 +121,6 @@ module.exports = function() {
           console.log('no rain? type is: ', locationData.precipType.value);
           return null;
         }
-      }
-
-      function duplicateArray(newArray, array, times) {
-        for (var i = 0; i < times; i++) {
-          newArray = newArray.concat(array);
-        }
-        return newArray;
       }
 
       function addRandomStops(notesArray) {
@@ -162,7 +157,6 @@ module.exports = function() {
         } else {
           console.log('problem with arrpeggio ', arpeggioType);
         }
-        console.log('arp playing, arpPart: ', arpPart);
         arpPart.start();
       }
 
@@ -177,9 +171,8 @@ module.exports = function() {
           playArp(precipCategory(locationData), notesArray, soundFilter);
         } else {
           arpPart.stop(0);
-          console.log('no rain');
+          console.log('no rain, should stop arp');
         }
-        console.log('isPrecip(locationData)', isPrecip(locationData));
 
 				for (var i = 0; i < organSounds.length; i++) {
 					organSounds[i].organ.disconnect();
@@ -214,6 +207,7 @@ module.exports = function() {
 						notesArray.push(centreNote + intervals.minorOctave[j] * avSettings.semitone);
 					}
 				}
+        console.log('notesArray assignPitches', notesArray);
 				playSounds(locationData, notesArray);
 			}
 
@@ -223,15 +217,22 @@ module.exports = function() {
 			*/
 			function mapPitchValues(locationData) {
         var notesArray = [];
+        var count = 0;
 				mappedValsLoop:
 				for (var condition in locationData) {
-					if (locationData.hasOwnProperty(condition)) {
-						if (condition === 'name' || condition === 'soundParams') {
-							continue mappedValsLoop;
-						}
-						notesArray.push(sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max));
-					}
+          while (avSettings.numNotes > count) {
+            if (locationData.hasOwnProperty(condition)) {
+              if (condition === 'name' || condition === 'soundParams') {
+                continue mappedValsLoop;
+              }
+              notesArray.push(sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max).toFixed(4));
+            }
+            count++;
+            console.log('count', count);
+            continue mappedValsLoop;
+          }
 				}
+        console.log('notesArray mapPitchValues', notesArray);
 				// continue with sound processing
 				playSounds(locationData, notesArray);
 			}
@@ -295,7 +296,7 @@ module.exports = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
         if (audioSupported) {
-          for (var i = 0; i < 4; i++) {
+          for (var i = 0; i < avSettings.numNotes; i++) {
             organSounds[i] = new WeatherSound(
               sketch.loadSound('/audio/organ-C2.mp3'),
               sketch.loadSound('/audio/organ-C2d.mp3')
