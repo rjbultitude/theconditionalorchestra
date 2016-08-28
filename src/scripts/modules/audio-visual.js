@@ -10,7 +10,8 @@
 'use strict';
 
 var P5 = require('../libs/p5');
-//handle AudioContext
+// handle AudioContext
+// should be handled in P5
 var audioSupported = true;
 if (window.AudioContext || window.webkitAudioContext) {
   require('../libs/p5.sound');
@@ -24,29 +25,17 @@ var channel = postal.channel();
 var intervals = require('./intervals');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
+var avSettings = require('./av-settings');
 
 module.exports = function() {
-	//animation speed
-	var animAmount = 1;
-	//Array for all sounds
+	// Array for all sounds
 	var weatherSounds = [];
-	//Array for all visual shapes
+	// Array for all visual shapes
 	var shapeSet = [];
-	var noiseInc = 0.01;
-	//Canvas size
-	var cWidth = 800;
-	var cHeight = 400;
-	var cPadding = '50%';
-	//Colour offset
-	var colourDim = 18;
-	//Pitch / rate
-	var semitone = 0.0833;
-	//DOM
-	var cContainerName = 'canvas-container';
-  //dialog
+  // dialog / modal
   var dialogIsOpen = false;
 
-	//Is this size or smaller
+	// Is this size or smaller
 	function matchMediaMaxWidth(maxWidthVal) {
     return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
   }
@@ -62,7 +51,7 @@ module.exports = function() {
     }
   }
 
-	//main app init
+	// main app init
 	function init(locationData, isRunning) {
 		//Create filter
     var soundFilter = null;
@@ -74,16 +63,29 @@ module.exports = function() {
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
 
-			//Visuals
+			// Visuals
 			var sqSize = 25;
 			var temperatureColour = 0;
+
+      function isPrecip() {
+        if (locationData.precipIntensity !== undefined) {
+          return locationData.precipIntensity >= 0;
+        } else {
+          console.log('No precipitation value');
+          return false;
+        }
+      }
+
+      function isCold(locationData) {
+        return locationData.apparentTemp < 8;
+      }
 
 			function checkClemency(locationData) {
 				return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16 && locationData.temperature.value > 20;
 			}
 
 			function playSounds(locationData, notesArray) {
-				//Set filter
+				// Set filter
 				//console.log('filter frequency: ', locationData.soundParams.freq.value);
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
@@ -116,11 +118,11 @@ module.exports = function() {
 				var notesArray = [];
 				if (checkClemency(locationData)) {
 					for (var i = 0; i < intervals.majorIntervals.length; i++) {
-						notesArray.push(centreNote + intervals.majorIntervals[i] * semitone);
+						notesArray.push(centreNote + intervals.majorIntervals[i] * avSettings.semitone);
 					}
 				} else {
 					for (var j = 0; j < intervals.minorOctave.length; j++) {
-						notesArray.push(centreNote + intervals.minorOctave[j] * semitone);
+						notesArray.push(centreNote + intervals.minorOctave[j] * avSettings.semitone);
 					}
 				}
 				playSounds(locationData, notesArray);
@@ -140,7 +142,7 @@ module.exports = function() {
 						locationData[condition].mappedValue = sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max);
 					}
 				}
-				//continue with sound processing
+				// continue with sound processing
 				playSounds(locationData);
 				return true;
 			}
@@ -209,15 +211,15 @@ module.exports = function() {
 			sketch.setup = function setup() {
 				//If this size or smaller
 				if (matchMediaMaxWidth(540).matches) {
-						cWidth = 400;
-						cHeight = 800;
-						cPadding = '200%';
+						avSettings.cWidth = 400;
+						avSettings.cHeight = 800;
+						avSettings.cPadding = '200%';
 				}
 				//Canvas setup
-				var myCanvas = sketch.createCanvas(cWidth, cHeight);
-				myCanvas.parent(cContainerName);
-				var cContainer = document.getElementById(cContainerName);
-				cContainer.style.paddingBottom = cPadding;
+				var myCanvas = sketch.createCanvas(avSettings.cWidth, avSettings.cHeight);
+				myCanvas.parent(avSettings.cContainerName);
+				var cContainer = document.getElementById(avSettings.cContainerName);
+				cContainer.style.paddingBottom = avSettings.cPadding;
 				sketch.frameRate(25);
 				sketch.background(0, 0, 0);
         //create shapes in grid
@@ -225,8 +227,8 @@ module.exports = function() {
 				var vSquares = Math.round(sketch.height/sqSize);
         createShapeSet(hSquares, vSquares);
         //set runtime constants
-				animAmount = Math.round(locationData.speed.value);
-				noiseInc = sketch.map(animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
+				avSettings.animAmount = Math.round(locationData.speed.value);
+				avSettings.noiseInc = sketch.map(avSettings.animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
 				//console.log('locationData', locationData);
 				//handle sounds
@@ -241,8 +243,8 @@ module.exports = function() {
 				sketch.background(0, 0, 0, 0);
         if (dialogIsOpen) {
           for (var i = 0; i < shapeSet.length; i++) {
-            shapeSet[i].update(sketch, noiseInc, animAmount);
-            shapeSet[i].paint(sketch, temperatureColour, colourDim);
+            shapeSet[i].update(sketch, avSettings.noiseInc, avSettings.animAmount);
+            shapeSet[i].paint(sketch, temperatureColour, avSettings.colourDim);
           }
         }
 			};

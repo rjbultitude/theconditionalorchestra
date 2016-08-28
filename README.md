@@ -93,8 +93,8 @@ Pick a 'cut off' temperature that defines whether the sound scale is predefined 
 
 precipType - a string (rain, snow, or sleet) that is undefined if precipIntensity is 0
 rain - hard sound
-sleet - softer sound
-snow - soft sound
+sleet - softer sound, played slowly
+snow - soft sound, payed slowest
 
 Use the icons
 icon: A machine-readable text summary of this data point, suitable for selecting an icon for display. If defined, this property will have one of the following values: clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night. (Developers should ensure that a sensible default is defined, as additional values, such as hail, thunderstorm, or tornado, may be defined in the future.)
