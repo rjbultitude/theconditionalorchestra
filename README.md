@@ -86,3 +86,19 @@ visibility - Filter freq
 Cloud cover - sound dist volume
 Pressure - pitch root
 Wind speed - sound volume
+
+##Plans
+
+Pick a 'cut off' temperature that defines whether the sound scale is predefined or tuned to arbitrary values
+
+precipType - a string (rain, snow, or sleet) that is undefined if precipIntensity is 0
+rain - hard sound
+sleet - softer sound
+snow - soft sound
+
+Use the icons
+icon: A machine-readable text summary of this data point, suitable for selecting an icon for display. If defined, this property will have one of the following values: clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night. (Developers should ensure that a sensible default is defined, as additional values, such as hail, thunderstorm, or tornado, may be defined in the future.)
+
+Use visibility and day/night to set Filter
+
+Add service worker for offline joy
