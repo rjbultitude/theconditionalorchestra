@@ -33,7 +33,7 @@ module.exports = function() {
   var dropSound;
   var arpPhrase;
   var arpPart;
-  var rainDropsPattern = [1,1.2,1,2,1.6,2,1,2.2];
+  var rainDropsPattern;
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -112,7 +112,30 @@ module.exports = function() {
         }
       }
 
-      function playArp(arpeggioType) {
+      function duplicateArray(newArray, array, times) {
+        for (var i = 0; i < times; i++) {
+          newArray = newArray.concat(array);
+        }
+        return newArray;
+      }
+
+      function addRandomStops(notesArray) {
+        //duplicate notes
+        var newNotesArray = [];
+        newNotesArray = duplicateArray(newNotesArray, notesArray, 10);
+        var randomStopCount = newNotesArray.length / 2;
+        //Add stops
+        for (var i = 0; i < randomStopCount; i++) {
+          var randomIndex = sketch.random(0,newNotesArray.length);
+          newNotesArray.splice(randomIndex, 0, 0);
+        }
+        return newNotesArray;
+      }
+
+      function playArp(arpeggioType, notesArray) {
+        //Overwrite sequence with new notes
+        var newNotesArray = addRandomStops(notesArray);
+        arpPhrase.sequence = newNotesArray;
         arpPart.addPhrase(arpPhrase);
         //Type logic
         if (arpeggioType === 'hard') {
@@ -137,8 +160,10 @@ module.exports = function() {
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
 
-        //console.log('organSounds.length', organSounds.length);
-        //console.log('organSounds', organSounds);
+        // Handle precipitation
+        if (isPrecip(locationData)) {
+          playArp(precipCategory(locationData), notesArray);
+        }
 
 				for (var i = 0; i < organSounds.length; i++) {
 					organSounds[i].organ.disconnect();
@@ -180,18 +205,18 @@ module.exports = function() {
 				calculated by mapping conditions to pitch
 			*/
 			function mapPitchValues(locationData) {
+        var notesArray = [];
 				mappedValsLoop:
 				for (var condition in locationData) {
 					if (locationData.hasOwnProperty(condition)) {
 						if (condition === 'name' || condition === 'soundParams') {
 							continue mappedValsLoop;
 						}
-						locationData[condition].mappedValue = sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max);
+						notesArray.push(sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max));
 					}
 				}
 				// continue with sound processing
-				playSounds(locationData);
-				return true;
+				playSounds(locationData, notesArray);
 			}
 
 			/*
@@ -227,10 +252,6 @@ module.exports = function() {
           // and heptatonic for warm weather
           else {
             assignPitches(locationData);
-          }
-          // Handle precipitation
-          if (isPrecip(locationData)) {
-            playArp(precipCategory(locationData));
           }
 			}
 
