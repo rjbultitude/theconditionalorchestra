@@ -23,6 +23,7 @@ var postal = require('postal');
 var channel = postal.channel();
 var intervals = require('./intervals');
 var updateStatus = require('./update-status');
+var SingleShape = require('./single-shape-cnstrctr');
 
 module.exports = function() {
 	//animation speed
@@ -174,38 +175,6 @@ module.exports = function() {
 					assignPitches(locationData);
 			}
 
-			//Indiviual shape constructor
-			//TODO store in external module
-			function SingleShape(xPos, yPos, size, colour, index) {
-				this.xPos = xPos;
-				this.yPos = yPos;
-				this.size = size;
-				this.xNew = xPos;
-				this.yNew = yPos;
-				this.colour = colour;
-				this.noiseStart = index/100;
-				this.noiseAmt = 0;
-			}
-
-			SingleShape.prototype.paint = function() {
-				sketch.noStroke();
-				sketch.fill(temperatureColour, this.colour, 255 - temperatureColour);
-				//Upper triangle
-				//top left, bottom left, top right
-				sketch.triangle(this.xPos, this.yPos, this.xPos, this.yPos + this.size, this.xPos + this.size, this.yPos);
-				sketch.fill(temperatureColour - colourDim, this.colour - colourDim, 255 - temperatureColour - colourDim);
-				//Lower triangle
-				//bottom left, bottom right,
-				sketch.triangle(this.xPos, this.yPos + this.size, this.xNew, this.yNew, this.xPos + this.size, this.yPos);
-			};
-
-			SingleShape.prototype.update = function() {
-				this.noiseStart += noiseInc;
-				this.noiseAmt = sketch.noise(this.noiseStart);
-				this.xNew = this.xPos + this.size - this.noiseAmt * animAmount;
-				this.yNew = this.yPos + this.size - this.noiseAmt * animAmount;
-			};
-
 			//Accepts number of horizontal and vertical squares to draw
 			function createShapeSet(hSquares, vSquares) {
 				var index = 0;
@@ -272,8 +241,8 @@ module.exports = function() {
 				sketch.background(0, 0, 0, 0);
         if (dialogIsOpen) {
           for (var i = 0; i < shapeSet.length; i++) {
-            shapeSet[i].update();
-            shapeSet[i].paint();
+            shapeSet[i].update(sketch, noiseInc, animAmount);
+            shapeSet[i].paint(sketch, temperatureColour, colourDim);
           }
         }
 			};
