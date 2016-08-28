@@ -9,7 +9,6 @@ module.exports = function() {
 	var aPressureEl = document.querySelector('[data-ref=airPressure]').querySelector('[data-ref=value]');
 
 	function ConditionValues(locationData) {
-		console.log('locationData.temperature.value farenheight', locationData.temperature.value);
 		this.temperature = (locationData.temperature.value - 32) * 5/9;
 		this.cloudCover = locationData.cloudCover.value * 100;
 		this.airPressure = locationData.pressure.value;

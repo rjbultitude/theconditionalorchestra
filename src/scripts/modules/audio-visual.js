@@ -46,13 +46,20 @@ module.exports = function() {
 
   function killCurrentSounds(isRunning) {
     if (isRunning) {
+      // Stop arrpeggio
+      arpPart.stop(0);
+      // Fade organ sounds
       for (var i = 0; i < organSounds.length; i++) {
         organSounds[i].organ.fade(0,avSettings.fadeTime);
         organSounds[i].organDist.fade(0,avSettings.fadeTime);
-        dropSound.fade(0,avSettings.fadeTime);
       }
+      // Fade rain drop sound
+      dropSound.fade(0,avSettings.fadeTime);
+      //Empty vars;
       organSounds = [];
-      dropSound = undefined;
+      //TODO
+      // Why is makeDropSound still being called?
+      //dropSound = undefined;
       isRunning = false;
     }
   }
@@ -71,8 +78,10 @@ module.exports = function() {
     }
     // Create phrase
     // name, callback, sequence
-    arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
-    arpPart = new P5.Part();
+    if (typeof arpPhrase !== 'object' || typeof arpPhrase === 'undefined') {
+      arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+      arpPart = new P5.Part();
+    }
     // Kill playing sounds
     killCurrentSounds(isRunning);
 		//Create p5 sketch
@@ -139,18 +148,18 @@ module.exports = function() {
         arpPart.addPhrase(arpPhrase);
         //Type logic
         if (arpeggioType === 'hard') {
-          arpPart.setBPM(180);
+          arpPart.setBPM(200);
           dropSound.amp(0.8);
         } else if (arpeggioType === 'soft') {
-          arpPart.setBPM(120);
+          arpPart.setBPM(155);
           dropSound.amp(0.5);
         } else if (arpeggioType === 'softest') {
-          arpPart.setBPM(60);
+          arpPart.setBPM(110);
           dropSound.amp(0.3);
         } else {
           console.log('problem with arrpeggio ', arpeggioType);
         }
-        console.log('arp playing, dropSound: ', dropSound);
+        console.log('arp playing, arpPart: ', arpPart);
         arpPart.start();
       }
 
