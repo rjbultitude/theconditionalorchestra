@@ -44,7 +44,7 @@ module.exports = function() {
   				temperature: {value: conditions[0].getTemperature() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.temperature.max, maxMinVals.forecastParams.temperature.min, 'temperature') : conditions[0].getTemperature() },
   				apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? maxMinVals.getMean(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp') : conditions[0].getApparentTemperature() },
   				precipIntensity: {value: conditions[0].getPrecipIntensity() },
-          precitYpe: {value: conditions[0].getPrecipitationType() }
+          precipType: {value: conditions[0].getPrecipitationType() }
   			};
 			  //Add the location name
 			  //Ensure it's not enumerable
@@ -52,7 +52,8 @@ module.exports = function() {
 			  //Add the max & min condition vals
   			addMinMaxLoop:
   			for (var key in locationData) {
-  				if (locationData.hasOwnProperty(key)) {
+          // Avoid the non numerical property
+  				if (locationData.hasOwnProperty(key) && key !== 'precipType') {
   					Object.defineProperty(locationData[key], 'min', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].min});
   					Object.defineProperty(locationData[key], 'max', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].max});
   				}

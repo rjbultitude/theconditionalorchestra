@@ -28,8 +28,12 @@ var SingleShape = require('./single-shape-cnstrctr');
 var avSettings = require('./av-settings');
 
 module.exports = function() {
-	// Array for all sounds
-	var weatherSounds = [];
+	// sounds
+	var organSounds = [];
+  var dropSound;
+  var arpPhrase;
+  var arpPart;
+  var rainDropsPattern = [1,1.2,1,2,1.6,2,1,2.2];
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -42,22 +46,33 @@ module.exports = function() {
 
   function killCurrentSounds(isRunning) {
     if (isRunning) {
-      for (var i = 0; i < weatherSounds.length; i++) {
-        weatherSounds[i].organ.fade(0,1);
-        weatherSounds[i].organDist.fade(0,1);
+      for (var i = 0; i < organSounds.length; i++) {
+        organSounds[i].organ.fade(0,avSettings.fadeTime);
+        organSounds[i].organDist.fade(0,avSettings.fadeTime);
+        dropSound.fade(0,avSettings.fadeTime);
       }
-      weatherSounds = [];
+      organSounds = [];
+      dropSound = undefined;
       isRunning = false;
     }
   }
 
+  function makeDropSound(time, playbackRate) {
+    dropSound.rate(playbackRate);
+    dropSound.play(time);
+  }
+
 	// main app init
 	function init(locationData, isRunning) {
-		//Create filter
+		// Create filter
     var soundFilter = null;
     if (audioSupported) {
       soundFilter = new P5.LowPass();
     }
+    // Create phrase
+    // name, callback, sequence
+    arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+    arpPart = new P5.Part();
     // Kill playing sounds
     killCurrentSounds(isRunning);
 		//Create p5 sketch
@@ -67,9 +82,9 @@ module.exports = function() {
 			var sqSize = 25;
 			var temperatureColour = 0;
 
-      function isPrecip() {
-        if (locationData.precipIntensity !== undefined) {
-          return locationData.precipIntensity >= 0;
+      function isPrecip(locationData) {
+        if (locationData.precipIntensity.value !== undefined) {
+          return locationData.precipIntensity.value >= 0;
         } else {
           console.log('No precipitation value');
           return false;
@@ -77,12 +92,44 @@ module.exports = function() {
       }
 
       function isCold(locationData) {
-        return locationData.apparentTemp < 8;
+        return locationData.apparentTemp.value < 8;
       }
 
-			function checkClemency(locationData) {
-				return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16 && locationData.temperature.value > 20;
+			function isClement(locationData) {
+				return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16;
 			}
+
+      function precipCategory(locationData) {
+        if (locationData.precipType.value === 'rain' && locationData.precipIntensity.value > 0.2) {
+          return 'hard';
+        } else if (locationData.precipType.value === 'sleet' && locationData.precipIntensity.value <= 0.2) {
+          return 'soft';
+        } else if (locationData.precipType.value === 'snow' || locationData.precipIntensity.value <= 0.1) {
+          return 'softest';
+        } else {
+          console.log('no rain? type is: ', locationData.precipType.value);
+          return null;
+        }
+      }
+
+      function playArp(arpeggioType) {
+        arpPart.addPhrase(arpPhrase);
+        //Type logic
+        if (arpeggioType === 'hard') {
+          arpPart.setBPM(180);
+          dropSound.amp(0.8);
+        } else if (arpeggioType === 'soft') {
+          arpPart.setBPM(120);
+          dropSound.amp(0.5);
+        } else if (arpeggioType === 'softest') {
+          arpPart.setBPM(60);
+          dropSound.amp(0.3);
+        } else {
+          console.log('problem with arrpeggio ', arpeggioType);
+        }
+        console.log('arp playing, dropSound: ', dropSound);
+        arpPart.start();
+      }
 
 			function playSounds(locationData, notesArray) {
 				// Set filter
@@ -90,20 +137,20 @@ module.exports = function() {
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
 
-        //console.log('weatherSounds.length', weatherSounds.length);
-        //console.log('weatherSounds', weatherSounds);
+        //console.log('organSounds.length', organSounds.length);
+        //console.log('organSounds', organSounds);
 
-				for (var i = 0; i < weatherSounds.length; i++) {
-					weatherSounds[i].organ.disconnect();
-					weatherSounds[i].organDist.disconnect();
-					weatherSounds[i].organ.connect(soundFilter);
-					weatherSounds[i].organDist.connect(soundFilter);
-					weatherSounds[i].organ.rate(notesArray[i]);
-					weatherSounds[i].organDist.rate(notesArray[i]);
-					weatherSounds[i].organ.amp(locationData.soundParams.soundVolume);
-					weatherSounds[i].organDist.amp(locationData.soundParams.soundDistVolume);
-					weatherSounds[i].organ.loop();
-					weatherSounds[i].organDist.loop();
+				for (var i = 0; i < organSounds.length; i++) {
+					organSounds[i].organ.disconnect();
+					organSounds[i].organDist.disconnect();
+					organSounds[i].organ.connect(soundFilter);
+					organSounds[i].organDist.connect(soundFilter);
+					organSounds[i].organ.rate(notesArray[i]);
+					organSounds[i].organDist.rate(notesArray[i]);
+					organSounds[i].organ.amp(locationData.soundParams.soundVolume);
+					organSounds[i].organDist.amp(locationData.soundParams.soundDistVolume);
+					organSounds[i].organ.loop();
+					organSounds[i].organDist.loop();
 				}
         updateStatus('playing', locationData.name);
         channel.publish('play');
@@ -116,7 +163,7 @@ module.exports = function() {
 			function assignPitches(locationData) {
 				var centreNote = (locationData.soundParams.pitch.min + locationData.soundParams.pitch.max) / 2;
 				var notesArray = [];
-				if (checkClemency(locationData)) {
+				if (isClement(locationData)) {
 					for (var i = 0; i < intervals.majorIntervals.length; i++) {
 						notesArray.push(centreNote + intervals.majorIntervals[i] * avSettings.semitone);
 					}
@@ -172,9 +219,19 @@ module.exports = function() {
 					locationData.soundParams.pitch.max = 1.5 + locationData.soundParams.soundPitchOffset;
 					//visibility is filter freq
 					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
-					//continue with sound processing
-					//mapPitchValues(locationData);
-					assignPitches(locationData);
+					// continue with sound processing
+          // use arbitrary scale for cold places
+          if (isCold(locationData)) {
+            mapPitchValues(locationData);
+          }
+          // and heptatonic for warm weather
+          else {
+            assignPitches(locationData);
+          }
+          // Handle precipitation
+          if (isPrecip(locationData)) {
+            playArp(precipCategory(locationData));
+          }
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
@@ -200,11 +257,12 @@ module.exports = function() {
 				//will be ready to play in time for setup
         if (audioSupported) {
           for (var i = 0; i < 4; i++) {
-            weatherSounds[i] = new WeatherSound(
+            organSounds[i] = new WeatherSound(
               sketch.loadSound('/audio/organ-C2.mp3'),
               sketch.loadSound('/audio/organ-C2d.mp3')
             );
           }
+          dropSound = sketch.loadSound('/audio/drop.mp3');
         }
 			};
 
@@ -256,11 +314,11 @@ module.exports = function() {
 
 	channel.subscribe('userUpdate', function(data) {
     // If app is already running
-    if (weatherSounds.length > 0) {
+    if (organSounds.length > 0) {
       init(data, true);
     }
     // If running for the first time
-    else if (weatherSounds.length === 0) {
+    else if (organSounds.length === 0) {
       init(data, false);
     }
 	});

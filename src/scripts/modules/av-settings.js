@@ -10,6 +10,7 @@ module.exports = {
 	colourDim: 18,
 	//Pitch / rate
 	semitone: 0.0833,
+  fadeTime: 1,
 	//DOM
 	cContainerName: 'canvas-container'
 };

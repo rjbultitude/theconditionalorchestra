@@ -59,6 +59,10 @@ module.exports = {
     apparentTemp: {
       min: -20,
       max: 120
+    },
+    precipIntensity: {
+      min: 0,
+      max: 0.5
     }
   },
   soundParams: {
