@@ -40,7 +40,7 @@ module.exports = function() {
   var dropSound;
   var arpPhrase;
   var arpPart;
-  var rainDropsPattern;
+  var rainDropsPattern = [0];
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -62,6 +62,7 @@ module.exports = function() {
     if (isRunning) {
       // Stop arrpeggio
       arpPart.stop(0);
+      arpPart.removePhrase('rainDrops');
       // Fade organ sounds
       for (var i = 0; i < organSounds.length; i++) {
         organSounds[i].organ.fade(0,avSettings.fadeTime);
@@ -93,11 +94,18 @@ module.exports = function() {
   }
 
 	// main app init
-	function init(locationData, isRunning) {
-    // Kill playing sounds
-    killCurrentSounds(isRunning);
+	function init(locationData) {
     //Error check
     checkIntervalsVNotes(intervals, avSettings.numNotes);
+
+    //Patch for issue #127 with P5.Sound
+    P5.Part.prototype.removePhrase = function (name) {
+      for (var i in this.phrases) {
+        if (this.phrases[i].name === name) {
+            this.phrases.splice(i, 1);
+        }
+      }
+    };
 
     /*
       Create P5 Objects
@@ -108,10 +116,9 @@ module.exports = function() {
       soundFilter = new P5.LowPass();
     }
     // Create phrase: name, callback, sequence
-    if (typeof arpPhrase !== 'object' || typeof arpPhrase === 'undefined') {
-      arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
-      arpPart = new P5.Part();
-    }
+    arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+    console.log('arpPhrase', arpPhrase);
+    arpPart = new P5.Part();
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
