@@ -11,7 +11,11 @@
   }
 
   p {
-    padding: 0 $padding/4;
+    padding: 0 $padding/2;
+
+    @media all and (max-width: $bp-mobile) {
+      padding: 0 $padding/3;
+    }
   }
 
   //Show first icon until app starts

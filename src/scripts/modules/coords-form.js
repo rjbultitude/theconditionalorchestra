@@ -191,12 +191,17 @@ module.exports = function() {
 		classListChain(coordsFormEl).remove('inactive').add('active');
     coordsFormInputEl.focus();
     coordsFormEl.tabIndex = 0;
+    coordsFormInputEl.tabIndex = 0;
+    coordsFormCloseBtnEl.tabIndex = 0;
+    coordsFormSubmitBtnEl.tabIndex = 0;
 	}
 
 	function hideForm() {
 		classListChain(coordsFormEl).remove('active').add('inactive');
     coordsFormEl.tabIndex = -1;
     coordsFormInputEl.tabIndex = -1;
+    coordsFormCloseBtnEl.tabIndex = -1;
+    coordsFormSubmitBtnEl.tabIndex = -1;
 	}
 
 	function getGeo() {
