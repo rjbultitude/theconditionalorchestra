@@ -86,9 +86,5 @@ module.exports = {
       min: 320,
       max: 5000
     }
-  },
-  getMean: function getMeanFn(min, max, name) {
-    console.log('The value of ' + name + ' was undefined');
-    return (min + max) / 2;
   }
 };

@@ -28,9 +28,14 @@ var SingleShape = require('./single-shape-cnstrctr');
 var avSettings = require('./av-settings');
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 var duplicateArray = require('../utilities/duplicate-array-vals');
+var getMeanVal = require('../utilities/get-mean-val');
 
 module.exports = function() {
-	// sounds
+  /*
+    Module scoped vars
+  */
+
+	// Sound containers
 	var organSounds = [];
   var dropSound;
   var arpPhrase;
@@ -40,6 +45,13 @@ module.exports = function() {
 	var shapeSet = [];
   // dialog / modal
   var dialogIsOpen = false;
+  // Visuals
+  var sqSize = 25;
+  var temperatureColour = 0;
+
+  /*
+    Utility functions
+  */
 
 	// Is this size or smaller
 	function matchMediaMaxWidth(maxWidthVal) {
@@ -66,6 +78,15 @@ module.exports = function() {
     }
   }
 
+  function checkIntervalsVNotes(intervals, numNotes) {
+    for (var scale in intervals) {
+      if (intervals[scale] < numNotes) {
+        console.log('interval scales have too few items for the number of notes', intervals[scale]);
+        break;
+      }
+    }
+  }
+
   function makeDropSound(time, playbackRate) {
     dropSound.rate(playbackRate);
     dropSound.play(time);
@@ -73,25 +94,27 @@ module.exports = function() {
 
 	// main app init
 	function init(locationData, isRunning) {
+    // Kill playing sounds
+    killCurrentSounds(isRunning);
+    //Error check
+    checkIntervalsVNotes(intervals, avSettings.numNotes);
+
+    /*
+      Create P5 Objects
+    */
 		// Create filter
     var soundFilter = null;
     if (audioSupported) {
       soundFilter = new P5.LowPass();
     }
-    // Create phrase
-    // name, callback, sequence
+    // Create phrase: name, callback, sequence
     if (typeof arpPhrase !== 'object' || typeof arpPhrase === 'undefined') {
       arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
       arpPart = new P5.Part();
     }
-    // Kill playing sounds
-    killCurrentSounds(isRunning);
+
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
-
-			// Visuals
-			var sqSize = 25;
-			var temperatureColour = 0;
 
       function isPrecip(locationData) {
         if (locationData.precipType.value !== undefined) {
@@ -171,7 +194,7 @@ module.exports = function() {
           playArp(precipCategory(locationData), notesArray, soundFilter);
         } else {
           arpPart.stop(0);
-          console.log('no rain, should stop arp');
+          console.log('no rain, no arpeggio');
         }
 
 				for (var i = 0; i < organSounds.length; i++) {
@@ -186,6 +209,7 @@ module.exports = function() {
 					organSounds[i].organ.loop();
 					organSounds[i].organDist.loop();
 				}
+        console.log('organSounds', organSounds);
         updateStatus('playing', locationData.name);
         channel.publish('play');
 			}
@@ -195,19 +219,20 @@ module.exports = function() {
 				Minor octave for anything else
 			*/
 			function assignPitches(locationData) {
-				var centreNote = (locationData.soundParams.pitch.min + locationData.soundParams.pitch.max) / 2;
+				var centreNote = getMeanVal(locationData.soundParams.pitch.min, locationData.soundParams.pitch.max, 'pitch');
 				var notesArray = [];
+
 				if (isClement(locationData)) {
-          console.log('isClement');
+          console.log('assignPitches isClement');
 					for (var i = 0; i < intervals.majorIntervals.length; i++) {
 						notesArray.push(centreNote + intervals.majorIntervals[i] * avSettings.semitone);
 					}
 				} else {
+          console.log('assignPitches is not clement');
 					for (var j = 0; j < intervals.minorOctave.length; j++) {
 						notesArray.push(centreNote + intervals.minorOctave[j] * avSettings.semitone);
 					}
 				}
-        console.log('notesArray assignPitches', notesArray);
 				playSounds(locationData, notesArray);
 			}
 
@@ -228,11 +253,10 @@ module.exports = function() {
               notesArray.push(sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max).toFixed(4));
             }
             count++;
-            console.log('count', count);
             continue mappedValsLoop;
           }
 				}
-        console.log('notesArray mapPitchValues', notesArray);
+        console.log('mapPitchValues');
 				// continue with sound processing
 				playSounds(locationData, notesArray);
 			}
@@ -265,7 +289,6 @@ module.exports = function() {
 					// continue with sound processing
           // use arbitrary scale for cold places
           if (isCold(locationData)) {
-            console.log('isCold');
             mapPitchValues(locationData);
           }
           // and heptatonic for warm weather
