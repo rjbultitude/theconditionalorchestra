@@ -83,10 +83,11 @@ A property `soundParams` is added to store values for:
 * pitch
 * soundPitchOffset
 
-visibility - Filter freq  
-Cloud cover - sound dist volume
-Pressure - pitch root
-Wind speed - sound volume
+Improtant values:
+* visibility - Filter freq  
+* Cloud cover - sound dist volume
+* Pressure - pitch root
+* Wind speed - sound volume
 
 A 'cut off' temperature defines whether the sound scale is predefined or tuned to arbitrary values
 

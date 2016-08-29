@@ -99,14 +99,14 @@ module.exports = function() {
     }
     // Then error check
     checkIntervalsVNotes(intervals, avSettings.numNotes);
-    console.log('avSettings.numNotes', avSettings.numNotes);
     return avSettings.numNotes;
   }
 
 	// main app init
 	function init(locationData) {
     // Set the number of organSounds
-    setNumNotes(locationData);
+    var numberofnotes = setNumNotes(locationData);
+    console.log('numberofnotes', numberofnotes);
 
     /*
       Create P5 Objects
@@ -174,6 +174,7 @@ module.exports = function() {
       }
 
 			function playSounds(locationData, notesArray) {
+        console.log('notesArray', notesArray);
 				// Set filter
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
@@ -198,7 +199,6 @@ module.exports = function() {
 					organSounds[i].organ.loop();
 					organSounds[i].organDist.loop();
 				}
-        console.log('organSounds', organSounds);
         //updateStatus('playing', locationData.name);
         channel.publish('play');
 			}
@@ -209,17 +209,20 @@ module.exports = function() {
 			*/
 			function assignPitches(locationData) {
 				var centreNote = getMeanVal(locationData.soundParams.pitch.min, locationData.soundParams.pitch.max, 'pitch');
-				var notesArray = [];
+        console.log('centreNote', centreNote);
+        var notesArray = [];
 
 				if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
           console.log('assignPitches isClement');
-					for (var i = 0; i < intervals.majorIntervals.length; i++) {
-						notesArray.push((centreNote + intervals.majorIntervals[i] * avSettings.semitone).toFixed(4));
+					for (var i = 0; i < avSettings.numNotes; i++) {
+            var newMajorNote = centreNote + (intervals.majorIntervals[i] * avSettings.semitone);
+						notesArray.push(newMajorNote);
 					}
 				} else {
           console.log('assignPitches is not clement');
-					for (var j = 0; j < intervals.minorIntervals.length; j++) {
-						notesArray.push((centreNote + intervals.minorIntervals[j] * avSettings.semitone)).toFixed(4);
+					for (var j = 0; j < avSettings.numNotes; j++) {
+            var newMinorNote = centreNote + (intervals.minorIntervals[j] * avSettings.semitone);
+						notesArray.push(newMinorNote);
 					}
 				}
 				playSounds(locationData, notesArray);
@@ -269,11 +272,14 @@ module.exports = function() {
 					locationData.soundParams.distVolume = sketch.map(Math.round(locationData.cloudCover.value), locationData.cloudCover.min, locationData.cloudCover.max, locationData.soundParams.distVolume.min, locationData.soundParams.distVolume.max);
 					//Wind speed determines volume of all sounds
 					locationData.soundParams.volume = sketch.map(Math.round(locationData.speed.value), locationData.speed.min, locationData.speed.max, locationData.soundParams.volume.min, locationData.soundParams.volume.max) - locationData.soundParams.distVolume/3;
-					//Pressure determines root note
-					locationData.soundParams.soundPitchOffset = sketch.map(Math.round(locationData.pressure.value), locationData.pressure.min, locationData.pressure.max, 0, 0.5);
-					//pitch range
-					locationData.soundParams.pitch.min = 0.5 + locationData.soundParams.soundPitchOffset;
-					locationData.soundParams.pitch.max = 1.5 + locationData.soundParams.soundPitchOffset;
+					//Pressure determines root note. Range 1 octave
+					locationData.soundParams.soundPitchOffset = sketch.map(Math.round(locationData.pressure.value), locationData.pressure.min, locationData.pressure.max, 0, 1);
+          console.log('locationData.soundParams.soundPitchOffset', locationData.soundParams.soundPitchOffset);
+          //pitch range
+					locationData.soundParams.pitch.min += locationData.soundParams.soundPitchOffset;
+          console.log('locationData.soundParams.pitch.min', locationData.soundParams.pitch.min);
+					locationData.soundParams.pitch.max += locationData.soundParams.soundPitchOffset;
+          console.log('locationData.soundParams.pitch.max', locationData.soundParams.pitch.max);
 					//visibility is filter freq
 					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
 					// continue with sound processing
@@ -306,7 +312,6 @@ module.exports = function() {
 			}
 
 			sketch.preload = function() {
-        console.log('avSettings.numNotes', avSettings.numNotes);
 				//loadSound called during preload
 				//will be ready to play in time for setup
         if (audioSupported) {
@@ -366,8 +371,6 @@ module.exports = function() {
 	}
 
 	channel.subscribe('userUpdate', function(data) {
-    console.log('typeof data', typeof data);
-    console.log('data', data);
     // If app is already running
     if (organSounds.length > 0) {
       init(data, true);

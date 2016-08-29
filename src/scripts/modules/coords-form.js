@@ -107,6 +107,7 @@ module.exports = function() {
     function failure() {
       updateStatus('errorData');
       console.log('failed to load static data');
+      enableControls();
     });
   }
 

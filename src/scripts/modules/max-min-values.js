@@ -22,8 +22,8 @@ module.exports = {
     },
     //pressure in millibars
     pressure: {
-      min: 980,
-      max: 1050
+      min: 920,
+      max: 1080
     },
     //visibility in metres
     visibility: {
