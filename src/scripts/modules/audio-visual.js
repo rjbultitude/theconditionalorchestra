@@ -202,6 +202,8 @@ module.exports = function() {
         channel.publish('play');
 			}
 
+      //TODO
+      // It should be logarithmic
       function createMusicalScale() {
         var scale = [];
         var numSemitones = 12;
