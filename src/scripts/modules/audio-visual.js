@@ -115,7 +115,7 @@ module.exports = function() {
 		var myP5 = new P5(function(sketch) {
 
       function isPrecip(locationData) {
-        if (locationData.precipType.value !== undefined) {
+        if (locationData.precipType !== undefined) {
           return locationData.precipIntensity.value >= 0;
         } else {
           console.log('No precipitation value');
@@ -132,14 +132,14 @@ module.exports = function() {
 			}
 
       function precipCategory(locationData) {
-        if (locationData.precipType.value === 'rain' && locationData.precipIntensity.value > 0.2) {
+        if (locationData.precipType === 'rain' && locationData.precipIntensity.value > 0.2) {
           return 'hard';
-        } else if (locationData.precipType.value === 'sleet' && locationData.precipIntensity.value <= 0.2) {
+        } else if (locationData.precipType === 'sleet' && locationData.precipIntensity.value <= 0.2) {
           return 'soft';
-        } else if (locationData.precipType.value === 'snow' || locationData.precipIntensity.value <= 0.1) {
+        } else if (locationData.precipType === 'snow' || locationData.precipIntensity.value <= 0.1) {
           return 'softest';
         } else {
-          console.log('no rain? type is: ', locationData.precipType.value);
+          console.log('no rain? type is: ', locationData.precipType);
           return null;
         }
       }
@@ -183,7 +183,6 @@ module.exports = function() {
 
 			function playSounds(locationData, notesArray) {
 				// Set filter
-				//console.log('filter frequency: ', locationData.soundParams.freq.value);
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
 

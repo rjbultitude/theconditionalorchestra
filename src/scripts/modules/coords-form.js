@@ -31,8 +31,11 @@ module.exports = function() {
 			PROXY_SCRIPT: '/proxy.php'
 		});
 
+    //TODO
+    // Break this function up
   	forecast.getCurrentConditions(newLocation, function(conditions) {
   		if (conditions.length === 1) {
+        //Set numerical integer and floating point values
   			var locationData = {
   				cloudCover: {value: conditions[0].getCloudCover() === undefined ? getMeanVal(maxMinVals.forecastParams.cloudCover.max, maxMinVals.forecastParams.cloudCover.min, 'cloudCover') : conditions[0].getCloudCover() },
   				speed: {value: conditions[0].getWindSpeed() === undefined ? getMeanVal(maxMinVals.forecastParams.windSpeed.max, maxMinVals.forecastParams.windSpeed.min, 'windSpeed') : conditions[0].getWindSpeed() },
@@ -44,8 +47,7 @@ module.exports = function() {
   				dewPoint: {value: conditions[0].getDewPoint() === undefined ? getMeanVal(maxMinVals.forecastParams.dewPoint.max, maxMinVals.forecastParams.dewPoint.min, 'dewPoint') : conditions[0].getDewPoint() },
   				temperature: {value: conditions[0].getTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.temperature.max, maxMinVals.forecastParams.temperature.min, 'temperature') : conditions[0].getTemperature() },
   				apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp') : conditions[0].getApparentTemperature() },
-  				precipIntensity: {value: conditions[0].getPrecipIntensity() },
-          precipType: {value: conditions[0].getPrecipitationType() }
+  				precipIntensity: {value: conditions[0].getPrecipIntensity() }
   			};
 			  //Add the location name
 			  //Ensure it's not enumerable
@@ -53,12 +55,13 @@ module.exports = function() {
 			  //Add the max & min condition vals
   			addMinMaxLoop:
   			for (var key in locationData) {
-          // Avoid the non numerical property
-  				if (locationData.hasOwnProperty(key) && key !== 'precipType') {
+  				if (locationData.hasOwnProperty(key)) {
   					Object.defineProperty(locationData[key], 'min', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].min});
   					Object.defineProperty(locationData[key], 'max', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].max});
   				}
   			}
+        //Add string or time values
+        Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].getPrecipitationType() });
         //Add max & min sound values
         Object.defineProperty(locationData, 'soundParams', {writable: false, enumerable: true, value: maxMinVals.soundParams});
   			//Keep last state for next time

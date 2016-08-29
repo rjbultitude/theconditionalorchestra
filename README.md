@@ -75,11 +75,8 @@ Styles and scripts will be processed and minified.
 * Remove unused code from Forecast.io JS API
 
 ##Business logic
-2 objects are composed from the weather data:
- * `characterValues`
- 	* name, cloudCover, speed, pressure, visibility
- * `pitchValues`
- 	* bearing, ozone, humidity, dewPoint, temperature, apparentTemp
+1 master locationData object is composed from the weather data:
+
 
 
 visibility - Filter freq  
@@ -87,18 +84,18 @@ Cloud cover - sound dist volume
 Pressure - pitch root
 Wind speed - sound volume
 
+A 'cut off' temperature defines whether the sound scale is predefined or tuned to arbitrary values
+
+Precipitation plays an arpeggiated sequence
+A precipType of `rain` with high precipIntensity - Fast and loud
+A precipType of `sleet` - with high precipIntensity - Slower and less loud
+A precipType of `snow` - played slowest and quieter
+
 ##Plans
 
-Pick a 'cut off' temperature that defines whether the sound scale is predefined or tuned to arbitrary values
-
-precipType - a string (rain, snow, or sleet) that is undefined if precipIntensity is 0
-rain - hard sound
-sleet - softer sound, played slowly
-snow - soft sound, payed slowest
+Night time should also manage the filter frequency as it affects visibility
 
 Use the icons
 icon: A machine-readable text summary of this data point, suitable for selecting an icon for display. If defined, this property will have one of the following values: clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night. (Developers should ensure that a sensible default is defined, as additional values, such as hail, thunderstorm, or tornado, may be defined in the future.)
-
-Use visibility and day/night to set Filter
 
 Add service worker for offline joy
