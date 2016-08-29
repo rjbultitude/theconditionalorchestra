@@ -98,15 +98,6 @@ module.exports = function() {
     //Error check
     checkIntervalsVNotes(intervals, avSettings.numNotes);
 
-    //Patch for issue #127 with P5.Sound
-    P5.Part.prototype.removePhrase = function (name) {
-      for (var i in this.phrases) {
-        if (this.phrases[i].name === name) {
-            this.phrases.splice(i, 1);
-        }
-      }
-    };
-
     /*
       Create P5 Objects
     */
