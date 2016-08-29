@@ -225,9 +225,10 @@ module.exports = function() {
 			function assignPitches(locationData) {
         //TODO
         // get centre note from musical scale using index
-				//var centreNote = getMeanVal(locationData.soundParams.pitch.min, locationData.soundParams.pitch.max, 'pitch');
         var musicalScale = createMusicalScale();
+        console.log('locationData.soundParams.soundPitchOffset' ,locationData.soundParams.soundPitchOffset);
         var centreNote = musicalScale[12];
+        //var centreNote = musicalScale[locationData.soundParams.soundPitchOffset];
         var notesArray = [];
 
 				if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
@@ -241,7 +242,8 @@ module.exports = function() {
 				} else {
           console.log('assignPitches is not clement');
 					for (var j = 0; j < avSettings.numNotes; j++) {
-            var newMinorNote = centreNote + (intervals.minorIntervals[j] * avSettings.semitone);
+            var newMinorNote = centreNote + musicalScale[intervals.minorIntervals[j]];
+            //var newMinorNote = centreNote + (intervals.minorIntervals[j] * avSettings.semitone);
 						notesArray.push(newMinorNote);
 					}
 				}
@@ -296,13 +298,11 @@ module.exports = function() {
             locationData.soundParams.volume.min,
             locationData.soundParams.volume.max) - locationData.soundParams.distVolume/3;
 					//Pressure determines root note. Range 1 octave
-					locationData.soundParams.soundPitchOffset = sketch.map(Math.round(locationData.pressure.value), locationData.pressure.min, locationData.pressure.max, 0, avSettings.pitchOffsetInc);
+					locationData.soundParams.soundPitchOffset = Math.round(sketch.map(locationData.pressure.value, locationData.pressure.min, locationData.pressure.max, 0, 24));
           console.log('locationData.soundParams.soundPitchOffset', locationData.soundParams.soundPitchOffset);
           //pitch range
 					locationData.soundParams.pitch.min = avSettings.pitchOffsetInc + locationData.soundParams.soundPitchOffset;
-          console.log('locationData.soundParams.pitch.min', locationData.soundParams.pitch.min);
 					locationData.soundParams.pitch.max = (locationData.soundParams.pitch.max - avSettings.pitchOffsetInc) + locationData.soundParams.soundPitchOffset;
-          console.log('locationData.soundParams.pitch.max', locationData.soundParams.pitch.max);
 					//visibility is filter freq
 					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
 					// continue with sound processing
