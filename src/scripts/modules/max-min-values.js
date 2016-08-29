@@ -15,10 +15,10 @@ module.exports = {
       min: 0,
       max: 1
     },
-    //Wind speed typically up to  32m/s
+    //Wind speed typically up to 24mph
     speed: {
       min: 0,
-      max: 32
+      max: 74
     },
     //pressure in millibars
     pressure: {
@@ -68,11 +68,11 @@ module.exports = {
   soundParams: {
     pitch: {
       min: 0.5,
-      max: 2.0
+      max: 3.0
     },
     //Volume arbitary scale (0 - 1)
     volume: {
-      min: 0.2,
+      min: 0.6,
       max: 1.0
     },
     //Distorted volume arbitary scale (0 - 1)

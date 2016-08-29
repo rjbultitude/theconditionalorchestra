@@ -22,7 +22,7 @@ module.exports = {
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function(cloudCover, windSpeed) {
-    return cloudCover < 0.5 && windSpeed < 8;
+    return cloudCover < 0.5 && windSpeed < 20;
   },
 
   // @param cloudCover floating point
