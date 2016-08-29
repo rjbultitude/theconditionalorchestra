@@ -21,8 +21,18 @@ module.exports = function() {
   var coordsFormInputEl = coordsFormEl.querySelector('[data-ref="place-field"]');
   var coordsFormSubmitBtnEl = coordsFormEl.querySelector('[data-ref="submit"]');
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
-	var controlsEl = document.querySelector('[data-ref="controls"]');
+	var visualLaunchEl = document.querySelector('[data-ref="visuals-launcher"]');
   var isPlaying = false;
+
+  function enableControls() {
+    userLocBtnEl.disabled = false;
+    coordsFormSubmitBtnEl.disabled = false;
+  }
+
+  function disableControls() {
+    userLocBtnEl.disabled = true;
+    coordsFormSubmitBtnEl.disabled = true;
+  }
 
   function updateApp(lat, long, name) {
 		var newLocation = new Nll(lat, long, name);
@@ -38,21 +48,18 @@ module.exports = function() {
         // Set numerical integer and floating point values
         // Order is important for use in mapPitchValues
   			var locationData = {
-          dewPoint: {value: conditions[0].getDewPoint() === undefined ? getMeanVal(maxMinVals.forecastParams.dewPoint.max, maxMinVals.forecastParams.dewPoint.min, 'dewPoint') : conditions[0].getDewPoint() },
-          humidity: {value: conditions[0].getHumidity() === undefined ? getMeanVal(maxMinVals.forecastParams.humidity.max, maxMinVals.forecastParams.humidity.min, 'humidity') : conditions[0].getHumidity() },
-          ozone: {value: conditions[0].getOzone() === undefined ? getMeanVal(maxMinVals.forecastParams.ozone.max, maxMinVals.forecastParams.ozone.min, 'ozone') : conditions[0].getOzone() },
-          bearing: {value: conditions[0].getWindBearing() === undefined ? getMeanVal(maxMinVals.forecastParams.windBearing.max, maxMinVals.forecastParams.windBearing.min, 'windBearing') : conditions[0].getWindBearing() },
-          temperature: {value: conditions[0].getTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.temperature.max, maxMinVals.forecastParams.temperature.min, 'temperature') : conditions[0].getTemperature() },
-          apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp') : conditions[0].getApparentTemperature() },
-          cloudCover: {value: conditions[0].getCloudCover() === undefined ? getMeanVal(maxMinVals.forecastParams.cloudCover.max, maxMinVals.forecastParams.cloudCover.min, 'cloudCover') : conditions[0].getCloudCover() },
-          speed: {value: conditions[0].getWindSpeed() === undefined ? getMeanVal(maxMinVals.forecastParams.windSpeed.max, maxMinVals.forecastParams.windSpeed.min, 'windSpeed') : conditions[0].getWindSpeed() },
-  				visibility: {value: conditions[0].getVisibility() === undefined ? getMeanVal(maxMinVals.forecastParams.visibility.max, maxMinVals.forecastParams.visibility.min, 'visibility') : conditions[0].getVisibility() },
-          pressure: {value: conditions[0].getPressure() === undefined ? getMeanVal(maxMinVals.forecastParams.pressure.max, maxMinVals.forecastParams.pressure.min, 'pressure') : conditions[0].getPressure() },
+          dewPoint: {value: conditions[0].getDewPoint() === undefined ? getMeanVal(maxMinVals.forecastParams.dewPoint.max, maxMinVals.forecastParams.dewPoint.min, 'dewPoint', true) : conditions[0].getDewPoint() },
+          humidity: {value: conditions[0].getHumidity() === undefined ? getMeanVal(maxMinVals.forecastParams.humidity.max, maxMinVals.forecastParams.humidity.min, 'humidity', true) : conditions[0].getHumidity() },
+          ozone: {value: conditions[0].getOzone() === undefined ? getMeanVal(maxMinVals.forecastParams.ozone.max, maxMinVals.forecastParams.ozone.min, 'ozone', true) : conditions[0].getOzone() },
+          bearing: {value: conditions[0].getWindBearing() === undefined ? getMeanVal(maxMinVals.forecastParams.windBearing.max, maxMinVals.forecastParams.windBearing.min, 'windBearing', true) : conditions[0].getWindBearing() },
+          temperature: {value: conditions[0].getTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.temperature.max, maxMinVals.forecastParams.temperature.min, 'temperature', true) : conditions[0].getTemperature() },
+          apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp', true) : conditions[0].getApparentTemperature() },
+          cloudCover: {value: conditions[0].getCloudCover() === undefined ? getMeanVal(maxMinVals.forecastParams.cloudCover.max, maxMinVals.forecastParams.cloudCover.min, 'cloudCover', true) : conditions[0].getCloudCover() },
+          speed: {value: conditions[0].getWindSpeed() === undefined ? getMeanVal(maxMinVals.forecastParams.windSpeed.max, maxMinVals.forecastParams.windSpeed.min, 'windSpeed', true) : conditions[0].getWindSpeed() },
+  				visibility: {value: conditions[0].getVisibility() === undefined ? getMeanVal(maxMinVals.forecastParams.visibility.max, maxMinVals.forecastParams.visibility.min, 'visibility', true) : conditions[0].getVisibility() },
+          pressure: {value: conditions[0].getPressure() === undefined ? getMeanVal(maxMinVals.forecastParams.pressure.max, maxMinVals.forecastParams.pressure.min, 'pressure', true) : conditions[0].getPressure() },
   				precipIntensity: {value: conditions[0].getPrecipIntensity() }
   			};
-			  //Add the location name
-			  //Ensure it's not enumerable
-			  Object.defineProperty( locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: false});
 			  //Add the max & min condition vals
   			addMinMaxLoop:
   			for (var key in locationData) {
@@ -61,6 +68,8 @@ module.exports = function() {
   					Object.defineProperty(locationData[key], 'max', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].max});
   				}
   			}
+        //Add the location name
+			  Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
         //Add string or time values
         Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].getPrecipitationType() });
         //Add max & min sound values
@@ -72,23 +81,28 @@ module.exports = function() {
         console.log('local storage set');
   			//Post the data to rest of app
   			channel.publish('userUpdate', locationData);
-  			controlsEl.style.display = 'block';
+        updateStatus('playing', locationData.name);
+  			visualLaunchEl.style.display = 'block';
   		}
       else {
   			console.log('There seems to be more than one location: ', conditions.length);
   		}
-      userLocBtnEl.disabled = false;
-      coordsFormSubmitBtnEl.disabled = false;
+      enableControls();
 		});
 	}
 
-  function useStaticData() {
+  function useStaticData(badPlaceName) {
     var fetchStaticData = makeRequest('GET', 'data/static-data.json');
     fetchStaticData.then(function success(staticData) {
-      staticData = JSON.parse(staticData);
-      updateStatus('defaultData', staticData.name);
-      channel.publish('userUpdate', staticData);
-      userLocBtnEl.disabled = false;
+      var staticDataJSON = JSON.parse(staticData);
+      console.log('staticDataJSON.name', staticDataJSON.name);
+      if (badPlaceName) {
+        updateStatus('badPlaceName', staticDataJSON.name);
+      } else {
+        updateStatus('defaultData', staticDataJSON.name);
+      }
+      channel.publish('userUpdate', staticDataJSON);
+      enableControls();
     },
     function failure() {
       updateStatus('errorData');
@@ -97,20 +111,24 @@ module.exports = function() {
   }
 
   //Use previous state to run app
-  function useLocalStorageData() {
+  function useLocalStorageData(badPlaceName) {
     if(Object.keys(window.localStorage).length > 0) {
       var restoredData = localStorage.getItem('locationData');
-      updateStatus('lastKnown', restoredData.name);
-      channel.publish('userUpdate', JSON.parse(restoredData));
-      userLocBtnEl.disabled = false;
+      var restoredDataJSON = JSON.parse(restoredData);
+      if (badPlaceName) {
+        updateStatus('badPlaceName', restoredDataJSON.name);
+      } else {
+        updateStatus('lastKnown', restoredDataJSON.name);
+      }
+      channel.publish('userUpdate', restoredDataJSON);
+      enableControls();
     }
     //Else use static location data
     else {
       console.log('no data in localStorage');
-      useStaticData();
+      useStaticData(badPlaceName);
     }
   }
-
 
   function getLatLong(placeString) {
 		var gpKey = makeRequest('GET', '/gm-key.php');
@@ -128,7 +146,7 @@ module.exports = function() {
 	        } else {
               updateStatus('badPlaceName');
 	            console.log('Geocode failed due to: ' + status );
-              useStaticData();
+              useLocalStorageData(true);
 	        }
 		    });
 			});
@@ -228,7 +246,7 @@ module.exports = function() {
 			if(failure.message.indexOf('Only secure origins are allowed') === 0) {
       	console.log('Only secure origins are allowed');
     	}
-			useLocalStorageData();
+			useLocalStorageData(false);
 		}
 
 		navigator.geolocation.getCurrentPosition(success, failure);
@@ -247,8 +265,7 @@ module.exports = function() {
 
   function startApp(inputType, placeInput) {
     // Temporarily disable buttons
-    userLocBtnEl.disabled = true;
-    coordsFormSubmitBtnEl.disabled = true;
+    disableControls();
 
     if (inputType === 'userLocation') {
       //getTestLocation(0); //Test
@@ -270,18 +287,13 @@ module.exports = function() {
     }
   }
 
-  function setStartState(reRunCustomSearch) {
+  function setStartState() {
     channel.publish('stop');
     isPlaying = false;
     updateStatus('start');
     userLocBtnEl.innerHTML = 'Play my weather';
     coordsFormSubmitBtnEl.innerHTML = 'Play';
-    controlsEl.style.display = 'none';
-    // if (reRunCustomSearch) {
-    //   useCustomLocation();
-    // } else {
-    //   console.log('not custom search. reRunCustomSearch: ', reRunCustomSearch);
-    // }
+    visualLaunchEl.style.display = 'none';
   }
 
   function setStopState() {
@@ -289,7 +301,6 @@ module.exports = function() {
     userLocBtnEl.innerHTML = 'Stop orchestra';
     coordsFormSubmitBtnEl.innerHTML = 'Stop';
   }
-
 
 	coordsFormCloseBtnEl.addEventListener('click', function(e) {
 		e.preventDefault();

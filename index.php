@@ -103,13 +103,10 @@
                   <!-- End conditions display -->
 
                   <!-- Begin controls -->
-                  <div class="controls-section section" data-ref="controls">
+                  <div class="controls-section section" data-ref="visuals-launcher">
                     <button class="cta" type="button" data-a11y-dialog-show="visuals-dialog">
                       <span class="text">
                         Show visualiser
-                      </span>
-                      <span class="icon">
-                        <?php echo file_get_contents("img/full-screen.svg"); ?>
                       </span>
                     </button>
                   </div>

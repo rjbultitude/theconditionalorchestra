@@ -93,9 +93,9 @@ module.exports = function() {
 
   function setNumNotes(locationData) {
     if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.speed.value, locationData.precipIntensity.value)) {
-      avSettings.numNotes = 4;
-    } else {
       avSettings.numNotes = 6;
+    } else {
+      avSettings.numNotes = 4;
     }
     // Then error check
     checkIntervalsVNotes(intervals, avSettings.numNotes);
@@ -118,7 +118,6 @@ module.exports = function() {
     }
     // Create phrase: name, callback, sequence
     arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
-    console.log('arpPhrase', arpPhrase);
     arpPart = new P5.Part();
 
 		//Create p5 sketch
@@ -200,7 +199,7 @@ module.exports = function() {
 					organSounds[i].organDist.loop();
 				}
         console.log('organSounds', organSounds);
-        updateStatus('playing', locationData.name);
+        //updateStatus('playing', locationData.name);
         channel.publish('play');
 			}
 
@@ -215,12 +214,12 @@ module.exports = function() {
 				if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
           console.log('assignPitches isClement');
 					for (var i = 0; i < intervals.majorIntervals.length; i++) {
-						notesArray.push(centreNote + intervals.majorIntervals[i] * avSettings.semitone);
+						notesArray.push((centreNote + intervals.majorIntervals[i] * avSettings.semitone).toFixed(4));
 					}
 				} else {
           console.log('assignPitches is not clement');
 					for (var j = 0; j < intervals.minorIntervals.length; j++) {
-						notesArray.push(centreNote + intervals.minorIntervals[j] * avSettings.semitone);
+						notesArray.push((centreNote + intervals.minorIntervals[j] * avSettings.semitone)).toFixed(4);
 					}
 				}
 				playSounds(locationData, notesArray);
@@ -233,8 +232,6 @@ module.exports = function() {
 			function mapPitchValues(locationData) {
         var notesArray = [];
         var count = 0;
-        //TODO
-        // What keys is this actually using?
 				mappedValsLoop:
 				for (var condition in locationData) {
           while (avSettings.numNotes > count) {
@@ -309,6 +306,7 @@ module.exports = function() {
 			}
 
 			sketch.preload = function() {
+        console.log('avSettings.numNotes', avSettings.numNotes);
 				//loadSound called during preload
 				//will be ready to play in time for setup
         if (audioSupported) {
@@ -344,7 +342,6 @@ module.exports = function() {
 				avSettings.animAmount = Math.round(locationData.speed.value);
 				avSettings.noiseInc = sketch.map(avSettings.animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
-				//console.log('locationData', locationData);
 				//handle sounds
         if (audioSupported) {
           configureSounds(locationData);
@@ -369,6 +366,8 @@ module.exports = function() {
 	}
 
 	channel.subscribe('userUpdate', function(data) {
+    console.log('typeof data', typeof data);
+    console.log('data', data);
     // If app is already running
     if (organSounds.length > 0) {
       init(data, true);

@@ -18,7 +18,7 @@ module.exports = {
     string: 'please enter text',
     success: 'it worked :]',
     noAddress: 'could not find that place...perhaps it\'s just the ocean',
-    badPlaceName: 'couldn\'t find that place, check the spelling',
+    badPlaceName: 'couldn\'t find that place sorry. Using last location: ',
     defaultData: 'You appear to be offline. Using default location: ',
     lastKnown: 'You appear to be offline. Using last location: ',
     noAudio: 'Your browser doesn\'t support web audio. Try using Chrome or Firefox'
