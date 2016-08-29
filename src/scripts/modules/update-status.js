@@ -24,7 +24,6 @@ module.exports = function updateStatus(status, locationAddress) {
   //Update icons
   for (var i = 0; i < icons.length; i++) {
     if(icons[i].getAttribute('id') === status) {
-      console.log('icon attr', icons[i].getAttribute('id'));
       icons[i].style.display = 'inline-block';
     } else {
       icons[i].style.display = 'none';

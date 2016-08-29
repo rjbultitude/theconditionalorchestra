@@ -75,9 +75,13 @@ Styles and scripts will be processed and minified.
 * Remove unused code from Forecast.io JS API
 
 ##Business logic
-1 master locationData object is composed from the weather data:
-
-
+1 master locationData object is composed from the weather data.
+A property `soundParams` is added to store values for:
+* frequency
+* volume
+* distVolume
+* pitch
+* soundPitchOffset
 
 visibility - Filter freq  
 Cloud cover - sound dist volume
@@ -94,6 +98,7 @@ A precipType of `snow` - played slowest and quieter
 ##Plans
 
 Night time should also manage the filter frequency as it affects visibility
+Only works with daily endpoint
 
 Use the icons
 icon: A machine-readable text summary of this data point, suitable for selecting an icon for display. If defined, this property will have one of the following values: clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night. (Developers should ensure that a sensible default is defined, as additional values, such as hail, thunderstorm, or tornado, may be defined in the future.)

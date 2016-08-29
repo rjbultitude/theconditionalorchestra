@@ -26,9 +26,9 @@ var intervals = require('./intervals');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
 var avSettings = require('./av-settings');
-var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 var duplicateArray = require('../utilities/duplicate-array-vals');
 var getMeanVal = require('../utilities/get-mean-val');
+var weatherCheck = require('../utilities/weather-checker-fns');
 
 module.exports = function() {
   /*
@@ -72,9 +72,6 @@ module.exports = function() {
       dropSound.fade(0,avSettings.fadeTime);
       //Empty vars;
       organSounds = [];
-      //TODO
-      // Why is makeDropSound still being called?
-      //dropSound = undefined;
       isRunning = false;
     }
   }
@@ -83,9 +80,10 @@ module.exports = function() {
     for (var scale in intervals) {
       if (intervals[scale] < numNotes) {
         console.log('interval scales have too few items for the number of notes', intervals[scale]);
-        break;
+        return false;
       }
     }
+    return true;
   }
 
   function makeDropSound(time, playbackRate) {
@@ -93,10 +91,22 @@ module.exports = function() {
     dropSound.play(time);
   }
 
+  function setNumNotes(locationData) {
+    if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.speed.value, locationData.precipIntensity.value)) {
+      avSettings.numNotes = 4;
+    } else {
+      avSettings.numNotes = 6;
+    }
+    // Then error check
+    checkIntervalsVNotes(intervals, avSettings.numNotes);
+    console.log('avSettings.numNotes', avSettings.numNotes);
+    return avSettings.numNotes;
+  }
+
 	// main app init
 	function init(locationData) {
-    //Error check
-    checkIntervalsVNotes(intervals, avSettings.numNotes);
+    // Set the number of organSounds
+    setNumNotes(locationData);
 
     /*
       Create P5 Objects
@@ -113,23 +123,6 @@ module.exports = function() {
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
-
-      function isPrecip(locationData) {
-        if (locationData.precipType !== undefined) {
-          return locationData.precipIntensity.value >= 0;
-        } else {
-          console.log('No precipitation value');
-          return false;
-        }
-      }
-
-      function isCold(locationData) {
-        return frnhtToCelcius(locationData.temperature.value) < 8;
-      }
-
-			function isClement(locationData) {
-				return locationData.cloudCover.value < 0.5 && locationData.speed.value < 16;
-			}
 
       function precipCategory(locationData) {
         if (locationData.precipType === 'rain' && locationData.precipIntensity.value > 0.2) {
@@ -187,7 +180,7 @@ module.exports = function() {
 				soundFilter.res(20);
 
         // Handle precipitation
-        if (isPrecip(locationData)) {
+        if (weatherCheck.isPrecip(locationData.precipType, locationData.precipIntensity.value)) {
           playArp(precipCategory(locationData), notesArray, soundFilter);
         } else {
           arpPart.stop(0);
@@ -219,15 +212,15 @@ module.exports = function() {
 				var centreNote = getMeanVal(locationData.soundParams.pitch.min, locationData.soundParams.pitch.max, 'pitch');
 				var notesArray = [];
 
-				if (isClement(locationData)) {
+				if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
           console.log('assignPitches isClement');
 					for (var i = 0; i < intervals.majorIntervals.length; i++) {
 						notesArray.push(centreNote + intervals.majorIntervals[i] * avSettings.semitone);
 					}
 				} else {
           console.log('assignPitches is not clement');
-					for (var j = 0; j < intervals.minorOctave.length; j++) {
-						notesArray.push(centreNote + intervals.minorOctave[j] * avSettings.semitone);
+					for (var j = 0; j < intervals.minorIntervals.length; j++) {
+						notesArray.push(centreNote + intervals.minorIntervals[j] * avSettings.semitone);
 					}
 				}
 				playSounds(locationData, notesArray);
@@ -240,10 +233,13 @@ module.exports = function() {
 			function mapPitchValues(locationData) {
         var notesArray = [];
         var count = 0;
+        //TODO
+        // What keys is this actually using?
 				mappedValsLoop:
 				for (var condition in locationData) {
           while (avSettings.numNotes > count) {
             if (locationData.hasOwnProperty(condition)) {
+              console.log('condition', condition);
               if (condition === 'name' || condition === 'soundParams') {
                 continue mappedValsLoop;
               }
@@ -285,7 +281,7 @@ module.exports = function() {
 					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
 					// continue with sound processing
           // use arbitrary scale for cold places
-          if (isCold(locationData)) {
+          if (weatherCheck.isCold(locationData.temperature.value)) {
             mapPitchValues(locationData);
           }
           // and heptatonic for warm weather
