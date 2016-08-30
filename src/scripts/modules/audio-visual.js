@@ -220,32 +220,43 @@ module.exports = function() {
         return scale;
       }
 
-			/*
+      function createMusicalLogScale() {
+          var scale = [];
+          var numSemitones = 25; //2 octaves
+          for (var i = 1; i < numSemitones; i++) {
+            scale.push(1 + Math.log(i));
+          }
+          console.log('scale', scale);
+          return scale;
+      }
+
+      /*
 				Major scale for clement weather
 				Minor octave for anything else
 			*/
 			function assignPitches(locationData) {
         //TODO
         // get centre note from musical scale using index
-        var musicalScale = createMusicalScale();
-        console.log('locationData.soundParams.soundPitchOffset' ,locationData.soundParams.soundPitchOffset);
-        var centreNote = musicalScale[12];
+        var musicalScale = createMusicalLogScale();
+        //console.log('locationData.soundParams.soundPitchOffset' ,locationData.soundParams.soundPitchOffset);
+        //var centreNote = musicalScale[12];
+        var centreNote = 0;
         //var centreNote = musicalScale[locationData.soundParams.soundPitchOffset];
         var notesArray = [];
 
 				if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
           console.log('assignPitches isClement');
 					for (var i = 0; i < avSettings.numNotes; i++) {
-            var newMajorNote = centreNote + musicalScale[intervals.majorIntervals[i]];
+            var newMajorNote = centreNote + intervals.chromaticScale[intervals.majorIntervals[i]];
+            //var newMajorNote = centreNote + intervals.musicalScale[intervals.majorIntervals[i]];
             //var newMajorNote = centreNote + (intervals.majorIntervals[i] * avSettings.semitone);
-            console.log('newMajorNote', Math.ceil(newMajorNote * 12));
+            console.log('newMajorNote', newMajorNote);
 						notesArray.push(newMajorNote);
 					}
 				} else {
           console.log('assignPitches is not clement');
 					for (var j = 0; j < avSettings.numNotes; j++) {
-            var newMinorNote = centreNote + musicalScale[intervals.minorIntervals[j]];
-            //var newMinorNote = centreNote + (intervals.minorIntervals[j] * avSettings.semitone);
+            var newMinorNote = centreNote + intervals.chromaticScale[intervals.minorIntervals[j]];
 						notesArray.push(newMinorNote);
 					}
 				}
