@@ -53,6 +53,27 @@ module.exports = function() {
     Utility functions
   */
 
+  function createJustMusicalExpScale() {
+    var scale = [];
+    var numSemitones = 13; //2 octaves
+    var startFreq = 1;
+    //Create downwards scale
+    for (var i = numSemitones; i > 0; i--) {
+        //var freq = startFreq * -Math.abs(Math.pow(2, i/12));
+        var freqLow = startFreq / Math.abs(Math.pow(2, i/12));
+        scale.push(freqLow);
+    }
+    //Add centre frequency
+    scale.push(startFreq);
+    //Create upwards scale
+    for (var i = 1; i < numSemitones; i++) {
+        var freqHigh = startFreq * Math.pow(2, i/12);
+        scale.push(freqHigh);
+    }
+    console.log('scale', scale);
+    return scale;
+  }
+
 	// Is this size or smaller
 	function matchMediaMaxWidth(maxWidthVal) {
     return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
@@ -202,34 +223,6 @@ module.exports = function() {
         channel.publish('play');
 			}
 
-      //TODO
-      // It should be logarithmic
-      function createMusicalScale() {
-        var scale = [];
-        var numSemitones = 12;
-        for (var i = 0; i < numSemitones; i++) {
-          scale.push(0.5 + (i * avSettings.semitoneLower));
-        }
-        for (var j = 0; j < numSemitones; j++) {
-          scale.push(1 + (j * avSettings.semitone));
-        }
-        for (var k = 0; k < numSemitones; k++) {
-          scale.push(2 + (k * avSettings.semitoneHigher));
-        }
-        console.log('scale', scale);
-        return scale;
-      }
-
-      function createMusicalLogScale() {
-          var scale = [];
-          var numSemitones = 25; //2 octaves
-          for (var i = 1; i < numSemitones; i++) {
-            scale.push(1 + Math.log(i));
-          }
-          console.log('scale', scale);
-          return scale;
-      }
-
       /*
 				Major scale for clement weather
 				Minor octave for anything else
@@ -237,7 +230,7 @@ module.exports = function() {
 			function assignPitches(locationData) {
         //TODO
         // get centre note from musical scale using index
-        var musicalScale = createMusicalLogScale();
+        var musicalScale = createJustMusicalExpScale();
         //console.log('locationData.soundParams.soundPitchOffset' ,locationData.soundParams.soundPitchOffset);
         //var centreNote = musicalScale[12];
         var centreNote = 0;
@@ -428,6 +421,9 @@ module.exports = function() {
   channel.subscribe('stop', function() {
     killCurrentSounds(true);
   });
+
+  console.log('intervals.chromaticScale', intervals.chromaticScale);
+  createJustMusicalExpScale();
 
 	return true;
 };
