@@ -23,6 +23,7 @@ else {
 var postal = require('postal');
 var channel = postal.channel();
 var intervals = require('./intervals');
+var generateFreqScales = require('./generate-freq-scales');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
 var avSettings = require('./av-settings');
@@ -41,6 +42,7 @@ module.exports = function() {
   var arpPhrase;
   var arpPart;
   var rainDropsPattern = [0];
+  var freqScales = generateFreqScales();
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -52,27 +54,6 @@ module.exports = function() {
   /*
     Utility functions
   */
-
-  function createJustMusicalExpScale() {
-    var scale = [];
-    var numSemitones = 13; //2 octaves
-    var startFreq = 1;
-    //Create downwards scale
-    for (var i = numSemitones; i > 0; i--) {
-        //var freq = startFreq * -Math.abs(Math.pow(2, i/12));
-        var freqLow = startFreq / Math.abs(Math.pow(2, i/12));
-        scale.push(freqLow);
-    }
-    //Add centre frequency
-    scale.push(startFreq);
-    //Create upwards scale
-    for (var i = 1; i < numSemitones; i++) {
-        var freqHigh = startFreq * Math.pow(2, i/12);
-        scale.push(freqHigh);
-    }
-    console.log('scale', scale);
-    return scale;
-  }
 
 	// Is this size or smaller
 	function matchMediaMaxWidth(maxWidthVal) {
@@ -228,28 +209,21 @@ module.exports = function() {
 				Minor octave for anything else
 			*/
 			function assignPitches(locationData) {
-        //TODO
-        // get centre note from musical scale using index
-        var musicalScale = createJustMusicalExpScale();
-        //console.log('locationData.soundParams.soundPitchOffset' ,locationData.soundParams.soundPitchOffset);
-        //var centreNote = musicalScale[12];
-        var centreNote = 0;
-        //var centreNote = musicalScale[locationData.soundParams.soundPitchOffset];
+        var musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
+        var centreNoteIndex = locationData.soundParams.soundPitchOffset;
         var notesArray = [];
 
 				if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
           console.log('assignPitches isClement');
 					for (var i = 0; i < avSettings.numNotes; i++) {
-            var newMajorNote = centreNote + intervals.chromaticScale[intervals.majorIntervals[i]];
-            //var newMajorNote = centreNote + intervals.musicalScale[intervals.majorIntervals[i]];
-            //var newMajorNote = centreNote + (intervals.majorIntervals[i] * avSettings.semitone);
+            var newMajorNote = musicalScale[intervals.majorIntervals[i] + centreNoteIndex];
             console.log('newMajorNote', newMajorNote);
 						notesArray.push(newMajorNote);
 					}
 				} else {
           console.log('assignPitches is not clement');
 					for (var j = 0; j < avSettings.numNotes; j++) {
-            var newMinorNote = centreNote + intervals.chromaticScale[intervals.minorIntervals[j]];
+            var newMinorNote = musicalScale[intervals.minorIntervals[j] + centreNoteIndex];
 						notesArray.push(newMinorNote);
 					}
 				}
@@ -304,11 +278,12 @@ module.exports = function() {
             locationData.soundParams.volume.min,
             locationData.soundParams.volume.max) - locationData.soundParams.distVolume/3;
 					//Pressure determines root note. Range 1 octave
-					locationData.soundParams.soundPitchOffset = Math.round(sketch.map(locationData.pressure.value, locationData.pressure.min, locationData.pressure.max, 0, 24));
+					locationData.soundParams.soundPitchOffset = Math.round(sketch.map(locationData.pressure.value, locationData.pressure.min, locationData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
           console.log('locationData.soundParams.soundPitchOffset', locationData.soundParams.soundPitchOffset);
           //pitch range
-					locationData.soundParams.pitch.min = avSettings.pitchOffsetInc + locationData.soundParams.soundPitchOffset;
-					locationData.soundParams.pitch.max = (locationData.soundParams.pitch.max - avSettings.pitchOffsetInc) + locationData.soundParams.soundPitchOffset;
+          // no longer needed
+					//locationData.soundParams.pitch.min = avSettings.pitchOffsetInc + locationData.soundParams.soundPitchOffset;
+					//locationData.soundParams.pitch.max = (locationData.soundParams.pitch.max - avSettings.pitchOffsetInc) + locationData.soundParams.soundPitchOffset;
 					//visibility is filter freq
 					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
 					// continue with sound processing
@@ -422,8 +397,8 @@ module.exports = function() {
     killCurrentSounds(true);
   });
 
-  console.log('intervals.chromaticScale', intervals.chromaticScale);
-  createJustMusicalExpScale();
+  //var myScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
+  //console.log('myScale', myScale);
 
 	return true;
 };

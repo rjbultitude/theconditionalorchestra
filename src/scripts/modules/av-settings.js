@@ -10,9 +10,9 @@ module.exports = {
 	colourDim: 18,
 	//Pitch / rate
   numNotes: 6,
-	semitone: 0.08333333333333,
-  semitoneLower: 0.04166666666667,
-  semitoneHigher: 0.16666666666667,
+  numOctaves: 3,
+  numSemitones: 12,
+  scaleSize: 7,
   pitchOffsetInc: 0.5,
   fadeTime: 1,
 	//DOM
