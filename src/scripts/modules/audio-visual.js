@@ -196,8 +196,8 @@ module.exports = function() {
 					organSounds[i].organDist.connect(soundFilter);
 					organSounds[i].organ.rate(notesArray[i]);
 					organSounds[i].organDist.rate(notesArray[i]);
-          organSounds[i].organ.amp(locationData.soundParams.volume);
-					organSounds[i].organDist.amp(locationData.soundParams.distVolume);
+          organSounds[i].organ.amp(locationData.soundParams.volume.value);
+					organSounds[i].organDist.amp(locationData.soundParams.distVolume.value);
 					organSounds[i].organ.loop();
 					organSounds[i].organDist.loop();
 				}
@@ -208,8 +208,13 @@ module.exports = function() {
 				Major scale for clement weather
 				Minor octave for anything else
 			*/
-			function assignPitches(locationData) {
-        var musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
+			function assignPitches(locationData, isJust) {
+        var musicalScale = [];
+        if (isJust) {
+          musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
+        } else {
+          musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, 18);
+        }
         var centreNoteIndex = locationData.soundParams.soundPitchOffset;
         var notesArray = [];
 
@@ -271,12 +276,16 @@ module.exports = function() {
 					//Add global values to the main data object
 
 					//cloud cover determines level of distorition
-					locationData.soundParams.distVolume = sketch.map(Math.round(locationData.cloudCover.value), locationData.cloudCover.min, locationData.cloudCover.max, locationData.soundParams.distVolume.min, locationData.soundParams.distVolume.max);
+					locationData.soundParams.distVolume.value = sketch.map(Math.round(locationData.cloudCover.value),
+            locationData.cloudCover.min,
+            locationData.cloudCover.max,
+            locationData.soundParams.distVolume.min,
+            locationData.soundParams.distVolume.max);
 					//Wind speed determines volume of all sounds
-					locationData.soundParams.volume = sketch.map(Math.round(locationData.speed.value),
+					locationData.soundParams.volume.value = sketch.map(Math.round(locationData.speed.value),
             locationData.speed.min, locationData.speed.max,
             locationData.soundParams.volume.min,
-            locationData.soundParams.volume.max) - locationData.soundParams.distVolume/3;
+            locationData.soundParams.volume.max) - locationData.soundParams.distVolume.value/3;
 					//Pressure determines root note. Range 1 octave
 					locationData.soundParams.soundPitchOffset = Math.round(sketch.map(locationData.pressure.value, locationData.pressure.min, locationData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
           console.log('locationData.soundParams.soundPitchOffset', locationData.soundParams.soundPitchOffset);
@@ -289,12 +298,14 @@ module.exports = function() {
 					// continue with sound processing
           // use arbitrary scale for cold places
           if (weatherCheck.isCold(locationData.temperature.value)) {
-            mapPitchValues(locationData);
+            mapPitchValues(locationData, false);
           }
           // and heptatonic for warm weather
           else {
-            assignPitches(locationData);
+            mapPitchValues(locationData, true);
+            //assignPitches(locationData);
           }
+          console.log('locationData', locationData);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
