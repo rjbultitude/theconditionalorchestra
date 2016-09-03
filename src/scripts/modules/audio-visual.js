@@ -213,7 +213,9 @@ module.exports = function() {
         if (isJust) {
           musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
         } else {
-          musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, 18);
+          //TODO
+          // Should this use random?
+          musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, sketch.random(avSettings.numSemitones+1, avSettings.numSemitones * 2));
         }
         var centreNoteIndex = locationData.soundParams.soundPitchOffset;
         var notesArray = [];
@@ -300,10 +302,12 @@ module.exports = function() {
           if (weatherCheck.isCold(locationData.temperature.value)) {
             mapPitchValues(locationData, false);
           }
+          else if (weatherCheck.isFreezing(locationData.temperature.value)) {
+            assignPitches(locationData);
+          }
           // and heptatonic for warm weather
           else {
             mapPitchValues(locationData, true);
-            //assignPitches(locationData);
           }
           console.log('locationData', locationData);
 			}

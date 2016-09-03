@@ -19,6 +19,11 @@ module.exports = {
     return frnhtToCelcius(temperatureInFrnht) < 8;
   },
 
+  // @param temperatureInFrnht floating point
+  isFreezing: function(temperatureInFrnht) {
+    return frnhtToCelcius(temperatureInFrnht) < -2;
+  },
+
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function(cloudCover, windSpeed) {
