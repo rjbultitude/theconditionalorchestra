@@ -22,14 +22,14 @@ else {
 }
 var postal = require('postal');
 var channel = postal.channel();
-var intervals = require('./intervals');
-var generateFreqScales = require('./generate-freq-scales');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
-var avSettings = require('./av-settings');
+var weatherCheck = require('./weather-checker-fns');
+var intervals = require('../utilities/intervals');
+var generateFreqScales = require('../utilities/generate-freq-scales');
 var duplicateArray = require('../utilities/duplicate-array-vals');
 var getMeanVal = require('../utilities/get-mean-val');
-var weatherCheck = require('../utilities/weather-checker-fns');
+var avSettings = require('../settings/av-settings');
 
 module.exports = function() {
   /*
@@ -140,8 +140,7 @@ module.exports = function() {
 
       function addRandomStops(notesArray) {
         //duplicate notes
-        var newNotesArray = [];
-        newNotesArray = duplicateArray(newNotesArray, notesArray, 10);
+        var newNotesArray = duplicateArray(notesArray, 10);
         var randomStopCount = newNotesArray.length / 2;
         //Add stops
         for (var i = 0; i < randomStopCount; i++) {

@@ -1,13 +1,13 @@
 'use strict';
 
 var Forecastio = require('../libs/forecast.io');
-var Nll = require('./nll-cnstrctr');
 var GoogleMapsLoader = require('google-maps');
-var makeRequest = require('./make-request');
-var maxMinVals = require('./max-min-values');
 var postal = require('postal');
 var channel = postal.channel();
+var Nll = require('./nll-cnstrctr');
+var maxMinVals = require('../settings/max-min-values');
 var updateStatus = require('./update-status');
+var makeRequest = require('../utilities/make-request');
 var classListChain = require('../utilities/class-list-chain');
 var getMeanVal = require('../utilities/get-mean-val');
 

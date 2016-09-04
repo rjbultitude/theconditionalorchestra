@@ -3,9 +3,9 @@
 var coordsForm = require('./modules/coords-form');
 var audioVisual = require('./modules/audio-visual');
 var conditionsDisplay = require('./modules/conditions-display');
-var jsLoad = require('./modules/js-load');
 var visualsDialog = require('./modules/visuals-dialog');
 var Tabs = require('./modules/tabs');
+var jsLoad = require('./utilities/js-load');
 //start app
 coordsForm();
 audioVisual();

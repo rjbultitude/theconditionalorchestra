@@ -1,6 +1,6 @@
 'use strict';
 
-var frnhtToCelcius = require('./frnht-to-celcius');
+var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 
 module.exports = {
   // @param precipType String
