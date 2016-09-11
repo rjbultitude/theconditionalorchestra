@@ -65,6 +65,14 @@
  *
  *   Web Audio API: http://w3.org/TR/webaudio/
  */
+ // Start audio context check
+if (!window.AudioContext || !window.webkitAudioContext) {
+ console.error('No Audio Context');
+ p5.prototype.noWebAudioCtx = function noWebAudioCtxFn(_callback) {
+   _callback();
+ }
+ return false;
+}
 var sndcore;
 sndcore = function () {
   'use strict';

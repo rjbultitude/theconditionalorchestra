@@ -10,16 +10,10 @@
 'use strict';
 
 var P5 = require('../libs/p5');
+require('../libs/p5.sound');
 // handle AudioContext
 // should be handled in P5
 var audioSupported = true;
-if (window.AudioContext || window.webkitAudioContext) {
-  require('../libs/p5.sound');
-}
-else {
-  audioSupported = false;
-  console.log('No web Audio API');
-}
 var postal = require('postal');
 var channel = postal.channel();
 var updateStatus = require('./update-status');
@@ -113,6 +107,12 @@ module.exports = function() {
     /*
       Create P5 Objects
     */
+    var p5test = new P5();
+    console.log('p5test', p5test);
+    if(p5test.noWebAudioCtx) {
+      audioSupported = false;
+      console.log('No web Audio API');
+    }
 		// Create filter
     var soundFilter = null;
     if (audioSupported) {
@@ -262,16 +262,14 @@ module.exports = function() {
 				playSounds(locationData, notesArray);
 			}
 
-			/*
-				Sound algorithm
-				---------------
-				Currently it pitches the notes arbitarily
-				using 'character' values
-				The distorition is set by cloud cover
-				The note volume is set by wind speed
-				The root key is set by the air pressure
-				The filter frequency is set by visibility
-			 */
+      /*
+      	Sound config algorithm
+      	---------------
+      	The distortion is set by cloud cover
+      	The note volume is set by wind speed
+      	The root key is set by the air pressure
+      	The filter frequency is set by visibility
+       */
 			function configureSounds(locationData) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
@@ -302,7 +300,7 @@ module.exports = function() {
             mapPitchValues(locationData, false);
           }
           else if (weatherCheck.isFreezing(locationData.temperature.value)) {
-            assignPitches(locationData);
+            assignPitches(locationData, true);
           }
           // and heptatonic for warm weather
           else {
@@ -411,8 +409,7 @@ module.exports = function() {
     killCurrentSounds(true);
   });
 
-  //var myScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
-  //console.log('myScale', myScale);
+  var myScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
 
 	return true;
 };

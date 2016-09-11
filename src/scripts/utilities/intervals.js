@@ -3,7 +3,7 @@
 module.exports = {
     majorIntervals: [0, 2, 4, 5, 7, 9, 11],
     minorIntervals: [0, 2, 3, 5, 7, 9, 10], // harmonic minor scale
-    chromaticScale: [
+    chromaticEqualScale: [
       1.0000,
       1.05946,
       1.12246,
@@ -17,5 +17,20 @@ module.exports = {
       1.78180,
       1.88775,
       2.0000
+    ],
+    chromaticJustScale: [
+      1,
+      1.0417,
+      1.125,
+      1.2,
+      1.25,
+      1.3333,
+      1.4063,
+      1.5,
+      1.6,
+      1.6667,
+      1.8,
+      1.875,
+      2
     ]
 };
