@@ -2,13 +2,21 @@
 
 var statusMsgs = require('./messages');
 
-module.exports = function updateStatus(status, locationAddress) {
+module.exports = function updateStatus(status, locationAddress, noAudioSupport) {
   var icons = document.querySelectorAll('[data-ref=status-icon]');
   var messageBlock = document.getElementById('message-block');
+  var messagesParent = messageBlock.parentNode;
 
-  // console.log('status', status);
-  // console.log('locationAddress', locationAddress);
-  // console.log('statusMsgs[status]', statusMsgs[status]);
+  if (noAudioSupport) {
+    var noAudioEl = document.createElement('p');
+    noAudioEl.innerHTML = statusMsgs['noAudio'];
+    console.log('noAudioEl', noAudioEl);
+    messagesParent.insertBefore(noAudioEl, messageBlock);
+    if (locationAddress) {
+      messageBlock.innerHTML = statusMsgs['noAudioPlaying'] + locationAddress;
+    }
+    return;
+  }
 
   //Absent key handler
   if (statusMsgs[status] === undefined) {

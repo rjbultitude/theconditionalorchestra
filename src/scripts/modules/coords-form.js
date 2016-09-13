@@ -332,7 +332,10 @@ module.exports = function() {
     }
   }, false);
 
-  channel.subscribe('play', function(){
+  channel.subscribe('play', function(audioSupported){
+    if (audioSupported === false) {
+      updateStatus(null, null, true);
+    }
     setStopState();
   });
 

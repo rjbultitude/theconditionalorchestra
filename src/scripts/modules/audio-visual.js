@@ -11,8 +11,6 @@
 
 var P5 = require('../libs/p5');
 require('../libs/p5.sound');
-// handle AudioContext
-// should be handled in P5
 var audioSupported = true;
 var postal = require('postal');
 var channel = postal.channel();
@@ -35,6 +33,7 @@ module.exports = function() {
   var dropSound;
   var arpPhrase;
   var arpPart;
+  var soundFilter;
   var rainDropsPattern = [0];
   var freqScales = generateFreqScales();
 	// Array for all visual shapes
@@ -44,6 +43,8 @@ module.exports = function() {
   // Visuals
   var sqSize = 25;
   var temperatureColour = 0;
+  //
+  var pee5 = new P5();
 
   /*
     Utility functions
@@ -98,29 +99,30 @@ module.exports = function() {
     return avSettings.numNotes;
   }
 
+  /**
+   * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
+   * @param  {[boolean]} audioSupported [whether AudioContext is supported]
+   * @return {[object]}                [All the sound objects]
+   */
+  function createP5SoundObjs(audioSupported) {
+    if (audioSupported) {
+      soundFilter = new P5.LowPass();
+      // Create phrase: name, callback, sequence
+      arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+      arpPart = new P5.Part();
+    }
+    return {
+      soundFilter: soundFilter,
+      arpPhrase: arpPhrase,
+      arpPart: arpPart
+    };
+  }
+
 	// main app init
 	function init(locationData) {
     // Set the number of organSounds
     var numberofnotes = setNumNotes(locationData);
     console.log('numberofnotes', numberofnotes);
-
-    /*
-      Create P5 Objects
-    */
-    var p5test = new P5();
-    console.log('p5test', p5test);
-    if(p5test.noWebAudioCtx) {
-      audioSupported = false;
-      console.log('No web Audio API');
-    }
-		// Create filter
-    var soundFilter = null;
-    if (audioSupported) {
-      soundFilter = new P5.LowPass();
-    }
-    // Create phrase: name, callback, sequence
-    arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
-    arpPart = new P5.Part();
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -200,7 +202,7 @@ module.exports = function() {
 					organSounds[i].organ.loop();
 					organSounds[i].organDist.loop();
 				}
-        channel.publish('play');
+        channel.publish('play', audioSupported);
 			}
 
       /*
@@ -311,6 +313,7 @@ module.exports = function() {
 
 			//Accepts number of horizontal and vertical squares to draw
 			function createShapeSet(hSquares, vSquares) {
+        var shapeSet = [];
 				var index = 0;
 				for (var i = 0; i < hSquares; i++) {
 					for (var j = 0; j < vSquares; j++) {
@@ -319,6 +322,7 @@ module.exports = function() {
 						shapeSet.push(shape);
 					}
 				}
+        return shapeSet;
 			}
 
 			//Sound constructor
@@ -358,16 +362,16 @@ module.exports = function() {
         //create shapes in grid
 				var hSquares = Math.round(sketch.width/sqSize);
 				var vSquares = Math.round(sketch.height/sqSize);
-        createShapeSet(hSquares, vSquares);
+        shapeSet = createShapeSet(hSquares, vSquares);
         //set runtime constants
 				avSettings.animAmount = Math.round(locationData.speed.value);
 				avSettings.noiseInc = sketch.map(avSettings.animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
-				//handle sounds
+				// handle sounds
         if (audioSupported) {
           configureSounds(locationData);
         } else {
-          updateStatus('noAudio');
+          updateStatus(null, locationData.name, true);
         }
 			};
 
@@ -386,8 +390,21 @@ module.exports = function() {
 		return myP5;
 	}
 
+  // Check for audioContext support
+  function isAudioSuppored(pee5) {
+    var audioSupported = true;
+    if(pee5.noWebAudioCtx) {
+      audioSupported = false;
+    } else {
+      createP5SoundObjs(audioSupported);
+    }
+    return audioSupported;
+  }
+
 	channel.subscribe('userUpdate', function(data) {
+    audioSupported = isAudioSuppored(pee5);
     // If app is already running
+    // TODO not sure if this case exists any more
     if (organSounds.length > 0) {
       init(data, true);
     }

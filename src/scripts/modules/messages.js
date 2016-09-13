@@ -10,6 +10,7 @@ module.exports = {
     weather: 'Fetching weather data',
     location: 'Looking up name',
     playing: 'You are listening to the weather of ',
+    noAudioPlaying: 'Showing the weather for ',
     error: 'Error getting your location',
     errorData: 'Error getting weather data, sorry',
     noGeo: 'Geolocation is not supported by your browser Try searching',
