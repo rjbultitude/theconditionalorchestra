@@ -162,39 +162,46 @@ module.exports = function() {
         // Type logic
         if (arpeggioType === 'hard') {
           arpPart.setBPM(200);
-          dropSound.amp(0.8);
+          dropSound.amp(0.6);
         } else if (arpeggioType === 'soft') {
           arpPart.setBPM(155);
-          dropSound.amp(0.5);
+          dropSound.amp(0.4);
         } else if (arpeggioType === 'softest') {
           arpPart.setBPM(110);
-          dropSound.amp(0.3);
+          dropSound.amp(0.2);
         } else {
           console.log('problem with arrpeggio ', arpeggioType);
         }
         arpPart.start();
       }
 
-			function playSounds(locationData, notesArray) {
-        console.log('notesArray', notesArray);
+      function handlePrecipitation(locationData, weatherCheck, scaleArray, arpPart) {
+        var isPrecip = false;
+        // Handle precipitation
+        if (weatherCheck.isPrecip(locationData.precipType, locationData.precipIntensity.value)) {
+          playArp(precipCategory(locationData), scaleArray, soundFilter);
+          isPrecip = true;
+        } else {
+          arpPart.stop(0);
+          isPrecip = false;
+        }
+        return isPrecip;
+      }
+
+			function playSounds(locationData, scaleArray) {
 				// Set filter
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
-
-        // Handle precipitation
-        if (weatherCheck.isPrecip(locationData.precipType, locationData.precipIntensity.value)) {
-          playArp(precipCategory(locationData), notesArray, soundFilter);
-        } else {
-          arpPart.stop(0);
-        }
-
+        // Play rain
+        handlePrecipitation(locationData, weatherCheck, scaleArray, arpPart);
+        // Play brass
 				for (var i = 0; i < organSounds.length; i++) {
 					organSounds[i].organ.disconnect();
 					organSounds[i].organDist.disconnect();
 					organSounds[i].organ.connect(soundFilter);
 					organSounds[i].organDist.connect(soundFilter);
-					organSounds[i].organ.rate(notesArray[i]);
-					organSounds[i].organDist.rate(notesArray[i]);
+					organSounds[i].organ.rate(scaleArray[i]);
+					organSounds[i].organDist.rate(scaleArray[i]);
           organSounds[i].organ.amp(locationData.soundParams.volume.value);
 					organSounds[i].organDist.amp(locationData.soundParams.distVolume.value);
 					organSounds[i].organ.loop();
@@ -204,44 +211,26 @@ module.exports = function() {
 			}
 
       /*
-				Major scale for clement weather
+        Use an equal temperament scale
+        Major scale for clement weather
 				Minor octave for anything else
 			*/
-			function assignPitches(locationData, isJust) {
-        var musicalScale = [];
-        if (isJust) {
-          musicalScale = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, avSettings.numSemitones);
+			function createEqTempPitchesArr(locationData, isWesternScale) {
+        var allNotesArray = [];
+        if (isWesternScale) {
+          allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, avSettings.numSemitones);
         } else {
-          //TODO
-          // Should this use random?
-          musicalScale = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, sketch.random(avSettings.numSemitones+1, avSettings.numSemitones * 2));
+          allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, sketch.random(avSettings.numSemitones+2, avSettings.numSemitones * 2));
         }
-        var centreNoteIndex = locationData.soundParams.soundPitchOffset;
-        var notesArray = [];
-
-				if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
-          console.log('assignPitches isClement');
-					for (var i = 0; i < avSettings.numNotes; i++) {
-            var newMajorNote = musicalScale[intervals.majorIntervals[i] + centreNoteIndex];
-            console.log('newMajorNote', newMajorNote);
-						notesArray.push(newMajorNote);
-					}
-				} else {
-          console.log('assignPitches is not clement');
-					for (var j = 0; j < avSettings.numNotes; j++) {
-            var newMinorNote = musicalScale[intervals.minorIntervals[j] + centreNoteIndex];
-						notesArray.push(newMinorNote);
-					}
-				}
-				playSounds(locationData, notesArray);
+        return allNotesArray;
 			}
 
 			/*
 				Arbitarily assigned pitch values
 				calculated by mapping conditions to pitch
 			*/
-			function mapPitchValues(locationData) {
-        var notesArray = [];
+			function createArbitraryPitchesArr(locationData) {
+        var allNotesArray = [];
         var count = 0;
 				mappedValsLoop:
 				for (var condition in locationData) {
@@ -251,16 +240,48 @@ module.exports = function() {
               if (condition === 'name' || condition === 'soundParams') {
                 continue mappedValsLoop;
               }
-              notesArray.push(sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max).toFixed(4));
+              allNotesArray.push(sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max).toFixed(4));
             }
             count++;
             continue mappedValsLoop;
           }
 				}
-        console.log('mapPitchValues');
-				// continue with sound processing
-				playSounds(locationData, notesArray);
+        return allNotesArray;
 			}
+
+      function allNotesScaleType(locationData, weatherCheck) {
+        // use arbitrary scale for cold places
+        var allNotesArray = [];
+        if (weatherCheck.isCold(locationData.temperature.value)) {
+          allNotesArray = createEqTempPitchesArr(locationData, false);
+        }
+        else if (weatherCheck.isFreezing(locationData.temperature.value)) {
+          allNotesArray = createArbitraryPitchesArr(locationData);
+        }
+        // and heptatonic for warm weather
+        else {
+          allNotesArray = createEqTempPitchesArr(locationData, true);
+        }
+        return allNotesArray;
+      }
+
+      function createMusicalScale(locationData, weatherCheck, allNotesArray) {
+        var centreNoteIndex = locationData.soundParams.soundPitchOffset;
+        var scaleArray = [];
+
+        if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
+          for (var i = 0; i < avSettings.numNotes; i++) {
+            var newMajorNote = allNotesArray[intervals.majorIntervals[i] + centreNoteIndex];
+            scaleArray.push(newMajorNote);
+          }
+        } else {
+          for (var j = 0; j < avSettings.numNotes; j++) {
+            var newMinorNote = allNotesArray[intervals.minorIntervals[j] + centreNoteIndex];
+            scaleArray.push(newMinorNote);
+          }
+        }
+        return scaleArray;
+      }
 
       /*
       	Sound config algorithm
@@ -270,7 +291,7 @@ module.exports = function() {
       	The root key is set by the air pressure
       	The filter frequency is set by visibility
        */
-			function configureSounds(locationData) {
+			function configureSounds(locationData, weatherCheck) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
 
@@ -287,26 +308,10 @@ module.exports = function() {
             locationData.soundParams.volume.max) - locationData.soundParams.distVolume.value/3;
 					//Pressure determines root note. Range 1 octave
 					locationData.soundParams.soundPitchOffset = Math.round(sketch.map(locationData.pressure.value, locationData.pressure.min, locationData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
-          console.log('locationData.soundParams.soundPitchOffset', locationData.soundParams.soundPitchOffset);
-          //pitch range
-          // no longer needed
-					//locationData.soundParams.pitch.min = avSettings.pitchOffsetInc + locationData.soundParams.soundPitchOffset;
-					//locationData.soundParams.pitch.max = (locationData.soundParams.pitch.max - avSettings.pitchOffsetInc) + locationData.soundParams.soundPitchOffset;
 					//visibility is filter freq
 					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
-					// continue with sound processing
-          // use arbitrary scale for cold places
-          if (weatherCheck.isCold(locationData.temperature.value)) {
-            mapPitchValues(locationData, false);
-          }
-          else if (weatherCheck.isFreezing(locationData.temperature.value)) {
-            assignPitches(locationData, true);
-          }
-          // and heptatonic for warm weather
-          else {
-            mapPitchValues(locationData, true);
-          }
-          console.log('locationData', locationData);
+          var scaleArray = createMusicalScale(locationData, weatherCheck, allNotesScaleType(locationData, weatherCheck));
+          playSounds(locationData, scaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
@@ -350,24 +355,32 @@ module.exports = function() {
 						avSettings.cHeight = 800;
 						avSettings.cPadding = '200%';
 				}
+        //--------------------
 				//Canvas setup
+				//--------------------
 				var myCanvas = sketch.createCanvas(avSettings.cWidth, avSettings.cHeight);
 				myCanvas.parent(avSettings.cContainerName);
 				var cContainer = document.getElementById(avSettings.cContainerName);
 				cContainer.style.paddingBottom = avSettings.cPadding;
 				sketch.frameRate(25);
 				sketch.background(0, 0, 0);
+        //---------------------
         //create shapes in grid
+        //---------------------
 				var hSquares = Math.round(sketch.width/sqSize);
 				var vSquares = Math.round(sketch.height/sqSize);
         shapeSet = createShapeSet(hSquares, vSquares);
+        //---------------------
         //set runtime constants
+        //--------------------
 				avSettings.animAmount = Math.round(locationData.speed.value);
 				avSettings.noiseInc = sketch.map(avSettings.animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
-				// handle sounds
+        //--------------------
+        // handle sounds
+        // --------------------
         if (audioSupported) {
-          configureSounds(locationData);
+          configureSounds(locationData, weatherCheck);
         } else {
           updateStatus(null, locationData.name, true);
         }
@@ -423,9 +436,6 @@ module.exports = function() {
   channel.subscribe('stop', function() {
     killCurrentSounds(true);
   });
-
-  var myScale = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, avSettings.numSemitones);
-  console.log('myScale', myScale);
 
 	return true;
 };

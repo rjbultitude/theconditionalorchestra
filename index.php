@@ -30,7 +30,7 @@
               <div class="article-body">
                 <div class="wrapper">
                   <!-- begin forms -->
-                  <div class="form-section section">
+                  <section class="form-section section">
                     <div class="form-user-location" data-ref="form-user-location">
                       <button id="use-location-btn" class="cta" aria-controls="message-block">Play my weather</button>
                       <a href="#form-coords" id="link-location-select">Or choose another location</a>
@@ -49,7 +49,7 @@
                         </span>
                       </button>
                     </form>
-                  </div>
+                  </section>
                   <!-- end forms -->
 
                   <!-- Begin message & icon block -->
@@ -66,7 +66,7 @@
                   <!-- End message & icon block -->
 
                   <!-- Begin conditions display -->
-                  <div class="conditions-display section">
+                  <section class="conditions-display section">
                     <ul class="conditions-display__list">
                       <li class="conditions-display__item">
                         <h2 class="conditions-display__heading">Temperature</h2>
@@ -99,17 +99,17 @@
                         </p>
                       </li>
                     </ul>
-                  </div>
+                  </section>
                   <!-- End conditions display -->
 
                   <!-- Begin controls -->
-                  <div class="controls-section section" data-ref="visuals-launcher">
+                  <section class="controls-section section" data-ref="visuals-launcher">
                     <button class="cta" type="button" data-a11y-dialog-show="visuals-dialog">
                       <span class="text">
                         Show visualiser
                       </span>
                     </button>
-                  </div>
+                  </section>
                   <!-- End controls -->
                 </div>
               </div>
