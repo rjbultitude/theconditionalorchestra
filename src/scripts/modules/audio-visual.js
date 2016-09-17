@@ -18,7 +18,7 @@ var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
 var weatherCheck = require('./weather-checker-fns');
 var intervals = require('../utilities/intervals');
-var generateFreqScales = require('../utilities/generate-freq-scales');
+var generateFreqScales = require('../utilities/create-freq-scales');
 var duplicateArray = require('../utilities/duplicate-array-vals');
 var getMeanVal = require('../utilities/get-mean-val');
 var avSettings = require('../settings/av-settings');
@@ -35,7 +35,6 @@ module.exports = function() {
   var arpPart;
   var soundFilter;
   var rainDropsPattern = [0];
-  var freqScales = generateFreqScales();
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -187,7 +186,6 @@ module.exports = function() {
           playArp(precipCategory(locationData), notesArray, soundFilter);
         } else {
           arpPart.stop(0);
-          console.log('no rain, no arpeggio');
         }
 
 				for (var i = 0; i < organSounds.length; i++) {
@@ -212,11 +210,11 @@ module.exports = function() {
 			function assignPitches(locationData, isJust) {
         var musicalScale = [];
         if (isJust) {
-          musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
+          musicalScale = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, avSettings.numSemitones);
         } else {
           //TODO
           // Should this use random?
-          musicalScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, sketch.random(avSettings.numSemitones+1, avSettings.numSemitones * 2));
+          musicalScale = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, sketch.random(avSettings.numSemitones+1, avSettings.numSemitones * 2));
         }
         var centreNoteIndex = locationData.soundParams.soundPitchOffset;
         var notesArray = [];
@@ -426,7 +424,8 @@ module.exports = function() {
     killCurrentSounds(true);
   });
 
-  var myScale = freqScales.createJustMusicalExpScale(1, avSettings.numOctaves, avSettings.numSemitones);
+  var myScale = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, avSettings.numSemitones);
+  console.log('myScale', myScale);
 
 	return true;
 };

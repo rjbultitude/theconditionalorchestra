@@ -9,11 +9,11 @@ module.exports = function updateStatus(status, locationAddress, noAudioSupport) 
 
   if (noAudioSupport) {
     var noAudioEl = document.createElement('p');
-    noAudioEl.innerHTML = statusMsgs['noAudio'];
+    noAudioEl.innerHTML = statusMsgs.noAudio;
     console.log('noAudioEl', noAudioEl);
     messagesParent.insertBefore(noAudioEl, messageBlock);
     if (locationAddress) {
-      messageBlock.innerHTML = statusMsgs['noAudioPlaying'] + locationAddress;
+      messageBlock.innerHTML = statusMsgs.noAudioPlaying + locationAddress;
     }
     return;
   }
