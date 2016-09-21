@@ -66,29 +66,15 @@
  *   Web Audio API: http://w3.org/TR/webaudio/
  */
  // Start audio context check
-var context;
-window.addEventListener('load', init, false);
-function init() {
-  try {
-      // Fix up for prefixing
-      window.AudioContext = window.AudioContext||window.webkitAudioContext;
-      context = new AudioContext();
-   }
-   catch(e) {
-     console.error('no audio');
-     p5.prototype.noWebAudioCtx = function noWebAudioCtxFn(_callback) {
-        _callback();
-      }
-      return false;
-   }
+if (typeof window.AudioContext === 'function' || typeof window.webkitAudioContext === 'function') {
+ //do nothing
+} else {
+  console.error('No Audio Context');
+  p5.prototype.noWebAudioCtx = function noWebAudioCtxFn(_callback) {
+    _callback();
+  }
+  return false;
 }
-// if (!window.hasOwnProperty('AudioContext') || !window.hasOwnProperty('webkitAudioContext')) {
-//  console.error('No Audio Context');
-//  p5.prototype.noWebAudioCtx = function noWebAudioCtxFn(_callback) {
-//    _callback();
-//  }
-//  return false;
-// }
 var sndcore;
 sndcore = function () {
   'use strict';
