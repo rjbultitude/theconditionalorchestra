@@ -8,7 +8,8 @@ module.exports = {
 	cPadding: '50%',
 	//Colour offset
 	colourDim: 18,
-	//Pitch / rate
+	//Pitch / rate / volume
+	volume: 0.2,
   numNotes: 6,
   numOctaves: 3,
   numSemitones: 12,

@@ -54,16 +54,18 @@ module.exports = function() {
     return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
   }
 
+  function fadeOutOrganSounds(soundItem) {
+    soundItem.organ.fade(0,avSettings.fadeTime);
+    soundItem.organDist.fade(0,avSettings.fadeTime);
+  }
+
   function killCurrentSounds(isRunning) {
     if (isRunning) {
       // Stop arrpeggio
       arpPart.stop(0);
       arpPart.removePhrase('rainDrops');
       // Fade organ sounds
-      for (var i = 0; i < organSounds.length; i++) {
-        organSounds[i].organ.fade(0,avSettings.fadeTime);
-        organSounds[i].organDist.fade(0,avSettings.fadeTime);
-      }
+      organSounds.forEach(fadeOutOrganSounds);
       // Fade rain drop sound
       dropSound.fade(0,avSettings.fadeTime);
       //Empty vars;
@@ -83,6 +85,7 @@ module.exports = function() {
   }
 
   function makeDropSound(time, playbackRate) {
+    dropSound.setVolume(avSettings.volume);
     dropSound.rate(playbackRate);
     dropSound.play(time);
   }
@@ -153,18 +156,29 @@ module.exports = function() {
         dropSound.disconnect();
         dropSound.connect(soundFilter);
         // Type logic
-        if (arpeggioType === 'hard') {
-          arpPart.setBPM(200);
-          dropSound.amp(0.6);
-        } else if (arpeggioType === 'soft') {
-          arpPart.setBPM(155);
-          dropSound.amp(0.4);
-        } else if (arpeggioType === 'softest') {
-          arpPart.setBPM(110);
-          dropSound.amp(0.2);
-        } else {
-          console.log('problem with arrpeggio ', arpeggioType);
+        switch (arpeggioType) {
+          case 'hard':
+            avSettings.volume = 0.6;
+            dropSound.setVolume(0.6);
+            arpPart.setBPM(160);
+            console.log('hard');
+            break;
+          case 'soft':
+            avSettings.volume = 0.4;
+            dropSound.setVolume(0.4);
+            arpPart.setBPM(110);
+            console.log('soft');
+            break;
+          case 'softest':
+            avSettings.volume = 0.2;
+            dropSound.setVolume(0.2);
+            arpPart.setBPM(60);
+            console.log('softest');
+            break;
+          default:
+            console.log('problem with arrpeggio ', arpeggioType);
         }
+        console.log('dropSound', dropSound);
         arpPart.start();
       }
 
@@ -199,8 +213,8 @@ module.exports = function() {
           organSounds[i].organDist.loop();
 					organSounds[i].organ.rate(scaleArray[i]);
 					organSounds[i].organDist.rate(scaleArray[i]);
-          organSounds[i].organ.amp(locationData.soundParams.volume.value);
-					organSounds[i].organDist.amp(locationData.soundParams.distVolume.value);
+          organSounds[i].organ.setVolume(locationData.soundParams.volume.value);
+					organSounds[i].organDist.setVolume(locationData.soundParams.distVolume.value);
 				}
         channel.publish('play', audioSupported);
 			}

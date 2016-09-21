@@ -21,9 +21,6 @@ module.exports = function() {
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
 	var visualLaunchEl = document.querySelector('[data-ref="visuals-launcher"]');
   var isPlaying = false;
-  //Init
-	localStorage.clear();
-  enableControls();
 
   function enableControls() {
     userLocBtnEl.disabled = false;
@@ -79,7 +76,7 @@ module.exports = function() {
   			//in case user should be offline
   			var locationDataString = JSON.stringify(locationData);
   			localStorage.setItem('locationData', locationDataString);
-        console.log('local storage set');
+        console.log('local storage set', locationDataString);
   			//Post the data to rest of app
   			channel.publish('userUpdate', locationData);
         updateStatus('playing', locationData.name);
@@ -333,6 +330,18 @@ module.exports = function() {
     }
   }, false);
 
+  // Override for test
+  // userLocBtnEl.addEventListener('click', function(e) {
+  //   e.preventDefault();
+  //   var staticWeatherData = makeRequest('GET', 'data/static-weather.json');
+  //   staticWeatherData.then(function(weatherData) {
+  //     var locationData = JSON.parse(weatherData);
+  //     channel.publish('userUpdate', locationData);
+  //     updateStatus('playing', locationData.name);
+  //     visualLaunchEl.style.display = 'block';
+  //   });
+  // }, false);
+
   channel.subscribe('play', function(audioSupported){
     if (audioSupported === false) {
       updateStatus(null, null, true);
@@ -343,4 +352,6 @@ module.exports = function() {
   //Init
   updateStatus('start');
   hideForm();
+  enableControls();
+	localStorage.clear();
 };
