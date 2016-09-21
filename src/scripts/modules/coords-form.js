@@ -12,8 +12,6 @@ var classListChain = require('../utilities/class-list-chain');
 var getMeanVal = require('../utilities/get-mean-val');
 
 module.exports = function() {
-	//Debug
-	localStorage.clear();
 	//Vars
 	var userLocBtnEl = document.getElementById('use-location-btn');
 	var linkLocationSelectEl = document.getElementById('link-location-select');
@@ -23,6 +21,9 @@ module.exports = function() {
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
 	var visualLaunchEl = document.querySelector('[data-ref="visuals-launcher"]');
   var isPlaying = false;
+  //Init
+	localStorage.clear();
+  enableControls();
 
   function enableControls() {
     userLocBtnEl.disabled = false;

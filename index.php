@@ -32,7 +32,7 @@
                   <!-- begin forms -->
                   <section class="form-section section">
                     <div class="form-user-location" data-ref="form-user-location">
-                      <button id="use-location-btn" class="cta" aria-controls="message-block">Play my weather</button>
+                      <button id="use-location-btn" class="cta" aria-controls="message-block" disabled="true">Play my weather</button>
                       <a href="#form-coords" id="link-location-select">Or choose another location</a>
                     </div>
                     <form class="form-coords inactive" id="form-coords" data-ref="form-coords">

@@ -103,18 +103,11 @@ module.exports = function() {
    * @param  {[boolean]} audioSupported [whether AudioContext is supported]
    * @return {[object]}                [All the sound objects]
    */
-  function createP5SoundObjs(audioSupported) {
-    if (audioSupported) {
-      soundFilter = new P5.LowPass();
-      // Create phrase: name, callback, sequence
-      arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
-      arpPart = new P5.Part();
-    }
-    return {
-      soundFilter: soundFilter,
-      arpPhrase: arpPhrase,
-      arpPart: arpPart
-    };
+  function createP5SoundObjs() {
+    soundFilter = new P5.LowPass();
+    // Create phrase: name, callback, sequence
+    arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+    arpPart = new P5.Part();
   }
 
 	// main app init
@@ -189,23 +182,25 @@ module.exports = function() {
       }
 
 			function playSounds(locationData, scaleArray) {
-				// Set filter
+				//Set filter
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
         // Play rain
         handlePrecipitation(locationData, weatherCheck, scaleArray, arpPart);
         // Play brass
+        // must loop before rate is set
+        // issue in Chrome only
 				for (var i = 0; i < organSounds.length; i++) {
 					organSounds[i].organ.disconnect();
 					organSounds[i].organDist.disconnect();
 					organSounds[i].organ.connect(soundFilter);
 					organSounds[i].organDist.connect(soundFilter);
+          organSounds[i].organ.loop();
+          organSounds[i].organDist.loop();
 					organSounds[i].organ.rate(scaleArray[i]);
 					organSounds[i].organDist.rate(scaleArray[i]);
           organSounds[i].organ.amp(locationData.soundParams.volume.value);
 					organSounds[i].organDist.amp(locationData.soundParams.distVolume.value);
-					organSounds[i].organ.loop();
-					organSounds[i].organDist.loop();
 				}
         channel.publish('play', audioSupported);
 			}
@@ -407,7 +402,7 @@ module.exports = function() {
     if(pee5.noWebAudioCtx) {
       audioSupported = false;
     } else {
-      createP5SoundObjs(audioSupported);
+      createP5SoundObjs();
     }
     return audioSupported;
   }
