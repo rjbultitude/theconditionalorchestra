@@ -30,6 +30,7 @@ module.exports = function() {
 	// Sound containers
 	var organSounds = [];
   var dropSound;
+  var fluteSound;
   var arpPhrase;
   var arpPart;
   var soundFilter;
@@ -67,6 +68,8 @@ module.exports = function() {
       organSounds.forEach(fadeOutOrganSounds);
       // Fade rain drop sound
       dropSound.fade(0,avSettings.fadeTime);
+      // Fade fluteSound
+      fluteSound.fade(0,avSettings.fadeTime);
       //Empty vars;
       organSounds = [];
       isRunning = false;
@@ -93,7 +96,7 @@ module.exports = function() {
   function setNumPadNotes(locationData, avSettings) {
     //error check
     var numPadNotes;
-    if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.speed.value, locationData.precipIntensity.value)) {
+    if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.windSpeed.value, locationData.precipIntensity.value)) {
       numPadNotes = 7;
     } else {
       numPadNotes = avSettings.numPadNotes;
@@ -203,6 +206,12 @@ module.exports = function() {
 				soundFilter.res(20);
         // Play rain
         handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart);
+        // Play fluteSound
+        if (weatherCheck.isClement(locationData.cloudCover.value, locationData.windSpeed.value)) {
+          fluteSound.loop();
+          fluteSound.rate(scaleArray[Math.ceil(scaleArray.length/4)]);
+          fluteSound.setVolume(0.3);
+        }
         // Play brass
         // must loop before rate is set
         // issue in Chrome only
@@ -283,10 +292,9 @@ module.exports = function() {
         console.log('centreNoteIndex', centreNoteIndex);
         console.log('numPadNotes: ', numPadNotes);
 
-        if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
+        if (weatherCheck.isClement(locationData.cloudCover.value, locationData.windSpeed.value)) {
           for (var i = 0; i < numNotes; i++) {
             var newMajorNote = allNotesArray[intervals.HeptMajorIntervals[i] + centreNoteIndex];
-            console.log('majorIntervals');
             scaleArray.push(newMajorNote);
           }
         } else {
@@ -320,8 +328,8 @@ module.exports = function() {
             locationData.soundParams.distVolume.min,
             locationData.soundParams.distVolume.max);
 					//Wind speed determines volume of all sounds
-					locationData.soundParams.volume.value = sketch.map(Math.round(locationData.speed.value),
-            locationData.speed.min, locationData.speed.max,
+					locationData.soundParams.volume.value = sketch.map(Math.round(locationData.windSpeed.value),
+            locationData.windSpeed.min, locationData.windSpeed.max,
             locationData.soundParams.volume.min,
             locationData.soundParams.volume.max) - locationData.soundParams.distVolume.value/3;
 					//Pressure determines root note. Range 1 octave
@@ -364,6 +372,7 @@ module.exports = function() {
             );
           }
           dropSound = sketch.loadSound('/audio/drop.mp3');
+          fluteSound = sketch.loadSound('/audio/recorder-harmonics.mp3');
         }
 			};
 
@@ -392,8 +401,8 @@ module.exports = function() {
         //---------------------
         //set runtime constants
         //--------------------
-				avSettings.animAmount = Math.round(locationData.speed.value);
-				avSettings.noiseInc = sketch.map(avSettings.animAmount, locationData.speed.min, locationData.speed.max, 0.01, 0.05);
+				avSettings.animAmount = Math.round(locationData.windSpeed.value);
+				avSettings.noiseInc = sketch.map(avSettings.animAmount, locationData.windSpeed.min, locationData.windSpeed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
         //--------------------
         // handle sounds

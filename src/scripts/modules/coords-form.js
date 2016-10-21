@@ -53,7 +53,7 @@ module.exports = function() {
           temperature: {value: conditions[0].getTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.temperature.max, maxMinVals.forecastParams.temperature.min, 'temperature', true) : conditions[0].getTemperature() },
           apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp', true) : conditions[0].getApparentTemperature() },
           cloudCover: {value: conditions[0].getCloudCover() === undefined ? getMeanVal(maxMinVals.forecastParams.cloudCover.max, maxMinVals.forecastParams.cloudCover.min, 'cloudCover', true) : conditions[0].getCloudCover() },
-          speed: {value: conditions[0].getWindSpeed() === undefined ? getMeanVal(maxMinVals.forecastParams.windSpeed.max, maxMinVals.forecastParams.windSpeed.min, 'windSpeed', true) : conditions[0].getWindSpeed() },
+          windSpeed: {value: conditions[0].getWindSpeed() === undefined ? getMeanVal(maxMinVals.forecastParams.windSpeed.max, maxMinVals.forecastParams.windSpeed.min, 'windSpeed', true) : conditions[0].getWindSpeed() },
   				visibility: {value: conditions[0].getVisibility() === undefined ? getMeanVal(maxMinVals.forecastParams.visibility.max, maxMinVals.forecastParams.visibility.min, 'visibility', true) : conditions[0].getVisibility() },
           pressure: {value: conditions[0].getPressure() === undefined ? getMeanVal(maxMinVals.forecastParams.pressure.max, maxMinVals.forecastParams.pressure.min, 'pressure', true) : conditions[0].getPressure() },
   				precipIntensity: {value: conditions[0].getPrecipIntensity() }
@@ -76,8 +76,8 @@ module.exports = function() {
   			//in case user should be offline
   			var locationDataString = JSON.stringify(locationData);
   			localStorage.setItem('locationData', locationDataString);
-        console.log('local storage set', locationDataString);
-  			//Post the data to rest of app
+        //console.log('local storage set', locationDataString);
+  			// Post the data to rest of app
   			channel.publish('userUpdate', locationData);
         updateStatus('playing', locationData.name);
   			visualLaunchEl.style.display = 'block';

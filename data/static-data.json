@@ -5,7 +5,7 @@
     "min":0,
     "max":1
   },
-  "speed":{
+  "windSpeed":{
     "value":8.05,
     "min":0,
     "max":32

@@ -16,7 +16,7 @@ module.exports = {
       max: 1
     },
     //Wind speed typically up to 24mph
-    speed: {
+    windSpeed: {
       min: 0,
       max: 74
     },
