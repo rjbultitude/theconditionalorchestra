@@ -9,8 +9,8 @@ module.exports = {
 	//Colour offset
 	colourDim: 18,
 	//Pitch / rate / volume
-	volume: 0.2,
-  numNotes: 6,
+	dropVolume: 0.2,
+  numPadNotes: 5,
   numOctaves: 3,
   numSemitones: 12,
   scaleSize: 7,

@@ -20,7 +20,6 @@ var weatherCheck = require('./weather-checker-fns');
 var intervals = require('../utilities/intervals');
 var generateFreqScales = require('../utilities/create-freq-scales');
 var duplicateArray = require('../utilities/duplicate-array-vals');
-var getMeanVal = require('../utilities/get-mean-val');
 var avSettings = require('../settings/av-settings');
 
 module.exports = function() {
@@ -74,31 +73,33 @@ module.exports = function() {
     }
   }
 
-  function checkIntervalsVNotes(intervals, numNotes) {
-    for (var scale in intervals) {
-      if (intervals[scale] < numNotes) {
-        console.log('interval scales have too few items for the number of notes', intervals[scale]);
-        return false;
-      }
-    }
-    return true;
-  }
-
   function makeDropSound(time, playbackRate) {
-    dropSound.setVolume(avSettings.volume);
+    dropSound.setVolume(avSettings.dropVolume);
     dropSound.rate(playbackRate);
     dropSound.play(time);
   }
 
-  function setNumNotes(locationData) {
-    if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.speed.value, locationData.precipIntensity.value)) {
-      avSettings.numNotes = 6;
-    } else {
-      avSettings.numNotes = 4;
+  function checkIntervalsVNotes(intervals, numPadNotes) {
+    for (var scale in intervals) {
+      if (intervals[scale] < numPadNotes) {
+        console.error('interval scales have too few items for the number of notes', intervals[scale]);
+        return false;
+      } else {
+        return true;
+      }
     }
-    // Then error check
-    checkIntervalsVNotes(intervals, avSettings.numNotes);
-    return avSettings.numNotes;
+  }
+
+  function setNumPadNotes(locationData, avSettings) {
+    //error check
+    var numPadNotes;
+    if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.speed.value, locationData.precipIntensity.value)) {
+      numPadNotes = 7;
+    } else {
+      numPadNotes = avSettings.numPadNotes;
+    }
+    checkIntervalsVNotes(intervals, numPadNotes);
+    return numPadNotes;
   }
 
   /**
@@ -116,8 +117,7 @@ module.exports = function() {
 	// main app init
 	function init(locationData) {
     // Set the number of organSounds
-    var numberofnotes = setNumNotes(locationData);
-    console.log('numberofnotes', numberofnotes);
+    var numPadNotes = setNumPadNotes(locationData, avSettings);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -147,9 +147,11 @@ module.exports = function() {
         return newNotesArray;
       }
 
-      function playArp(arpeggioType, notesArray, soundFilter) {
+      function playArp(arpeggioType, arpScaleArray, soundFilter) {
         //Overwrite sequence with new notes
-        var newNotesArray = addRandomStops(notesArray);
+        //TODO repeat intervals upwards
+        //for 12 note arp pattern that uses intervals of less notes
+        var newNotesArray = addRandomStops(arpScaleArray);
         arpPhrase.sequence = newNotesArray;
         arpPart.addPhrase(arpPhrase);
         // Set filter
@@ -158,19 +160,19 @@ module.exports = function() {
         // Type logic
         switch (arpeggioType) {
           case 'hard':
-            avSettings.volume = 0.6;
+            avSettings.dropVolume = 0.6;
             dropSound.setVolume(0.6);
             arpPart.setBPM(160);
             console.log('hard');
             break;
           case 'soft':
-            avSettings.volume = 0.4;
+            avSettings.dropVolume = 0.4;
             dropSound.setVolume(0.4);
             arpPart.setBPM(110);
             console.log('soft');
             break;
           case 'softest':
-            avSettings.volume = 0.2;
+            avSettings.dropVolume = 0.2;
             dropSound.setVolume(0.2);
             arpPart.setBPM(60);
             console.log('softest');
@@ -182,11 +184,11 @@ module.exports = function() {
         arpPart.start();
       }
 
-      function handlePrecipitation(locationData, weatherCheck, scaleArray, arpPart) {
+      function handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart) {
         var isPrecip = false;
         // Handle precipitation
         if (weatherCheck.isPrecip(locationData.precipType, locationData.precipIntensity.value)) {
-          playArp(precipCategory(locationData), scaleArray, soundFilter);
+          playArp(precipCategory(locationData), arpScaleArray, soundFilter);
           isPrecip = true;
         } else {
           arpPart.stop(0);
@@ -195,12 +197,12 @@ module.exports = function() {
         return isPrecip;
       }
 
-			function playSounds(locationData, scaleArray) {
+			function playSounds(locationData, scaleArray, arpScaleArray) {
 				//Set filter
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
         // Play rain
-        handlePrecipitation(locationData, weatherCheck, scaleArray, arpPart);
+        handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart);
         // Play brass
         // must loop before rate is set
         // issue in Chrome only
@@ -243,7 +245,7 @@ module.exports = function() {
         var count = 0;
 				mappedValsLoop:
 				for (var condition in locationData) {
-          while (avSettings.numNotes > count) {
+          while (numPadNotes > count) {
             if (locationData.hasOwnProperty(condition)) {
               console.log('condition', condition);
               if (condition === 'name' || condition === 'soundParams') {
@@ -259,7 +261,8 @@ module.exports = function() {
 			}
 
       function allNotesScaleType(locationData, weatherCheck) {
-        // use arbitrary scale for cold places
+        //  Use equal temperament scale for cold & warm
+        //  use arbitrary scale for freezing
         var allNotesArray = [];
         if (weatherCheck.isCold(locationData.temperature.value)) {
           allNotesArray = createEqTempPitchesArr(locationData, false);
@@ -274,18 +277,22 @@ module.exports = function() {
         return allNotesArray;
       }
 
-      function createMusicalScale(locationData, weatherCheck, allNotesArray) {
+      function createMusicalScale(locationData, weatherCheck, allNotesArray, numNotes) {
         var centreNoteIndex = locationData.soundParams.soundPitchOffset;
         var scaleArray = [];
+        console.log('centreNoteIndex', centreNoteIndex);
+        console.log('numPadNotes: ', numPadNotes);
 
         if (weatherCheck.isClement(locationData.cloudCover.value, locationData.speed.value)) {
-          for (var i = 0; i < avSettings.numNotes; i++) {
-            var newMajorNote = allNotesArray[intervals.majorIntervals[i] + centreNoteIndex];
+          for (var i = 0; i < numNotes; i++) {
+            var newMajorNote = allNotesArray[intervals.HeptMajorIntervals[i] + centreNoteIndex];
+            console.log('majorIntervals');
             scaleArray.push(newMajorNote);
           }
         } else {
-          for (var j = 0; j < avSettings.numNotes; j++) {
-            var newMinorNote = allNotesArray[intervals.minorIntervals[j] + centreNoteIndex];
+          for (var j = 0; j < numNotes; j++) {
+            var newMinorNote = allNotesArray[intervals.HeptMinorIntervals[j] + centreNoteIndex];
+            console.log('minorIntervals');
             scaleArray.push(newMinorNote);
           }
         }
@@ -303,8 +310,10 @@ module.exports = function() {
 			function configureSounds(locationData, weatherCheck) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
+					//TODO
+					//Dist and volume are at odds with each other
 
-					//cloud cover determines level of distorition
+					//cloud cover determines level of brass distorition
 					locationData.soundParams.distVolume.value = sketch.map(Math.round(locationData.cloudCover.value),
             locationData.cloudCover.min,
             locationData.cloudCover.max,
@@ -319,8 +328,9 @@ module.exports = function() {
 					locationData.soundParams.soundPitchOffset = Math.round(sketch.map(locationData.pressure.value, locationData.pressure.min, locationData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
 					//visibility is filter freq
 					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
-          var scaleArray = createMusicalScale(locationData, weatherCheck, allNotesScaleType(locationData, weatherCheck));
-          playSounds(locationData, scaleArray);
+          var padScaleArray = createMusicalScale(locationData, weatherCheck, allNotesScaleType(locationData, weatherCheck), numPadNotes);
+          var arpScaleArray = createMusicalScale(locationData, weatherCheck, allNotesScaleType(locationData, weatherCheck), 12);
+          playSounds(locationData, padScaleArray, arpScaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
@@ -347,7 +357,7 @@ module.exports = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
         if (audioSupported) {
-          for (var i = 0; i < avSettings.numNotes; i++) {
+          for (var i = 0; i < numPadNotes; i++) {
             organSounds[i] = new WeatherSound(
               sketch.loadSound('/audio/organ-C2.mp3'),
               sketch.loadSound('/audio/organ-C2d.mp3')
@@ -406,7 +416,6 @@ module.exports = function() {
 			};
 
 		}, 'canvas-container');
-
 		return myP5;
 	}
 
@@ -423,15 +432,7 @@ module.exports = function() {
 
 	channel.subscribe('userUpdate', function(data) {
     audioSupported = isAudioSuppored(pee5);
-    // If app is already running
-    // TODO not sure if this case exists any more
-    if (organSounds.length > 0) {
-      init(data, true);
-    }
-    // If running for the first time
-    else if (organSounds.length === 0) {
-      init(data, false);
-    }
+    init(data);
 	});
 
   channel.subscribe('dialogOpen', function() {

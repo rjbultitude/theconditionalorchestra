@@ -93,19 +93,18 @@ module.exports = function() {
     var fetchStaticData = makeRequest('GET', 'data/static-data.json');
     fetchStaticData.then(function success(staticData) {
       var staticDataJSON = JSON.parse(staticData);
-      console.log('staticDataJSON.name', staticDataJSON.name);
       if (badPlaceName) {
         updateStatus('badPlaceName', staticDataJSON.name);
       } else {
         updateStatus('defaultData', staticDataJSON.name);
       }
-      channel.publish('userUpdate', staticDataJSON);
       enableControls();
+      channel.publish('userUpdate', staticDataJSON);
     },
     function failure() {
       updateStatus('errorData');
-      console.log('failed to load static data');
       enableControls();
+      console.log('failed to load static data');
     });
   }
 
@@ -301,46 +300,53 @@ module.exports = function() {
     coordsFormSubmitBtnEl.innerHTML = 'Stop';
   }
 
-	coordsFormCloseBtnEl.addEventListener('click', function(e) {
-		e.preventDefault();
-		hideForm();
-	});
-
-	linkLocationSelectEl.addEventListener('click', function(e) {
-		e.preventDefault();
-		//hideOptions();
-		showForm();
-	}, false);
-
-	coordsFormSubmitBtnEl.addEventListener('click', function(e) {
+  function customLocationSubmit(e) {
     e.preventDefault();
     if (isPlaying) {
       setStartState();
     } else {
       useCustomLocation();
     }
-  }, false);
+  }
 
-	userLocBtnEl.addEventListener('click', function(e) {
+  function userLocationSubmit(e) {
     e.preventDefault();
     if (isPlaying) {
       setStartState();
     } else {
       startApp('userLocation', null);
     }
-  }, false);
+  }
 
-  // Override for test
-  // userLocBtnEl.addEventListener('click', function(e) {
-  //   e.preventDefault();
-  //   var staticWeatherData = makeRequest('GET', 'data/static-weather.json');
-  //   staticWeatherData.then(function(weatherData) {
-  //     var locationData = JSON.parse(weatherData);
-  //     channel.publish('userUpdate', locationData);
-  //     updateStatus('playing', locationData.name);
-  //     visualLaunchEl.style.display = 'block';
-  //   });
-  // }, false);
+  function userLocationSubmitTest(e) {
+    e.preventDefault();
+    if (isPlaying) {
+        setStartState();
+    } else {
+      var staticWeatherData = makeRequest('GET', 'data/static-weather.json');
+      staticWeatherData.then(function(weatherData) {
+        var locationData = JSON.parse(weatherData);
+        channel.publish('userUpdate', locationData);
+        updateStatus('playing', locationData.name);
+        visualLaunchEl.style.display = 'block';
+      });
+    }
+  }
+
+  coordsFormCloseBtnEl.addEventListener('click', function(e) {
+		e.preventDefault();
+		hideForm();
+	});
+
+  linkLocationSelectEl.addEventListener('click', function(e) {
+		e.preventDefault();
+		//hideOptions();
+		showForm();
+	}, false);
+
+	coordsFormSubmitBtnEl.addEventListener('click', customLocationSubmit, false);
+
+	userLocBtnEl.addEventListener('click', userLocationSubmit, false);
 
   channel.subscribe('play', function(audioSupported){
     if (audioSupported === false) {
