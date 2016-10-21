@@ -30,7 +30,8 @@ module.exports = function() {
 	// Sound containers
 	var organSounds = [];
   var dropSound;
-  var fluteSound;
+  var bass;
+  var brassBass;
   var arpPhrase;
   var arpPart;
   var soundFilter;
@@ -68,8 +69,8 @@ module.exports = function() {
       organSounds.forEach(fadeOutOrganSounds);
       // Fade rain drop sound
       dropSound.fade(0,avSettings.fadeTime);
-      // Fade fluteSound
-      fluteSound.fade(0,avSettings.fadeTime);
+      // Fade bass
+      bass.fade(0,avSettings.fadeTime);
       //Empty vars;
       organSounds = [];
       isRunning = false;
@@ -121,6 +122,7 @@ module.exports = function() {
 	function init(locationData) {
     // Set the number of organSounds
     var numPadNotes = setNumPadNotes(locationData, avSettings);
+    var scaleArrayIndex = 0;
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -200,18 +202,35 @@ module.exports = function() {
         return isPrecip;
       }
 
+      function playBass() {
+        bass.play();
+        bass.rate(scaleArray[0]);
+        bass.setVolume(0.6);
+      }
+
+      function playBrassBass() {
+        brassBass.play();
+        brassBass.rate(scaleArray[scaleArrayIndex]);
+        brassBass.setVolume(0.5);
+        if (scaleArrayIndex >= scaleArray.length -1) {
+          scaleArrayIndex = 0;
+        } else {
+          scaleArrayIndex++;
+        }
+
+      }
+
 			function playSounds(locationData, scaleArray, arpScaleArray) {
+        //Pan
+        var panIndex = 0;
+        var panArr = [-0.8,0,0.8];
 				//Set filter
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
         // Play rain
         handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart);
-        // Play fluteSound
-        if (weatherCheck.isClement(locationData.cloudCover.value, locationData.windSpeed.value)) {
-          fluteSound.loop();
-          fluteSound.rate(scaleArray[Math.ceil(scaleArray.length/4)]);
-          fluteSound.setVolume(0.3);
-        }
+        // Play bass
+        handleBass(locationData, weatherCheck);
         // Play brass
         // must loop before rate is set
         // issue in Chrome only
@@ -224,8 +243,15 @@ module.exports = function() {
           organSounds[i].organDist.loop();
 					organSounds[i].organ.rate(scaleArray[i]);
 					organSounds[i].organDist.rate(scaleArray[i]);
+          organSounds[i].organ.pan(panArr[panIndex]);
+					organSounds[i].organDist.pan(panArr[panIndex]);
           organSounds[i].organ.setVolume(locationData.soundParams.volume.value);
 					organSounds[i].organDist.setVolume(locationData.soundParams.distVolume.value);
+          if (panIndex < panArr.length -1) {
+            panIndex++;
+          } else {
+            panIndex = 0;
+          }
 				}
         channel.publish('play', audioSupported);
 			}
@@ -372,7 +398,8 @@ module.exports = function() {
             );
           }
           dropSound = sketch.loadSound('/audio/drop.mp3');
-          fluteSound = sketch.loadSound('/audio/recorder-harmonics.mp3');
+          bass = sketch.loadSound('/audio/bass.mp3');
+          brassBass = sketch.loadSound('/audio/brassbass.mp3');
         }
 			};
 
@@ -421,6 +448,12 @@ module.exports = function() {
             shapeSet[i].update(sketch, avSettings.noiseInc, avSettings.animAmount);
             shapeSet[i].paint(sketch, temperatureColour, avSettings.colourDim);
           }
+        }
+        if (sketch.frameCount % 200 === 0 && weatherCheck.isStormy(locationData.cloudCover.value, locationData.windSpeed.value, locationData.precipIntensity.value)) {
+          playBass();
+        }
+        if (sketch.frameCount % 300 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
+          playBrassBass();
         }
 			};
 
