@@ -27,11 +27,13 @@ module.exports = function() {
     Module scoped vars
   */
 
+  var isPlaying = false;
 	// Sound containers
 	var organSounds = [];
   var dropSound;
   var bass;
   var brassBass;
+  var brassBass2;
   var arpPhrase;
   var arpPart;
   var soundFilter;
@@ -45,6 +47,10 @@ module.exports = function() {
   var temperatureColour = 0;
   //
   var pee5 = new P5();
+  //Subscriptions
+  var subStormy150;
+  var subWindy200;
+  var subWindy240;
 
   /*
     Utility functions
@@ -60,21 +66,25 @@ module.exports = function() {
     soundItem.organDist.fade(0,avSettings.fadeTime);
   }
 
-  function killCurrentSounds(isRunning) {
-    if (isRunning) {
+  function killCurrentSounds() {
       // Stop arrpeggio
       arpPart.stop(0);
       arpPart.removePhrase('rainDrops');
       // Fade organ sounds
       organSounds.forEach(fadeOutOrganSounds);
       // Fade rain drop sound
-      dropSound.fade(0,avSettings.fadeTime);
+      dropSound.fade(0, avSettings.fadeTime);
       // Fade bass
-      bass.fade(0,avSettings.fadeTime);
-      //Empty vars;
+      bass.fade(0, avSettings.fadeTime);
+      //Fade brassbass
+      brassBass.fade(0, avSettings.fadeTime);
+      brassBass2.fade(0, avSettings.fadeTime);
+      //Empty, clear;
       organSounds = [];
-      isRunning = false;
-    }
+      subStormy150.unsubscribe();
+      subWindy200.unsubscribe();
+      subWindy240.unsubscribe();
+      isPlaying = false;
   }
 
   function makeDropSound(time, playbackRate) {
@@ -141,6 +151,7 @@ module.exports = function() {
       }
 
       function addRandomStops(notesArray) {
+        console.log('notesArray', notesArray);
         //duplicate notes
         var newNotesArray = duplicateArray(notesArray, 10);
         var randomStopCount = newNotesArray.length / 2;
@@ -157,6 +168,7 @@ module.exports = function() {
         //TODO repeat intervals upwards
         //for 12 note arp pattern that uses intervals of less notes
         var newNotesArray = addRandomStops(arpScaleArray);
+        console.log('newNotesArray', newNotesArray);
         arpPhrase.sequence = newNotesArray;
         arpPart.addPhrase(arpPhrase);
         // Set filter
@@ -202,22 +214,35 @@ module.exports = function() {
         return isPrecip;
       }
 
-      function playBass() {
+      function playBass(scaleArray) {
         bass.play();
         bass.rate(scaleArray[0]);
         bass.setVolume(0.6);
+        console.log('bass playing');
       }
 
-      function playBrassBass() {
+      function playBrassBass(scaleArray) {
         brassBass.play();
         brassBass.rate(scaleArray[scaleArrayIndex]);
-        brassBass.setVolume(0.5);
+        brassBass.setVolume(1);
+        if (scaleArrayIndex >= 1) {
+          scaleArrayIndex = 0;
+        } else {
+          scaleArrayIndex++;
+        }
+        console.log('brass bass playing');
+      }
+
+      function playBrassBass2(scaleArray) {
+        brassBass.play();
+        brassBass.rate(scaleArray[scaleArrayIndex]);
+        brassBass.setVolume(1);
         if (scaleArrayIndex >= scaleArray.length -1) {
           scaleArrayIndex = 0;
         } else {
           scaleArrayIndex++;
         }
-
+        console.log('brass bass2 playing');
       }
 
 			function playSounds(locationData, scaleArray, arpScaleArray) {
@@ -229,9 +254,18 @@ module.exports = function() {
 				soundFilter.res(20);
         // Play rain
         handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart);
+        //handleBass(locationData, weatherCheck);
         // Play bass
-        handleBass(locationData, weatherCheck);
+        subStormy150 = channel.subscribe('stormy150', function() {
+          playBass(scaleArray);
+        });
         // Play brass
+        subWindy200 = channel.subscribe('windy200', function() {
+          playBrassBass(scaleArray);
+        });
+        subWindy240 = channel.subscribe('windy240', function() {
+          playBrassBass2(scaleArray);
+        });
         // must loop before rate is set
         // issue in Chrome only
 				for (var i = 0; i < organSounds.length; i++) {
@@ -315,17 +349,28 @@ module.exports = function() {
       function createMusicalScale(locationData, weatherCheck, allNotesArray, numNotes) {
         var centreNoteIndex = locationData.soundParams.soundPitchOffset;
         var scaleArray = [];
+        var heptMajorIntervals = intervals.heptMajorIntervals;
+        var heptMinorIntervals = intervals.heptMinorIntervals;
         console.log('centreNoteIndex', centreNoteIndex);
         console.log('numPadNotes: ', numPadNotes);
+        //error check
+        if (numNotes > intervals.heptMajorIntervals.length) {
+          console.error('not enough notes in hept major scale');
+          heptMajorIntervals = duplicateArray(intervals.HeptMajorIntervals, 3);
+        }
+        if (numNotes > intervals.heptMinorIntervals.length) {
+          console.error('not enough notes in hept minor scale');
+          heptMinorIntervals = duplicateArray(intervals.heptMinorIntervals, 3);
+        }
 
         if (weatherCheck.isClement(locationData.cloudCover.value, locationData.windSpeed.value)) {
           for (var i = 0; i < numNotes; i++) {
-            var newMajorNote = allNotesArray[intervals.HeptMajorIntervals[i] + centreNoteIndex];
+            var newMajorNote = allNotesArray[heptMajorIntervals[i] + centreNoteIndex];
             scaleArray.push(newMajorNote);
           }
         } else {
           for (var j = 0; j < numNotes; j++) {
-            var newMinorNote = allNotesArray[intervals.HeptMinorIntervals[j] + centreNoteIndex];
+            var newMinorNote = allNotesArray[heptMinorIntervals[j] + centreNoteIndex];
             console.log('minorIntervals');
             scaleArray.push(newMinorNote);
           }
@@ -400,6 +445,7 @@ module.exports = function() {
           dropSound = sketch.loadSound('/audio/drop.mp3');
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBass = sketch.loadSound('/audio/brassbass.mp3');
+          brassBass2 = sketch.loadSound('/audio/brassbass.mp3');
         }
 			};
 
@@ -450,10 +496,16 @@ module.exports = function() {
           }
         }
         if (sketch.frameCount % 200 === 0 && weatherCheck.isStormy(locationData.cloudCover.value, locationData.windSpeed.value, locationData.precipIntensity.value)) {
-          playBass();
+          //playBass();
+          channel.publish('stormy150');
         }
-        if (sketch.frameCount % 300 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
-          playBrassBass();
+        if (sketch.frameCount % 400 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
+          //playBrassBass();
+          channel.publish('windy200');
+        }
+        if (sketch.frameCount % 500 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
+          //playBrassBass2();
+          channel.publish('windy240');
         }
 			};
 
