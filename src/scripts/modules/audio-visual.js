@@ -50,9 +50,9 @@ module.exports = function() {
   //
   var pee5 = new P5();
   //Subscriptions
-  var subStormy150;
-  var subWindy200;
-  var subWindy240;
+  var publishBass;
+  var publishBrassOne;
+  var publishBrassTwo;
 
   /*
     Utility functions
@@ -86,19 +86,21 @@ module.exports = function() {
       brassBass2.fade(0, avSettings.fadeTime);
       //Empty, clear;
       organSounds = [];
-      subStormy150.unsubscribe();
-      subWindy200.unsubscribe();
-      subWindy240.unsubscribe();
+      publishBass.unsubscribe();
+      publishBrassOne.unsubscribe();
+      publishBrassTwo.unsubscribe();
       isPlaying = false;
   }
 
   function makeDropSound(time, playbackRate) {
     dropSound.rate(playbackRate);
+    dropSound.setVolume(0.1);
     dropSound.play(time);
   }
 
   function makeDropLightSound(time, playbackRate) {
     dropLightSound.rate(playbackRate);
+    dropLightSound.setVolume(0.1);
     dropLightSound.play(time);
   }
 
@@ -142,7 +144,8 @@ module.exports = function() {
 	function init(locationData) {
     // Set the number of organSounds
     var numPadNotes = setNumPadNotes(locationData, avSettings);
-    var scaleArrayIndex = 0;
+    var brassOneScaleArrayIndex = 0;
+    var brassTwoScaleArrayIndex = 0;
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -230,26 +233,28 @@ module.exports = function() {
 
       function playBrassBass(scaleArray) {
         brassBass.play();
-        brassBass.rate(scaleArray[scaleArrayIndex]);
+        brassBass.rate(scaleArray[brassOneScaleArrayIndex]);
+        console.log('scaleArray[brassOneScaleArrayIndex] brass one', scaleArray[brassOneScaleArrayIndex]);
         brassBass.setVolume(1);
-        if (scaleArrayIndex >= 1) {
-          scaleArrayIndex = 0;
+        if (brassOneScaleArrayIndex >= 1) {
+          brassOneScaleArrayIndex = 0;
         } else {
-          scaleArrayIndex++;
+          brassOneScaleArrayIndex++;
         }
         console.log('brass bass playing');
       }
 
-      function playBrassBass2(scaleArray) {
+      function playBrassBassTwo(scaleArray) {
         brassBass.play();
-        brassBass.rate(scaleArray[scaleArrayIndex]);
+        brassBass.rate(scaleArray[brassTwoScaleArrayIndex]);
+        console.log('scaleArray[brassTwoScaleArrayIndex] brass two', scaleArray[brassTwoScaleArrayIndex]);
         brassBass.setVolume(1);
-        if (scaleArrayIndex >= scaleArray.length -1) {
-          scaleArrayIndex = 0;
+        if (brassTwoScaleArrayIndex >= scaleArray.length -1) {
+          brassTwoScaleArrayIndex = 0;
         } else {
-          scaleArrayIndex++;
+          brassTwoScaleArrayIndex++;
         }
-        console.log('brass bass2 playing');
+        console.log('brass bass two playing');
       }
 
 			function playSounds(locationData, scaleArray, arpScaleArray) {
@@ -263,15 +268,15 @@ module.exports = function() {
         handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart);
         //handleBass(locationData, weatherCheck);
         // Play bass
-        subStormy150 = channel.subscribe('stormy150', function() {
+        publishBass = channel.subscribe('publishBass', function() {
           playBass(scaleArray);
         });
         // Play brass
-        subWindy200 = channel.subscribe('windy200', function() {
+        publishBrassOne = channel.subscribe('publishBrassOne', function() {
           playBrassBass(scaleArray);
         });
-        subWindy240 = channel.subscribe('windy240', function() {
-          playBrassBass2(scaleArray);
+        publishBrassTwo = channel.subscribe('publishBrassTwo', function() {
+          playBrassBassTwo(scaleArray);
         });
         // must loop before rate is set
         // issue in Chrome only
@@ -504,16 +509,13 @@ module.exports = function() {
           }
         }
         if (sketch.frameCount % 200 === 0 && weatherCheck.isStormy(locationData.cloudCover.value, locationData.windSpeed.value, locationData.precipIntensity.value)) {
-          //playBass();
-          channel.publish('stormy150');
+          channel.publish('publishBass');
         }
         if (sketch.frameCount % 400 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
-          //playBrassBass();
-          channel.publish('windy200');
+          channel.publish('publishBrassOne');
         }
         if (sketch.frameCount % 500 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
-          //playBrassBass2();
-          channel.publish('windy240');
+          channel.publish('publishBrassTwo');
         }
 			};
 
