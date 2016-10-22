@@ -37,7 +37,7 @@ module.exports = function() {
   var arpPhrase;
   var arpPart;
   var soundFilter;
-  var rainDropsPattern = [0];
+  var rainDropsPattern = [1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179];
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -88,9 +88,9 @@ module.exports = function() {
   }
 
   function makeDropSound(time, playbackRate) {
-    dropSound.setVolume(avSettings.dropVolume);
     dropSound.rate(playbackRate);
     dropSound.play(time);
+    //dropSound.setVolume(avSettings.dropVolume);
   }
 
   function checkIntervalsVNotes(intervals, numPadNotes) {
@@ -168,37 +168,35 @@ module.exports = function() {
         //TODO repeat intervals upwards
         //for 12 note arp pattern that uses intervals of less notes
         var newNotesArray = addRandomStops(arpScaleArray);
-        console.log('newNotesArray', newNotesArray);
         arpPhrase.sequence = newNotesArray;
         arpPart.addPhrase(arpPhrase);
+        arpPart.setBPM(60);
         // Set filter
-        dropSound.disconnect();
-        dropSound.connect(soundFilter);
+        //dropSound.disconnect();
+        //dropSound.connect(soundFilter);
         // Type logic
         switch (arpeggioType) {
           case 'hard':
-            avSettings.dropVolume = 0.6;
-            dropSound.setVolume(0.6);
+            avSettings.dropVolume = 0.3;
             arpPart.setBPM(160);
             console.log('hard');
             break;
           case 'soft':
-            avSettings.dropVolume = 0.4;
-            dropSound.setVolume(0.4);
+            avSettings.dropVolume = 0.2;
             arpPart.setBPM(110);
             console.log('soft');
             break;
           case 'softest':
-            avSettings.dropVolume = 0.2;
-            dropSound.setVolume(0.2);
+            avSettings.dropVolume = 0.1;
             arpPart.setBPM(60);
             console.log('softest');
             break;
           default:
             console.log('problem with arrpeggio ', arpeggioType);
         }
-        console.log('dropSound', dropSound);
         arpPart.start();
+        console.log('arpPart', arpPart);
+        console.log('arpPhrase', arpPhrase);
       }
 
       function handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart) {
@@ -217,7 +215,7 @@ module.exports = function() {
       function playBass(scaleArray) {
         bass.play();
         bass.rate(scaleArray[0]);
-        bass.setVolume(0.6);
+        bass.setVolume(1);
         console.log('bass playing');
       }
 
@@ -356,7 +354,7 @@ module.exports = function() {
         //error check
         if (numNotes > intervals.heptMajorIntervals.length) {
           console.error('not enough notes in hept major scale');
-          heptMajorIntervals = duplicateArray(intervals.HeptMajorIntervals, 3);
+          heptMajorIntervals = duplicateArray(intervals.heptMajorIntervals, 3);
         }
         if (numNotes > intervals.heptMinorIntervals.length) {
           console.error('not enough notes in hept minor scale');

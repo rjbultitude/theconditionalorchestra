@@ -1,7 +1,7 @@
-/*! p5.sound.js v0.3.0 2016-01-31 */
+/*! p5.sound.js v0.3.1 2016-09-29 */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd)
-    define('p5.sound', ['./p5'], function (p5) { (factory(p5));});
+    define('p5.sound', ['p5'], function (p5) { (factory(p5));});
   else if (typeof exports === 'object')
     factory(require('./p5'));
   else
@@ -65,26 +65,6 @@
  *
  *   Web Audio API: http://w3.org/TR/webaudio/
  */
-
-// Start audio context check
-// if (!window.AudioContext && !window.webkitAudioContext) {
-//   console.error('No Audio Context');
-//   p5.prototype.noWebAudioCtx = function noWebAudioCtxFn(_callback) { 
-//     _callback();
-//   }
-//   return false;
-// }
-
- // Start audio context check
-if (typeof window.AudioContext === 'function' || typeof window.webkitAudioContext === 'function') {
-  window.webkitAudioContext = window.AudioContext
-} else {
-  console.error('No Audio Context');
-  p5.prototype.noWebAudioCtx = function noWebAudioCtxFn(_callback) {
-    _callback();
-  }
-  return false;
-}
 var sndcore;
 sndcore = function () {
   'use strict';
@@ -315,7 +295,7 @@ master = function () {
     //put a hard limiter on the output
     this.limiter = audiocontext.createDynamicsCompressor();
     this.limiter.threshold.value = 0;
-    this.limiter.ratio.value = 100;
+    this.limiter.ratio.value = 20;
     this.audiocontext = audiocontext;
     this.output.disconnect();
     // an array of input sources
@@ -394,15 +374,15 @@ master = function () {
     }
   };
   /**
-   *  p5.soundOut is the p5.sound master output. It sends output to
+   *  `p5.soundOut` is the p5.sound master output. It sends output to
    *  the destination of this window's web audio context. It contains
    *  Web Audio API nodes including a dyanmicsCompressor (<code>.limiter</code>),
    *  and Gain Nodes for <code>.input</code> and <code>.output</code>.
    *
-   *  @property p5.soundOut
+   *  @property soundOut
    *  @type {Object}
    */
-  p5.soundOut = p5sound;
+  p5.prototype.soundOut = p5.soundOut = p5sound;
   /**
    *  a silent connection to the DesinationNode
    *  which will ensure that anything connected to it
@@ -783,9 +763,12 @@ soundfile = function () {
    *                                     about what went wrong.
    *  @param {Function} [whileLoadingCallback]   Name of a function to call while file
    *                                             is loading. That function will
-   *                                             receive percentage loaded
-   *                                             (between 0 and 1) as a
-   *                                             parameter.
+   *                                             receive progress of the request to
+   *                                             load the sound file
+   *                                             (between 0 and 1) as its first
+   *                                             parameter. This progress
+   *                                             does not account for the additional
+   *                                             time needed to decode the audio data.
    *
    *  @return {Object}    p5.SoundFile Object
    *  @example
@@ -996,8 +979,8 @@ soundfile = function () {
   // TO DO: use this method to create a loading bar that shows progress during file upload/decode.
   p5.SoundFile.prototype._updateProgress = function (evt) {
     if (evt.lengthComputable) {
-      var percentComplete = Math.log(evt.loaded / evt.total * 9.9);
-      this._whileLoading(percentComplete);
+      var percentComplete = evt.loaded / evt.total * 0.99;
+      this._whileLoading(percentComplete, evt);
     } else {
       // Unable to compute progress information since the total size is unknown
       this._whileLoading('size unknown');
@@ -1046,6 +1029,9 @@ soundfile = function () {
         this.bufferSourceNode.stop(time);
         this._counterNode.stop(time);
       }
+      // set playback rate
+      if (rate)
+        this.playbackRate = rate;
       // make a new source and counter. They are automatically assigned playbackRate and buffer
       this.bufferSourceNode = this._initSourceNode();
       // garbage collect counterNode and create a new one
@@ -1081,10 +1067,6 @@ soundfile = function () {
       // this.bufferSourceNode.gain.connect(this.output);
       this.bufferSourceNode.connect(this.output);
       this.output.gain.value = a;
-      // not necessary with _initBufferSource ?
-      // this.bufferSourceNode.playbackRate.cancelScheduledValues(now);
-      rate = rate || Math.abs(this.playbackRate);
-      this.bufferSourceNode.playbackRate.setValueAtTime(rate, now);
       // if it was paused, play at the pause position
       if (this._paused) {
         this.bufferSourceNode.start(time, this.pauseTime, duration);
@@ -1207,6 +1189,7 @@ soundfile = function () {
    *      soundFile.play();
    *      background(0, 255, 0);
    *    }
+   *  }
    *  </code>
    *  </div>
    */
@@ -1438,7 +1421,7 @@ soundfile = function () {
    *  @method rate
    *  @param {Number} [playbackRate]     Set the playback rate. 1.0 is normal,
    *                                     .5 is half-speed, 2.0 is twice as fast.
-   *                                     Must be greater than zero.
+   *                                     Values less than zero play backwards.
    *  @example
    *  <div><code>
    *  var song;
@@ -1545,7 +1528,7 @@ soundfile = function () {
    *
    * @method jump
    * @param {Number} cueTime    cueTime of the soundFile in seconds.
-   * @param {Number} uuration    duration in seconds.
+   * @param {Number} duration    duration in seconds.
    */
   p5.SoundFile.prototype.jump = function (cueTime, duration) {
     if (cueTime < 0 || cueTime > this.buffer.duration) {
@@ -1757,8 +1740,8 @@ soundfile = function () {
    *
    * @method disconnect
    */
-  p5.SoundFile.prototype.disconnect = function (unit) {
-    this.panner.disconnect(unit);
+  p5.SoundFile.prototype.disconnect = function () {
+    this.panner.disconnect();
   };
   /**
    */
@@ -1839,7 +1822,7 @@ soundfile = function () {
     var now = ac.currentTime;
     var bufferSourceNode = ac.createBufferSource();
     bufferSourceNode.buffer = self.buffer;
-    bufferSourceNode.playbackRate.setValueAtTime(self.playbackRate, now);
+    bufferSourceNode.playbackRate.value = self.playbackRate;
     return bufferSourceNode;
   };
   var _createCounterBuffer = function (buffer) {
@@ -4402,11 +4385,10 @@ oscillator = function () {
     this.oscillator = p5sound.audiocontext.createOscillator();
     this.f = freq || 440;
     // frequency
-    this.oscillator.frequency.setValueAtTime(this.f, p5sound.audiocontext.currentTime);
     this.oscillator.type = type || 'sine';
+    this.oscillator.frequency.setValueAtTime(this.f, p5sound.audiocontext.currentTime);
     var o = this.oscillator;
     // connections
-    this.input = p5sound.audiocontext.createGain();
     this.output = p5sound.audiocontext.createGain();
     this._freqMods = [];
     // modulators connected to this oscillator's frequency
@@ -4441,6 +4423,11 @@ oscillator = function () {
     if (!this.started) {
       var freq = f || this.f;
       var type = this.oscillator.type;
+      // set old osc free to be garbage collected (memory)
+      if (this.oscillator) {
+        this.oscillator.disconnect();
+        this.oscillator = undefined;
+      }
       // var detune = this.oscillator.frequency.value;
       this.oscillator = p5sound.audiocontext.createOscillator();
       this.oscillator.frequency.exponentialRampToValueAtTime(Math.abs(freq), p5sound.audiocontext.currentTime);
@@ -4636,7 +4623,6 @@ oscillator = function () {
       var now = p5sound.audiocontext.currentTime;
       this.stop(now);
       this.disconnect();
-      this.oscillator.disconnect();
       this.panner = null;
       this.oscillator = null;
     }
@@ -5308,14 +5294,49 @@ env = function () {
    *                                 decayLevel = sustainLevel)
    *  @param {Number} releaseTime   Release Time (in seconds)
    *  @param {Number} releaseLevel  Amplitude
+   *  @example
+   *  <div><code>
+   *  var t1 = 0.1; // attack time in seconds
+   *  var l1 = 0.7; // attack level 0.0 to 1.0
+   *  var t2 = 0.3; // decay time in seconds
+   *  var l2 = 0.1; // decay level  0.0 to 1.0
+   *  var t3 = 0.2; // sustain time in seconds
+   *  var l3 = dL; // sustain level  0.0 to 1.0
+   *  // release level defaults to zero
+   *
+   *  var env;
+   *  var triOsc;
+   *
+   *  function setup() {
+   *    background(0);
+   *    noStroke();
+   *    fill(255);
+   *    textAlign(CENTER);
+   *    text('click to play', width/2, height/2);
+   *
+   *    env = new p5.Env(t1, l1, t2, l2, t3, l3);
+   *    triOsc = new p5.Oscillator('triangle');
+   *    triOsc.amp(env); // give the env control of the triOsc's amp
+   *    triOsc.start();
+   *  }
+   *
+   *  // mouseClick triggers envelope if over canvas
+   *  function mouseClicked() {
+   *    // is mouse over canvas?
+   *    if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+   *      env.play(triOsc);
+   *    }
+   *  }
+   *  </code></div>
+   *
    */
   p5.Env.prototype.set = function (t1, l1, t2, l2, t3, l3) {
     this.aTime = t1;
     this.aLevel = l1;
     this.dTime = t2 || 0;
     this.dLevel = l2 || 0;
-    this.rTime = t4 || 0;
-    this.rLevel = l4 || 0;
+    this.rTime = t3 || 0;
+    this.rLevel = l3 || 0;
     // set time constants for ramp
     this._setRampAD(t1, t2);
   };
@@ -5492,7 +5513,7 @@ env = function () {
   //helper method to protect against zero values being sent to exponential functions
   p5.Env.prototype.checkExpInput = function (value) {
     if (value <= 0) {
-      value = 0.0001;
+      value = 1e-8;
     }
     return value;
   };
@@ -6129,11 +6150,19 @@ noise = function () {
    *  @return {Object}    Noise Object
    */
   p5.Noise = function (type) {
+    var assignType;
     p5.Oscillator.call(this);
     delete this.f;
     delete this.freq;
     delete this.oscillator;
-    this.buffer = _whiteNoise;
+    if (type === 'brown') {
+      assignType = _brownNoise;
+    } else if (type === 'pink') {
+      assignType = _pinkNoise;
+    } else {
+      assignType = _whiteNoise;
+    }
+    this.buffer = assignType;
   };
   p5.Noise.prototype = Object.create(p5.Oscillator.prototype);
   // generate noise buffers
@@ -6310,10 +6339,15 @@ audioin = function () {
    *  feedback.</p>
    *
    *  <p><em>Note: This uses the <a href="http://caniuse.com/stream">getUserMedia/
-   *  Stream</a> API, which is not supported by certain browsers.</em></p>
+   *  Stream</a> API, which is not supported by certain browsers. Access in Chrome browser
+   *  is limited to localhost and https, but access over http may be limited.</em></p>
    *
    *  @class p5.AudioIn
    *  @constructor
+   *  @param {Function} [errorCallback] A function to call if there is an error
+   *                                    accessing the AudioIn. For example,
+   *                                    Safari and iOS devices do not
+   *                                    currently allow microphone access.
    *  @return {Object} AudioIn
    *  @example
    *  <div><code>
@@ -6329,7 +6363,7 @@ audioin = function () {
    *  }
    *  </code></div>
    */
-  p5.AudioIn = function () {
+  p5.AudioIn = function (errorCallback) {
     // set up audio input
     this.input = p5sound.audiocontext.createGain();
     this.output = p5sound.audiocontext.createGain();
@@ -6348,7 +6382,11 @@ audioin = function () {
     this.output.connect(this.amplitude.input);
     // Some browsers let developer determine their input sources
     if (typeof window.MediaStreamTrack === 'undefined') {
-      window.alert('This browser does not support MediaStreamTrack');
+      if (errorCallback) {
+        errorCallback();
+      } else {
+        window.alert('This browser does not support AudioIn');
+      }
     } else if (typeof window.MediaStreamTrack.getSources === 'function') {
       // Chrome supports getSources to list inputs. Dev picks default
       window.MediaStreamTrack.getSources(this._gotSources);
@@ -6363,6 +6401,11 @@ audioin = function () {
    *  is not connected to p5.sound's output. So you won't hear
    *  anything unless you use the connect() method.<br/>
    *
+   *  Certain browsers limit access to the user's microphone. For example,
+   *  Chrome only allows access from localhost and over https. For this reason,
+   *  you may want to include an errorCallback—a function that is called in case
+   *  the browser won't provide mic access.
+   *
    *  @method start
    *  @param {Function} successCallback Name of a function to call on
    *                                    success.
@@ -6373,6 +6416,7 @@ audioin = function () {
    */
   p5.AudioIn.prototype.start = function (successCallback, errorCallback) {
     var self = this;
+    // if stream was already started...
     // if _gotSources() i.e. developers determine which source to use
     if (p5sound.inputSources[self.currentSource]) {
       // set the audio source
@@ -6417,13 +6461,15 @@ audioin = function () {
     }
   };
   /**
-   *  Turn the AudioIn off. If the AudioIn is stopped, it cannot getLevel().<br/>
+   *  Turn the AudioIn off. If the AudioIn is stopped, it cannot getLevel().
+   *  If re-starting, the user may be prompted for permission access.
    *
    *  @method stop
    */
   p5.AudioIn.prototype.stop = function () {
     if (this.stream) {
-      this.stream.stop();
+      // assume only one track
+      this.stream.getTracks()[0].stop();
     }
   };
   /**
@@ -6454,8 +6500,8 @@ audioin = function () {
    *
    *  @method  disconnect
    */
-  p5.AudioIn.prototype.disconnect = function (unit) {
-    this.output.disconnect(unit);
+  p5.AudioIn.prototype.disconnect = function () {
+    this.output.disconnect();
     // stay connected to amplitude even if not outputting to p5
     this.output.connect(this.amplitude.input);
   };
@@ -7867,6 +7913,8 @@ metro = function () {
       // for all of the active things on the metro:
       for (var i in this.syncedParts) {
         var thisPart = this.syncedParts[i];
+        if (!thisPart.isPlaying)
+          return;
         thisPart.incrementStep(secondsFromNow);
         // each synced source keeps track of its own beat number
         for (var j in thisPart.phrases) {
@@ -8091,12 +8139,8 @@ looper = function () {
     // how many beats
     this.partStep = 0;
     this.phrases = [];
-    this.looping = false;
     this.isPlaying = false;
-    // what does this looper do when it gets to the last step?
-    this.onended = function () {
-      this.stop();
-    };
+    this.noLoop();
     this.tatums = bLength || 0.0625;
     // defaults to quarter note
     this.metro = new p5.Metro();
@@ -8263,11 +8307,11 @@ looper = function () {
       this.callback(time);
       this.partStep += 1;
     } else {
-      if (this.looping) {
-        this.callback(time);
+      if (!this.looping && this.partStep == this.length - 1) {
+        console.log('done');
+        // this.callback(time);
+        this.onended();
       }
-      this.onended();
-      this.partStep = 0;
     }
   };
   /**
@@ -8634,8 +8678,14 @@ soundRecorder = function () {
    *  @param  {String} name      name of the resulting .wav file.
    */
   p5.prototype.saveSound = function (soundFile, name) {
-    var leftChannel = soundFile.buffer.getChannelData(0);
-    var rightChannel = soundFile.buffer.getChannelData(1);
+    var leftChannel, rightChannel;
+    leftChannel = soundFile.buffer.getChannelData(0);
+    // handle mono files
+    if (soundFile.buffer.numberOfChannels > 1) {
+      rightChannel = soundFile.buffer.getChannelData(1);
+    } else {
+      rightChannel = leftChannel;
+    }
     var interleaved = interleave(leftChannel, rightChannel);
     // create the buffer and view to create the .WAV file
     var buffer = new ArrayBuffer(44 + interleaved.length * 2);
@@ -8644,7 +8694,7 @@ soundRecorder = function () {
     // check spec at: https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
     // RIFF chunk descriptor
     writeUTFBytes(view, 0, 'RIFF');
-    view.setUint32(4, 44 + interleaved.length * 2, true);
+    view.setUint32(4, 36 + interleaved.length * 2, true);
     writeUTFBytes(view, 8, 'WAVE');
     // FMT sub-chunk
     writeUTFBytes(view, 12, 'fmt ');
@@ -9045,10 +9095,150 @@ gain = function () {
     this.input = undefined;
   };
 }(master, sndcore);
+var distortion;
+distortion = function () {
+  'use strict';
+  var p5sound = master;
+  /*
+   * Adapted from [Kevin Ennis on StackOverflow](http://stackoverflow.com/questions/22312841/waveshaper-node-in-webaudio-how-to-emulate-distortion)
+   */
+  function makeDistortionCurve(amount) {
+    var k = typeof amount === 'number' ? amount : 50;
+    var n_samples = 44100;
+    var curve = new Float32Array(n_samples);
+    var deg = Math.PI / 180;
+    var i = 0;
+    var x;
+    for (; i < n_samples; ++i) {
+      x = i * 2 / n_samples - 1;
+      curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+    }
+    return curve;
+  }
+  /**
+   * A Distortion effect created with a Waveshaper Node,
+   * with an approach adapted from
+   * [Kevin Ennis](http://stackoverflow.com/questions/22312841/waveshaper-node-in-webaudio-how-to-emulate-distortion)
+   *
+   * @class p5.Distortion
+   * @constructor
+   * @param {Number} [amount=0.25] Unbounded distortion amount.
+   *                                Normal values range from 0-1.
+   * @param {String} [oversample='none'] 'none', '2x', or '4x'.
+   *
+   * @return {Object}   Distortion object
+   */
+  p5.Distortion = function (amount, oversample) {
+    if (typeof amount === 'undefined') {
+      amount = 0.25;
+    }
+    if (typeof amount !== 'number') {
+      throw new Error('amount must be a number');
+    }
+    if (typeof oversample === 'undefined') {
+      oversample = '2x';
+    }
+    if (typeof oversample !== 'string') {
+      throw new Error('oversample must be a String');
+    }
+    var curveAmount = p5.prototype.map(amount, 0, 1, 0, 2000);
+    this.ac = p5sound.audiocontext;
+    this.input = this.ac.createGain();
+    this.output = this.ac.createGain();
+    /**
+     *  The p5.Distortion is built with a
+     *  <a href="http://www.w3.org/TR/webaudio/#WaveShaperNode">
+     *  Web Audio WaveShaper Node</a>.
+     *
+     *  @property WaveShaperNode
+     *  @type {Object}  AudioNode
+     */
+    this.waveShaperNode = this.ac.createWaveShaper();
+    this.amount = curveAmount;
+    this.waveShaperNode.curve = makeDistortionCurve(curveAmount);
+    this.waveShaperNode.oversample = oversample;
+    this.input.connect(this.waveShaperNode);
+    this.waveShaperNode.connect(this.output);
+    this.connect();
+    // add to the soundArray
+    p5sound.soundArray.push(this);
+  };
+  p5.Distortion.prototype.process = function (src, amount, oversample) {
+    src.connect(this.input);
+    this.set(amount, oversample);
+  };
+  /**
+   * Set the amount and oversample of the waveshaper distortion.
+   *
+   * @method setType
+   * @param {Number} [amount=0.25] Unbounded distortion amount.
+   *                                Normal values range from 0-1.
+   * @param {String} [oversample='none'] 'none', '2x', or '4x'.
+   * @param {String}
+   */
+  p5.Distortion.prototype.set = function (amount, oversample) {
+    if (amount) {
+      var curveAmount = p5.prototype.map(amount, 0, 1, 0, 2000);
+      this.amount = curveAmount;
+      this.waveShaperNode.curve = makeDistortionCurve(curveAmount);
+    }
+    if (oversample) {
+      this.waveShaperNode.oversample = oversample;
+    }
+  };
+  /**
+   *  Return the distortion amount, typically between 0-1.
+   *
+   *  @method  getAmount
+   *  @return {Number} Unbounded distortion amount.
+   *                   Normal values range from 0-1.
+   */
+  p5.Distortion.prototype.getAmount = function () {
+    return this.amount;
+  };
+  /**
+   *  Return the oversampling.
+   *
+   *  @return {String} Oversample can either be 'none', '2x', or '4x'.
+   */
+  p5.Distortion.prototype.getOversample = function () {
+    return this.waveShaperNode.oversample;
+  };
+  /**
+   *  Send output to a p5.sound or web audio object
+   *
+   *  @method connect
+   *  @param  {Object} unit
+   */
+  p5.Distortion.prototype.connect = function (unit) {
+    var u = unit || p5.soundOut.input;
+    this.output.connect(u);
+  };
+  /**
+   *  Disconnect all output.
+   *
+   *  @method disconnect
+   */
+  p5.Distortion.prototype.disconnect = function () {
+    this.output.disconnect();
+  };
+  p5.Distortion.prototype.dispose = function () {
+    var index = p5sound.soundArray.indexOf(this);
+    p5sound.soundArray.splice(index, 1);
+    this.input.disconnect();
+    this.waveShaperNode.disconnect();
+    this.input = null;
+    this.waveShaperNode = null;
+    if (typeof this.output !== 'undefined') {
+      this.output.disconnect();
+      this.output = null;
+    }
+  };
+}(master);
 var src_app;
 src_app = function () {
   'use strict';
   var p5SOUND = sndcore;
   return p5SOUND;
-}(sndcore, master, helpers, errorHandler, panner, soundfile, amplitude, fft, signal, oscillator, env, pulse, noise, audioin, filter, delay, reverb, metro, looper, soundRecorder, peakdetect, gain);
+}(sndcore, master, helpers, errorHandler, panner, soundfile, amplitude, fft, signal, oscillator, env, pulse, noise, audioin, filter, delay, reverb, metro, looper, soundRecorder, peakdetect, gain, distortion);
 }));
