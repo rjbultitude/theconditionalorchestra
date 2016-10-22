@@ -287,11 +287,6 @@ module.exports = function() {
 
   function setStartState() {
     channel.publish('stop');
-    isPlaying = false;
-    updateStatus('start');
-    userLocBtnEl.innerHTML = 'Play my weather';
-    coordsFormSubmitBtnEl.innerHTML = 'Play';
-    visualLaunchEl.style.display = 'none';
   }
 
   function setStopState() {
@@ -354,6 +349,14 @@ module.exports = function() {
     }
     setStopState();
   });
+
+  channel.subscribe('allStopped', function() {
+    isPlaying = false;
+    updateStatus('start');
+    userLocBtnEl.innerHTML = 'Play my weather';
+    coordsFormSubmitBtnEl.innerHTML = 'Play';
+    visualLaunchEl.style.display = 'none';
+  })
 
   //Init
   updateStatus('start');

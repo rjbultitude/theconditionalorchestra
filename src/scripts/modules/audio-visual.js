@@ -80,7 +80,12 @@ module.exports = function() {
       arpPart.removePhrase('rainDrops');
       arpPart.removePhrase('rainDropsLight');
       // Fade organ sounds
-      organSounds.forEach(fadeOutOrganSounds);
+      //organSounds.forEach(fadeOutOrganSounds);
+      for (var i = 0; i < organSounds.length; i++) {
+        organSounds[i].organ.fade(0, avSettings.fadeTime);
+        organSounds[i].organDist.fade(0, avSettings.fadeTime);
+        organSounds[i].organLoop.fade(0, avSettings.fadeTime);
+      }
       // Fade rain drop sound
       // TODO Not sure we need this
       dropSound.fade(0, avSettings.fadeTime);
@@ -91,13 +96,18 @@ module.exports = function() {
       brassBass.fade(0, avSettings.fadeTime);
       brassBass2.fade(0, avSettings.fadeTime);
       // Fade choral
-      choralSounds.forEach(fadeChoralSounds);
+      //choralSounds.forEach(fadeChoralSounds);
+      for (var j = 0; j < choralSounds.length; j++) {
+        choralSounds[j].fade(0, avSettings.fadeTime);
+      }
       //Empty, clear;
       organSounds = [];
+      choralSounds = [];
       publishBass.unsubscribe();
       publishBrassOne.unsubscribe();
       publishBrassTwo.unsubscribe();
       isPlaying = false;
+      channel.publish('allStopped');
   }
 
   function makeDropSound(time, playbackRate) {
@@ -255,6 +265,7 @@ module.exports = function() {
       }
 
       function playOrgan(locationData, weatherCheck, scaleArray) {
+        console.log('scaleArray', scaleArray);
         //Pan
         var panIndex = 0;
         var panArr = [-0.8,0,0.8];
@@ -311,7 +322,10 @@ module.exports = function() {
       function handleFineWeather(locationData, weatherCheck, scaleArray) {
         if (weatherCheck.isFine(locationData.temperature.value, locationData.windSpeed.value, locationData.cloudCover.value)) {
           console.log('is fine');
+          console.log('choralSounds.length', choralSounds.length);
           choralSounds.forEach(function(choralSound, i) {
+            console.log('choralSound', choralSound);
+            console.log('scaleArray', scaleArray);
             choralSound.loop();
             choralSound.rate(scaleArray[i]);
             choralSound.setVolume(0.17);
@@ -329,14 +343,20 @@ module.exports = function() {
         handleFineWeather(locationData, weatherCheck, scaleArray);
         // Play bass
         publishBass = channel.subscribe('triggerBass', function() {
-          playBass(scaleArray);
+          if (weatherCheck.isCloudy(locationData.cloudCover.value)) {
+            playBass(scaleArray);
+          }
         });
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
-          playBrassBass(scaleArray);
+          if (weatherCheck.isWindy(locationData.windSpeed.value)) {
+            playBrassBass(scaleArray);
+          }
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
-          playBrassBassTwo(scaleArray);
+          if (weatherCheck.isWindy(locationData.windSpeed.value)) {
+            playBrassBassTwo(scaleArray);
+          }
         });
         //Organ
         playOrgan(locationData, weatherCheck, scaleArray);
@@ -554,13 +574,13 @@ module.exports = function() {
             shapeSet[i].paint(sketch, temperatureColour, avSettings.colourDim);
           }
         }
-        if (sketch.frameCount % 300 === 0 && weatherCheck.isCloudy(locationData.cloudCover.value)) {
+        if (sketch.frameCount % 300 === 0) {
           channel.publish('triggerBass');
         }
-        if (sketch.frameCount % 400 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
+        if (sketch.frameCount % 400 === 0) {
           channel.publish('triggerBrassOne');
         }
-        if (sketch.frameCount % 500 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
+        if (sketch.frameCount % 500 === 0) {
           channel.publish('triggerBrassTwo');
         }
 			};
@@ -594,7 +614,7 @@ module.exports = function() {
   });
 
   channel.subscribe('stop', function() {
-    killCurrentSounds(true);
+    killCurrentSounds();
   });
 
 	return true;
