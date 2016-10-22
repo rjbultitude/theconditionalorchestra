@@ -30,6 +30,7 @@ module.exports = function() {
   var isPlaying = false;
 	// Sound containers
 	var organSounds = [];
+  var choralSounds = [];
   var dropSound;
   var dropLightSound;
   var bass;
@@ -64,8 +65,13 @@ module.exports = function() {
   }
 
   function fadeOutOrganSounds(soundItem) {
-    soundItem.organ.fade(0,avSettings.fadeTime);
-    soundItem.organDist.fade(0,avSettings.fadeTime);
+    soundItem.organ.fade(0, avSettings.fadeTime);
+    soundItem.organDist.fade(0, avSettings.fadeTime);
+    soundItem.organLoop.fade(0, avSettings.fadeTime);
+  }
+
+  function fadeChoralSounds(soundItem) {
+    soundItem.fade(0, avSettings.fadeTime);
   }
 
   function killCurrentSounds() {
@@ -84,6 +90,8 @@ module.exports = function() {
       //Fade brassbass
       brassBass.fade(0, avSettings.fadeTime);
       brassBass2.fade(0, avSettings.fadeTime);
+      // Fade choral
+      choralSounds.forEach(fadeChoralSounds);
       //Empty, clear;
       organSounds = [];
       publishBass.unsubscribe();
@@ -136,12 +144,13 @@ module.exports = function() {
     soundFilter = new P5.LowPass();
     // Create phrase: name, callback, sequence
     arpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
-    arpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern)
+    arpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
     arpPart = new P5.Part();
   }
 
 	// main app init
 	function init(locationData) {
+    console.log('locationData', locationData);
     // Set the number of organSounds
     var numPadNotes = setNumPadNotes(locationData, avSettings);
     var brassOneScaleArrayIndex = 0;
@@ -180,7 +189,7 @@ module.exports = function() {
         //Overwrite sequence with new notes
         //TODO repeat intervals upwards
         //for 12 note arp pattern that uses intervals of less notes
-        var newNotesArray = addRandomStops(arpScaleArray);
+        var newNotesArray = addRandomStops(arpScaleArray).reverse();
         arpDropPhrase.sequence = newNotesArray;
         arpDropLightPhrase.sequence = newNotesArray;
         //Only use dropSound for rain
@@ -209,19 +218,7 @@ module.exports = function() {
         }
         console.log('arpPart', arpPart);
         arpPart.start();
-      }
-
-      function handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart) {
-        var isPrecip = false;
-        // Handle precipitation
-        if (weatherCheck.isPrecip(locationData.precipType, locationData.precipIntensity.value)) {
-          playArp(precipCategory(locationData), arpScaleArray);
-          isPrecip = true;
-        } else {
-          arpPart.stop(0);
-          isPrecip = false;
-        }
-        return isPrecip;
+        arpPart.loop();
       }
 
       function playBass(scaleArray) {
@@ -257,48 +254,92 @@ module.exports = function() {
         console.log('brass bass two playing');
       }
 
-			function playSounds(locationData, scaleArray, arpScaleArray) {
+      function playOrgan(locationData, weatherCheck, scaleArray) {
         //Pan
         var panIndex = 0;
         var panArr = [-0.8,0,0.8];
 				//Set filter
 				soundFilter.freq(locationData.soundParams.freq.value);
 				soundFilter.res(20);
-        // Play rain
-        handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart);
-        //handleBass(locationData, weatherCheck);
-        // Play bass
-        publishBass = channel.subscribe('publishBass', function() {
-          playBass(scaleArray);
-        });
-        // Play brass
-        publishBrassOne = channel.subscribe('publishBrassOne', function() {
-          playBrassBass(scaleArray);
-        });
-        publishBrassTwo = channel.subscribe('publishBrassTwo', function() {
-          playBrassBassTwo(scaleArray);
-        });
         // must loop before rate is set
         // issue in Chrome only
-				for (var i = 0; i < organSounds.length; i++) {
-					organSounds[i].organ.disconnect();
-					organSounds[i].organDist.disconnect();
-					organSounds[i].organ.connect(soundFilter);
-					organSounds[i].organDist.connect(soundFilter);
-          organSounds[i].organ.loop();
-          organSounds[i].organDist.loop();
-					organSounds[i].organ.rate(scaleArray[i]);
-					organSounds[i].organDist.rate(scaleArray[i]);
-          organSounds[i].organ.pan(panArr[panIndex]);
-					organSounds[i].organDist.pan(panArr[panIndex]);
-          organSounds[i].organ.setVolume(locationData.soundParams.volume.value);
-					organSounds[i].organDist.setVolume(locationData.soundParams.distVolume.value);
+        organSounds.map(function(organSound, i) {
+          if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.windSpeed.value, locationData.precipIntensity.value)) {
+            console.log('is stormy');
+            organSound.organLoop.disconnect();
+            organSound.organLoop.connect(soundFilter);
+            organSound.organLoop.loop();
+            organSound.organLoop.rate(scaleArray[i]);
+            organSound.organLoop.pan(panArr[panIndex]);
+            organSound.organLoop.setVolume(locationData.soundParams.volume.value);
+          } else {
+            organSound.organ.disconnect();
+            organSound.organDist.disconnect();
+            organSound.organ.connect(soundFilter);
+            organSound.organDist.connect(soundFilter);
+            organSound.organ.loop();
+            organSound.organDist.loop();
+            organSound.organ.rate(scaleArray[i]);
+            organSound.organDist.rate(scaleArray[i]);
+            organSound.organ.pan(panArr[panIndex]);
+            organSound.organDist.pan(panArr[panIndex]);
+            organSound.organ.setVolume(locationData.soundParams.volume.value);
+            organSound.organDist.setVolume(locationData.soundParams.distVolume.value);
+          }
           if (panIndex < panArr.length -1) {
             panIndex++;
           } else {
             panIndex = 0;
           }
-				}
+          console.log('organSound', organSound);
+        });
+      }
+
+      function handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart) {
+        var isPrecip = false;
+        // Handle precipitation
+        if (weatherCheck.isPrecip(locationData.precipType, locationData.precipIntensity.value)) {
+          playArp(precipCategory(locationData), arpScaleArray);
+          isPrecip = true;
+        } else {
+          arpPart.stop(0);
+          isPrecip = false;
+        }
+        return isPrecip;
+      }
+
+      function handleFineWeather(locationData, weatherCheck, scaleArray) {
+        if (weatherCheck.isFine(locationData.temperature.value, locationData.windSpeed.value, locationData.cloudCover.value)) {
+          console.log('is fine');
+          choralSounds.forEach(function(choralSound, i) {
+            choralSound.loop();
+            choralSound.rate(scaleArray[i]);
+            choralSound.setVolume(0.17);
+          });
+          console.log('choralSounds', choralSounds);
+        } else {
+          console.log('weather is not fine');
+        }
+      }
+
+			function playSounds(locationData, scaleArray, arpScaleArray) {
+        // Rain
+        handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart);
+        // Fine conditions
+        handleFineWeather(locationData, weatherCheck, scaleArray);
+        // Play bass
+        publishBass = channel.subscribe('triggerBass', function() {
+          playBass(scaleArray);
+        });
+        // Play brass
+        publishBrassOne = channel.subscribe('triggerBrassOne', function() {
+          playBrassBass(scaleArray);
+        });
+        publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
+          playBrassBassTwo(scaleArray);
+        });
+        //Organ
+        playOrgan(locationData, weatherCheck, scaleArray);
         channel.publish('play', audioSupported);
 			}
 
@@ -439,9 +480,10 @@ module.exports = function() {
 			}
 
 			//Sound constructor
-			function WeatherSound(organ, organDist) {
+			function OrganSound(organ, organDist, organLoop) {
 				this.organ = organ;
 				this.organDist = organDist;
+				this.organLoop = organLoop;
 			}
 
 			sketch.preload = function() {
@@ -449,10 +491,14 @@ module.exports = function() {
 				//will be ready to play in time for setup
         if (audioSupported) {
           for (var i = 0; i < numPadNotes; i++) {
-            organSounds[i] = new WeatherSound(
+            organSounds[i] = new OrganSound(
               sketch.loadSound('/audio/organ-C2.mp3'),
-              sketch.loadSound('/audio/organ-C2d.mp3')
+              sketch.loadSound('/audio/organ-C2d.mp3'),
+              sketch.loadSound('/audio/organ-C2-loop.mp3')
             );
+          }
+          for (var j = 0; j < 2; j++) {
+            choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
           }
           dropSound = sketch.loadSound('/audio/drop.mp3');
           dropLightSound = sketch.loadSound('/audio/drop-light.mp3');
@@ -508,14 +554,14 @@ module.exports = function() {
             shapeSet[i].paint(sketch, temperatureColour, avSettings.colourDim);
           }
         }
-        if (sketch.frameCount % 200 === 0 && weatherCheck.isStormy(locationData.cloudCover.value, locationData.windSpeed.value, locationData.precipIntensity.value)) {
-          channel.publish('publishBass');
+        if (sketch.frameCount % 300 === 0 && weatherCheck.isCloudy(locationData.cloudCover.value)) {
+          channel.publish('triggerBass');
         }
         if (sketch.frameCount % 400 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
-          channel.publish('publishBrassOne');
+          channel.publish('triggerBrassOne');
         }
         if (sketch.frameCount % 500 === 0 && weatherCheck.isWindy(locationData.windSpeed.value)) {
-          channel.publish('publishBrassTwo');
+          channel.publish('triggerBrassTwo');
         }
 			};
 
