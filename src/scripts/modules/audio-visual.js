@@ -31,10 +31,12 @@ module.exports = function() {
 	// Sound containers
 	var organSounds = [];
   var dropSound;
+  var dropLightSound;
   var bass;
   var brassBass;
   var brassBass2;
-  var arpPhrase;
+  var arpDropPhrase;
+  var arpDropLightPhrase;
   var arpPart;
   var soundFilter;
   var rainDropsPattern = [1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179];
@@ -70,10 +72,13 @@ module.exports = function() {
       // Stop arrpeggio
       arpPart.stop(0);
       arpPart.removePhrase('rainDrops');
+      arpPart.removePhrase('rainDropsLight');
       // Fade organ sounds
       organSounds.forEach(fadeOutOrganSounds);
       // Fade rain drop sound
+      // TODO Not sure we need this
       dropSound.fade(0, avSettings.fadeTime);
+      dropLightSound.fade(0, avSettings.fadeTime);
       // Fade bass
       bass.fade(0, avSettings.fadeTime);
       //Fade brassbass
@@ -90,7 +95,11 @@ module.exports = function() {
   function makeDropSound(time, playbackRate) {
     dropSound.rate(playbackRate);
     dropSound.play(time);
-    //dropSound.setVolume(avSettings.dropVolume);
+  }
+
+  function makeDropLightSound(time, playbackRate) {
+    dropLightSound.rate(playbackRate);
+    dropLightSound.play(time);
   }
 
   function checkIntervalsVNotes(intervals, numPadNotes) {
@@ -124,7 +133,8 @@ module.exports = function() {
   function createP5SoundObjs() {
     soundFilter = new P5.LowPass();
     // Create phrase: name, callback, sequence
-    arpPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+    arpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+    arpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern)
     arpPart = new P5.Part();
   }
 
@@ -163,47 +173,46 @@ module.exports = function() {
         return newNotesArray;
       }
 
-      function playArp(arpeggioType, arpScaleArray, soundFilter) {
+      function playArp(arpeggioType, arpScaleArray) {
         //Overwrite sequence with new notes
         //TODO repeat intervals upwards
         //for 12 note arp pattern that uses intervals of less notes
         var newNotesArray = addRandomStops(arpScaleArray);
-        arpPhrase.sequence = newNotesArray;
-        arpPart.addPhrase(arpPhrase);
+        arpDropPhrase.sequence = newNotesArray;
+        arpDropLightPhrase.sequence = newNotesArray;
+        //Only use dropSound for rain
+        if (arpeggioType === 'hard') {
+          arpPart.addPhrase(arpDropPhrase);
+        } else {
+          arpPart.addPhrase(arpDropLightPhrase);
+        }
         arpPart.setBPM(60);
-        // Set filter
-        //dropSound.disconnect();
-        //dropSound.connect(soundFilter);
         // Type logic
         switch (arpeggioType) {
           case 'hard':
-            avSettings.dropVolume = 0.3;
             arpPart.setBPM(160);
             console.log('hard');
             break;
           case 'soft':
-            avSettings.dropVolume = 0.2;
             arpPart.setBPM(110);
             console.log('soft');
             break;
           case 'softest':
-            avSettings.dropVolume = 0.1;
             arpPart.setBPM(60);
             console.log('softest');
             break;
           default:
             console.log('problem with arrpeggio ', arpeggioType);
         }
-        arpPart.start();
         console.log('arpPart', arpPart);
-        console.log('arpPhrase', arpPhrase);
+        arpPart.start();
       }
 
       function handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart) {
         var isPrecip = false;
         // Handle precipitation
         if (weatherCheck.isPrecip(locationData.precipType, locationData.precipIntensity.value)) {
-          playArp(precipCategory(locationData), arpScaleArray, soundFilter);
+          playArp(precipCategory(locationData), arpScaleArray);
           isPrecip = true;
         } else {
           arpPart.stop(0);
@@ -441,6 +450,7 @@ module.exports = function() {
             );
           }
           dropSound = sketch.loadSound('/audio/drop.mp3');
+          dropLightSound = sketch.loadSound('/audio/drop-light.mp3');
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBass = sketch.loadSound('/audio/brassbass.mp3');
           brassBass2 = sketch.loadSound('/audio/brassbass.mp3');
