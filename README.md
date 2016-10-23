@@ -121,6 +121,8 @@ A precipType of `snow` - played slowest and quieter
 
 ##Plans
 
+Ajax in the icons!
+
 Decide on what organ sounds should do, eg looping organ for stormy, distorted for rough and clean for clement?
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[

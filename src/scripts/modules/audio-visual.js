@@ -428,11 +428,11 @@ module.exports = function() {
         console.log('numPadNotes: ', numPadNotes);
         //error check
         if (numNotes > intervals.heptMajorIntervals.length) {
-          console.error('not enough notes in hept major scale');
+          console.log('not enough notes in hept major scale');
           heptMajorIntervals = duplicateArray(intervals.heptMajorIntervals, 3);
         }
         if (numNotes > intervals.heptMinorIntervals.length) {
-          console.error('not enough notes in hept minor scale');
+          console.log('not enough notes in hept minor scale');
           heptMinorIntervals = duplicateArray(intervals.heptMinorIntervals, 3);
         }
 

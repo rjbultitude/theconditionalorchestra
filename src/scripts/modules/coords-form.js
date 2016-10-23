@@ -89,45 +89,60 @@ module.exports = function() {
 		});
 	}
 
-  function useStaticData(badPlaceName) {
+  function handleNoGeoData(statusString, data, localStorageExists) {
+    if (statusString === 'badPlaceName' && localStorageExists === true) {
+      updateStatus('badPlaceNameLastKnown', data.name);
+    } else if (statusString === 'badPlaceName' && localStorageExists === false) {
+      updateStatus('badPlaceNameStatic', data.name);
+    } else if (statusString === 'noGeoAccess' && localStorageExists === true) {
+      updateStatus('noGeoAcessLastKnown', data.name);
+    } else if (statusString === 'noGeoAccess' && localStorageExists === false) {
+      updateStatus('noGeoAcessStatic', data.name);
+    } else if (statusString === 'badConnection' && localStorageExists === true) {
+      updateStatus('badConnectionLastKnown', data.name);
+    } else if (statusString === 'badConnection' && localStorageExists === false) {
+      updateStatus('badConnectionStatic', data.name);
+    } else {
+      console.error('Unhandled error, status: ', statusString);
+    }
+  }
+
+  function useStaticData(statusString) {
     var fetchStaticData = makeRequest('GET', 'data/static-data.json');
     fetchStaticData.then(function success(staticData) {
       var staticDataJSON = JSON.parse(staticData);
-      if (badPlaceName) {
-        updateStatus('badPlaceName', staticDataJSON.name);
-      } else {
-        updateStatus('defaultData', staticDataJSON.name);
-      }
+      handleNoGeoData(statusString, staticDataJSON, false);
       enableControls();
       channel.publish('userUpdate', staticDataJSON);
     },
     function failure() {
       updateStatus('errorData');
       enableControls();
-      console.log('failed to load static data');
+      console.error('failed to load static data');
     });
   }
 
   //Use previous state to run app
-  function useLocalStorageData(badPlaceName) {
+  function useLocalStorageData(statusString) {
     if(Object.keys(window.localStorage).length > 0) {
       var restoredData = localStorage.getItem('locationData');
       var restoredDataJSON = JSON.parse(restoredData);
-      if (badPlaceName) {
-        updateStatus('badPlaceName', restoredDataJSON.name);
-      } else {
-        updateStatus('lastKnown', restoredDataJSON.name);
-      }
+      handleNoGeoData(statusString, restoredDataJSON, true);
       channel.publish('userUpdate', restoredDataJSON);
       enableControls();
     }
     //Else use static location data
     else {
       console.log('no data in localStorage');
-      useStaticData(badPlaceName);
+      useStaticData(statusString);
     }
   }
 
+  /**
+   * Converts string from form input to lat long and runs app
+   * @param  {String} placeString A custom user location
+   * @return {Boolean}
+   */
   function getLatLong(placeString) {
 		var gpKey = makeRequest('GET', '/gm-key.php');
 		gpKey.then(function(key) {
@@ -136,22 +151,29 @@ module.exports = function() {
 				var geocoder = new google.maps.Geocoder();
 
 				geocoder.geocode( { 'address' : placeString }, function(results, status) {
+          var statusString;
 	        if( status === google.maps.GeocoderStatus.OK ) {
 	            var lat = results[0].geometry.location.lat();
 	            var long = results[0].geometry.location.lng();
 							var address = results[0].formatted_address;
 							updateApp(lat, long, address);
 	        } else {
-              updateStatus('badPlaceName');
+              statusString = 'badPlaceName';
+              updateStatus(statusString);
 	            console.log('Geocode failed due to: ' + status );
-              useLocalStorageData(true);
+              useLocalStorageData(statusString);
 	        }
 		    });
 			});
 		});
 	}
 
-
+  /**
+   * Takes lat long vals from geolocation and runs app
+   * @param  {Number} lat  Lattitude
+   * @param  {Number} long Longitude
+   * @return {Boolean}
+   */
 	function getPlaces(lat, long) {
 		var gpKey = makeRequest('GET', '/gm-key.php');
 		gpKey.then(function success(key) {
@@ -224,6 +246,10 @@ module.exports = function() {
     coordsFormSubmitBtnEl.tabIndex = -1;
 	}
 
+  function containsWord(string, word) {
+    return new RegExp('(?:[^.\w]|^|^\\W+)' + word + '(?:[^.\w]|\\W(?=\\W+|$)|$)').test(string);
+  }
+
 	function getGeo() {
     updateStatus('location');
 
@@ -239,13 +265,23 @@ module.exports = function() {
 		}
 
 		function failure(failure) {
-      if (failure.code === 1) {
-        updateStatus('noGeoAccess');
-      } else {
-        updateStatus('badConnection');
+      // User/browser permission issue
+      var statusString;
+      if (containsWord(failure.message, 'permission')) {
+        statusString = 'noGeoAccess';
       }
+      // Server/https issue
+      else if (containsWord(failure.message, 'secure')) {
+        statusString = 'noGeoAccess';
+      }
+      // Possible internet connection issue
+      else {
+        statusString = 'badConnection';
+      }
+      updateStatus(statusString);
+      useLocalStorageData(statusString);
+      console.error('failure.code', failure.code);
       console.error('failure.message', failure.message);
-			useLocalStorageData(false);
 		}
 
 		navigator.geolocation.getCurrentPosition(success, failure);
@@ -279,7 +315,7 @@ module.exports = function() {
   function useCustomLocation() {
     var placeInput = document.getElementById('place').value;
     if (typeof placeInput !== 'string') {
-      updateStatus('string');
+      updateStatus('stringError');
     }
     else {
       startApp('customLocation', placeInput);
