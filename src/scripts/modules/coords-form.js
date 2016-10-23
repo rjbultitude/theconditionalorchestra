@@ -234,7 +234,7 @@ module.exports = function() {
 		}
 
 		function success(position) {
-			updateStatus('success');
+			updateStatus('obtainedLocation');
 			getPlaces(position.coords.latitude, position.coords.longitude);
 		}
 

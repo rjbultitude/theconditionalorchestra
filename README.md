@@ -101,9 +101,17 @@ Notes in the brass sound and arpeggio are defined as follows:
 If weather is _clement_ a scale using major intervals is produced
 Else a minor scale is produced
 
-###Brass
-The number of brass notes is _7_ if the weather is _stormy_
-or the default _5_ for all other conditions
+Each note is assigned a different _pan_ position from an array of 3 (Left, Center, Right)
+
+###Organ
+The number of organ notes is _7_ if the weather is _stormy_
+or the default _5_ for all other conditions TBC
+
+###Choral
+Two choral notes are played when the weather is _fine_
+
+###Bass
+One bass note is played when the weather _isCloudy_
 
 ###Arpeggio
 Precipitation plays an arpeggiated sequence
@@ -112,6 +120,8 @@ A precipType of `sleet` - with high precipIntensity - Slower and less loud
 A precipType of `snow` - played slowest and quieter
 
 ##Plans
+
+Decide on what organ sounds should do, eg looping organ for stormy, distorted for rough and clean for clement?
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
 
