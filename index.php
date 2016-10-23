@@ -57,7 +57,7 @@
                     <div id="core-content">
                       <div class="status-bar">
                         <div class="icons-block">
-                          <?php include('includes/status-icons.php'); ?>
+                          <?php echo file_get_contents("img/sun-icon.svg"); ?>
                         </div>
                         <p id="message-block" aria-live="polite">Loading...</p>
                       </div>

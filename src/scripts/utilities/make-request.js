@@ -1,7 +1,7 @@
 'use strict';
 var Promise = require('es6-promise').Promise;
 
-module.exports = function makeRequest(method, url) {
+module.exports = function makeRequest(method, url, mimeOverride) {
 	return new Promise(function(resolve, reject) {
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url);
@@ -15,6 +15,9 @@ module.exports = function makeRequest(method, url) {
 				});
 			}
 		};
+    if (mimeOverride) {
+      xhr.overrideMimeType(mimeOverride);
+    }
 		xhr.onerror = function() {
 			reject({
 				status: this.status,

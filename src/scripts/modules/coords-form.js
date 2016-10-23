@@ -382,7 +382,7 @@ module.exports = function() {
 
   channel.subscribe('play', function(audioSupported){
     if (audioSupported === false) {
-      updateStatus(null, null, true);
+      updateStatus('error', null, true);
     }
     setStopState();
   });

@@ -4,6 +4,13 @@
 
   .icons-block {
     min-height: 88px;
+    display: inline-block;
+    width: 120px;
+    text-align: center;
+
+    svg {
+      display: inline-block;
+    }
   }
 
   .icon {
@@ -19,7 +26,7 @@
   }
 
   //Show first icon until app starts
-  #start {
+  #sun-icon {
     display: block;
     animation: rotating 7s linear infinite;
   }

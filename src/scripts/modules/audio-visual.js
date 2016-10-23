@@ -562,7 +562,7 @@ module.exports = function() {
         if (audioSupported) {
           configureSounds(locationData, weatherCheck);
         } else {
-          updateStatus(null, locationData.name, true);
+          updateStatus('error', locationData.name, true);
         }
 			};
 
@@ -591,13 +591,12 @@ module.exports = function() {
 
   // Check for audioContext support
   function isAudioSuppored(pee5) {
-    var audioSupported = true;
     if(pee5.noWebAudioCtx) {
-      audioSupported = false;
+      return false;
     } else {
       createP5SoundObjs();
+      return true;
     }
-    return audioSupported;
   }
 
 	channel.subscribe('userUpdate', function(data) {
