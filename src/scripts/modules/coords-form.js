@@ -239,11 +239,12 @@ module.exports = function() {
 		}
 
 		function failure(failure) {
-			updateStatus('badConnection');
-			//Ensure we're on https or localhost
-			if(failure.message.indexOf('Only secure origins are allowed') === 0) {
-      	console.log('Only secure origins are allowed');
-    	}
+      if (failure.code === 1) {
+        updateStatus('noGeoAccess');
+      } else {
+        updateStatus('badConnection');
+      }
+      console.error('failure.message', failure.message);
 			useLocalStorageData(false);
 		}
 
@@ -271,7 +272,7 @@ module.exports = function() {
     } else if (inputType === 'customLocation') {
       getLatLong(placeInput);
     } else {
-      console.log('inputType error ', inputType);
+      console.error('inputType error ', inputType);
     }
   }
 
@@ -356,7 +357,7 @@ module.exports = function() {
     userLocBtnEl.innerHTML = 'Play my weather';
     coordsFormSubmitBtnEl.innerHTML = 'Play';
     visualLaunchEl.style.display = 'none';
-  })
+  });
 
   //Init
   updateStatus('start');

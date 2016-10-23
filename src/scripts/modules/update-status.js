@@ -2,7 +2,7 @@
 
 var statusMsgs = require('./messages');
 
-module.exports = function updateStatus(status, locationAddress, noAudioSupport) {
+module.exports = function updateStatus(status, locationAddress, noAudioSupport, customMessage) {
   var icons = document.querySelectorAll('[data-ref=status-icon]');
   var messageBlock = document.getElementById('message-block');
   var messagesParent = messageBlock.parentNode;
@@ -29,6 +29,12 @@ module.exports = function updateStatus(status, locationAddress, noAudioSupport) 
   if (locationAddress !== undefined) {
     messageBlock.innerHTML = statusMsgs[status] + locationAddress;
   }
+
+  //Custom message
+  if (customMessage !== undefined) {
+    messageBlock.innerHTML = customMessage + statusMsgs[status] + locationAddress;
+  }
+
   //Update icons
   for (var i = 0; i < icons.length; i++) {
     if(icons[i].getAttribute('id') === status) {
