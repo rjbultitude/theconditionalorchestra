@@ -10,7 +10,7 @@ module.exports = {
 	colourDim: 18,
 	//Pitch / rate / volume
 	dropVolume: 0.2,
-  numPadNotes: 5,
+  numOrganNotes: 5,
   numOctaves: 3,
   numSemitones: 12,
   scaleSize: 7,

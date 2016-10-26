@@ -26,7 +26,6 @@ module.exports = function() {
   /*
     Module scoped vars
   */
-
   var isPlaying = false;
 	// Sound containers
 	var organSounds = [];
@@ -80,26 +79,15 @@ module.exports = function() {
       arpPart.removePhrase('rainDrops');
       arpPart.removePhrase('rainDropsLight');
       // Fade organ sounds
-      //organSounds.forEach(fadeOutOrganSounds);
-      for (var i = 0; i < organSounds.length; i++) {
-        organSounds[i].organ.fade(0, avSettings.fadeTime);
-        organSounds[i].organDist.fade(0, avSettings.fadeTime);
-        organSounds[i].organLoop.fade(0, avSettings.fadeTime);
-      }
-      // Fade rain drop sound
-      // TODO Not sure we need this
-      dropSound.fade(0, avSettings.fadeTime);
-      dropLightSound.fade(0, avSettings.fadeTime);
+      organSounds.forEach(fadeOutOrganSounds);
       // Fade bass
       bass.fade(0, avSettings.fadeTime);
       //Fade brassbass
       brassBass.fade(0, avSettings.fadeTime);
       brassBass2.fade(0, avSettings.fadeTime);
       // Fade choral
-      //choralSounds.forEach(fadeChoralSounds);
-      for (var j = 0; j < choralSounds.length; j++) {
-        choralSounds[j].fade(0, avSettings.fadeTime);
-      }
+      choralSounds.forEach(fadeChoralSounds);
+      // TODO find better way of avoiding mutation
       //Empty, clear;
       organSounds = [];
       choralSounds = [];
@@ -122,9 +110,9 @@ module.exports = function() {
     dropLightSound.play(time);
   }
 
-  function checkIntervalsVNotes(intervals, numPadNotes) {
+  function checkIntervalsVNotes(intervals, numOrganNotes) {
     for (var scale in intervals) {
-      if (intervals[scale] < numPadNotes) {
+      if (intervals[scale] < numOrganNotes) {
         console.error('interval scales have too few items for the number of notes', intervals[scale]);
         return false;
       } else {
@@ -133,17 +121,17 @@ module.exports = function() {
     }
   }
 
-  function setNumPadNotes(locationData, avSettings) {
-    //error check
-    var numPadNotes;
-    if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.windSpeed.value, locationData.precipIntensity.value)) {
-      numPadNotes = 7;
-    } else {
-      numPadNotes = avSettings.numPadNotes;
-    }
-    checkIntervalsVNotes(intervals, numPadNotes);
-    return numPadNotes;
-  }
+  function setNumPadNotes(lwData, avSettings, isStormy) {
+        var _numOrganNotes;
+        if (isStormy) {
+          _numOrganNotes = 7;
+        } else {
+          _numOrganNotes = avSettings.numOrganNotes;
+        }
+        //error check
+        checkIntervalsVNotes(intervals, _numOrganNotes);
+        return _numOrganNotes;
+      }
 
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
@@ -159,25 +147,35 @@ module.exports = function() {
   }
 
 	// main app init
-	function init(locationData) {
-    console.log('locationData', locationData);
-    // Set the number of organSounds
-    var numPadNotes = setNumPadNotes(locationData, avSettings);
+	function init(lwData) {
+    console.log('lwData', lwData);
+    //Init scoped values
     var brassOneScaleArrayIndex = 0;
     var brassTwoScaleArrayIndex = 0;
+    var scaleSetIndex = 0;
+    // weather checks
+    var isPrecip = weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value);
+    var isFine = weatherCheck.isFine(lwData.temperature.value, lwData.windSpeed.value, lwData.cloudCover.value);
+    var isCold = weatherCheck.isCold(lwData.temperature.value);
+    var isFreezing = weatherCheck.isFreezing(lwData.temperature.value);
+    var isClement = weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value);
+    var isWindy = weatherCheck.isWindy(lwData.windSpeed.value);
+    var isCloudy = weatherCheck.isCloudy(lwData.cloudCover.value);
+    var isStormy = weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value);
+    var numOrganNotes = setNumPadNotes(lwData, avSettings, isStormy);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
 
-      function precipCategory(locationData) {
-        if (locationData.precipType === 'rain' && locationData.precipIntensity.value > 0.2) {
+      function precipCategory(lwData) {
+        if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
           return 'hard';
-        } else if (locationData.precipType === 'sleet' && locationData.precipIntensity.value <= 0.2) {
+        } else if (lwData.precipType === 'sleet' && lwData.precipIntensity.value <= 0.2) {
           return 'soft';
-        } else if (locationData.precipType === 'snow' || locationData.precipIntensity.value <= 0.1) {
+        } else if (lwData.precipType === 'snow' || lwData.precipIntensity.value <= 0.1) {
           return 'softest';
         } else {
-          console.log('no rain? type is: ', locationData.precipType);
+          console.log('no rain? type is: ', lwData.precipType);
           return null;
         }
       }
@@ -264,38 +262,45 @@ module.exports = function() {
         console.log('brass bass two playing');
       }
 
-      function playOrgan(locationData, weatherCheck, scaleArray) {
-        console.log('scaleArray', scaleArray);
+      //TODO need to break this up into each separate sound
+      //else the recursion won't work due to different sound lengths
+      function playOrgan(lwData, scaleSet, scaleSetIndex) {
+        console.log('scaleSet', scaleSet);
+        console.log('scaleSet[scaleSetIndex]', scaleSet[scaleSetIndex]);
         //Pan
         var panIndex = 0;
         var panArr = [-0.8,0,0.8];
 				//Set filter
-				soundFilter.freq(locationData.soundParams.freq.value);
+				soundFilter.freq(lwData.soundParams.freq.value);
 				soundFilter.res(20);
         // must loop before rate is set
         // issue in Chrome only
         organSounds.map(function(organSound, i) {
-          if (weatherCheck.isStormy(locationData.cloudCover.value, locationData.windSpeed.value, locationData.precipIntensity.value)) {
+          console.log('scaleSet[scaleSetIndex][i]', scaleSet[scaleSetIndex][i]);
+          if (isStormy) {
             console.log('is stormy');
             organSound.organLoop.disconnect();
             organSound.organLoop.connect(soundFilter);
-            organSound.organLoop.loop();
-            organSound.organLoop.rate(scaleArray[i]);
+            organSound.organLoop.play();
+            organSound.organLoop.onended(function() { organCallback(lwData, scaleSet); });
+            organSound.organLoop.rate(scaleSet[scaleSetIndex][i]);
             organSound.organLoop.pan(panArr[panIndex]);
-            organSound.organLoop.setVolume(locationData.soundParams.volume.value);
+            organSound.organLoop.setVolume(lwData.soundParams.volume.value);
           } else {
             organSound.organ.disconnect();
             organSound.organDist.disconnect();
             organSound.organ.connect(soundFilter);
             organSound.organDist.connect(soundFilter);
-            organSound.organ.loop();
-            organSound.organDist.loop();
-            organSound.organ.rate(scaleArray[i]);
-            organSound.organDist.rate(scaleArray[i]);
+            organSound.organ.play();
+            organSound.organ.onended(function() { organCallback(lwData, scaleSet); });
+            organSound.organDist.play();
+            organSound.organDist.onended(function() { organCallback(lwData, scaleSet); });
+            organSound.organ.rate(scaleSet[scaleSetIndex][i]);
+            organSound.organDist.rate(scaleSet[scaleSetIndex][i]);
             organSound.organ.pan(panArr[panIndex]);
             organSound.organDist.pan(panArr[panIndex]);
-            organSound.organ.setVolume(locationData.soundParams.volume.value);
-            organSound.organDist.setVolume(locationData.soundParams.distVolume.value);
+            organSound.organ.setVolume(lwData.soundParams.volume.value);
+            organSound.organDist.setVolume(lwData.soundParams.distVolume.value);
           }
           if (panIndex < panArr.length -1) {
             panIndex++;
@@ -306,23 +311,28 @@ module.exports = function() {
         });
       }
 
-      function handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart) {
-        var isPrecip = false;
-        // Handle precipitation
-        if (weatherCheck.isPrecip(locationData.precipType, locationData.precipIntensity.value)) {
-          playArp(precipCategory(locationData), arpScaleArray);
-          isPrecip = true;
-        } else {
-          arpPart.stop(0);
-          isPrecip = false;
+      function organCallback(lwData, scaleSet) {
+        playOrgan(lwData, scaleSet, scaleSetIndex);
+        if (!isStormy) {
+          if (scaleSetIndex >= scaleSet.length) {
+            scaleSetIndex = 0;
+          } else {
+            scaleSetIndex++;
+          }
         }
-        return isPrecip;
       }
 
-      function handleFineWeather(locationData, weatherCheck, scaleArray) {
-        if (weatherCheck.isFine(locationData.temperature.value, locationData.windSpeed.value, locationData.cloudCover.value)) {
-          console.log('is fine');
-          console.log('choralSounds.length', choralSounds.length);
+      function handlePrecipitation(lwData, arpScaleArray, arpPart) {
+        // Handle precipitation
+        if (isPrecip) {
+          playArp(precipCategory(lwData), arpScaleArray);
+        } else {
+          arpPart.stop(0);
+        }
+      }
+
+      function handleFineWeather(lwData, scaleArray) {
+        if (isFine) {
           choralSounds.forEach(function(choralSound, i) {
             console.log('choralSound', choralSound);
             console.log('scaleArray', scaleArray);
@@ -330,36 +340,37 @@ module.exports = function() {
             choralSound.rate(scaleArray[i]);
             choralSound.setVolume(0.17);
           });
-          console.log('choralSounds', choralSounds);
         } else {
           console.log('weather is not fine');
         }
       }
 
-			function playSounds(locationData, scaleArray, arpScaleArray) {
+			function playSounds(lwData, scaleArray, scaleAltArray, arpScaleArray) {
+        // Make scale set array for sequence
+        var scaleSet = [scaleArray, scaleAltArray];
         // Rain
-        handlePrecipitation(locationData, weatherCheck, arpScaleArray, arpPart);
+        handlePrecipitation(lwData, arpScaleArray, arpPart);
         // Fine conditions
-        handleFineWeather(locationData, weatherCheck, scaleArray);
+        handleFineWeather(lwData, scaleArray);
         // Play bass
         publishBass = channel.subscribe('triggerBass', function() {
-          if (weatherCheck.isCloudy(locationData.cloudCover.value)) {
+          if (isCloudy) {
             playBass(scaleArray);
           }
         });
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
-          if (weatherCheck.isWindy(locationData.windSpeed.value)) {
+          if (isWindy) {
             playBrassBass(scaleArray);
           }
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
-          if (weatherCheck.isWindy(locationData.windSpeed.value)) {
+          if (isWindy) {
             playBrassBassTwo(scaleArray);
           }
         });
         //Organ
-        playOrgan(locationData, weatherCheck, scaleArray);
+        playOrgan(lwData, scaleSet);
         channel.publish('play', audioSupported);
 			}
 
@@ -368,7 +379,7 @@ module.exports = function() {
         Major scale for clement weather
 				Minor octave for anything else
 			*/
-			function createEqTempPitchesArr(locationData, isWesternScale) {
+			function createEqTempPitchesArr(lwData, isWesternScale) {
         var allNotesArray = [];
         if (isWesternScale) {
           allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, avSettings.numSemitones);
@@ -382,18 +393,18 @@ module.exports = function() {
 				Arbitarily assigned pitch values
 				calculated by mapping conditions to pitch
 			*/
-			function createArbitraryPitchesArr(locationData) {
+			function createArbitraryPitchesArr(lwData) {
         var allNotesArray = [];
         var count = 0;
 				mappedValsLoop:
-				for (var condition in locationData) {
-          while (numPadNotes > count) {
-            if (locationData.hasOwnProperty(condition)) {
+				for (var condition in lwData) {
+          while (numOrganNotes > count) {
+            if (lwData.hasOwnProperty(condition)) {
               console.log('condition', condition);
               if (condition === 'name' || condition === 'soundParams') {
                 continue mappedValsLoop;
               }
-              allNotesArray.push(sketch.map(locationData[condition].value, locationData[condition].min, locationData[condition].max, locationData.soundParams.pitch.min, locationData.soundParams.pitch.max).toFixed(4));
+              allNotesArray.push(sketch.map(lwData[condition].value, lwData[condition].min, lwData[condition].max, lwData.soundParams.pitch.min, lwData.soundParams.pitch.max).toFixed(4));
             }
             count++;
             continue mappedValsLoop;
@@ -402,30 +413,29 @@ module.exports = function() {
         return allNotesArray;
 			}
 
-      function allNotesScaleType(locationData, weatherCheck) {
+      function allNotesScaleType(lwData) {
         //  Use equal temperament scale for cold & warm
         //  use arbitrary scale for freezing
         var allNotesArray = [];
-        if (weatherCheck.isCold(locationData.temperature.value)) {
-          allNotesArray = createEqTempPitchesArr(locationData, false);
+        if (isCold) {
+          allNotesArray = createEqTempPitchesArr(lwData, false);
         }
-        else if (weatherCheck.isFreezing(locationData.temperature.value)) {
-          allNotesArray = createArbitraryPitchesArr(locationData);
+        else if (isFreezing) {
+          allNotesArray = createArbitraryPitchesArr(lwData);
         }
         // and heptatonic for warm weather
         else {
-          allNotesArray = createEqTempPitchesArr(locationData, true);
+          allNotesArray = createEqTempPitchesArr(lwData, true);
         }
         return allNotesArray;
       }
 
-      function createMusicalScale(locationData, weatherCheck, allNotesArray, numNotes) {
-        var centreNoteIndex = locationData.soundParams.soundPitchOffset;
+      function createMusicalScale(lwData, allNotesArray, numNotes, centreNoteOffset) {
+        var centreNoteIndex = centreNoteOffset || lwData.soundParams.soundPitchOffset;
         var scaleArray = [];
         var heptMajorIntervals = intervals.heptMajorIntervals;
         var heptMinorIntervals = intervals.heptMinorIntervals;
         console.log('centreNoteIndex', centreNoteIndex);
-        console.log('numPadNotes: ', numPadNotes);
         //error check
         if (numNotes > intervals.heptMajorIntervals.length) {
           console.log('not enough notes in hept major scale');
@@ -436,7 +446,7 @@ module.exports = function() {
           heptMinorIntervals = duplicateArray(intervals.heptMinorIntervals, 3);
         }
 
-        if (weatherCheck.isClement(locationData.cloudCover.value, locationData.windSpeed.value)) {
+        if (isClement) {
           for (var i = 0; i < numNotes; i++) {
             var newMajorNote = allNotesArray[heptMajorIntervals[i] + centreNoteIndex];
             scaleArray.push(newMajorNote);
@@ -459,30 +469,31 @@ module.exports = function() {
       	The root key is set by the air pressure
       	The filter frequency is set by visibility
        */
-			function configureSounds(locationData, weatherCheck) {
+			function configureSounds(lwData) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
 					//TODO
 					//Dist and volume are at odds with each other
 
 					//cloud cover determines level of brass distorition
-					locationData.soundParams.distVolume.value = sketch.map(Math.round(locationData.cloudCover.value),
-            locationData.cloudCover.min,
-            locationData.cloudCover.max,
-            locationData.soundParams.distVolume.min,
-            locationData.soundParams.distVolume.max);
+					lwData.soundParams.distVolume.value = sketch.map(Math.round(lwData.cloudCover.value),
+            lwData.cloudCover.min,
+            lwData.cloudCover.max,
+            lwData.soundParams.distVolume.min,
+            lwData.soundParams.distVolume.max);
 					//Wind speed determines volume of all sounds
-					locationData.soundParams.volume.value = sketch.map(Math.round(locationData.windSpeed.value),
-            locationData.windSpeed.min, locationData.windSpeed.max,
-            locationData.soundParams.volume.min,
-            locationData.soundParams.volume.max) - locationData.soundParams.distVolume.value/3;
+					lwData.soundParams.volume.value = sketch.map(Math.round(lwData.windSpeed.value),
+            lwData.windSpeed.min, lwData.windSpeed.max,
+            lwData.soundParams.volume.min,
+            lwData.soundParams.volume.max) - lwData.soundParams.distVolume.value/3;
 					//Pressure determines root note. Range 1 octave
-					locationData.soundParams.soundPitchOffset = Math.round(sketch.map(locationData.pressure.value, locationData.pressure.min, locationData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
+					lwData.soundParams.soundPitchOffset = Math.round(sketch.map(lwData.pressure.value, lwData.pressure.min, lwData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
 					//visibility is filter freq
-					locationData.soundParams.freq.value = sketch.map(Math.round(locationData.visibility.value), locationData.visibility.min, locationData.visibility.max, locationData.soundParams.freq.min, locationData.soundParams.freq.max);
-          var padScaleArray = createMusicalScale(locationData, weatherCheck, allNotesScaleType(locationData, weatherCheck), numPadNotes);
-          var arpScaleArray = createMusicalScale(locationData, weatherCheck, allNotesScaleType(locationData, weatherCheck), 12);
-          playSounds(locationData, padScaleArray, arpScaleArray);
+					lwData.soundParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.soundParams.freq.min, lwData.soundParams.freq.max);
+          var organScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), numOrganNotes);
+          var organAltScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), numOrganNotes, lwData.soundParams.soundPitchOffset - 4);
+          var arpScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), 12);
+          playSounds(lwData, organScaleArray, organAltScaleArray, arpScaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
@@ -510,7 +521,7 @@ module.exports = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
         if (audioSupported) {
-          for (var i = 0; i < numPadNotes; i++) {
+          for (var i = 0; i < numOrganNotes; i++) {
             organSounds[i] = new OrganSound(
               sketch.loadSound('/audio/organ-C2.mp3'),
               sketch.loadSound('/audio/organ-C2d.mp3'),
@@ -553,16 +564,16 @@ module.exports = function() {
         //---------------------
         //set runtime constants
         //--------------------
-				avSettings.animAmount = Math.round(locationData.windSpeed.value);
-				avSettings.noiseInc = sketch.map(avSettings.animAmount, locationData.windSpeed.min, locationData.windSpeed.max, 0.01, 0.05);
-				temperatureColour = sketch.map(locationData.temperature.value, locationData.temperature.min, locationData.temperature.max, 25, 255);
+				avSettings.animAmount = Math.round(lwData.windSpeed.value);
+				avSettings.noiseInc = sketch.map(avSettings.animAmount, lwData.windSpeed.min, lwData.windSpeed.max, 0.01, 0.05);
+				temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
         //--------------------
         // handle sounds
         // --------------------
         if (audioSupported) {
-          configureSounds(locationData, weatherCheck);
+          configureSounds(lwData);
         } else {
-          updateStatus('error', locationData.name, true);
+          updateStatus('error', lwData.name, true);
         }
 			};
 
