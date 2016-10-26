@@ -264,9 +264,7 @@ module.exports = function() {
 
       //TODO need to break this up into each separate sound
       //else the recursion won't work due to different sound lengths
-      function playOrgan(lwData, scaleSet, scaleSetIndex) {
-        console.log('scaleSet', scaleSet);
-        console.log('scaleSet[scaleSetIndex]', scaleSet[scaleSetIndex]);
+      function playOrgan(lwData, scaleSet) {
         //Pan
         var panIndex = 0;
         var panArr = [-0.8,0,0.8];
@@ -276,9 +274,7 @@ module.exports = function() {
         // must loop before rate is set
         // issue in Chrome only
         organSounds.map(function(organSound, i) {
-          console.log('scaleSet[scaleSetIndex][i]', scaleSet[scaleSetIndex][i]);
           if (isStormy) {
-            console.log('is stormy');
             organSound.organLoop.disconnect();
             organSound.organLoop.connect(soundFilter);
             organSound.organLoop.play();
@@ -312,9 +308,9 @@ module.exports = function() {
       }
 
       function organCallback(lwData, scaleSet) {
-        playOrgan(lwData, scaleSet, scaleSetIndex);
+        playOrgan(lwData, scaleSet);
         if (!isStormy) {
-          if (scaleSetIndex >= scaleSet.length) {
+          if (scaleSetIndex >= scaleSet.length -1) {
             scaleSetIndex = 0;
           } else {
             scaleSetIndex++;
