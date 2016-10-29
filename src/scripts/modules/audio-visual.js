@@ -401,6 +401,7 @@ module.exports = function() {
           }
         });
         //Organ
+        //TODO handle chord change here?
         if (isStormy) {
           playOrganLoop(lwData, scaleSet);
         } else if (!isStormy && isCloudy) {
