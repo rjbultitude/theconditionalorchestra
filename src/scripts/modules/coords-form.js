@@ -380,7 +380,7 @@ module.exports = function() {
 
 	userLocBtnEl.addEventListener('click', userLocationSubmit, false);
 
-  channel.subscribe('play', function(audioSupported){
+  channel.subscribe('playing', function(audioSupported){
     if (audioSupported === false) {
       updateStatus('error', null, true);
     }

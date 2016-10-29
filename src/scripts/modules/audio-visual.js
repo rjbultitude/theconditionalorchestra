@@ -39,7 +39,8 @@ module.exports = function() {
   var arpDropLightPhrase;
   var arpPart;
   var soundFilter;
-  var rainDropsPattern = [1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179, 1.0000, 1.12246, 1.33483, 1.49831, 1.68179];
+  var panArr = [-0.8,0,0.8];
+  var rainDropsPattern = [];
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -232,7 +233,7 @@ module.exports = function() {
       function playBass(scaleArray) {
         bass.play();
         bass.rate(scaleArray[0]);
-        bass.setVolume(1);
+        bass.setVolume(0.4);
         console.log('bass playing');
       }
 
@@ -262,59 +263,92 @@ module.exports = function() {
         console.log('brass bass two playing');
       }
 
-      //TODO need to break this up into each separate sound
-      //else the recursion won't work due to different sound lengths
+      function getPanIndex(panIndex) {
+        if (panIndex < panArr.length -1) {
+          panIndex++;
+        } else {
+          panIndex = 0;
+        }
+        return panIndex;
+      }
+
+      function setScaleSetIndex(scaleSet) {
+        if (scaleSetIndex >= scaleSet.length -1) {
+          scaleSetIndex = 0;
+        } else {
+          scaleSetIndex++;
+        }
+        return scaleSetIndex;
+      }
+
       function playOrgan(lwData, scaleSet) {
         //Pan
-        var panIndex = 0;
-        var panArr = [-0.8,0,0.8];
-				//Set filter
-				soundFilter.freq(lwData.soundParams.freq.value);
-				soundFilter.res(20);
+        var _panIndex = 0;
         // must loop before rate is set
         // issue in Chrome only
         organSounds.map(function(organSound, i) {
-          if (isStormy) {
-            organSound.organLoop.disconnect();
-            organSound.organLoop.connect(soundFilter);
-            organSound.organLoop.play();
-            organSound.organLoop.onended(function() { organCallback(lwData, scaleSet); });
-            organSound.organLoop.rate(scaleSet[scaleSetIndex][i]);
-            organSound.organLoop.pan(panArr[panIndex]);
-            organSound.organLoop.setVolume(lwData.soundParams.volume.value);
-          } else {
-            organSound.organ.disconnect();
-            organSound.organDist.disconnect();
-            organSound.organ.connect(soundFilter);
-            organSound.organDist.connect(soundFilter);
-            organSound.organ.play();
-            organSound.organ.onended(function() { organCallback(lwData, scaleSet); });
-            organSound.organDist.play();
-            organSound.organDist.onended(function() { organCallback(lwData, scaleSet); });
-            organSound.organ.rate(scaleSet[scaleSetIndex][i]);
-            organSound.organDist.rate(scaleSet[scaleSetIndex][i]);
-            organSound.organ.pan(panArr[panIndex]);
-            organSound.organDist.pan(panArr[panIndex]);
-            organSound.organ.setVolume(lwData.soundParams.volume.value);
-            organSound.organDist.setVolume(lwData.soundParams.distVolume.value);
-          }
-          if (panIndex < panArr.length -1) {
-            panIndex++;
-          } else {
-            panIndex = 0;
-          }
-          console.log('organSound', organSound);
+          organSound.organ.disconnect();
+          organSound.organ.connect(soundFilter);
+          organSound.organ.play();
+          organSound.organ.onended(function() { organCallback(lwData, scaleSet, i); });
+          organSound.organ.rate(scaleSet[scaleSetIndex][i]);
+          organSound.organ.pan(panArr[_panIndex]);
+          organSound.organ.setVolume(0.8);
+          _panIndex = getPanIndex(_panIndex);
         });
+        console.log('organ playing');
       }
 
-      function organCallback(lwData, scaleSet) {
-        playOrgan(lwData, scaleSet);
-        if (!isStormy) {
-          if (scaleSetIndex >= scaleSet.length -1) {
-            scaleSetIndex = 0;
-          } else {
-            scaleSetIndex++;
-          }
+      function playOrganDist(lwData, scaleSet) {
+        var _panIndex = 0;
+        organSounds.map(function(organSound, i) {
+          organSound.organDist.disconnect();
+          organSound.organDist.connect(soundFilter);
+          organSound.organDist.play();
+          organSound.organDist.onended(function() { organDistCallback(lwData, scaleSet, i); });
+          organSound.organDist.rate(scaleSet[scaleSetIndex][i]);
+          organSound.organDist.pan(panArr[_panIndex]);
+          organSound.organDist.setVolume(0.4);
+          _panIndex = getPanIndex(_panIndex);
+        });
+        console.log('organ dist playing');
+      }
+
+      function playOrganLoop(lwData, scaleSet) {
+        var _panIndex = 0;
+        // must loop before rate is set
+        // issue in Chrome only
+        organSounds.map(function(organSound, i) {
+          organSound.organLoop.disconnect();
+          organSound.organLoop.connect(soundFilter);
+          organSound.organLoop.play();
+          organSound.organLoop.onended(function() { organLoopCallback(lwData, scaleSet, i); });
+          organSound.organLoop.rate(scaleSet[scaleSetIndex][i]);
+          organSound.organLoop.pan(panArr[_panIndex]);
+          organSound.organLoop.setVolume(lwData.soundParams.volume.value);
+          _panIndex = getPanIndex(_panIndex);
+        });
+        console.log('organ loop playing');
+      }
+
+      function organCallback(lwData, scaleSet, organIndex) {
+        if (organIndex === organSounds.length - 1) {
+          playOrgan(lwData, scaleSet);
+          setScaleSetIndex(scaleSet);
+        }
+      }
+
+      function organDistCallback(lwData, scaleSet, organDistIndex) {
+        if (organDistIndex === organSounds.length - 1) {
+          playOrganDist(lwData, scaleSet);
+          setScaleSetIndex(scaleSet);
+        }
+      }
+
+      function organLoopCallback(lwData, scaleSet, organLoopIndex) {
+        if (organLoopIndex === organSounds.length - 1) {
+          playOrganLoop(lwData, scaleSet);
+          setScaleSetIndex(scaleSet);
         }
       }
 
@@ -329,6 +363,7 @@ module.exports = function() {
 
       function handleFineWeather(lwData, scaleArray) {
         if (isFine) {
+          console.log('weather is fine. choralSound should play');
           choralSounds.forEach(function(choralSound, i) {
             console.log('choralSound', choralSound);
             console.log('scaleArray', scaleArray);
@@ -337,7 +372,7 @@ module.exports = function() {
             choralSound.setVolume(0.17);
           });
         } else {
-          console.log('weather is not fine');
+          console.log('weather is not fine. No choralSounds');
         }
       }
 
@@ -366,8 +401,14 @@ module.exports = function() {
           }
         });
         //Organ
-        playOrgan(lwData, scaleSet);
-        channel.publish('play', audioSupported);
+        if (isStormy) {
+          playOrganLoop(lwData, scaleSet);
+        } else if (!isStormy && isCloudy) {
+          playOrganDist(lwData, scaleSet);
+        } else {
+          playOrgan(lwData, scaleSet);
+        }
+        channel.publish('playing', audioSupported);
 			}
 
       /*
@@ -468,24 +509,14 @@ module.exports = function() {
 			function configureSounds(lwData) {
 					//Use math.abs for all pitch and volume values?
 					//Add global values to the main data object
-					//TODO
-					//Dist and volume are at odds with each other
-
-					//cloud cover determines level of brass distorition
-					lwData.soundParams.distVolume.value = sketch.map(Math.round(lwData.cloudCover.value),
-            lwData.cloudCover.min,
-            lwData.cloudCover.max,
-            lwData.soundParams.distVolume.min,
-            lwData.soundParams.distVolume.max);
-					//Wind speed determines volume of all sounds
-					lwData.soundParams.volume.value = sketch.map(Math.round(lwData.windSpeed.value),
-            lwData.windSpeed.min, lwData.windSpeed.max,
-            lwData.soundParams.volume.min,
-            lwData.soundParams.volume.max) - lwData.soundParams.distVolume.value/3;
 					//Pressure determines root note. Range 1 octave
 					lwData.soundParams.soundPitchOffset = Math.round(sketch.map(lwData.pressure.value, lwData.pressure.min, lwData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
-					//visibility is filter freq
+					// Set filter
+					// visibility is filter freq
 					lwData.soundParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.soundParams.freq.min, lwData.soundParams.freq.max);
+  				soundFilter.freq(lwData.soundParams.freq.value);
+  				soundFilter.res(20);
+          // Create scales for playback
           var organScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), numOrganNotes);
           var organAltScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), numOrganNotes, lwData.soundParams.soundPitchOffset - 4);
           var arpScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), 12);
