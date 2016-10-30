@@ -1,10 +1,6 @@
 /*
-	This module loads and converts the data
-	Three locations are used as the data sources
-
-	Each location's properties are used to inform the shape of the sounds
-	Wind bearing is mapped to used for the pitch
-	Wind speed for volume
+	This module manages the
+  sonic and visual output of the app
  */
 
 'use strict';
@@ -66,12 +62,16 @@ module.exports = function() {
 
   function fadeOutOrganSounds(soundItem) {
     soundItem.organ.fade(0, avSettings.fadeTime);
+    soundItem.organ.stop();
     soundItem.organDist.fade(0, avSettings.fadeTime);
+    soundItem.organDist.stop();
     soundItem.organLoop.fade(0, avSettings.fadeTime);
+    soundItem.organLoop.stop();
   }
 
   function fadeChoralSounds(soundItem) {
-    soundItem.fade(0, avSettings.fadeTime);
+    //soundItem.fade(0, avSettings.fadeTime);
+    soundItem.stop();
   }
 
   function killCurrentSounds() {
@@ -81,17 +81,16 @@ module.exports = function() {
       arpPart.removePhrase('rainDropsLight');
       // Fade organ sounds
       organSounds.forEach(fadeOutOrganSounds);
-      // Fade bass
-      bass.fade(0, avSettings.fadeTime);
-      //Fade brassbass
-      brassBass.fade(0, avSettings.fadeTime);
-      brassBass2.fade(0, avSettings.fadeTime);
       // Fade choral
       choralSounds.forEach(fadeChoralSounds);
-      // TODO find better way of avoiding mutation
-      //Empty, clear;
-      organSounds = [];
-      choralSounds = [];
+      // Fade bass
+      bass.fade(0, avSettings.fadeTime);
+      bass.stop();
+      //Fade brassbass
+      brassBass.fade(0, avSettings.fadeTime);
+      brassBass.stop();
+      //brassBass2.fade(0, avSettings.fadeTime);
+      brassBass2.stop();
       publishBass.unsubscribe();
       publishBrassOne.unsubscribe();
       publishBrassTwo.unsubscribe();
@@ -154,6 +153,11 @@ module.exports = function() {
     var brassOneScaleArrayIndex = 0;
     var brassTwoScaleArrayIndex = 0;
     var scaleSetIndex = 0;
+    var organIndexCount = 0;
+    // TODO find better way of avoiding mutation
+    //Empty, clear;
+    choralSounds = [];
+    organSounds = [];
     // weather checks
     var isPrecip = weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value);
     var isFine = weatherCheck.isFine(lwData.temperature.value, lwData.windSpeed.value, lwData.cloudCover.value);
@@ -182,7 +186,6 @@ module.exports = function() {
       }
 
       function addRandomStops(notesArray) {
-        console.log('notesArray', notesArray);
         //duplicate notes
         var newNotesArray = duplicateArray(notesArray, 10);
         var randomStopCount = newNotesArray.length / 2;
@@ -281,74 +284,32 @@ module.exports = function() {
         return scaleSetIndex;
       }
 
-      function playOrgan(lwData, scaleSet) {
-        //Pan
+      function playOrgan(lwData, scaleSet, key) {
         var _panIndex = 0;
         // must loop before rate is set
         // issue in Chrome only
         organSounds.map(function(organSound, i) {
-          organSound.organ.disconnect();
-          organSound.organ.connect(soundFilter);
-          organSound.organ.play();
-          organSound.organ.onended(function() { organCallback(lwData, scaleSet, i); });
-          organSound.organ.rate(scaleSet[scaleSetIndex][i]);
-          organSound.organ.pan(panArr[_panIndex]);
-          organSound.organ.setVolume(0.8);
+          organSound[key].disconnect();
+          organSound[key].connect(soundFilter);
+          organSound[key].play();
+          organSound[key].onended(function() { organCallback(lwData, scaleSet, key); });
+          organSound[key].rate(scaleSet[scaleSetIndex][i]);
+          organSound[key].pan(panArr[_panIndex]);
+          organSound[key].setVolume(avSettings[key].volume);
           _panIndex = getPanIndex(_panIndex);
         });
-        console.log('organ playing');
+        console.log('organ ' + key + ' is playing');
       }
 
-      function playOrganDist(lwData, scaleSet) {
-        var _panIndex = 0;
-        organSounds.map(function(organSound, i) {
-          organSound.organDist.disconnect();
-          organSound.organDist.connect(soundFilter);
-          organSound.organDist.play();
-          organSound.organDist.onended(function() { organDistCallback(lwData, scaleSet, i); });
-          organSound.organDist.rate(scaleSet[scaleSetIndex][i]);
-          organSound.organDist.pan(panArr[_panIndex]);
-          organSound.organDist.setVolume(0.4);
-          _panIndex = getPanIndex(_panIndex);
-        });
-        console.log('organ dist playing');
-      }
-
-      function playOrganLoop(lwData, scaleSet) {
-        var _panIndex = 0;
-        // must loop before rate is set
-        // issue in Chrome only
-        organSounds.map(function(organSound, i) {
-          organSound.organLoop.disconnect();
-          organSound.organLoop.connect(soundFilter);
-          organSound.organLoop.play();
-          organSound.organLoop.onended(function() { organLoopCallback(lwData, scaleSet, i); });
-          organSound.organLoop.rate(scaleSet[scaleSetIndex][i]);
-          organSound.organLoop.pan(panArr[_panIndex]);
-          organSound.organLoop.setVolume(lwData.soundParams.volume.value);
-          _panIndex = getPanIndex(_panIndex);
-        });
-        console.log('organ loop playing');
-      }
-
-      function organCallback(lwData, scaleSet, organIndex) {
-        if (organIndex === organSounds.length - 1) {
-          playOrgan(lwData, scaleSet);
-          setScaleSetIndex(scaleSet);
-        }
-      }
-
-      function organDistCallback(lwData, scaleSet, organDistIndex) {
-        if (organDistIndex === organSounds.length - 1) {
-          playOrganDist(lwData, scaleSet);
-          setScaleSetIndex(scaleSet);
-        }
-      }
-
-      function organLoopCallback(lwData, scaleSet, organLoopIndex) {
-        if (organLoopIndex === organSounds.length - 1) {
-          playOrganLoop(lwData, scaleSet);
-          setScaleSetIndex(scaleSet);
+      function organCallback(lwData, scaleSet, key) {
+        if (isPlaying) {
+          organIndexCount++;
+          // When all the sounds have played once, loop
+          if (organIndexCount === organSounds.length) {
+            playOrgan(lwData, scaleSet, key);
+            setScaleSetIndex(scaleSet);
+            organIndexCount = 0;
+          }
         }
       }
 
@@ -376,9 +337,38 @@ module.exports = function() {
         }
       }
 
+      function handleChordChange(scaleArray, scaleAltArray) {
+        var _scaleSet = [];
+        if (isStormy) {
+          _scaleSet = [scaleArray];
+        } else {
+          _scaleSet = [scaleArray, scaleAltArray];
+        }
+        return _scaleSet;
+      }
+
+      function handleOrganType(lwData, scaleSet) {
+        if (isStormy) {
+          playOrgan(lwData, scaleSet, 'organLoop');
+        } else if (!isStormy && isCloudy) {
+          playOrgan(lwData, scaleSet, 'organDist');
+        } else {
+          playOrgan(lwData, scaleSet, 'organ');
+        }
+      }
+
+      /**
+       * playSounds Handles playback logic
+       * Though some of this is delegated
+       * @param  {Object} lwData        [description]
+       * @param  {[type]} scaleArray    [description]
+       * @param  {[type]} scaleAltArray [description]
+       * @param  {[type]} arpScaleArray [description]
+       * @return {[type]}               [description]
+       */
 			function playSounds(lwData, scaleArray, scaleAltArray, arpScaleArray) {
-        // Make scale set array for sequence
-        var scaleSet = [scaleArray, scaleAltArray];
+        // Make scale set array for chord sequence
+        var scaleSet = handleChordChange(scaleArray, scaleAltArray);
         // Rain
         handlePrecipitation(lwData, arpScaleArray, arpPart);
         // Fine conditions
@@ -401,14 +391,9 @@ module.exports = function() {
           }
         });
         //Organ
-        //TODO handle chord change here?
-        if (isStormy) {
-          playOrganLoop(lwData, scaleSet);
-        } else if (!isStormy && isCloudy) {
-          playOrganDist(lwData, scaleSet);
-        } else {
-          playOrgan(lwData, scaleSet);
-        }
+        handleOrganType(lwData, scaleSet);
+        //Tell rest of app we're playing
+        isPlaying = true;
         channel.publish('playing', audioSupported);
 			}
 
@@ -475,6 +460,7 @@ module.exports = function() {
         var heptMinorIntervals = intervals.heptMinorIntervals;
         console.log('centreNoteIndex', centreNoteIndex);
         //error check
+        //could make intervals arr span larger scale
         if (numNotes > intervals.heptMajorIntervals.length) {
           console.log('not enough notes in hept major scale');
           heptMajorIntervals = duplicateArray(intervals.heptMajorIntervals, 3);
@@ -518,9 +504,10 @@ module.exports = function() {
   				soundFilter.freq(lwData.soundParams.freq.value);
   				soundFilter.res(20);
           // Create scales for playback
-          var organScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), numOrganNotes);
-          var organAltScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), numOrganNotes, lwData.soundParams.soundPitchOffset - 4);
-          var arpScaleArray = createMusicalScale(lwData, allNotesScaleType(lwData), 12);
+          var allNotesScale = allNotesScaleType(lwData);
+          var organScaleArray = createMusicalScale(lwData, allNotesScale, numOrganNotes);
+          var organAltScaleArray = createMusicalScale(lwData, allNotesScale, numOrganNotes, lwData.soundParams.soundPitchOffset - 4);
+          var arpScaleArray = createMusicalScale(lwData, allNotesScale, 12);
           playSounds(lwData, organScaleArray, organAltScaleArray, arpScaleArray);
 			}
 

@@ -10,6 +10,9 @@ module.exports = {
 	colourDim: 18,
 	//Pitch / rate / volume
 	dropVolume: 0.2,
+	organ: {volume : 0.75},
+	organDist: {volume : 0.425},
+	organLoop: {volume : 0.5},
   numOrganNotes: 5,
   numOctaves: 3,
   numSemitones: 12,
