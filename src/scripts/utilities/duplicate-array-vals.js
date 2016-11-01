@@ -2,9 +2,9 @@
 
 /**
  * [exports description]
- * @param  {[Array]} array    [array to duplicate]
- * @param  {[Number]} times   [number of times to duplicate]
- * @return {[Array]}          [array]
+ * @param  {Array} array    [array to duplicate]
+ * @param  {Number} times   [number of times to duplicate]
+ * @return {Array}          [array]
  */
 module.exports = function duplicateArray(array, times) {
   var newArray = [];

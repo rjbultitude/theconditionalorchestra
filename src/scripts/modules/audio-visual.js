@@ -16,6 +16,7 @@ var weatherCheck = require('./weather-checker-fns');
 var intervals = require('../utilities/intervals');
 var generateFreqScales = require('../utilities/create-freq-scales');
 var duplicateArray = require('../utilities/duplicate-array-vals');
+var duplicateAndPitchArray = require('../utilities/duplicate-pitch-array-vals');
 var avSettings = require('../settings/av-settings');
 
 module.exports = function() {
@@ -44,7 +45,7 @@ module.exports = function() {
   // Visuals
   var sqSize = 25;
   var temperatureColour = 0;
-  //
+  // For audioContext support
   var pee5 = new P5();
   //Subscriptions
   var publishBass;
@@ -61,17 +62,22 @@ module.exports = function() {
   }
 
   function fadeOutOrganSounds(soundItem) {
-    soundItem.organ.fade(0, avSettings.fadeTime);
-    soundItem.organ.stop();
-    soundItem.organDist.fade(0, avSettings.fadeTime);
-    soundItem.organDist.stop();
-    soundItem.organLoop.fade(0, avSettings.fadeTime);
-    soundItem.organLoop.stop();
+    function stopOrganSounds(organSound) {
+      setTimeout(function() {
+        organSound.stop();
+      }, avSettings.fadeTime * 1000);
+    }
+    for (var organSound in soundItem) {
+      soundItem[organSound].fade(0, avSettings.fadeTime);
+      stopOrganSounds(soundItem[organSound]);
+    }
   }
 
   function fadeChoralSounds(soundItem) {
-    //soundItem.fade(0, avSettings.fadeTime);
-    soundItem.stop();
+    soundItem.fade(0, avSettings.fadeTime);
+    setTimeout(function(){
+      soundItem.stop();
+    }, avSettings.fadeTime * 1000);
   }
 
   function killCurrentSounds() {
@@ -89,7 +95,7 @@ module.exports = function() {
       //Fade brassbass
       brassBass.fade(0, avSettings.fadeTime);
       brassBass.stop();
-      //brassBass2.fade(0, avSettings.fadeTime);
+      brassBass2.fade(0, avSettings.fadeTime);
       brassBass2.stop();
       publishBass.unsubscribe();
       publishBrassOne.unsubscribe();
@@ -110,17 +116,6 @@ module.exports = function() {
     dropLightSound.play(time);
   }
 
-  function checkIntervalsVNotes(intervals, numOrganNotes) {
-    for (var scale in intervals) {
-      if (intervals[scale] < numOrganNotes) {
-        console.error('interval scales have too few items for the number of notes', intervals[scale]);
-        return false;
-      } else {
-        return true;
-      }
-    }
-  }
-
   function setNumPadNotes(lwData, avSettings, isStormy) {
         var _numOrganNotes;
         if (isStormy) {
@@ -128,8 +123,6 @@ module.exports = function() {
         } else {
           _numOrganNotes = avSettings.numOrganNotes;
         }
-        //error check
-        checkIntervalsVNotes(intervals, _numOrganNotes);
         return _numOrganNotes;
       }
 
@@ -275,6 +268,14 @@ module.exports = function() {
         return panIndex;
       }
 
+      function getAltScaleOffset() {
+        if (isFine) {
+          return 5;
+        } else {
+          return 4;
+        }
+      }
+
       function setScaleSetIndex(scaleSet) {
         if (scaleSetIndex >= scaleSet.length -1) {
           scaleSetIndex = 0;
@@ -297,8 +298,10 @@ module.exports = function() {
           organSound[key].pan(panArr[_panIndex]);
           organSound[key].setVolume(avSettings[key].volume);
           _panIndex = getPanIndex(_panIndex);
+          console.log('organSound[key].playbackRate', organSound[key].playbackRate);
         });
-        console.log('organ ' + key + ' is playing');
+        setScaleSetIndex(scaleSet);
+        console.log(key + ' is playing');
       }
 
       function organCallback(lwData, scaleSet, key) {
@@ -307,7 +310,6 @@ module.exports = function() {
           // When all the sounds have played once, loop
           if (organIndexCount === organSounds.length) {
             playOrgan(lwData, scaleSet, key);
-            setScaleSetIndex(scaleSet);
             organIndexCount = 0;
           }
         }
@@ -360,11 +362,11 @@ module.exports = function() {
       /**
        * playSounds Handles playback logic
        * Though some of this is delegated
-       * @param  {Object} lwData        [description]
-       * @param  {[type]} scaleArray    [description]
-       * @param  {[type]} scaleAltArray [description]
-       * @param  {[type]} arpScaleArray [description]
-       * @return {[type]}               [description]
+       * @param  {Object} lwData        Main weather data object
+       * @param  {Array} scaleArray    a set of notes to play
+       * @param  {Array} scaleAltArray another set of notes to play
+       * @param  {Array} arpScaleArray a set of notes fot the sequencer to play
+       * @return {boolean}               default value
        */
 			function playSounds(lwData, scaleArray, scaleAltArray, arpScaleArray) {
         // Make scale set array for chord sequence
@@ -460,14 +462,18 @@ module.exports = function() {
         var heptMinorIntervals = intervals.heptMinorIntervals;
         console.log('centreNoteIndex', centreNoteIndex);
         //error check
-        //could make intervals arr span larger scale
+        //TODO could make intervals arr span larger scale
         if (numNotes > intervals.heptMajorIntervals.length) {
-          console.log('not enough notes in hept major scale');
-          heptMajorIntervals = duplicateArray(intervals.heptMajorIntervals, 3);
+          //console.log('not enough notes in hept major scale');
+          //heptMajorIntervals = duplicateArray(intervals.heptMajorIntervals, 3);
+          heptMajorIntervals = duplicateAndPitchArray(intervals.heptMajorIntervals, 2);
+          console.log('heptMajorIntervals', heptMajorIntervals);
         }
         if (numNotes > intervals.heptMinorIntervals.length) {
-          console.log('not enough notes in hept minor scale');
-          heptMinorIntervals = duplicateArray(intervals.heptMinorIntervals, 3);
+          //console.log('not enough notes in hept minor scale');
+          //heptMinorIntervals = duplicateArray(intervals.heptMinorIntervals, 3);
+          heptMinorIntervals = duplicateAndPitchArray(intervals.heptMinorIntervals, 2);
+          console.log('heptMinorIntervals', heptMinorIntervals);
         }
 
         if (isClement) {
@@ -494,21 +500,22 @@ module.exports = function() {
       	The filter frequency is set by visibility
        */
 			function configureSounds(lwData) {
-					//Use math.abs for all pitch and volume values?
-					//Add global values to the main data object
-					//Pressure determines root note. Range 1 octave
-					lwData.soundParams.soundPitchOffset = Math.round(sketch.map(lwData.pressure.value, lwData.pressure.min, lwData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
-					// Set filter
-					// visibility is filter freq
-					lwData.soundParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.soundParams.freq.min, lwData.soundParams.freq.max);
-  				soundFilter.freq(lwData.soundParams.freq.value);
-  				soundFilter.res(20);
-          // Create scales for playback
-          var allNotesScale = allNotesScaleType(lwData);
-          var organScaleArray = createMusicalScale(lwData, allNotesScale, numOrganNotes);
-          var organAltScaleArray = createMusicalScale(lwData, allNotesScale, numOrganNotes, lwData.soundParams.soundPitchOffset - 4);
-          var arpScaleArray = createMusicalScale(lwData, allNotesScale, 12);
-          playSounds(lwData, organScaleArray, organAltScaleArray, arpScaleArray);
+        var _altScaleOffset = getAltScaleOffset();
+        //Use math.abs for all pitch and volume values?
+        //Add global values to the main data object
+        //Pressure determines root note. Range 1 octave
+        lwData.soundParams.soundPitchOffset = Math.round(sketch.map(lwData.pressure.value, lwData.pressure.min, lwData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
+        // Set filter
+        // visibility is filter freq
+        lwData.soundParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.soundParams.freq.min, lwData.soundParams.freq.max);
+        soundFilter.freq(lwData.soundParams.freq.value);
+        soundFilter.res(20);
+        // Create scales for playback
+        var allNotesScale = allNotesScaleType(lwData);
+        var organScaleArray = createMusicalScale(lwData, allNotesScale, numOrganNotes);
+        var organAltScaleArray = createMusicalScale(lwData, allNotesScale, numOrganNotes, lwData.soundParams.soundPitchOffset - _altScaleOffset);
+        var arpScaleArray = createMusicalScale(lwData, allNotesScale, 12);
+        playSounds(lwData, organScaleArray, organAltScaleArray, arpScaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
