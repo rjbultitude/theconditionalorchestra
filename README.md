@@ -121,7 +121,11 @@ A precipType of `snow` - played slowest and quieter
 
 ##Plans
 
-Decide on what organ sounds should do, eg looping organ for stormy, distorted for rough and clean for clement?
+Playback rate bug - try fixing using a switch in the draw loop
+
+Looping organ sound won't work now due to playback being handled by a callback
+
+Build error checker for undefined values, particularly in arp array
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
 

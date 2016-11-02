@@ -113,6 +113,7 @@ module.exports = function() {
       var staticDataJSON = JSON.parse(staticData);
       handleNoGeoData(statusString, staticDataJSON, false);
       enableControls();
+      console.log('using static data');
       channel.publish('userUpdate', staticDataJSON);
     },
     function failure() {
@@ -292,7 +293,7 @@ module.exports = function() {
 		fetchStaticPlaces.then(function (staticPlaces) {
 			var staticPlacesJSON = JSON.parse(staticPlaces);
 			getPlaces(staticPlacesJSON[index].lat, staticPlacesJSON[index].long);
-			console.log('Using static data');
+			console.log('Using static test data');
 		}, function (status) {
 			console.log(status.statusText);
 		});
@@ -303,8 +304,8 @@ module.exports = function() {
     disableControls();
 
     if (inputType === 'userLocation') {
-      getTestLocation(0); //Test
-      //getGeo(); //Live
+      //getTestLocation(0); //Test
+      getGeo(); //Live
     } else if (inputType === 'customLocation') {
       getLatLong(placeInput);
     } else {

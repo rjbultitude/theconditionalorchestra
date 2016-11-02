@@ -51,11 +51,11 @@
     "max":120
   },
   "precipIntensity":{
-    "value":0.2,
+    "value":0,
     "min":0,
     "max":0.5
   },
-  "precipType": "snow",
+  "precipType": "",
   "soundParams":{
     "pitch":{
       "min":0.5,

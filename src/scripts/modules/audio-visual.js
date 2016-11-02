@@ -192,8 +192,6 @@ module.exports = function() {
 
       function playArp(arpeggioType, arpScaleArray) {
         //Overwrite sequence with new notes
-        //TODO repeat intervals upwards
-        //for 12 note arp pattern that uses intervals of less notes
         var newNotesArray = addRandomStops(arpScaleArray).reverse();
         arpDropPhrase.sequence = newNotesArray;
         arpDropLightPhrase.sequence = newNotesArray;
@@ -236,7 +234,6 @@ module.exports = function() {
       function playBrassBass(scaleArray) {
         brassBass.play();
         brassBass.rate(scaleArray[brassOneScaleArrayIndex]);
-        console.log('scaleArray[brassOneScaleArrayIndex] brass one', scaleArray[brassOneScaleArrayIndex]);
         brassBass.setVolume(1);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
@@ -249,7 +246,6 @@ module.exports = function() {
       function playBrassBassTwo(scaleArray) {
         brassBass.play();
         brassBass.rate(scaleArray[brassTwoScaleArrayIndex]);
-        console.log('scaleArray[brassTwoScaleArrayIndex] brass two', scaleArray[brassTwoScaleArrayIndex]);
         brassBass.setVolume(1);
         if (brassTwoScaleArrayIndex >= scaleArray.length -1) {
           brassTwoScaleArrayIndex = 0;
@@ -287,19 +283,33 @@ module.exports = function() {
 
       function playOrgan(lwData, scaleSet, key) {
         var _panIndex = 0;
-        // must loop before rate is set
-        // issue in Chrome only
-        organSounds.map(function(organSound, i) {
-          organSound[key].disconnect();
-          organSound[key].connect(soundFilter);
-          organSound[key].play();
-          organSound[key].onended(function() { organCallback(lwData, scaleSet, key); });
-          organSound[key].rate(scaleSet[scaleSetIndex][i]);
-          organSound[key].pan(panArr[_panIndex]);
-          organSound[key].setVolume(avSettings[key].volume);
-          _panIndex = getPanIndex(_panIndex);
-          console.log('organSound[key].playbackRate', organSound[key].playbackRate);
+        var _newOrganSounds;
+        // make new array in attempt to fix pitch bug
+        _newOrganSounds = organSounds.map(function(organSound){
+          return organSound;
         });
+        for (var i = 0; i < _newOrganSounds.length; i++) {
+          _newOrganSounds[i][key].disconnect();
+          _newOrganSounds[i][key].connect(soundFilter);
+          _newOrganSounds[i][key].play();
+          _newOrganSounds[i][key].rate(scaleSet[scaleSetIndex][i]);
+          _newOrganSounds[i][key].pan(panArr[_panIndex]);
+          _newOrganSounds[i][key].setVolume(avSettings[key].volume);
+          _newOrganSounds[i][key].onended(function() { organCallback(lwData, scaleSet, key); });
+          _panIndex = getPanIndex(_panIndex);
+          //console.log('_newOrganSounds[i][key].playbackRate', _newOrganSounds[i][key].playbackRate);
+        }
+        //organSounds.map(function(organSound, i) {
+        //   organSound[key].disconnect();
+        //   organSound[key].connect(soundFilter);
+        //   organSound[key].play();
+        //   organSound[key].rate(scaleSet[scaleSetIndex][i]);
+        //   organSound[key].pan(panArr[_panIndex]);
+        //   organSound[key].setVolume(avSettings[key].volume);
+        //   organSound[key].onended(function() { organCallback(lwData, scaleSet, key); });
+        //   _panIndex = getPanIndex(_panIndex);
+        //   console.log('organSound[key].playbackRate', organSound[key].playbackRate);
+        // });
         setScaleSetIndex(scaleSet);
         console.log(key + ' is playing');
       }
@@ -328,6 +338,8 @@ module.exports = function() {
         if (isFine) {
           console.log('weather is fine. choralSound should play');
           choralSounds.forEach(function(choralSound, i) {
+            // must loop before rate is set
+            // issue in Chrome only
             console.log('choralSound', choralSound);
             console.log('scaleArray', scaleArray);
             choralSound.loop();
@@ -462,29 +474,27 @@ module.exports = function() {
         var heptMinorIntervals = intervals.heptMinorIntervals;
         console.log('centreNoteIndex', centreNoteIndex);
         //error check
-        //TODO could make intervals arr span larger scale
         if (numNotes > intervals.heptMajorIntervals.length) {
-          //console.log('not enough notes in hept major scale');
-          //heptMajorIntervals = duplicateArray(intervals.heptMajorIntervals, 3);
-          heptMajorIntervals = duplicateAndPitchArray(intervals.heptMajorIntervals, 2);
-          console.log('heptMajorIntervals', heptMajorIntervals);
+          //not enough notes in hept major scale
+          heptMajorIntervals = duplicateArray(duplicateAndPitchArray(intervals.heptMajorIntervals, 2), 2);
         }
         if (numNotes > intervals.heptMinorIntervals.length) {
-          //console.log('not enough notes in hept minor scale');
-          //heptMinorIntervals = duplicateArray(intervals.heptMinorIntervals, 3);
-          heptMinorIntervals = duplicateAndPitchArray(intervals.heptMinorIntervals, 2);
-          console.log('heptMinorIntervals', heptMinorIntervals);
+          //not enough notes in hept minor scale
+          heptMinorIntervals = duplicateArray(duplicateAndPitchArray(intervals.heptMajorIntervals, 2), 2);
         }
 
         if (isClement) {
+          console.log('major');
           for (var i = 0; i < numNotes; i++) {
+            //TODO error check for undefined items in array
             var newMajorNote = allNotesArray[heptMajorIntervals[i] + centreNoteIndex];
             scaleArray.push(newMajorNote);
           }
         } else {
+          console.log('minor');
           for (var j = 0; j < numNotes; j++) {
+            //TODO error check for undefined items in array
             var newMinorNote = allNotesArray[heptMinorIntervals[j] + centreNoteIndex];
-            console.log('minorIntervals');
             scaleArray.push(newMinorNote);
           }
         }
@@ -505,6 +515,7 @@ module.exports = function() {
         //Add global values to the main data object
         //Pressure determines root note. Range 1 octave
         lwData.soundParams.soundPitchOffset = Math.round(sketch.map(lwData.pressure.value, lwData.pressure.min, lwData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
+        console.log('lwData.soundParams.soundPitchOffset', lwData.soundParams.soundPitchOffset);
         // Set filter
         // visibility is filter freq
         lwData.soundParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.soundParams.freq.min, lwData.soundParams.freq.max);

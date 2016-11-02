@@ -7,7 +7,7 @@ module.exports = {
   // @param precipIntensity floating point
   isPrecip: function(precipType, precipIntensity) {
     if (precipType !== undefined) {
-      return precipIntensity >= 0;
+      return precipIntensity > 0;
     } else {
       console.log('No precipitation type value');
       return false;
