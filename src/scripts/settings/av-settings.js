@@ -15,6 +15,7 @@ module.exports = {
   organDist: {volume : 0.425},
   organLoop: {volume : 0.5},
   numOrganNotes: 5,
+  numArpNotes: 12,
   numOctaves: 4,
   numSemitones: 12,
   scaleSize: 7,

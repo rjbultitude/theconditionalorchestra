@@ -36,6 +36,7 @@ module.exports = function() {
   var arpDropLightPhrase;
   var arpPart;
   var soundFilter;
+  var masterGain;
   var panArr = [-0.8,0,0.8];
   var rainDropsPattern = [];
 	// Array for all visual shapes
@@ -137,6 +138,7 @@ module.exports = function() {
     arpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
     arpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
     arpPart = new P5.Part();
+    masterGain = new P5.Gain();
   }
 
 	// main app init
@@ -264,14 +266,6 @@ module.exports = function() {
         return panIndex;
       }
 
-      function getAltScaleOffset() {
-        if (isFine) {
-          return 5;
-        } else {
-          return 4;
-        }
-      }
-
       function setScaleSetIndex(scaleSet) {
         if (scaleSetIndex >= scaleSet.length -1) {
           scaleSetIndex = 0;
@@ -283,33 +277,17 @@ module.exports = function() {
 
       function playOrgan(lwData, scaleSet, key) {
         var _panIndex = 0;
-        var _newOrganSounds;
-        // make new array in attempt to fix pitch bug
-        _newOrganSounds = organSounds.map(function(organSound){
-          return organSound;
-        });
-        for (var i = 0; i < _newOrganSounds.length; i++) {
-          _newOrganSounds[i][key].disconnect();
-          _newOrganSounds[i][key].connect(soundFilter);
-          _newOrganSounds[i][key].play();
-          _newOrganSounds[i][key].rate(scaleSet[scaleSetIndex][i]);
-          _newOrganSounds[i][key].pan(panArr[_panIndex]);
-          _newOrganSounds[i][key].setVolume(avSettings[key].volume);
-          _newOrganSounds[i][key].onended(function() { organCallback(lwData, scaleSet, key); });
+        for (var i = 0; i < organSounds.length; i++) {
+          organSounds[i][key].disconnect();
+          organSounds[i][key].connect(soundFilter);
+          organSounds[i][key].play();
+          organSounds[i][key].rate(scaleSet[scaleSetIndex][i]);
+          organSounds[i][key].pan(panArr[_panIndex]);
+          organSounds[i][key].setVolume(avSettings[key].volume);
+          organSounds[i][key].onended(function() { organCallback(lwData, scaleSet, key); });
           _panIndex = getPanIndex(_panIndex);
-          //console.log('_newOrganSounds[i][key].playbackRate', _newOrganSounds[i][key].playbackRate);
+          //console.log('organSounds[i][key].playbackRate', organSounds[i][key].playbackRate);
         }
-        //organSounds.map(function(organSound, i) {
-        //   organSound[key].disconnect();
-        //   organSound[key].connect(soundFilter);
-        //   organSound[key].play();
-        //   organSound[key].rate(scaleSet[scaleSetIndex][i]);
-        //   organSound[key].pan(panArr[_panIndex]);
-        //   organSound[key].setVolume(avSettings[key].volume);
-        //   organSound[key].onended(function() { organCallback(lwData, scaleSet, key); });
-        //   _panIndex = getPanIndex(_panIndex);
-        //   console.log('organSound[key].playbackRate', organSound[key].playbackRate);
-        // });
         setScaleSetIndex(scaleSet);
         console.log(key + ' is playing');
       }
@@ -336,12 +314,11 @@ module.exports = function() {
 
       function handleFineWeather(lwData, scaleArray) {
         if (isFine) {
-          console.log('weather is fine. choralSound should play');
+          console.log('weather is fine. choralSound playing');
           choralSounds.forEach(function(choralSound, i) {
             // must loop before rate is set
             // issue in Chrome only
-            console.log('choralSound', choralSound);
-            console.log('scaleArray', scaleArray);
+            //choralSound.fade(0.17, avSettings.fadeTime);
             choralSound.loop();
             choralSound.rate(scaleArray[i]);
             choralSound.setVolume(0.17);
@@ -349,16 +326,6 @@ module.exports = function() {
         } else {
           console.log('weather is not fine. No choralSounds');
         }
-      }
-
-      function handleChordChange(scaleArray, scaleAltArray) {
-        var _scaleSet = [];
-        if (isStormy) {
-          _scaleSet = [scaleArray];
-        } else {
-          _scaleSet = [scaleArray, scaleAltArray];
-        }
-        return _scaleSet;
       }
 
       function handleOrganType(lwData, scaleSet) {
@@ -380,32 +347,33 @@ module.exports = function() {
        * @param  {Array} arpScaleArray a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
-			function playSounds(lwData, scaleArray, scaleAltArray, arpScaleArray) {
+			function playSounds(lwData, organScales, arpScaleArray) {
         // Make scale set array for chord sequence
-        var scaleSet = handleChordChange(scaleArray, scaleAltArray);
+        sketch.masterVolume(0);
+        sketch.masterVolume(1, 3, 0);
         // Rain
         handlePrecipitation(lwData, arpScaleArray, arpPart);
         // Fine conditions
-        handleFineWeather(lwData, scaleArray);
+        handleFineWeather(lwData, organScales[0]);
         // Play bass
         publishBass = channel.subscribe('triggerBass', function() {
           if (isCloudy) {
-            playBass(scaleArray);
+            playBass(organScales[0]);
           }
         });
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
           if (isWindy) {
-            playBrassBass(scaleArray);
+            playBrassBass(organScales[0]);
           }
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
           if (isWindy) {
-            playBrassBassTwo(scaleArray);
+            playBrassBassTwo(organScales[0]);
           }
         });
         //Organ
-        handleOrganType(lwData, scaleSet);
+        handleOrganType(lwData, organScales);
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', audioSupported);
@@ -467,38 +435,89 @@ module.exports = function() {
         return allNotesArray;
       }
 
-      function createMusicalScale(lwData, allNotesArray, numNotes, centreNoteOffset) {
-        var centreNoteIndex = centreNoteOffset || lwData.soundParams.soundPitchOffset;
-        var scaleArray = [];
-        var heptMajorIntervals = intervals.heptMajorIntervals;
-        var heptMinorIntervals = intervals.heptMinorIntervals;
-        console.log('centreNoteIndex', centreNoteIndex);
-        //error check
-        if (numNotes > intervals.heptMajorIntervals.length) {
-          //not enough notes in hept major scale
-          heptMajorIntervals = duplicateArray(duplicateAndPitchArray(intervals.heptMajorIntervals, 2), 2);
+      function createIntervalsArray(initIntervals, numNotes) {
+        var _newIntervals;
+        if (numNotes > initIntervals.length) {
+          _newIntervals = duplicateArray(duplicateAndPitchArray(initIntervals, 2), 2);
+          return _newIntervals;
+        } else {
+          return initIntervals;
         }
-        if (numNotes > intervals.heptMinorIntervals.length) {
-          //not enough notes in hept minor scale
-          heptMinorIntervals = duplicateArray(duplicateAndPitchArray(intervals.heptMajorIntervals, 2), 2);
+      }
+
+      function getPitchesFromIntervals(allNotesArray, scaleIntervals, centreNoteIndex, numNotes) {
+        var _scaleArray = [];
+        var _newNote;
+        for (var i = 0; i < numNotes; i++) {
+          _newNote = allNotesArray[scaleIntervals[i] + centreNoteIndex];
+          if (_newNote !== undefined) {
+            _scaleArray.push(_newNote);
+          } else {
+            console.log('undefined note');
+          }
+        }
+        return _scaleArray;
+      }
+
+      function createMusicalScale(lwData, allNotesArray, numNotes, centreNoteOffset, scaleType) {
+        console.log('numNotes', numNotes);
+        console.log('centreNoteOffset', centreNoteOffset);
+        var scaleArray = [];
+        var _centreNoteIndex = lwData.soundParams.soundPitchOffset - centreNoteOffset;
+        var _scaleIntervals = [];
+        console.log('_centreNoteIndex', _centreNoteIndex);
+
+        if (scaleType === 'major') {
+          console.log('major');
+          _scaleIntervals = createIntervalsArray(intervals.heptMajorIntervals, numNotes);
+        } else if (scaleType === 'minor') {
+          console.log('minor');
+          _scaleIntervals = createIntervalsArray(intervals.heptMinorIntervals, numNotes);
+        } else if (scaleType === 'minorOct') {
+          _scaleIntervals = createIntervalsArray(intervals.octMinorIntervals, numNotes);
+        }
+        console.log('_scaleIntervals', _scaleIntervals);
+        scaleArray = getPitchesFromIntervals(allNotesArray, _scaleIntervals, _centreNoteIndex, numNotes);
+        console.log('scaleArray', scaleArray);
+        return scaleArray;
+      }
+
+      function getChorsOffsetArr(numChords) {
+        var chordOffsetArr = [];
+        function getChords() {
+          var _chordArr = [];
+          _chordArr.push(0);
+          if (isFine) {
+            _chordArr.push(5);
+            _chordArr.push(3);
+          } else {
+            _chordArr.push(4);
+            _chordArr.push(2);
+          }
+          return _chordArr;
         }
 
-        if (isClement) {
-          console.log('major');
-          for (var i = 0; i < numNotes; i++) {
-            //TODO error check for undefined items in array
-            var newMajorNote = allNotesArray[heptMajorIntervals[i] + centreNoteIndex];
-            scaleArray.push(newMajorNote);
-          }
-        } else {
-          console.log('minor');
-          for (var j = 0; j < numNotes; j++) {
-            //TODO error check for undefined items in array
-            var newMinorNote = allNotesArray[heptMinorIntervals[j] + centreNoteIndex];
-            scaleArray.push(newMinorNote);
+        chordOffsetArr = getChords();
+        if (numChords > chordOffsetArr.length) {
+          chordOffsetArr = chordOffsetArr.concat(getChords());
+        }
+        console.log('chordOffsetArr', chordOffsetArr);
+        return chordOffsetArr;
+      }
+
+      function makeChordSequence(lwData, numChords, allNotesScale) {
+        var chordOffSetArr = getChorsOffsetArr(numChords);
+        var chordSeq = [];
+        for (var i = 0; i < numChords; i++) {
+          console.log('chordOffSet value', chordOffSetArr[i]);
+          if (isClement) {
+            chordSeq.push(createMusicalScale(lwData, allNotesScale, numOrganNotes, chordOffSetArr[i], 'major'));
+          } else {
+            chordSeq.push(createMusicalScale(lwData, allNotesScale, numOrganNotes, chordOffSetArr[i], 'minor'));
           }
         }
-        return scaleArray;
+        console.log('chordSeq', chordSeq);
+        return chordSeq;
       }
 
       /*
@@ -510,7 +529,7 @@ module.exports = function() {
       	The filter frequency is set by visibility
        */
 			function configureSounds(lwData) {
-        var _altScaleOffset = getAltScaleOffset();
+        var organScaleSets = [];
         //Use math.abs for all pitch and volume values?
         //Add global values to the main data object
         //Pressure determines root note. Range 1 octave
@@ -523,10 +542,14 @@ module.exports = function() {
         soundFilter.res(20);
         // Create scales for playback
         var allNotesScale = allNotesScaleType(lwData);
-        var organScaleArray = createMusicalScale(lwData, allNotesScale, numOrganNotes);
-        var organAltScaleArray = createMusicalScale(lwData, allNotesScale, numOrganNotes, lwData.soundParams.soundPitchOffset - _altScaleOffset);
-        var arpScaleArray = createMusicalScale(lwData, allNotesScale, 12);
-        playSounds(lwData, organScaleArray, organAltScaleArray, arpScaleArray);
+        if (isStormy || isFine) {
+          organScaleSets = makeChordSequence(lwData, 2, allNotesScale);
+        } else {
+          organScaleSets = makeChordSequence(lwData, 3, allNotesScale);
+        }
+        //TODO handle type for arpeggio
+        var arpScaleArray = createMusicalScale(lwData, allNotesScale, avSettings.numArpNotes, 0, 'minor');
+        playSounds(lwData, organScaleSets, arpScaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
@@ -573,6 +596,8 @@ module.exports = function() {
 			};
 
 			sketch.setup = function setup() {
+        console.log('masterGain.amp', masterGain.amp);
+        masterGain.amp(0, 0, 0);
 				//If this size or smaller
 				if (matchMediaMaxWidth(540).matches) {
 						avSettings.cWidth = 400;
