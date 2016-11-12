@@ -286,7 +286,7 @@ module.exports = function() {
           organSounds[i][key].setVolume(avSettings[key].volume);
           organSounds[i][key].onended(function() { organCallback(lwData, scaleSet, key); });
           _panIndex = getPanIndex(_panIndex);
-          //console.log('organSounds[i][key].playbackRate', organSounds[i][key].playbackRate);
+          console.log('organSounds[i][key].playbackRate', organSounds[i][key].playbackRate);
         }
         setScaleSetIndex(scaleSet);
         console.log(key + ' is playing');
@@ -305,6 +305,7 @@ module.exports = function() {
 
       function handlePrecipitation(lwData, arpScaleArray, arpPart) {
         // Handle precipitation
+        // playlogic
         if (isPrecip) {
           playArp(precipCategory(lwData), arpScaleArray);
         } else {
@@ -313,6 +314,7 @@ module.exports = function() {
       }
 
       function handleFineWeather(lwData, scaleArray) {
+        // playlogic
         if (isFine) {
           console.log('weather is fine. choralSound playing');
           choralSounds.forEach(function(choralSound, i) {
@@ -329,6 +331,7 @@ module.exports = function() {
       }
 
       function handleOrganType(lwData, scaleSet) {
+        //playlogic
         if (isStormy) {
           playOrgan(lwData, scaleSet, 'organLoop');
         } else if (!isStormy && isCloudy) {
@@ -349,7 +352,7 @@ module.exports = function() {
        */
 			function playSounds(lwData, organScales, arpScaleArray) {
         // Make scale set array for chord sequence
-        sketch.masterVolume(0);
+
         sketch.masterVolume(1, 3, 0);
         // Rain
         handlePrecipitation(lwData, arpScaleArray, arpPart);
@@ -357,17 +360,20 @@ module.exports = function() {
         handleFineWeather(lwData, organScales[0]);
         // Play bass
         publishBass = channel.subscribe('triggerBass', function() {
+          //playlogic
           if (isCloudy) {
             playBass(organScales[0]);
           }
         });
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
+          //playlogic
           if (isWindy) {
             playBrassBass(organScales[0]);
           }
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
+          //playlogic
           if (isWindy) {
             playBrassBassTwo(organScales[0]);
           }
@@ -389,7 +395,7 @@ module.exports = function() {
         if (isWesternScale) {
           allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, avSettings.numSemitones);
         } else {
-          allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, sketch.random(avSettings.numSemitones+2, avSettings.numSemitones * 2));
+          allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2));
         }
         return allNotesArray;
 			}
@@ -422,13 +428,16 @@ module.exports = function() {
         //  Use equal temperament scale for cold & warm
         //  use arbitrary scale for freezing
         var allNotesArray = [];
-        if (isCold) {
-          allNotesArray = createEqTempPitchesArr(lwData, false);
-        }
-        else if (isFreezing) {
+        //playlogic
+        // arbritrary pitches
+        if (isFreezing) {
           allNotesArray = createArbitraryPitchesArr(lwData);
         }
-        // and heptatonic for warm weather
+        // non western eq temp scale
+        else if (isCold) {
+          allNotesArray = createEqTempPitchesArr(lwData, false);
+        }
+        // and heptatonic for warmer weather
         else {
           allNotesArray = createEqTempPitchesArr(lwData, true);
         }
@@ -460,8 +469,8 @@ module.exports = function() {
       }
 
       function createMusicalScale(lwData, allNotesArray, numNotes, centreNoteOffset, scaleType) {
-        console.log('numNotes', numNotes);
         console.log('centreNoteOffset', centreNoteOffset);
+        console.log('allNotesArray.length', allNotesArray.length);
         var scaleArray = [];
         var _centreNoteIndex = lwData.soundParams.soundPitchOffset - centreNoteOffset;
         var _scaleIntervals = [];
@@ -476,18 +485,17 @@ module.exports = function() {
         } else if (scaleType === 'minorOct') {
           _scaleIntervals = createIntervalsArray(intervals.octMinorIntervals, numNotes);
         }
-        console.log('_scaleIntervals', _scaleIntervals);
         scaleArray = getPitchesFromIntervals(allNotesArray, _scaleIntervals, _centreNoteIndex, numNotes);
-        console.log('scaleArray', scaleArray);
         return scaleArray;
       }
 
-      function getChorsOffsetArr(numChords) {
+      function getChordsOffsetArr(numChords) {
         var chordOffsetArr = [];
         function getChords() {
           var _chordArr = [];
           _chordArr.push(0);
-          if (isFine) {
+          //playlogic
+          if (isClement) {
             _chordArr.push(5);
             _chordArr.push(3);
           } else {
@@ -498,6 +506,7 @@ module.exports = function() {
         }
 
         chordOffsetArr = getChords();
+        // error check
         if (numChords > chordOffsetArr.length) {
           chordOffsetArr = chordOffsetArr.concat(getChords());
         }
@@ -506,10 +515,11 @@ module.exports = function() {
       }
 
       function makeChordSequence(lwData, numChords, allNotesScale) {
-        var chordOffSetArr = getChorsOffsetArr(numChords);
+        var chordOffSetArr = getChordsOffsetArr(numChords);
         var chordSeq = [];
         for (var i = 0; i < numChords; i++) {
           console.log('chordOffSet value', chordOffSetArr[i]);
+          //playlogic
           if (isClement) {
             chordSeq.push(createMusicalScale(lwData, allNotesScale, numOrganNotes, chordOffSetArr[i], 'major'));
           } else {
@@ -533,7 +543,13 @@ module.exports = function() {
         //Use math.abs for all pitch and volume values?
         //Add global values to the main data object
         //Pressure determines root note. Range 1 octave
-        lwData.soundParams.soundPitchOffset = Math.round(sketch.map(lwData.pressure.value, lwData.pressure.min, lwData.pressure.max, 0 + avSettings.scaleSize, (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleSize));
+        lwData.soundParams.soundPitchOffset = Math.round(sketch.map(
+          lwData.pressure.value,
+          lwData.pressure.min,
+          lwData.pressure.max,
+          avSettings.scaleStartIndexBuffer, //x amount from the beginning
+          (avSettings.numOctaves * avSettings.numSemitones) - avSettings.scaleStartIndexBuffer //x amount from the end
+        ));
         console.log('lwData.soundParams.soundPitchOffset', lwData.soundParams.soundPitchOffset);
         // Set filter
         // visibility is filter freq
@@ -542,6 +558,7 @@ module.exports = function() {
         soundFilter.res(20);
         // Create scales for playback
         var allNotesScale = allNotesScaleType(lwData);
+        //playlogic
         if (isStormy || isFine) {
           organScaleSets = makeChordSequence(lwData, 2, allNotesScale);
         } else {
@@ -596,7 +613,6 @@ module.exports = function() {
 			};
 
 			sketch.setup = function setup() {
-        console.log('masterGain.amp', masterGain.amp);
         masterGain.amp(0, 0, 0);
 				//If this size or smaller
 				if (matchMediaMaxWidth(540).matches) {

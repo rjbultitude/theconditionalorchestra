@@ -18,7 +18,7 @@ module.exports = {
   numArpNotes: 12,
   numOctaves: 4,
   numSemitones: 12,
-  scaleSize: 7,
+  scaleStartIndexBuffer: 10,
   pitchOffsetInc: 0.5,
   fadeTime: 1,
 	//DOM

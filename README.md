@@ -121,11 +121,13 @@ A precipType of `snow` - played slowest and quieter
 
 ##Plans
 
-Playback rate bug - try fixing using a switch in the draw loop
+Playback rate bug - seems to exist only in Chrome
+
+Swap dropLightSound to reversed dropSound
 
 Looping organ sound won't work now due to playback being handled by a callback
 
-Build error checker for undefined values, particularly in arp array
+Decide on program pattern - are we always passing in member vars to functions or not?
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
 
