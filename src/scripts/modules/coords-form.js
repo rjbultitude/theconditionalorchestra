@@ -75,7 +75,6 @@ module.exports = function() {
             );
           }
         }
-        console.log('locationData', locationData);
         //Add the location name
 			  Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
         //Add string or time values

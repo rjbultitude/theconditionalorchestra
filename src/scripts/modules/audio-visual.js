@@ -432,6 +432,27 @@ module.exports = function() {
         return _allNotesArray;
       }
 
+      function addMissingIntervals(intervalsArr, difference) {
+        var _diffCount = difference;
+        var _count = 0;
+        var _newIntervalsArr = intervalsArr.map(function(item) {
+          return item
+        });
+        var _finalIntevalsArr = [];
+        var _diffArr = [];
+        for (var i = 0; i < difference; i++) {
+          if (_diffCount > intervalsArr.length) {
+            _count = 0;
+          } else {
+            _count++;
+          }
+          _diffCount--;
+          _diffArr.push(intervalsArr[_count] += 12);
+          _finalIntevalsArr = _newIntervalsArr.concat(_diffArr);
+        }
+        return _finalIntevalsArr;
+      }
+
       /**
        * Returns a set of intervals that is
        * long enough for the sequence to play
@@ -440,9 +461,12 @@ module.exports = function() {
        * @return {Array}                [current or new array]
        */
       function createIntervalsArray(initIntervals, numNotes) {
+        console.log('numNotes', numNotes);
+        console.log('initIntervals.length', initIntervals.length);
         var _newIntervals;
         if (numNotes > initIntervals.length) {
-          _newIntervals = duplicateArray(duplicateAndPitchArray(initIntervals, 2), 2);
+          //_newIntervals = duplicateArray(duplicateAndPitchArray(initIntervals, 2), 2);
+          _newIntervals = addMissingIntervals(initIntervals, numNotes - initIntervals.length);
           return _newIntervals;
         } else {
           return initIntervals;
@@ -452,6 +476,8 @@ module.exports = function() {
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes) {
         var _scaleArray = [];
         var _newNote;
+        //TODO error check here
+        //and add new (higher) notes
         for (var i = 0; i < numNotes; i++) {
           _newNote = allNotesScale[scaleIntervals[i] + centreNoteIndex];
           if (_newNote !== undefined) {
@@ -464,11 +490,11 @@ module.exports = function() {
       }
 
       function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, key) {
-        console.log('allNotesScale.length', allNotesScale.length);
         var _scaleArray = [];
         var _centreNoteIndex = lwData.soundParams.soundPitchOffset + centreNoteOffset;
         var _scaleIntervals = createIntervalsArray(intervals[key], numNotes);
         _scaleArray = getPitchesFromIntervals(allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes);
+        console.log('_scaleArray', _scaleArray);
         return _scaleArray;
       }
 
@@ -556,6 +582,7 @@ module.exports = function() {
         // Set filter
         // visibility is filter freq
         lwData.soundParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.soundParams.freq.min, lwData.soundParams.freq.max);
+        console.log('lwData.soundParams.freq.value', lwData.soundParams.freq.value);
         soundFilter.freq(lwData.soundParams.freq.value);
         soundFilter.res(20);
         //playlogic

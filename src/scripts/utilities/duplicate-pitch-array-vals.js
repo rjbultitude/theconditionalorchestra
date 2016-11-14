@@ -6,19 +6,19 @@
  * @param  {Number} times   [number of times to duplicate]
  * @return {Array}          [array]
  */
-module.exports = function duplicateArray(array, times, multiple) {
-  var newArray = [];
-  var mappedArray = [];
-  var multipleVal = multiple || 12;
+module.exports = function duplicateAndPitchArray(array, times, multiple) {
+  var _newArray = [];
+  var _mappedArray = [];
+  var _multipleVal = multiple || 12;
   for (var i = 0; i < times; i++) {
-    mappedArray = array.map(function(item) {
-      var _multiple = multipleVal;
+  _mappedArray = array.map(function(item) {
+      var _multiple = _multipleVal;
       _multiple *= i;
       item += _multiple;
       return item;
     });
-    newArray = newArray.concat(mappedArray);
+    _newArray = _newArray.concat(_mappedArray);
     multiple *= 2;
   }
-  return newArray;
+  return _newArray;
 };
