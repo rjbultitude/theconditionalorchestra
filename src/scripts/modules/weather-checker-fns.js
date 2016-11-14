@@ -21,7 +21,7 @@ module.exports = {
 
   // @param temperatureInFrnht floating point
   isCold: function(temperatureInFrnht) {
-    return frnhtToCelcius(temperatureInFrnht) < 11;
+    return frnhtToCelcius(temperatureInFrnht) <= 12;
   },
 
   // @param temperatureInFrnht floating point

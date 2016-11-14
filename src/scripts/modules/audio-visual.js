@@ -154,15 +154,18 @@ module.exports = function() {
     choralSounds = [];
     padSounds = [];
     // weather checks
-    var isPrecip = weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value);
-    var isFine = weatherCheck.isFine(lwData.temperature.value, lwData.windSpeed.value, lwData.cloudCover.value);
-    var isCold = weatherCheck.isCold(lwData.temperature.value);
-    var isFreezing = weatherCheck.isFreezing(lwData.temperature.value);
-    var isClement = weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value);
-    var isWindy = weatherCheck.isWindy(lwData.windSpeed.value);
-    var isCloudy = weatherCheck.isCloudy(lwData.cloudCover.value);
-    var isStormy = weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value);
-    var numPadNotes = setNumPadNotes(lwData, avSettings, isStormy);
+    var wCheck = {
+      isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value),
+      isFine: weatherCheck.isFine(lwData.temperature.value, lwData.windSpeed.value, lwData.cloudCover.value),
+      isCold: weatherCheck.isCold(lwData.temperature.value),
+      isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
+      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value),
+      isWindy: weatherCheck.isWindy(lwData.windSpeed.value),
+      isCloudy: weatherCheck.isCloudy(lwData.cloudCover.value),
+      isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
+    };
+    console.log('wCheck', wCheck);
+    var numPadNotes = setNumPadNotes(lwData, avSettings, wCheck.isStormy);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -207,15 +210,15 @@ module.exports = function() {
         // Type logic
         switch (arpeggioType) {
           case 'hard':
-            arpPart.setBPM(160);
+            arpPart.setBPM(150);
             console.log('hard');
             break;
           case 'soft':
-            arpPart.setBPM(110);
+            arpPart.setBPM(120);
             console.log('soft');
             break;
           case 'softest':
-            arpPart.setBPM(60);
+            arpPart.setBPM(90);
             console.log('softest');
             break;
           default:
@@ -306,7 +309,7 @@ module.exports = function() {
       function handlePrecipitation(lwData, arpScaleArray, arpPart) {
         // Handle precipitation
         // playlogic
-        if (isPrecip) {
+        if (wCheck.isPrecip) {
           playArp(precipCategory(lwData), arpScaleArray);
         } else {
           arpPart.stop(0);
@@ -315,7 +318,7 @@ module.exports = function() {
 
       function handleFineWeather(lwData, scaleArray) {
         // playlogic
-        if (isFine) {
+        if (wCheck.isFine) {
           console.log('weather is fine. choralSound playing');
           choralSounds.forEach(function(choralSound, i) {
             // must loop before rate is set
@@ -332,11 +335,11 @@ module.exports = function() {
 
       function handlePadType(lwData, scaleSet) {
         //playlogic
-        if (isStormy) {
+        if (wCheck.isStormy) {
           playPad(lwData, scaleSet, 'organDist');
-        } else if (isCloudy && isCold) {
+        } else if (wCheck.isCloudy && wCheck.isCold) {
           playPad(lwData, scaleSet, 'sax');
-        } else if (isCloudy && isFreezing) {
+        } else if (wCheck.isCloudy && wCheck.isFreezing) {
           playPad(lwData, scaleSet, 'trumpet');
         } else {
           playPad(lwData, scaleSet, 'organ');
@@ -362,20 +365,20 @@ module.exports = function() {
         // Play bass
         publishBass = channel.subscribe('triggerBass', function() {
           //playlogic
-          if (isCloudy) {
+          if (wCheck.isCloudy) {
             playBass(padScales[0]);
           }
         });
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
           //playlogic
-          if (isWindy) {
+          if (wCheck.isWindy) {
             playBrassBass(padScales[0]);
           }
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
           //playlogic
-          if (isWindy) {
+          if (wCheck.isWindy) {
             playBrassBassTwo(padScales[0]);
           }
         });
@@ -411,7 +414,7 @@ module.exports = function() {
         var _allNotesArray = [];
         //playlogic
         // non western eq temp scale
-        if (isFreezing) {
+        if (wCheck.isFreezing) {
           _allNotesArray = createEqTempPitchesArr(lwData, false);
         }
         // western 12 note scale for warmer weather
@@ -450,7 +453,6 @@ module.exports = function() {
         var _scaleArray = [];
         var _centreNoteIndex = lwData.soundParams.soundPitchOffset + centreNoteOffset;
         var _scaleIntervals = [];
-        console.log('_centreNoteIndex', _centreNoteIndex);
 
         if (scaleType === 'major') {
           console.log('major');
@@ -474,7 +476,7 @@ module.exports = function() {
       }
 
       function getChordOffsetKey(allNotesScale) {
-        if (isClement) {
+        if (wCheck.isClement) {
           if (isRootNoteHigh(allNotesScale)) {
             return 'chordsMelancholyDown';
           } else {
@@ -490,37 +492,37 @@ module.exports = function() {
       }
 
       function getChordsOffsetArr(numChords, allNotesScale) {
-        var chordOffsetArr = [];
-        var chordOffsetKey = getChordOffsetKey(allNotesScale);
-        function getChords(chordOffsetKey) {
-          return intervals[chordOffsetKey].map(function(thisNumber) {
+        var _chordOffsetArr = [];
+        var _chordOffsetKey = getChordOffsetKey(allNotesScale);
+        function getChords(_chordOffsetKey) {
+          return intervals[_chordOffsetKey].map(function(thisNumber) {
             return thisNumber;
           });
         }
 
-        chordOffsetArr = getChords(chordOffsetKey);
+        _chordOffsetArr = getChords(_chordOffsetKey);
         // error check
-        if (numChords > chordOffsetArr.length) {
-          chordOffsetArr = chordOffsetArr.concat(getChords());
+        if (numChords > _chordOffsetArr.length) {
+          _chordOffsetArr = _chordOffsetArr.concat(getChords());
         }
-        console.log('chordOffsetArr', chordOffsetArr);
-        return chordOffsetArr;
+        console.log('_chordOffsetArr', _chordOffsetArr);
+        return _chordOffsetArr;
       }
 
       function makeChordSequence(lwData, numChords, allNotesScale) {
-        var chordOffSetArr = getChordsOffsetArr(numChords, allNotesScale);
-        var chordSeq = [];
+        var _chordOffSetArr = getChordsOffsetArr(numChords, allNotesScale);
+        var _chordSeq = [];
         for (var i = 0; i < numChords; i++) {
-          console.log('chordOffSet value', chordOffSetArr[i]);
+          console.log('chordOffSet value', _chordOffSetArr[i]);
           //playlogic
-          if (isClement) {
-            chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, chordOffSetArr[i], 'major'));
+          if (wCheck.isClement) {
+            _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], 'major'));
           } else {
-            chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, chordOffSetArr[i], 'minor'));
+            _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], 'minor'));
           }
         }
-        console.log('chordSeq', chordSeq);
-        return chordSeq;
+        console.log('_chordSeq', _chordSeq);
+        return _chordSeq;
       }
 
       /*
@@ -552,7 +554,7 @@ module.exports = function() {
         soundFilter.freq(lwData.soundParams.freq.value);
         soundFilter.res(20);
         //playlogic
-        if (isStormy || isFine) {
+        if (wCheck.isStormy || wCheck.isFine) {
           organScaleSets = makeChordSequence(lwData, 2, allNotesScale);
         } else {
           organScaleSets = makeChordSequence(lwData, 3, allNotesScale);

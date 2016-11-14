@@ -58,24 +58,24 @@ module.exports = (function generateFrequencyScales() {
      * @return {[Array]}              [an array of frequencies or pitches]
      */
     function createEqTempMusicalScale(startFreq, numOctaves, numSemitones) {
-      var scale = [];
-      var posCount = startFreq;
-      var negCount = startFreq;
+      var _scale = [];
+      var _posCount = startFreq;
+      var _negCount = startFreq;
       for (var i = 0; i < numOctaves; i++) {
-        //Create downwards scale
+        //Create downwards _scale
         if (i % 2 === 1) {
-          scale = arrayInsertAt(scale, 0, createScale(negCount, numSemitones, false, false));
-          negCount++;
+          _scale = arrayInsertAt(_scale, 0, createScale(_negCount, numSemitones, false, false));
+          _negCount++;
         } else {
-          //Create upwards scale
+          //Create upwards _scale
           //TODO avoid mutation
-          scale = scale.concat(createScale(posCount, numSemitones, true, true));
-          posCount++;
+          _scale = _scale.concat(createScale(_posCount, numSemitones, true, true));
+          _posCount++;
         }
       }
       //Add centre frequency
-      scale.splice(findCentreFreqIndex(numOctaves, numSemitones), 0, startFreq);
-      return scale;
+      _scale.splice(findCentreFreqIndex(numOctaves, numSemitones), 0, startFreq);
+      return _scale;
     }
 
     return {
