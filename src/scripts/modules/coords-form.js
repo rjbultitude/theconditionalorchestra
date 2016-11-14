@@ -5,7 +5,7 @@ var GoogleMapsLoader = require('google-maps');
 var postal = require('postal');
 var channel = postal.channel();
 var Nll = require('./nll-cnstrctr');
-var maxMinVals = require('../settings/max-min-values');
+var maxMin = require('../settings/max-min-values');
 var updateStatus = require('./update-status');
 var makeRequest = require('../utilities/make-request');
 var classListChain = require('../utilities/class-list-chain');
@@ -32,6 +32,12 @@ module.exports = function() {
     coordsFormSubmitBtnEl.disabled = true;
   }
 
+  function NumericCondition(value, min, max) {
+    this.value = value;
+    this.min = min;
+    this.max = max;
+  }
+
   function updateApp(lat, long, name) {
 		var newLocation = new Nll(lat, long, name);
 		updateStatus('weather');
@@ -42,36 +48,40 @@ module.exports = function() {
     //TODO
     // Break this function up
   	forecast.getCurrentConditions(newLocation, function(conditions) {
+      //must make new object at this point;
+      var locationData = {
+        //in use
+        cloudCover: null,
+        windSpeed: null,
+        visibility: null,
+        pressure: null,
+        precipIntensity: null,
+        temperature: null,
+        //non in use
+        dewPoint: null,
+        humidity: null,
+        windBearing: null,
+        ozone: null,
+        apparentTemperature: null
+      };
   		if (conditions.length === 1) {
         // Set numerical integer and floating point values
-        // Order is important for use in mapPitchValues
-  			var locationData = {
-          dewPoint: {value: conditions[0].getDewPoint() === undefined ? getMeanVal(maxMinVals.forecastParams.dewPoint.max, maxMinVals.forecastParams.dewPoint.min, 'dewPoint', true) : conditions[0].getDewPoint() },
-          humidity: {value: conditions[0].getHumidity() === undefined ? getMeanVal(maxMinVals.forecastParams.humidity.max, maxMinVals.forecastParams.humidity.min, 'humidity', true) : conditions[0].getHumidity() },
-          ozone: {value: conditions[0].getOzone() === undefined ? getMeanVal(maxMinVals.forecastParams.ozone.max, maxMinVals.forecastParams.ozone.min, 'ozone', true) : conditions[0].getOzone() },
-          bearing: {value: conditions[0].getWindBearing() === undefined ? getMeanVal(maxMinVals.forecastParams.windBearing.max, maxMinVals.forecastParams.windBearing.min, 'windBearing', true) : conditions[0].getWindBearing() },
-          temperature: {value: conditions[0].getTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.temperature.max, maxMinVals.forecastParams.temperature.min, 'temperature', true) : conditions[0].getTemperature() },
-          apparentTemp: {value: conditions[0].getApparentTemperature() === undefined ? getMeanVal(maxMinVals.forecastParams.apparentTemp.max, maxMinVals.forecastParams.apparentTemp.min, 'apparentTemp', true) : conditions[0].getApparentTemperature() },
-          cloudCover: {value: conditions[0].getCloudCover() === undefined ? getMeanVal(maxMinVals.forecastParams.cloudCover.max, maxMinVals.forecastParams.cloudCover.min, 'cloudCover', true) : conditions[0].getCloudCover() },
-          windSpeed: {value: conditions[0].getWindSpeed() === undefined ? getMeanVal(maxMinVals.forecastParams.windSpeed.max, maxMinVals.forecastParams.windSpeed.min, 'windSpeed', true) : conditions[0].getWindSpeed() },
-  				visibility: {value: conditions[0].getVisibility() === undefined ? getMeanVal(maxMinVals.forecastParams.visibility.max, maxMinVals.forecastParams.visibility.min, 'visibility', true) : conditions[0].getVisibility() },
-          pressure: {value: conditions[0].getPressure() === undefined ? getMeanVal(maxMinVals.forecastParams.pressure.max, maxMinVals.forecastParams.pressure.min, 'pressure', true) : conditions[0].getPressure() },
-  				precipIntensity: {value: conditions[0].getPrecipIntensity() }
-  			};
-			  //Add the max & min condition vals
-  			addMinMaxLoop:
-  			for (var key in locationData) {
-  				if (locationData.hasOwnProperty(key)) {
-  					Object.defineProperty(locationData[key], 'min', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].min});
-  					Object.defineProperty(locationData[key], 'max', {writable: true, enumerable: true, value: maxMinVals.forecastParams[key].max});
-  				}
-  			}
+        for (var key in locationData) {
+          if (locationData.hasOwnProperty(key)) {
+            locationData[key] = new NumericCondition(
+              conditions[0][key]() === undefined ? getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max, key, true) : conditions[0][key](),
+              maxMin.wParams[key].min,
+              maxMin.wParams[key].max
+            );
+          }
+        }
+        console.log('locationData', locationData);
         //Add the location name
 			  Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
         //Add string or time values
-        Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].getPrecipitationType() });
+        Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() });
         //Add max & min sound values
-        Object.defineProperty(locationData, 'soundParams', {writable: false, enumerable: true, value: maxMinVals.soundParams});
+        Object.defineProperty(locationData, 'soundParams', {writable: false, enumerable: true, value: maxMin.soundParams});
   			//Keep last state for next time
   			//in case user should be offline
   			var locationDataString = JSON.stringify(locationData);

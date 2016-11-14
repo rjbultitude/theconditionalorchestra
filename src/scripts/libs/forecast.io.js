@@ -237,7 +237,7 @@
 		 *
 		 * @return String
 		 */
-		this.getTemperature = function() {
+		this.temperature = function() {
 			return rawData.temperature;
 		};
 		/**
@@ -245,7 +245,7 @@
 		 *
 		 * @return String
 		 */
-		this.getApparentTemperature = function() {
+		this.apparentTemperature = function() {
 			return rawData.apparentTemperature;
 		};
 		/**
@@ -253,7 +253,7 @@
 		 *
 		 * @return String
 		 */
-		this.getSummary = function() {
+		this.summary = function() {
 			return rawData.summary;
 		};
 		/**
@@ -261,7 +261,7 @@
 		 *
 		 * @return String
 		 */
-		this.getIcon = function() {
+		this.icon = function() {
 			return rawData.icon;
 		};
 		/**
@@ -270,7 +270,7 @@
 		 * @param String $format
 		 * @return String
 		 */
-		this.getTime = function(format) {
+		this.time = function(format) {
 			if (!format) {
 				return rawData.time;
 			} else {
@@ -282,7 +282,7 @@
 		 *
 		 * @return String
 		 */
-		this.getPressure = function() {
+		this.pressure = function() {
 			return rawData.pressure;
 		};
 		/**
@@ -290,7 +290,7 @@
 		 *
 		 * @return String
 		 */
-		this.getHumidity = function() {
+		this.humidity = function() {
 			return rawData.humidity;
 		};
 		/**
@@ -298,7 +298,7 @@
 		 *
 		 * @return String
 		 */
-		this.getWindSpeed = function() {
+		this.windSpeed = function() {
 			return rawData.windSpeed;
 		};
 		/**
@@ -306,7 +306,7 @@
 		 *
 		 * @return type
 		 */
-		this.getWindBearing = function() {
+		this.windBearing = function() {
 			return rawData.windBearing;
 		};
 		/**
@@ -314,7 +314,7 @@
 		 *
 		 * @return type
 		 */
-		this.getPrecipitationType = function() {
+		this.precipitationType = function() {
 			return rawData.precipType;
 		};
 		/**
@@ -322,7 +322,7 @@
 		 *
 		 * @return type
 		 */
-		this.getPrecipitationProbability = function() {
+		this.precipitationProbability = function() {
 			return rawData.precipProbability;
 		};
 		/**
@@ -330,7 +330,7 @@
 		 *
 		 * @return type
 		 */
-		this.getCloudCover = function() {
+		this.cloudCover = function() {
 			return rawData.cloudCover;
 		};
 		/**
@@ -340,7 +340,7 @@
 		 *
 		 * @return type
 		 */
-		this.getMinTemperature = function() {
+		this.minTemperature = function() {
 			return rawData.temperatureMin;
 		};
 		/**
@@ -350,7 +350,7 @@
 		 *
 		 * @return type
 		 */
-		this.getMaxTemperature = function() {
+		this.maxTemperature = function() {
 			return rawData.temperatureMax;
 		};
 		/**
@@ -360,7 +360,7 @@
 		 *
 		 * @return type
 		 */
-		this.getSunrise = function() {
+		this.sunrise = function() {
 			return rawData.sunriseTime;
 		};
 		/**
@@ -370,7 +370,7 @@
 		 *
 		 * @return type
 		 */
-		this.getSunset = function() {
+		this.sunset = function() {
 			return rawData.sunsetTime;
 		};
 		/**
@@ -378,7 +378,7 @@
 		 *
 		 * @return number
 		 */
-		this.getPrecipIntensity = function() {
+		this.precipIntensity = function() {
 			return rawData.precipIntensity;
 		};
 		/**
@@ -386,7 +386,7 @@
 		 *
 		 * @return number
 		 */
-		this.getDewPoint = function() {
+		this.dewPoint = function() {
 			return rawData.dewPoint;
 		};
 		/**
@@ -394,7 +394,7 @@
 		 *
 		 * @return number
 		 */
-		this.getOzone = function() {
+		this.ozone = function() {
 			return rawData.ozone;
 		};
 		/**
@@ -402,7 +402,7 @@
 		 *
 		 * @return number
 		 */
-		this.getVisibility = function() {
+		this.visibility = function() {
 			return rawData.visibility;
 		};
 	}

@@ -127,6 +127,8 @@ Modulate master volume for windy conditions
 
 Check visibility filter
 
+Create sequencer for stormy weather that uses brash percussive sounds
+
 Decide on program pattern - are we always passing in member vars to functions or not?
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[

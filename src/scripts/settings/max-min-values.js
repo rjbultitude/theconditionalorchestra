@@ -9,7 +9,7 @@
 'use strict';
 
 module.exports = {
-  forecastParams: {
+  wParams: {
     //Cloud cover as a percentage
     cloudCover: {
       min: 0,
@@ -31,7 +31,7 @@ module.exports = {
       max: 10
     },
     //Wind Bearing in degrees
-    bearing: {
+    windBearing: {
       min: 0,
       max: 360
     },
@@ -56,7 +56,7 @@ module.exports = {
       max: 120
     },
     //apparent temperature in farenheit
-    apparentTemp: {
+    apparentTemperature: {
       min: -35,
       max: 120
     },
