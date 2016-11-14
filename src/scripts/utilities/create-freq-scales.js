@@ -11,24 +11,23 @@ module.exports = (function generateFrequencyScales() {
     * @return {[Array]}               [an array containing all the frequencies in the scale]
     */
     function createScale(startFreq, numTones, includeOctave, upwardsScale) {
-      var scale = [];
-      var toneLoopLength = numTones;
+      var _scale = [];
+      var _toneLoopLength = numTones;
       if (includeOctave) {
-        toneLoopLength = numTones + 1;
+        _toneLoopLength = numTones + 1;
       }
       if (upwardsScale) {
-        for (var i = 1; i < toneLoopLength; i++) {
-          var freqHigh = startFreq * Math.pow(2, i/numTones);
-          scale.push(freqHigh);
+        for (var i = 1; i < _toneLoopLength; i++) {
+          var _freqHigh = startFreq * Math.pow(2, i/numTones);
+          _scale.push(_freqHigh);
         }
       } else {
-        for (var j = toneLoopLength; j > 0; j--) {
-          var freqLow = startFreq / Math.abs(Math.pow(2, j/numTones));
-          scale.push(freqLow);
+        for (var j = _toneLoopLength; j > 0; j--) {
+          var _freqLow = startFreq / Math.abs(Math.pow(2, j/numTones));
+          _scale.push(_freqLow);
         }
       }
-      console.log('create scale.length', scale.length);
-      return scale;
+      return _scale;
     }
 
     /**
@@ -38,16 +37,16 @@ module.exports = (function generateFrequencyScales() {
      * @return {[Number]}              [the index representing the start frequency]
      */
     function findCentreFreqIndex(numOctaves, numSemitones) {
-      var totalNotes = numOctaves * numSemitones;
-      var noteIndex = null;
+      var _totalNotes = numOctaves * numSemitones;
+      var _noteIndex = null;
       if(numOctaves % 2 === 1) {
         //odd
-        noteIndex = numSemitones * ((numOctaves - 1) / 2);
-        return noteIndex;
+        _noteIndex = numSemitones * ((numOctaves - 1) / 2);
+        return _noteIndex;
       } else {
         //even
-        noteIndex = totalNotes/2;
-        return noteIndex;
+        _noteIndex = _totalNotes / 2;
+        return _noteIndex;
       }
     }
 
@@ -69,6 +68,7 @@ module.exports = (function generateFrequencyScales() {
           negCount++;
         } else {
           //Create upwards scale
+          //TODO avoid mutation
           scale = scale.concat(createScale(posCount, numSemitones, true, true));
           posCount++;
         }

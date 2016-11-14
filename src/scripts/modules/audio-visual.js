@@ -393,35 +393,15 @@ module.exports = function() {
 			*/
 			function createEqTempPitchesArr(lwData, isWesternScale) {
         var _allNotesArray = [];
+        var _numSemitones;
         if (isWesternScale) {
-          _allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, avSettings.numSemitones);
+          _numSemitones = avSettings.numSemitones;
+          console.log('western', _numSemitones);
         } else {
-          _allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2));
+          _numSemitones = sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2);
+          console.log('non western _numSemitones', _numSemitones);
         }
-        return _allNotesArray;
-			}
-
-			/*
-				Arbitarily assigned pitch values
-				calculated by mapping conditions to pitch
-			*/
-			function createArbitraryPitchesArr(lwData) {
-        var _allNotesArray = [];
-        var _count = 0;
-				mappedValsLoop:
-				for (var condition in lwData) {
-          while (numPadNotes > _count) {
-            if (lwData.hasOwnProperty(condition)) {
-              console.log('condition', condition);
-              if (condition === 'name' || condition === 'soundParams') {
-                continue mappedValsLoop;
-              }
-              _allNotesArray.push(sketch.map(lwData[condition].value, lwData[condition].min, lwData[condition].max, lwData.soundParams.pitch.min, lwData.soundParams.pitch.max).toFixed(4));
-            }
-            _count++;
-            continue mappedValsLoop;
-          }
-				}
+        _allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, _numSemitones);
         return _allNotesArray;
 			}
 
@@ -430,15 +410,11 @@ module.exports = function() {
         //  use arbitrary scale for freezing
         var _allNotesArray = [];
         //playlogic
-        // arbritrary pitches
-        if (isFreezing) {
-          _allNotesArray = createArbitraryPitchesArr(lwData);
-        }
         // non western eq temp scale
-        else if (isCold) {
+        if (isFreezing) {
           _allNotesArray = createEqTempPitchesArr(lwData, false);
         }
-        // and heptatonic for warmer weather
+        // western 12 note scale for warmer weather
         else {
           _allNotesArray = createEqTempPitchesArr(lwData, true);
         }
