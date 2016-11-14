@@ -123,9 +123,7 @@ A precipType of `snow` - played slowest and quieter
 
 Playback rate bug - seems to exist only in Chrome
 
-Swap dropLightSound to reversed dropSound
-
-Looping organ sound won't work now due to playback being handled by a callback
+Simplify scale for arpeggio
 
 Decide on program pattern - are we always passing in member vars to functions or not?
 

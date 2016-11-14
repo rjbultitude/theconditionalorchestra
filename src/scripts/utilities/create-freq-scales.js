@@ -27,6 +27,7 @@ module.exports = (function generateFrequencyScales() {
           scale.push(freqLow);
         }
       }
+      console.log('create scale.length', scale.length);
       return scale;
     }
 

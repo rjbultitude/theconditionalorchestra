@@ -21,12 +21,12 @@ module.exports = {
 
   // @param temperatureInFrnht floating point
   isCold: function(temperatureInFrnht) {
-    return frnhtToCelcius(temperatureInFrnht) < 8;
+    return frnhtToCelcius(temperatureInFrnht) < 11;
   },
 
   // @param temperatureInFrnht floating point
   isFreezing: function(temperatureInFrnht) {
-    return frnhtToCelcius(temperatureInFrnht) < -2;
+    return frnhtToCelcius(temperatureInFrnht) < -1;
   },
 
   // @param cloudCover floating point
@@ -41,13 +41,13 @@ module.exports = {
   },
   // @param cloudCover floating point
   isCloudy: function(cloudCover) {
-    return cloudCover > 0.6;
+    return cloudCover > 0.5;
   },
 
   // @param cloudCover floating point
   // @param windSpeed floating point
   // @param precipIntensity floating point
   isStormy: function(cloudCover, windSpeed, precipIntensity) {
-    return cloudCover > 0.5 && windSpeed > 9 && precipIntensity > 0.3;
+    return cloudCover > 0.5 && windSpeed > 18 && precipIntensity > 0.3;
   }
 };
