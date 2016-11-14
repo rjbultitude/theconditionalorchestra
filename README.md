@@ -123,7 +123,9 @@ A precipType of `snow` - played slowest and quieter
 
 Playback rate bug - seems to exist only in Chrome
 
-Simplify scale for arpeggio
+Modulate master volume for windy conditions
+
+Check visibility filter
 
 Decide on program pattern - are we always passing in member vars to functions or not?
 

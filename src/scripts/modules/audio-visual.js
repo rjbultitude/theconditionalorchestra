@@ -49,7 +49,6 @@ module.exports = function() {
   // For audioContext support
   var pee5 = new P5();
   //Subscriptions
-  var publishBass;
   var publishBrassOne;
   var publishBrassTwo;
 
@@ -81,6 +80,11 @@ module.exports = function() {
     }, avSettings.fadeTime * 1000);
   }
 
+  function fadeBass() {
+    bass.fade(0, avSettings.fadeTime);
+    bass.stop();
+  }
+
   function killCurrentSounds() {
       // Stop arrpeggio
       arpPart.stop(0);
@@ -91,14 +95,12 @@ module.exports = function() {
       // Fade choral
       choralSounds.forEach(fadeChoralSounds);
       // Fade bass
-      bass.fade(0, avSettings.fadeTime);
-      bass.stop();
+      fadeBass();
       //Fade brassbass
       brassBass.fade(0, avSettings.fadeTime);
       brassBass.stop();
       brassBass2.fade(0, avSettings.fadeTime);
       brassBass2.stop();
-      publishBass.unsubscribe();
       publishBrassOne.unsubscribe();
       publishBrassTwo.unsubscribe();
       isPlaying = false;
@@ -117,12 +119,12 @@ module.exports = function() {
     dropLightSound.play(time);
   }
 
-  function setNumPadNotes(lwData, avSettings, isStormy) {
+  function getNumPadNotes(lwData, avSettings, isStormy) {
     var _numPadNotes;
     if (isStormy) {
-      _numPadNotes = 7;
+      _numPadNotes = 6;
     } else {
-      _numPadNotes = avSettings.numPadNotes;
+      _numPadNotes = avSettings.numPadNotes; //6
     }
     return _numPadNotes;
   }
@@ -147,6 +149,7 @@ module.exports = function() {
     //Init scoped values
     var brassOneScaleArrayIndex = 0;
     var brassTwoScaleArrayIndex = 0;
+    var bassScaleArrayIndex = 0;
     var scaleSetIndex = 0;
     var padIndexCount = 0;
     // TODO find better way of avoiding mutation
@@ -165,7 +168,8 @@ module.exports = function() {
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
     };
     console.log('wCheck', wCheck);
-    var numPadNotes = setNumPadNotes(lwData, avSettings, wCheck.isStormy);
+    var numPadNotes = getNumPadNotes(lwData, avSettings, wCheck.isStormy);
+    console.log('numPadNotes', numPadNotes);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -229,16 +233,22 @@ module.exports = function() {
         arpPart.loop();
       }
 
-      function playBass(scaleArray) {
+      function playBass(scaleSet) {
         bass.play();
-        bass.rate(scaleArray[0]);
-        bass.setVolume(0.4);
+        //Play 1st note of each chord
+        bass.rate(scaleSet[bassScaleArrayIndex][0]);
+        bass.setVolume(0.5);
+        if (bassScaleArrayIndex >= 1) {
+          bassScaleArrayIndex = 0;
+        } else {
+          bassScaleArrayIndex++;
+        }
         console.log('bass playing');
       }
 
-      function playBrassBass(scaleArray) {
+      function playBrassBass(scaleSetArray) {
         brassBass.play();
-        brassBass.rate(scaleArray[brassOneScaleArrayIndex]);
+        brassBass.rate(scaleSetArray[brassOneScaleArrayIndex]);
         brassBass.setVolume(1);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
@@ -293,6 +303,10 @@ module.exports = function() {
         }
         setScaleSetIndex(scaleSet);
         console.log(key + ' is playing');
+        //playlogic
+        if (wCheck.isCloudy) {
+          playBass(scaleSet);
+        }
       }
 
       function padCallback(lwData, scaleSet, key) {
@@ -303,6 +317,7 @@ module.exports = function() {
             playPad(lwData, scaleSet, key);
             padIndexCount = 0;
           }
+          //fadeBass();
         }
       }
 
@@ -362,13 +377,6 @@ module.exports = function() {
         handlePrecipitation(lwData, arpScaleArray, arpPart);
         // Fine conditions
         handleFineWeather(lwData, padScales[0]);
-        // Play bass
-        publishBass = channel.subscribe('triggerBass', function() {
-          //playlogic
-          if (wCheck.isCloudy) {
-            playBass(padScales[0]);
-          }
-        });
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
           //playlogic
@@ -424,6 +432,13 @@ module.exports = function() {
         return _allNotesArray;
       }
 
+      /**
+       * Returns a set of intervals that is
+       * long enough for the sequence to play
+       * @param  {Array} initIntervals  [Set of initial intervals]
+       * @param  {Number} numNotes      [Number of notes needed]
+       * @return {Array}                [current or new array]
+       */
       function createIntervalsArray(initIntervals, numNotes) {
         var _newIntervals;
         if (numNotes > initIntervals.length) {
@@ -448,21 +463,11 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, scaleType) {
+      function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, key) {
         console.log('allNotesScale.length', allNotesScale.length);
         var _scaleArray = [];
         var _centreNoteIndex = lwData.soundParams.soundPitchOffset + centreNoteOffset;
-        var _scaleIntervals = [];
-
-        if (scaleType === 'major') {
-          console.log('major');
-          _scaleIntervals = createIntervalsArray(intervals.heptMajorIntervals, numNotes);
-        } else if (scaleType === 'minor') {
-          console.log('minor');
-          _scaleIntervals = createIntervalsArray(intervals.heptMinorIntervals, numNotes);
-        } else if (scaleType === 'minorOct') {
-          _scaleIntervals = createIntervalsArray(intervals.octMinorIntervals, numNotes);
-        }
+        var _scaleIntervals = createIntervalsArray(intervals[key], numNotes);
         _scaleArray = getPitchesFromIntervals(allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes);
         return _scaleArray;
       }
@@ -478,15 +483,15 @@ module.exports = function() {
       function getChordOffsetKey(allNotesScale) {
         if (wCheck.isClement) {
           if (isRootNoteHigh(allNotesScale)) {
-            return 'chordsMelancholyDown';
-          } else {
-            return 'chordsMelancholyUp';
-          }
-        } else {
-          if (isRootNoteHigh(allNotesScale)) {
             return 'chordsPositiveDown';
           } else {
             return 'chordsPositiveUp';
+          }
+        } else {
+          if (isRootNoteHigh(allNotesScale)) {
+            return 'chordsMelancholyDown';
+          } else {
+            return 'chordsMelancholyUp';
           }
         }
       }
@@ -516,9 +521,9 @@ module.exports = function() {
           console.log('chordOffSet value', _chordOffSetArr[i]);
           //playlogic
           if (wCheck.isClement) {
-            _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], 'major'));
+            _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], 'heptMajorIntervals'));
           } else {
-            _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], 'minor'));
+            _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], 'heptMinorIntervals'));
           }
         }
         console.log('_chordSeq', _chordSeq);
@@ -554,13 +559,19 @@ module.exports = function() {
         soundFilter.freq(lwData.soundParams.freq.value);
         soundFilter.res(20);
         //playlogic
-        if (wCheck.isStormy || wCheck.isFine) {
+        // We use a non western scale for freezing
+        // so only play one chord
+        if (wCheck.isFreezing) {
+          organScaleSets = makeChordSequence(lwData, 1, allNotesScale);
+        }
+        // We use a 6 note chord for stormy conditions
+        // so only use a two chord sequence
+        else if (wCheck.isStormy || wCheck.isFine) {
           organScaleSets = makeChordSequence(lwData, 2, allNotesScale);
         } else {
-          organScaleSets = makeChordSequence(lwData, 3, allNotesScale);
+          organScaleSets = makeChordSequence(lwData, avSettings.numChords, allNotesScale);
         }
-        //TODO handle type for arpeggio
-        var arpScaleArray = createMusicalScale(lwData, allNotesScale, avSettings.numArpNotes, 0, 'minor');
+        var arpScaleArray = createMusicalScale(lwData, allNotesScale, avSettings.numArpNotes, 0, 'safeIntervals');
         playSounds(lwData, organScaleSets, arpScaleArray);
 			}
 
