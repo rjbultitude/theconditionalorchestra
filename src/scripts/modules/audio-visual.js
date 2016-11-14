@@ -410,33 +410,37 @@ module.exports = function() {
           console.log('western', _numSemitones);
         } else {
           _numSemitones = sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2);
+          //TODO I need to get this number out
           console.log('non western _numSemitones', _numSemitones);
         }
         _allNotesArray = generateFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, _numSemitones);
-        return _allNotesArray;
+        return {
+          allNotesArray: _allNotesArray,
+          numSemitones: _numSemitones
+        };
 			}
 
       function allNotesScaleType(lwData) {
         //  Use equal temperament scale for cold & warm
         //  use arbitrary scale for freezing
-        var _allNotesArray = [];
+        var _allNotesObj = {};
         //playlogic
         // non western eq temp scale
         if (wCheck.isFreezing) {
-          _allNotesArray = createEqTempPitchesArr(lwData, false);
+          _allNotesObj = createEqTempPitchesArr(lwData, false);
         }
         // western 12 note scale for warmer weather
         else {
-          _allNotesArray = createEqTempPitchesArr(lwData, true);
+          _allNotesObj = createEqTempPitchesArr(lwData, true);
         }
-        return _allNotesArray;
+        return _allNotesObj;
       }
 
-      function addMissingIntervals(intervalsArr, difference) {
+      function addMissingIntervals(intervalsArr, difference, numSemitonesInScale) {
         var _diffCount = difference;
         var _count = 0;
         var _newIntervalsArr = intervalsArr.map(function(item) {
-          return item
+          return item;
         });
         var _finalIntevalsArr = [];
         var _diffArr = [];
@@ -447,7 +451,7 @@ module.exports = function() {
             _count++;
           }
           _diffCount--;
-          _diffArr.push(intervalsArr[_count] += 12);
+          _diffArr.push(intervalsArr[_count] += numSemitonesInScale);
           _finalIntevalsArr = _newIntervalsArr.concat(_diffArr);
         }
         return _finalIntevalsArr;
@@ -460,13 +464,13 @@ module.exports = function() {
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function createIntervalsArray(initIntervals, numNotes) {
+      function createIntervalsArray(initIntervals, numNotes, numSemitonesInScale) {
         console.log('numNotes', numNotes);
         console.log('initIntervals.length', initIntervals.length);
         var _newIntervals;
         if (numNotes > initIntervals.length) {
           //_newIntervals = duplicateArray(duplicateAndPitchArray(initIntervals, 2), 2);
-          _newIntervals = addMissingIntervals(initIntervals, numNotes - initIntervals.length);
+          _newIntervals = addMissingIntervals(initIntervals, numNotes - initIntervals.length, numSemitonesInScale);
           return _newIntervals;
         } else {
           return initIntervals;
@@ -476,10 +480,9 @@ module.exports = function() {
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes) {
         var _scaleArray = [];
         var _newNote;
-        //TODO error check here
-        //and add new (higher) notes
         for (var i = 0; i < numNotes; i++) {
           _newNote = allNotesScale[scaleIntervals[i] + centreNoteIndex];
+          //error check
           if (_newNote !== undefined) {
             _scaleArray.push(_newNote);
           } else {
@@ -489,10 +492,10 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, key) {
+      function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, key, numSemitonesInScale) {
         var _scaleArray = [];
         var _centreNoteIndex = lwData.soundParams.soundPitchOffset + centreNoteOffset;
-        var _scaleIntervals = createIntervalsArray(intervals[key], numNotes);
+        var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, numSemitonesInScale);
         _scaleArray = getPitchesFromIntervals(allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes);
         console.log('_scaleArray', _scaleArray);
         return _scaleArray;
@@ -567,7 +570,8 @@ module.exports = function() {
 			function configureSounds(lwData) {
         var organScaleSets = [];
         // Create scales for playback
-        var allNotesScale = allNotesScaleType(lwData);
+        var allNotesScale = allNotesScaleType(lwData).allNotesArray;
+        var numSemitonesInScale = allNotesScaleType(lwData).numSemitones;
         //Use math.abs for all pitch and volume values?
         //Add global values to the main data object
         //Pressure determines root note. Range 1 octave
@@ -598,7 +602,7 @@ module.exports = function() {
         } else {
           organScaleSets = makeChordSequence(lwData, avSettings.numChords, allNotesScale);
         }
-        var arpScaleArray = createMusicalScale(lwData, allNotesScale, avSettings.numArpNotes, 0, 'safeIntervals');
+        var arpScaleArray = createMusicalScale(lwData, allNotesScale, avSettings.numArpNotes, 0, 'safeIntervals', numSemitonesInScale);
         playSounds(lwData, organScaleSets, arpScaleArray);
 			}
 
