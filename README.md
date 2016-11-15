@@ -123,7 +123,13 @@ A precipType of `snow` - played slowest and quieter
 
 Playback rate bug - seems to exist only in Chrome
 
-Modulate master volume for windy conditions
+Modulate master volume for windy conditions. Requires sounds to be routed through one channel
+
+Consider using ozone as another data input
+
+Catch the range error earlier - consider creating the allNotesArray when we know how long it needs to be
+
+Use wind bearing for brass pan. 0 - 180deg is a pan from L to R, 181 - 360deg is pan from R to L
 
 Check visibility filter
 
