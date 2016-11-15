@@ -258,8 +258,9 @@ module.exports = function() {
       }
 
       function playBrassBassTwo(scaleArray) {
+        var _newScaleArr = scaleArray.slice().reverse();
         brassBass.play();
-        brassBass.rate(scaleArray[brassTwoScaleArrayIndex]);
+        brassBass.rate(_newScaleArr[brassTwoScaleArrayIndex]);
         brassBass.setVolume(1);
         if (brassTwoScaleArrayIndex >= scaleArray.length -1) {
           brassTwoScaleArrayIndex = 0;
@@ -446,15 +447,16 @@ module.exports = function() {
       /**
        * Returns a set of intervals that is
        * long enough for the sequence to play
-       * @param  {Array} initIntervals  [Set of initial intervals]
+       * @param  {Array} chosenIntervals  [Set of initial intervals]
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function createIntervalsArray(initIntervals, numNotes, semisInOct) {
+      function createIntervalsArray(chosenIntervals, numNotes, semisInOct) {
         var _newIntervals;
-        var _difference = numNotes - initIntervals.length;
+        var _difference = numNotes - chosenIntervals.length;
         var _numUpperOcts;
-        //Ensure numberes don't balloon
+        //When using non western scale
+        //ensure numbers don't balloon
         if (semisInOct > avSettings.numSemitones) {
           _numUpperOcts = 0;
         } else {
@@ -462,11 +464,28 @@ module.exports = function() {
         }
         //Error check
         if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(initIntervals, _difference, _numUpperOcts);
+          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts);
         } else {
-          _newIntervals = initIntervals;
+          _newIntervals = chosenIntervals;
         }
+        console.log('_newIntervals', _newIntervals);
         return _newIntervals;
+      }
+
+      function isOutofRange(arrLength, startingIndex, indicesToTest) {
+        var remainder = arrLength - startingIndex;
+        if (remainder <= 0) {
+          throw new Error('array is less than the starting index');
+        }
+        findLargerValLoop:
+        for (var i = 0; i < indicesToTest.length; i++) {
+          if (indicesToTest[i] > remainder) {
+            throw new Error('not enough array items, failed at ' + indicesToTest[i]);
+          } else {
+            continue findLargerValLoop;
+          }
+        }
+        return false;
       }
 
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, indexOffset) {
@@ -490,6 +509,12 @@ module.exports = function() {
         var _scaleArray = [];
         var _centreNoteIndex = lwData.soundParams.soundPitchOffset + centreNoteOffset;
         var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, semisInOct);
+        //error check
+        try {
+          isOutofRange(allNotesScale.length, centreNoteIndex, _scaleIntervals);
+        } catch(exception) {
+          console.error(exception.message);
+        }
         _scaleArray = getPitchesFromIntervals(allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, chordIndexOffset);
         return _scaleArray;
       }
@@ -509,6 +534,7 @@ module.exports = function() {
         //therefore no offset is required
         //TODO not sure humidity is the best
         //value to use
+        //playlogic
         if (wCheck.isHumid) {
           _key = 'chordsNoOffset';
         }
@@ -527,6 +553,7 @@ module.exports = function() {
             _key = 'chordsMelancholyUp';
           }
         }
+        console.log('chord seq type', _key);
         return _key;
       }
 
@@ -587,6 +614,7 @@ module.exports = function() {
         } else {
           _key = 'chordIndexesNoOffset';
         }
+        console.log('interval arr for chord ', _key);
         return _key;
       }
 
