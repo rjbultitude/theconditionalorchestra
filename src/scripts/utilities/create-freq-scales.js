@@ -77,7 +77,6 @@ module.exports = (function generateFrequencyScales() {
       }
       //Add centre frequency
       _scale.splice(findCentreFreqIndex(numOctaves, numSemitones), 0, startFreq);
-      console.log('_scale', _scale);
       return _scale;
     }
 

@@ -44,6 +44,10 @@ module.exports = {
     return cloudCover > 0.5;
   },
 
+  isHumid: function(humidity) {
+    return humidity > 0.4;
+  },
+
   // @param cloudCover floating point
   // @param windSpeed floating point
   // @param precipIntensity floating point
