@@ -511,7 +511,7 @@ module.exports = function() {
         var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, semisInOct);
         //error check
         try {
-          isOutofRange(allNotesScale.length, centreNoteIndex, _scaleIntervals);
+          isOutofRange(allNotesScale.length, centreNoteOffset, _scaleIntervals);
         } catch(exception) {
           console.error(exception.message);
         }
