@@ -26,7 +26,6 @@ module.exports = (function generateFrequencyScales() {
       } else {
         for (var j = _toneLoopLength; j > 0; j--) {
           _freqLow = startFreq / Math.abs(Math.pow(2, j/numTones));
-          console.log('_freqLow', _freqLow);
           _scale.push(_freqLow);
         }
       }
@@ -73,7 +72,7 @@ module.exports = (function generateFrequencyScales() {
           //Create upwards _scale
           //TODO avoid mutation
           _scale = _scale.concat(createScale(_posCount, numSemitones, true, true));
-          _posCount++;
+          _posCount *= 2;
         }
       }
       //Add centre frequency
