@@ -567,6 +567,24 @@ module.exports = function() {
         return _chordSeq;
       }
 
+      function getNumChords() {
+        var _numChords;
+        //playlogic
+        // We use a non western scale for freezing
+        // so only play one chord
+        if (wCheck.isFreezing) {
+          _numChords = 1;
+        }
+        // We use a 6 note chord for stormy conditions
+        // so only use a two chord sequence
+        else if (wCheck.isStormy || wCheck.isFine) {
+          _numChords = 2;
+        // or use default
+        } else {
+          _numChords = avSettings.numChords; //3
+        }
+        return _numChords;
+      }
       /*
       	Sound config algorithm
       	---------------
@@ -581,6 +599,7 @@ module.exports = function() {
         var _allNotesObj = allNotesScaleType(lwData);
         var _allNotesScale = _allNotesObj.allNotesArray;
         var _numSemitonesInScale = _allNotesObj.numSemitones;
+        var _arpCentreNoteOffset = -Math.abs(_numSemitonesInScale * 2);
         var _numChords;
         //Use math.abs for all pitch and volume values?
         //Add global values to the main data object
@@ -599,22 +618,9 @@ module.exports = function() {
         console.log('lwData.soundParams.freq.value', lwData.soundParams.freq.value);
         soundFilter.freq(lwData.soundParams.freq.value);
         soundFilter.res(20);
-        //playlogic
-        // We use a non western scale for freezing
-        // so only play one chord
-        if (wCheck.isFreezing) {
-          _numChords = 1;
-        }
-        // We use a 6 note chord for stormy conditions
-        // so only use a two chord sequence
-        else if (wCheck.isStormy || wCheck.isFine) {
-          _numChords = 2;
-        // or use default
-        } else {
-          _numChords = avSettings.numChords; //3
-        }
+        _numChords = getNumChords();
         _organScaleSets = makeChordSequence(lwData, _numChords, _allNotesScale, _numSemitonesInScale);
-        var arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, 0, 'safeIntervals', _numSemitonesInScale);
+        var arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _numSemitonesInScale);
         playSounds(lwData, _organScaleSets, arpScaleArray);
 			}
 
