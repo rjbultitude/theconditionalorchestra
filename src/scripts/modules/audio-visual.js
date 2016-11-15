@@ -590,15 +590,11 @@ module.exports = function() {
         var _numChords;
         //playlogic
         // We use a non western scale for freezing
-        // so only play one chord
-        if (wCheck.isFreezing) {
+        // so only play two chords
+        if (wCheck.isStormy && wCheck.isFreezing) {
           _numChords = 2;
-        }
-        // We use a 6 note chord for stormy conditions
-        // so only use a two chord sequence
-        else if (wCheck.isStormy || wCheck.isFine) {
+        } else if (wCheck.isStormy || wCheck.isFine) {
           _numChords = 3;
-        // or use default
         } else {
           _numChords = avSettings.numChords; //4
         }
