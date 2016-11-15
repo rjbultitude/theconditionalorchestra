@@ -8,5 +8,8 @@ module.exports = {
     chordsMelancholyUp: [0, 4, 2],
     chordsMelancholyDown: [0, -4, -2],
     chordsPositiveUp: [0, 5, 3],
-    chordsPositiveDown: [0, -5, -3]
+    chordsPositiveDown: [0, -5, -3],
+    chordsNoOffset: [0, 0, 0],
+    chordIndexes: [0,1,2],
+    chordIndexesNoOffset: [0, 0, 0]
 };

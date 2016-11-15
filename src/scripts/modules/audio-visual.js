@@ -488,7 +488,7 @@ module.exports = function() {
         var _newNote;
         var _indexOffset = indexOffset || 0;
         for (var i = 0; i < numNotes; i++) {
-          _newNote = allNotesScale[scaleIntervals[_indexOffsetArr] + centreNoteIndex];
+          _newNote = allNotesScale[scaleIntervals[_indexOffset] + centreNoteIndex];
           console.log('_newNote', _newNote);
           //error check
           if (_newNote !== undefined) {
@@ -518,19 +518,31 @@ module.exports = function() {
       }
 
       function getChordOffsetKey(allNotesScale) {
-        if (wCheck.isClement) {
+        var _key;
+        //For humid weather we use
+        //the available notes in the intervals
+        //therefore no offset is required
+        //TODO not sure humidity is the best
+        //value to use
+        if (weatherCheck.isHumid) {
+          _key = 'chordsNoOffset';
+        }
+        //otherwise we use various offsets
+        else if (wCheck.isClement) {
           if (isRootNoteHigh(allNotesScale)) {
-            return 'chordsPositiveDown';
+            _key = 'chordsPositiveDown';
           } else {
-            return 'chordsPositiveUp';
-          }
-        } else {
-          if (isRootNoteHigh(allNotesScale)) {
-            return 'chordsMelancholyDown';
-          } else {
-            return 'chordsMelancholyUp';
+            _key = 'chordsPositiveUp';
           }
         }
+        else {
+          if (isRootNoteHigh(allNotesScale)) {
+            _key = 'chordsMelancholyDown';
+          } else {
+            _key = 'chordsMelancholyUp';
+          }
+        }
+        return _key;
       }
 
       function getChordsOffsetArr(numChords, allNotesScale) {
@@ -544,6 +556,7 @@ module.exports = function() {
 
         _chordOffsetArr = getChords(_chordOffsetKey);
         // error check
+        // TODO is this good enough?
         if (numChords > _chordOffsetArr.length) {
           _chordOffsetArr = _chordOffsetArr.concat(getChords());
         }
@@ -581,36 +594,35 @@ module.exports = function() {
         return _numChords;
       }
 
-      function getChordSequenceType(numChords, allNotesScale) {
-        var _chordOffSetArr;
+      function getChordIndexOffsetKey() {
         var _chordIndexOffSetArr;
-        //play logic
+        var _key;
+        //playlogic
         if (wCheck.isHumid) {
-          //TODO abstract to fns
-          _chordOffSetArr = [0,0,0];
-          //this needs to be as longs as there are notes!
-          _chordIndexOffSetArr = [0,1,2];
+          _key = 'chordIndexes';
         } else {
-          _chordOffSetArr = getChordsOffsetArr(numChords, allNotesScale);
-          _chordIndexOffSetArr = null;
+          _key = 'chordIndexesNoOffset';
         }
-        return {
-          chordOffSetArr: _chordOffSetArr,
-          chordIndexOffSetArr: _chordIndexOffSetArr
-        };
+        _chordIndexOffSetArr = intervals[_key];
+        return _chordIndexOffSetArr;
+      }
+
+      function getChordIndexOffsetArr(numChords) {
+        var _chordIndexOffSetArr = [];
+        var _chordIndexOffSetKey = getChordIndexOffsetKey();
+        _chordIndexOffSetArr = intervals[_chordIndexOffSetKey];
+        if (numChords > _chordIndexOffSetArr) {
+          _chordIndexOffSetArr = duplicateArray(_chordIndexOffSetArr, 2);
+        }
+        return _chordIndexOffSetArr;
       }
 
       function makeChordSequence(lwData, numChords, allNotesScale, semisInOct) {
         var _chordSeq = [];
         var _chordType = getChordType();
-        var _chordSeqType = getChordSequenceType(numChords, allNotesScale);
-        console.log('_chordSeqType', _chordSeqType);
-        //var _numAvailableNotes = intervals[_chordType].length;
-        var _chordOffSetArr = _chordSeqType.chordOffSetArr;
-        var _chordIndexOffSetArr = _chordSeqType.chordIndexOffSetArr;
+        var _chordOffSetArr = getChordsOffsetArr(numChords, allNotesScale);
+        var _chordIndexOffSetArr = getChordIndexOffsetArr(numChords);
         for (var i = 0; i < numChords; i++) {
-          //create sets with potentially more available notes
-          //than will be played back
           _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], _chordType, semisInOct, _chordIndexOffSetArr[i]));
         }
         console.log('_chordSeq', _chordSeq);
@@ -632,7 +644,7 @@ module.exports = function() {
         var _allNotesScale = _allNotesObj.allNotesArray;
         var _semisInOct = _allNotesObj.numSemitones;
         var _arpCentreNoteOffset = -Math.abs(_semisInOct * 2);
-        var _numChords;
+        var _numChords = getNumChords();
         //Use math.abs for all pitch and volume values?
         //Add global values to the main data object
         //Pressure determines root note. Range 1 octave
@@ -650,7 +662,6 @@ module.exports = function() {
         console.log('lwData.soundParams.freq.value', lwData.soundParams.freq.value);
         soundFilter.freq(lwData.soundParams.freq.value);
         soundFilter.res(20);
-        _numChords = getNumChords();
         _organScaleSets = makeChordSequence(lwData, _numChords, _allNotesScale, _semisInOct);
         var arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _semisInOct);
         playSounds(lwData, _organScaleSets, arpScaleArray);
