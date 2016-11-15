@@ -20,6 +20,7 @@ module.exports = function() {
   var coordsFormSubmitBtnEl = coordsFormEl.querySelector('[data-ref="submit"]');
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
 	var visualLaunchEl = document.querySelector('[data-ref="visuals-launcher"]');
+  var summaryBox = document.getElementById('summary');
   var isPlaying = false;
 
   function enableControls() {
@@ -90,6 +91,7 @@ module.exports = function() {
   			channel.publish('userUpdate', locationData);
         updateStatus('playing', locationData.name);
   			visualLaunchEl.style.display = 'block';
+        summaryBox.innerHTML = conditions[0].summary();
   		}
       else {
   			console.log('There seems to be more than one location: ', conditions.length);

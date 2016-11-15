@@ -3,6 +3,9 @@
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 
 module.exports = {
+  /**
+   * Single concept items
+   */
   // @param precipType String
   // @param precipIntensity floating point
   isPrecip: function(precipType, precipIntensity) {
@@ -14,27 +17,10 @@ module.exports = {
     }
   },
 
-  // @param temperatureInFrnht floating point
-  isFine: function(temperatureInFrnht, windSpeed, cloudCover) {
-    //return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 12 && cloudCover < 0.2;
-    return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover < 0.2;
+  isHumid: function(humidity) {
+    return humidity > 0.4;
   },
 
-  // @param temperatureInFrnht floating point
-  isCold: function(temperatureInFrnht) {
-    return frnhtToCelcius(temperatureInFrnht) <= 12;
-  },
-
-  // @param temperatureInFrnht floating point
-  isFreezing: function(temperatureInFrnht) {
-    return frnhtToCelcius(temperatureInFrnht) < -1;
-  },
-
-  // @param cloudCover floating point
-  // @param windSpeed floating point
-  isClement: function(cloudCover, windSpeed) {
-    return cloudCover < 0.5 && windSpeed < 16;
-  },
 
   // @param windSpeed floating point
   isWindy: function(windSpeed) {
@@ -45,8 +31,32 @@ module.exports = {
     return cloudCover > 0.5;
   },
 
-  isHumid: function(humidity) {
-    return humidity > 0.4;
+  /**
+   * temperature
+   */
+  // @param temperatureInFrnht floating point
+  isCold: function(temperatureInFrnht) {
+    return frnhtToCelcius(temperatureInFrnht) <= 12;
+  },
+
+  // @param temperatureInFrnht floating point
+  isFreezing: function(temperatureInFrnht) {
+    return frnhtToCelcius(temperatureInFrnht) < -1;
+  },
+
+  /**
+   * Broad concept conditions
+   */
+
+  // @param temperatureInFrnht floating point
+  isFine: function(cloudCover, windSpeed, temperatureInFrnht) {
+   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover < 0.25;
+  },
+
+  // @param cloudCover floating point
+  // @param windSpeed floating point
+  isClement: function(cloudCover, windSpeed, precipIntensity) {
+    return cloudCover < 0.5 && windSpeed < 16 && precipIntensity === 0;
   },
 
   // @param cloudCover floating point

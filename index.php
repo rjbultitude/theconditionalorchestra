@@ -67,6 +67,7 @@
 
                   <!-- Begin conditions display -->
                   <section class="conditions-display section">
+                    <p id="summary"></div>
                     <ul class="conditions-display__list">
                       <li class="conditions-display__item">
                         <h2 class="conditions-display__heading">Temperature</h2>

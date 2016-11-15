@@ -122,9 +122,9 @@ module.exports = function() {
   function getNumPadNotes(lwData, avSettings, isStormy) {
     var _numPadNotes;
     if (isStormy) {
-      _numPadNotes = 6;
+      _numPadNotes = 3;
     } else {
-      _numPadNotes = avSettings.numPadNotes; //6
+      _numPadNotes = avSettings.numPadNotes; //4
     }
     return _numPadNotes;
   }
@@ -157,14 +157,17 @@ module.exports = function() {
     padSounds = [];
     // weather checks
     var wCheck = {
+      //single concept items
       isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value),
-      isFine: weatherCheck.isFine(lwData.temperature.value, lwData.windSpeed.value, lwData.cloudCover.value),
-      isCold: weatherCheck.isCold(lwData.temperature.value),
-      isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
-      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value),
+      isHumid: weatherCheck.isHumid(lwData.humidity.value),
       isWindy: weatherCheck.isWindy(lwData.windSpeed.value),
       isCloudy: weatherCheck.isCloudy(lwData.cloudCover.value),
-      isHumid: weatherCheck.isHumid(lwData.humidity.value),
+      //temperature
+      isCold: weatherCheck.isCold(lwData.temperature.value),
+      isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
+      //broad conditions
+      isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
+      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
     };
     console.log('wCheck', wCheck);
@@ -295,7 +298,7 @@ module.exports = function() {
           padSounds[i][key].setVolume(avSettings[key].volume);
           padSounds[i][key].onended(function() { padCallback(lwData, scaleSet, key); });
           _panIndex = getPanIndex(_panIndex);
-          console.log('padSounds[i][key].playbackRate', padSounds[i][key].playbackRate);
+          //console.log('padSounds[i][key].playbackRate', padSounds[i][key].playbackRate);
         }
         setScaleSetIndex(scaleSet);
         console.log(key + ' is playing');
@@ -346,12 +349,21 @@ module.exports = function() {
 
       function handlePadType(lwData, scaleSet) {
         //playlogic
-        if (wCheck.isStormy) {
+        //Start with harshes conditions
+        //and work our way up
+
+        //This setting uses non western scale
+        if (wCheck.isStormy && wCheck.isFreezing) {
+          playPad(lwData, scaleSet, 'organ');
+        } else if (wCheck.isStormy) {
+          //TODO watch out for clash between
+          //organDist and brass
+          //stormy plays less notes
           playPad(lwData, scaleSet, 'organDist');
-        } else if (wCheck.isCloudy && wCheck.isCold) {
-          playPad(lwData, scaleSet, 'sax');
-        } else if (wCheck.isCloudy && wCheck.isFreezing) {
+        } else if (wCheck.isFreezing) {
           playPad(lwData, scaleSet, 'trumpet');
+        } else if (wCheck.isCold) {
+          playPad(lwData, scaleSet, 'sax');
         } else {
           playPad(lwData, scaleSet, 'organ');
         }
@@ -366,9 +378,6 @@ module.exports = function() {
        * @return {boolean}               default value
        */
 			function playSounds(lwData, padScales, arpScaleArray) {
-        // Make scale set array for chord sequence
-
-        sketch.masterVolume(1, 3, 0);
         // Rain
         handlePrecipitation(lwData, arpScaleArray, arpPart);
         // Fine conditions
@@ -424,7 +433,7 @@ module.exports = function() {
         var _allNotesObj = {};
         //playlogic
         // non western eq temp scale
-        if (wCheck.isFreezing) {
+        if (wCheck.isStormy && wCheck.isFreezing) {
           _allNotesObj = createEqTempPitchesArr(lwData, false);
         }
         // western 12 note scale for warmer weather
@@ -478,13 +487,10 @@ module.exports = function() {
       }
 
       function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, key, semisInOct, chordIndexOffset) {
-        console.log('chordIndexOffset', chordIndexOffset);
         var _scaleArray = [];
         var _centreNoteIndex = lwData.soundParams.soundPitchOffset + centreNoteOffset;
         var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, semisInOct);
-        console.log('_scaleIntervals', _scaleIntervals);
         _scaleArray = getPitchesFromIntervals(allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, chordIndexOffset);
-        console.log('_scaleArray', _scaleArray);
         return _scaleArray;
       }
 
@@ -542,11 +548,14 @@ module.exports = function() {
       function getChordType() {
         var _chordType;
         //playlogic
-        if (wCheck.isClement) {
+        if (wCheck.isFine) {
+          _chordType = 'minorSeventhIntervals';
+        } else if (wCheck.isClement) {
           _chordType = 'heptMajorIntervals';
         } else {
           _chordType = 'heptMinorIntervals';
         }
+        console.log('_chordType', _chordType);
         return _chordType;
       }
 
@@ -556,15 +565,15 @@ module.exports = function() {
         // We use a non western scale for freezing
         // so only play one chord
         if (wCheck.isFreezing) {
-          _numChords = 1;
+          _numChords = 2;
         }
         // We use a 6 note chord for stormy conditions
         // so only use a two chord sequence
         else if (wCheck.isStormy || wCheck.isFine) {
-          _numChords = 2;
+          _numChords = 3;
         // or use default
         } else {
-          _numChords = avSettings.numChords; //3
+          _numChords = avSettings.numChords; //4
         }
         console.log('_numChords', _numChords);
         return _numChords;
@@ -598,7 +607,6 @@ module.exports = function() {
         var _chordType = getChordType();
         var _chordOffSetArr = getChordsOffsetArr(numChords, allNotesScale);
         var _chordIndexOffsetArr = getChordIndexOffsetArr(numChords);
-        console.log('numChords', numChords);
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], _chordType, semisInOct, _chordIndexOffsetArr[i]));
         }
@@ -622,7 +630,6 @@ module.exports = function() {
         var _semisInOct = _allNotesObj.numSemitones;
         var _arpCentreNoteOffset = -Math.abs(_semisInOct * 2);
         var _numChords = getNumChords();
-        //var _arpIndexOffsetArr = getChordIndexOffsetArr(_numChords, true);
         //Use math.abs for all pitch and volume values?
         //Add global values to the main data object
         //Pressure determines root note. Range 1 octave
@@ -637,12 +644,10 @@ module.exports = function() {
         // Set filter
         // visibility is filter freq
         lwData.soundParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.soundParams.freq.min, lwData.soundParams.freq.max);
-        console.log('lwData.soundParams.freq.value', lwData.soundParams.freq.value);
         soundFilter.freq(lwData.soundParams.freq.value);
         soundFilter.res(20);
         _organScaleSets = makeChordSequence(lwData, _numChords, _allNotesScale, _semisInOct);
         var arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _semisInOct);
-        //var arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _semisInOct, _arpIndexOffsetArr[0]);
         playSounds(lwData, _organScaleSets, arpScaleArray);
 			}
 
@@ -739,13 +744,10 @@ module.exports = function() {
             shapeSet[i].paint(sketch, temperatureColour, avSettings.colourDim);
           }
         }
-        if (sketch.frameCount % 300 === 0) {
-          channel.publish('triggerBass');
-        }
-        if (sketch.frameCount % 400 === 0) {
+        if (sketch.frameCount % 350 === 0) {
           channel.publish('triggerBrassOne');
         }
-        if (sketch.frameCount % 500 === 0) {
+        if (sketch.frameCount % 650 === 0) {
           channel.publish('triggerBrassTwo');
         }
 			};
