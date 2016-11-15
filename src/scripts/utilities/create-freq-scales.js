@@ -12,18 +12,21 @@ module.exports = (function generateFrequencyScales() {
     */
     function createScale(startFreq, numTones, includeOctave, upwardsScale) {
       var _scale = [];
+      var _freqHigh;
+      var _freqLow;
       var _toneLoopLength = numTones;
       if (includeOctave) {
         _toneLoopLength = numTones + 1;
       }
       if (upwardsScale) {
         for (var i = 1; i < _toneLoopLength; i++) {
-          var _freqHigh = startFreq * Math.pow(2, i/numTones);
+          _freqHigh = startFreq * Math.pow(2, i/numTones);
           _scale.push(_freqHigh);
         }
       } else {
         for (var j = _toneLoopLength; j > 0; j--) {
-          var _freqLow = startFreq / Math.abs(Math.pow(2, j/numTones));
+          _freqLow = startFreq / Math.abs(Math.pow(2, j/numTones));
+          console.log('_freqLow', _freqLow);
           _scale.push(_freqLow);
         }
       }
@@ -65,7 +68,7 @@ module.exports = (function generateFrequencyScales() {
         //Create downwards _scale
         if (i % 2 === 1) {
           _scale = arrayInsertAt(_scale, 0, createScale(_negCount, numSemitones, false, false));
-          _negCount++;
+          _negCount = _negCount / 2;
         } else {
           //Create upwards _scale
           //TODO avoid mutation
@@ -75,6 +78,7 @@ module.exports = (function generateFrequencyScales() {
       }
       //Add centre frequency
       _scale.splice(findCentreFreqIndex(numOctaves, numSemitones), 0, startFreq);
+      console.log('_scale', _scale);
       return _scale;
     }
 

@@ -8,9 +8,6 @@
  * @return {[Array]}               [the returned array]
  */
 module.exports = function arrayInsertAt(destArray, pos, arrayToInsert) {
-  // var _newDestArray = destArray.map(function(item) {
-  //   return item;
-  // });
   var _args = [];
   _args.push(pos);                           // where to insert
   _args.push(0);                             // nothing to remove

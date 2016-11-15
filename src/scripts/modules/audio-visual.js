@@ -189,21 +189,22 @@ module.exports = function() {
 
       function addRandomStops(notesArray) {
         //duplicate notes
-        var newNotesArray = duplicateArray(notesArray, 10);
-        var randomStopCount = newNotesArray.length / 2;
+        var _newNotesArray = duplicateArray(notesArray, 10);
+        var _randomStopCount = _newNotesArray.length / 2;
+        var _randomIndex;
         //Add stops
-        for (var i = 0; i < randomStopCount; i++) {
-          var randomIndex = sketch.random(0,newNotesArray.length);
-          newNotesArray.splice(randomIndex, 0, 0);
+        for (var i = 0; i < _randomStopCount; i++) {
+          _randomIndex = sketch.random(0,_newNotesArray.length);
+          _newNotesArray.splice(_randomIndex, 0, 0);
         }
-        return newNotesArray;
+        return _newNotesArray;
       }
 
       function playArp(arpeggioType, arpScaleArray) {
         //Overwrite sequence with new notes
-        var newNotesArray = addRandomStops(arpScaleArray).reverse();
-        arpDropPhrase.sequence = newNotesArray;
-        arpDropLightPhrase.sequence = newNotesArray;
+        var _newNotesArray = addRandomStops(arpScaleArray).reverse();
+        arpDropPhrase.sequence = _newNotesArray;
+        arpDropLightPhrase.sequence = _newNotesArray;
         //Only use dropSound for rain
         if (arpeggioType === 'hard') {
           arpPart.addPhrase(arpDropPhrase);
@@ -317,7 +318,6 @@ module.exports = function() {
             playPad(lwData, scaleSet, key);
             padIndexCount = 0;
           }
-          //fadeBass();
         }
       }
 
@@ -401,6 +401,9 @@ module.exports = function() {
         Use an equal temperament scale
         Major scale for clement weather
 				Minor octave for anything else
+        Returns an object containing
+        the complete musical scale and the
+        number of semitones in an octave
 			*/
 			function createEqTempPitchesArr(lwData, isWesternScale) {
         var _allNotesArray = [];
@@ -433,6 +436,7 @@ module.exports = function() {
         else {
           _allNotesObj = createEqTempPitchesArr(lwData, true);
         }
+        console.log('_allNotesObj', _allNotesObj);
         return _allNotesObj;
       }
 
@@ -568,10 +572,11 @@ module.exports = function() {
       	The filter frequency is set by visibility
        */
 			function configureSounds(lwData) {
-        var organScaleSets = [];
+        var _organScaleSets = [];
         // Create scales for playback
-        var allNotesScale = allNotesScaleType(lwData).allNotesArray;
-        var numSemitonesInScale = allNotesScaleType(lwData).numSemitones;
+        var _allNotesObj = allNotesScaleType(lwData);
+        var _allNotesScale = _allNotesObj.allNotesArray;
+        var _numSemitonesInScale = _allNotesObj.numSemitones;
         //Use math.abs for all pitch and volume values?
         //Add global values to the main data object
         //Pressure determines root note. Range 1 octave
@@ -580,7 +585,7 @@ module.exports = function() {
           lwData.pressure.min,
           lwData.pressure.max,
           avSettings.scaleStartIndexBuffer, //x amount from the beginning
-          allNotesScale.length - avSettings.scaleStartIndexBuffer //x amount from the end
+          _allNotesScale.length - avSettings.scaleStartIndexBuffer //x amount from the end
         ));
         console.log('lwData.soundParams.soundPitchOffset', lwData.soundParams.soundPitchOffset);
         // Set filter
@@ -593,17 +598,17 @@ module.exports = function() {
         // We use a non western scale for freezing
         // so only play one chord
         if (wCheck.isFreezing) {
-          organScaleSets = makeChordSequence(lwData, 1, allNotesScale);
+          _organScaleSets = makeChordSequence(lwData, 1, _allNotesScale);
         }
         // We use a 6 note chord for stormy conditions
         // so only use a two chord sequence
         else if (wCheck.isStormy || wCheck.isFine) {
-          organScaleSets = makeChordSequence(lwData, 2, allNotesScale);
+          _organScaleSets = makeChordSequence(lwData, 2, _allNotesScale);
         } else {
-          organScaleSets = makeChordSequence(lwData, avSettings.numChords, allNotesScale);
+          _organScaleSets = makeChordSequence(lwData, avSettings.numChords, _allNotesScale);
         }
-        var arpScaleArray = createMusicalScale(lwData, allNotesScale, avSettings.numArpNotes, 0, 'safeIntervals', numSemitonesInScale);
-        playSounds(lwData, organScaleSets, arpScaleArray);
+        var arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, 0, 'safeIntervals', _numSemitonesInScale);
+        playSounds(lwData, _organScaleSets, arpScaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
