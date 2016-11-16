@@ -65,7 +65,7 @@ module.exports = {
       max: 0.5
     }
   },
-  soundParams: {
+  sParams: {
     pitch: {
       min: 0.5,
       max: 3.0

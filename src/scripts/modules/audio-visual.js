@@ -507,7 +507,7 @@ module.exports = function() {
 
       function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, key, semisInOct, chordIndexOffset) {
         var _scaleArray = [];
-        var _centreNoteIndex = lwData.soundParams.soundPitchOffset + centreNoteOffset;
+        var _centreNoteIndex = lwData.sParams.soundPitchOffset + centreNoteOffset;
         var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, semisInOct);
         //error check
         try {
@@ -520,7 +520,7 @@ module.exports = function() {
       }
 
       function isRootNoteHigh(allNotesScale) {
-        if (lwData.soundParams.soundPitchOffset > Math.round(allNotesScale.length / 2)) {
+        if (lwData.sParams.soundPitchOffset > Math.round(allNotesScale.length / 2)) {
           return true;
         } else {
           return false;
@@ -638,6 +638,19 @@ module.exports = function() {
         return _chordSeq;
       }
 
+      function setRootNote(lwData, allNotesScale) {
+        //Add global values to the main data object
+        //Pressure determines root note. Range 1 octave
+        lwData.sParams.soundPitchOffset = Math.round(sketch.map(
+          lwData.pressure.value,
+          lwData.pressure.min,
+          lwData.pressure.max,
+          avSettings.scaleStartIndexBuffer, //x amount from the beginning
+          allNotesScale.length - avSettings.scaleStartIndexBuffer //x amount from the end
+        ));
+        console.log('lwData.sParams.soundPitchOffset', lwData.sParams.soundPitchOffset);
+      }
+
       /*
       	Sound config algorithm
       	---------------
@@ -648,31 +661,23 @@ module.exports = function() {
        */
 			function configureSounds(lwData) {
         var _organScaleSets = [];
+        var _arpScaleArray = [];
         // Create scales for playback
         var _allNotesObj = allNotesScaleType(lwData);
         var _allNotesScale = _allNotesObj.allNotesArray;
         var _semisInOct = _allNotesObj.numSemitones;
         var _arpCentreNoteOffset = -Math.abs(_semisInOct * 2);
         var _numChords = getNumChords();
+        // Set root note for use with all sounds
+        setRootNote(lwData, _allNotesScale);
         //Use math.abs for all pitch and volume values?
-        //Add global values to the main data object
-        //Pressure determines root note. Range 1 octave
-        lwData.soundParams.soundPitchOffset = Math.round(sketch.map(
-          lwData.pressure.value,
-          lwData.pressure.min,
-          lwData.pressure.max,
-          avSettings.scaleStartIndexBuffer, //x amount from the beginning
-          _allNotesScale.length - avSettings.scaleStartIndexBuffer //x amount from the end
-        ));
-        console.log('lwData.soundParams.soundPitchOffset', lwData.soundParams.soundPitchOffset);
-        // Set filter
-        // visibility is filter freq
-        lwData.soundParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.soundParams.freq.min, lwData.soundParams.freq.max);
-        soundFilter.freq(lwData.soundParams.freq.value);
+        // Set filter. Visibility is filter freq
+        lwData.sParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.sParams.freq.min, lwData.sParams.freq.max);
+        soundFilter.freq(lwData.sParams.freq.value);
         soundFilter.res(20);
         _organScaleSets = makeChordSequence(lwData, _numChords, _allNotesScale, _semisInOct);
-        var arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _semisInOct);
-        playSounds(lwData, _organScaleSets, arpScaleArray);
+        _arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _semisInOct);
+        playSounds(lwData, _organScaleSets, _arpScaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw

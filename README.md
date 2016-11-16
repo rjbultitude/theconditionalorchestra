@@ -77,7 +77,7 @@ Styles and scripts will be processed and minified.
 ##Business logic
 1 master locationData object is composed from the weather data.
 
-A property `soundParams` is added to store values for:
+A property `sParams` is added to store values for:
 * frequency - filter frequency
 * volume - not used
 * distVolume - not used

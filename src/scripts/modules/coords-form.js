@@ -81,7 +81,7 @@ module.exports = function() {
         //Add string or time values
         Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() });
         //Add max & min sound values
-        Object.defineProperty(locationData, 'soundParams', {writable: false, enumerable: true, value: maxMin.soundParams});
+        Object.defineProperty(locationData, 'sParams', {writable: false, enumerable: true, value: maxMin.sParams});
   			//Keep last state for next time
   			//in case user should be offline
   			var locationDataString = JSON.stringify(locationData);
