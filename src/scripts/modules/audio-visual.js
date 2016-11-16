@@ -428,19 +428,21 @@ module.exports = function() {
         };
 			}
 
-      function allNotesScaleType(lwData) {
+      function getallNotesScale(lwData) {
         //  Use equal temperament scale for cold & warm
         //  use arbitrary scale for freezing
         var _allNotesObj = {};
+        var _westernScale;
         //playlogic
         // non western eq temp scale
         if (wCheck.isStormy && wCheck.isFreezing) {
-          _allNotesObj = createEqTempPitchesArr(lwData, false);
+          _westernScale = false;
         }
         // western 12 note scale for warmer weather
         else {
-          _allNotesObj = createEqTempPitchesArr(lwData, true);
+          _westernScale = true;
         }
+        _allNotesObj = createEqTempPitchesArr(lwData, _westernScale);
         return _allNotesObj;
       }
 
@@ -663,7 +665,7 @@ module.exports = function() {
         var _organScaleSets = [];
         var _arpScaleArray = [];
         // Create scales for playback
-        var _allNotesObj = allNotesScaleType(lwData);
+        var _allNotesObj = getallNotesScale(lwData);
         var _allNotesScale = _allNotesObj.allNotesArray;
         var _semisInOct = _allNotesObj.numSemitones;
         var _arpCentreNoteOffset = -Math.abs(_semisInOct * 2);
