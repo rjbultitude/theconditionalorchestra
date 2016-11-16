@@ -2,6 +2,7 @@
 var Promise = require('es6-promise').Promise;
 
 module.exports = function makeRequest(method, url, mimeOverride) {
+
 	return new Promise(function(resolve, reject) {
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url);
@@ -10,20 +11,25 @@ module.exports = function makeRequest(method, url, mimeOverride) {
 				resolve(xhr.response);
 			} else {
 				reject({
-					status: this.status,
-					statusText: xhr.statusText
-				});
+          status: this.status,
+          statusText: xhr.statusText
+        });
 			}
 		};
     if (mimeOverride) {
       xhr.overrideMimeType(mimeOverride);
     }
+    //For network errors
 		xhr.onerror = function() {
-			reject({
-				status: this.status,
-				statusText: xhr.statusText
-			});
+			reject('error' + xhr.status);
 		};
+    xhr.onloadend = function() {
+      if(xhr.status === 404) {
+        console.log('call reject', reject);
+        doSomething();
+        reject();
+      }
+    };
 		xhr.send();
 	});
 };

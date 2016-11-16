@@ -16,6 +16,7 @@ var weatherCheck = require('./weather-checker-fns');
 var intervals = require('../utilities/intervals');
 var getFreqScales = require('../utilities/create-freq-scales');
 var duplicateArray = require('../utilities/duplicate-array-vals');
+var getLargestNumInArr = require('../utilities/largest-num-in-array');
 var addMissingArrayItems = require('../utilities/add-missing-array-items');
 var avSettings = require('../settings/av-settings');
 
@@ -476,15 +477,19 @@ module.exports = function() {
         return _newIntervals;
       }
 
-      function isOutofRange(arrLength, startingIndex, indicesToTest) {
-        var remainder = arrLength - startingIndex;
-        if (remainder <= 0) {
-          throw new Error('array is less than the starting index');
+      function checkScaleRange(arrLength, startingIndex, indicesToTest) {
+        var _remainder = arrLength - startingIndex;
+        var _largestNumber;
+        if (_remainder <= 0) {
+          console.error('array is shorter than the starting index');
         }
         findLargerValLoop:
         for (var i = 0; i < indicesToTest.length; i++) {
-          if (indicesToTest[i] > remainder) {
-            throw new Error('not enough array items, failed at ' + indicesToTest[i]);
+          if (indicesToTest[i] > _remainder) {
+            _largestNumber = getLargestNumInArr(indicesToTest);
+            console.log('not enough array items, failed at ' + indicesToTest[i]);
+            console.log('_largestNumber', _largestNumber);
+            break;
           } else {
             continue findLargerValLoop;
           }
@@ -514,10 +519,8 @@ module.exports = function() {
         var _centreNoteIndex = lwData.sParams.soundPitchOffset + centreNoteOffset;
         var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, semisInOct);
         //error check
-        try {
-          isOutofRange(allNotesScale.length, centreNoteOffset, _scaleIntervals);
-        } catch(exception) {
-          console.error(exception.message);
+        if (checkScaleRange(allNotesScale.length, centreNoteOffset, _scaleIntervals)) {
+
         }
         _scaleArray = getPitchesFromIntervals(allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, chordIndexOffset);
         return _scaleArray;
