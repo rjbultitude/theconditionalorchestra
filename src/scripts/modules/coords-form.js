@@ -100,21 +100,9 @@ module.exports = function() {
 		});
 	}
 
-  function handleNoGeoData(statusString, data, localStorageExists) {
-    if (statusString === 'badPlaceName' && localStorageExists === true) {
-      updateStatus('badPlaceNameLastKnown', data.name);
-    } else if (statusString === 'badPlaceName' && localStorageExists === false) {
-      updateStatus('badPlaceNameStatic', data.name);
-    } else if (statusString === 'noGeoAccess' && localStorageExists === true) {
-      updateStatus('noGeoAcessLastKnown', data.name);
-    } else if (statusString === 'noGeoAccess' && localStorageExists === false) {
-      updateStatus('noGeoAcessStatic', data.name);
-    } else if (statusString === 'badConnection' && localStorageExists === true) {
-      updateStatus('badConnectionLastKnown', data.name);
-    } else if (statusString === 'badConnection' && localStorageExists === false) {
-      updateStatus('badConnectionStatic', data.name);
-    } else if (statusString === 'badGMapsConnectionLastKnown') {
-      updateStatus('badGMapsConnectionLastKnown', data.name);
+  function handleNoGeoData(statusString, data) {
+    if (statusString) {
+      updateStatus(statusString, data.name);
     } else {
       console.error('Unhandled error, status: ', statusString);
     }
@@ -124,7 +112,7 @@ module.exports = function() {
     var fetchStaticData = makeRequest('GET', 'data/static-data.json');
     fetchStaticData.then(function success(staticData) {
       var staticDataJSON = JSON.parse(staticData);
-      handleNoGeoData(statusString, staticDataJSON, false);
+      handleNoGeoData(statusString, staticDataJSON);
       enableControls();
       console.log('using static data');
       channel.publish('userUpdate', staticDataJSON);
@@ -141,14 +129,14 @@ module.exports = function() {
     if(Object.keys(window.localStorage).length > 0) {
       var restoredData = localStorage.getItem('locationData');
       var restoredDataJSON = JSON.parse(restoredData);
-      handleNoGeoData(statusString, restoredDataJSON, true);
+      handleNoGeoData(statusString + lastKnownSuffix, restoredDataJSON);
       channel.publish('userUpdate', restoredDataJSON);
       enableControls();
     }
     //Else use static location data
     else {
       console.log('no data in localStorage');
-      useStaticData(statusString);
+      useStaticData(statusString + staticSuffix);
     }
   }
 
@@ -180,7 +168,9 @@ module.exports = function() {
 		    });
 			});
 		}, function failure(rejectObj) {
-        var statusString = 'badGMapsConnectionLastKnown';
+        console.log(rejectObj.status);
+        console.log(rejectObj.statusText);
+        var statusString = 'badGMapsConnection';
         updateStatus('error');
 		    useLocalStorageData(statusString);
 		});

@@ -137,6 +137,8 @@ Check visibility filter
 
 Create sequencer for stormy weather that uses brash percussive sounds
 
+Test offline, bad connection states (after refactor of handleNoGeoData fn)
+
 Decide on program pattern - are we always passing in member vars to functions or not?
 Drop lwData from all arguments
 

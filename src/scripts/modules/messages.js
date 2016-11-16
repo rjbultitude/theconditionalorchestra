@@ -23,6 +23,7 @@ module.exports = {
     badConnection: 'Unable to retrieve your location, perhaps you have no connection',
     badConnectionLastKnown: 'Unable to retrieve your location. Are you offline? Using last known location ',
     badConnectionStatic: 'Unable to retrieve your location. Are you offline? Using default location ',
+    badGMapsConnection: 'Unable to retrieve that location. Are you offline?',
     badGMapsConnectionLastKnown: 'Unable to retrieve that location. Are you offline?  Using last known location ',
     badGMapsConnectionStatic: 'Unable to retrieve that location. Are you offline? Using default location ',
     stringError: 'Please enter text',
