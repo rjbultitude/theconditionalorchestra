@@ -411,17 +411,19 @@ module.exports = function() {
         the complete musical scale and the
         number of semitones in an octave
 			*/
-			function createEqTempPitchesArr(lwData, isWesternScale) {
+			function createEqTempPitchesArr(lwData, isWesternScale, numOctaves) {
         var _allNotesArray = [];
         var _numSemitones;
+        var _numOctaves = numOctaves || avSettings.numOctaves;
         if (isWesternScale) {
           _numSemitones = avSettings.numSemitones;
           console.log('western', _numSemitones);
         } else {
-          _numSemitones = Math.round(sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2));
+          //_numSemitones = Math.round(sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2));
+          _numSemitones = avSettings.numSemitones + (avSettings.numSemitones / 2);
           console.log('non western _numSemitones', _numSemitones);
         }
-        _allNotesArray = getFreqScales.createEqTempMusicalScale(1, avSettings.numOctaves, _numSemitones);
+        _allNotesArray = getFreqScales.createEqTempMusicalScale(1, _numOctaves, _numSemitones);
         return {
           allNotesArray: _allNotesArray,
           numSemitones: _numSemitones
@@ -653,6 +655,14 @@ module.exports = function() {
         console.log('lwData.sParams.soundPitchOffset', lwData.sParams.soundPitchOffset);
       }
 
+      function setFilter(lwData) {
+        //Use math.abs for all pitch and volume values?
+        // Set filter. Visibility is filter freq
+        lwData.sParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.sParams.freq.min, lwData.sParams.freq.max);
+        soundFilter.freq(lwData.sParams.freq.value);
+        soundFilter.res(20);
+      }
+
       /*
       	Sound config algorithm
       	---------------
@@ -672,11 +682,9 @@ module.exports = function() {
         var _numChords = getNumChords();
         // Set root note for use with all sounds
         setRootNote(lwData, _allNotesScale);
-        //Use math.abs for all pitch and volume values?
-        // Set filter. Visibility is filter freq
-        lwData.sParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.sParams.freq.min, lwData.sParams.freq.max);
-        soundFilter.freq(lwData.sParams.freq.value);
-        soundFilter.res(20);
+        // Set filter for pad sounds
+        setFilter(lwData);
+        //Make arrays of frequencies for playback
         _organScaleSets = makeChordSequence(lwData, _numChords, _allNotesScale, _semisInOct);
         _arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _semisInOct);
         playSounds(lwData, _organScaleSets, _arpScaleArray);

@@ -115,9 +115,9 @@ One bass note is played when the weather _isCloudy_
 
 ###Arpeggio
 Precipitation plays an arpeggiated sequence
-A precipType of `rain` with high precipIntensity - Fast and loud
-A precipType of `sleet` - with high precipIntensity - Slower and less loud
-A precipType of `snow` - played slowest and quieter
+A precipType of `rain` with high precipIntensity - Fast and forwards dropSound
+A precipType of `sleet` - with high precipIntensity - Slower and reverse dropSound
+A precipType of `snow` - playes slowest - Slower and reverse dropSound
 
 ##Plans
 
@@ -136,6 +136,7 @@ Check visibility filter
 Create sequencer for stormy weather that uses brash percussive sounds
 
 Decide on program pattern - are we always passing in member vars to functions or not?
+Drop lwData from all arguments
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
 
