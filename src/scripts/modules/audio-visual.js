@@ -404,6 +404,14 @@ module.exports = function() {
         channel.publish('playing', audioSupported);
 			}
 
+      function getLongerAllNotesScale(largestNumber, arrLength, centreNoteIndex) {
+        var _availableNotes = arrLength - centreNoteIndex;
+        var  _diff = largestNumber - _availableNotes;
+        //TODO formula needs checking
+        var _numOctaves = Math.round((_diff / 12) * 2) + avSettings.numOctaves;
+        return getallNotesScale(lwData, _numOctaves);
+      }
+
       /*
         Use an equal temperament scale
         Major scale for clement weather
@@ -425,13 +433,14 @@ module.exports = function() {
           console.log('non western _numSemitones', _numSemitones);
         }
         _allNotesArray = getFreqScales.createEqTempMusicalScale(1, _numOctaves, _numSemitones);
+        console.log('_allNotesArray', _allNotesArray);
         return {
           allNotesArray: _allNotesArray,
           numSemitones: _numSemitones
         };
 			}
 
-      function getallNotesScale(lwData) {
+      function getallNotesScale(lwData, numOctaves) {
         //  Use equal temperament scale for cold & warm
         //  use arbitrary scale for freezing
         var _allNotesObj = {};
@@ -482,6 +491,7 @@ module.exports = function() {
         var _largestNumber;
         if (_remainder <= 0) {
           console.error('array is shorter than the starting index');
+          return _largestNumber;
         }
         findLargerValLoop:
         for (var i = 0; i < indicesToTest.length; i++) {
@@ -494,7 +504,7 @@ module.exports = function() {
             continue findLargerValLoop;
           }
         }
-        return false;
+        return _largestNumber;
       }
 
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, indexOffset) {
@@ -515,12 +525,16 @@ module.exports = function() {
       }
 
       function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, key, semisInOct, chordIndexOffset) {
+        var _allNotesScale;
         var _scaleArray = [];
         var _centreNoteIndex = lwData.sParams.soundPitchOffset + centreNoteOffset;
         var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, semisInOct);
         //error check
-        if (checkScaleRange(allNotesScale.length, centreNoteOffset, _scaleIntervals)) {
-
+        var _largestNumber = checkScaleRange(allNotesScale.length, centreNoteOffset, _scaleIntervals);
+        if (_largestNumber !== undefined) {
+          _allNotesScale = getLongerAllNotesScale(_largestNumber, allNotesScale.length, centreNoteOffset);
+        } else {
+          _allNotesScale = allNotesScale;
         }
         _scaleArray = getPitchesFromIntervals(allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, chordIndexOffset);
         return _scaleArray;
@@ -690,6 +704,8 @@ module.exports = function() {
         //Make arrays of frequencies for playback
         _organScaleSets = makeChordSequence(lwData, _numChords, _allNotesScale, _semisInOct);
         _arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _semisInOct);
+        //TODO something's still going wrong with this
+        console.log('_arpScaleArray', _arpScaleArray);
         playSounds(lwData, _organScaleSets, _arpScaleArray);
 			}
 

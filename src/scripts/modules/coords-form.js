@@ -92,7 +92,12 @@ module.exports = function() {
       channel.publish('userUpdate', locationData);
       updateStatus('playing', locationData.name);
       visualLaunchEl.style.display = 'block';
-      summaryBox.innerHTML = conditions[0].summary();
+      var summaryMsg = conditions[0].summary();
+      if (summaryMsg) {
+        summaryBox.innerHTML = conditions[0].summary();
+      } else {
+        console.log('Problem retrieving summary ', summaryMsg);
+      }
   		if (conditions.length > 1) {
         console.log('There seems to be more than one location: ', conditions.length);
   		}
@@ -311,8 +316,8 @@ module.exports = function() {
     disableControls();
 
     if (inputType === 'userLocation') {
-      //getTestLocation(0); //Test
-      getGeo(); //Live
+      getTestLocation(0); //Test
+      //getGeo(); //Live
     } else if (inputType === 'customLocation') {
       getLatLong(placeInput);
     } else {

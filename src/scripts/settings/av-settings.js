@@ -18,7 +18,7 @@ module.exports = {
   numPadNotes: 4,
   numChords: 3,
   numArpNotes: 12,
-  numOctaves: 6,
+  numOctaves: 2,
   numSemitones: 12,
   scaleStartIndexBuffer: 10,
   pitchOffsetInc: 0.5,
