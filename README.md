@@ -121,6 +121,8 @@ A precipType of `snow` - playes slowest - Slower and reverse dropSound
 
 ##Plans
 
+Make static data more sonically interesting - set precipIntensity and wind values
+
 Playback rate bug - seems to exist only in Chrome
 
 Modulate master volume for windy conditions. Requires sounds to be routed through one channel

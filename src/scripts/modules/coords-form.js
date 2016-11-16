@@ -22,6 +22,8 @@ module.exports = function() {
 	var visualLaunchEl = document.querySelector('[data-ref="visuals-launcher"]');
   var summaryBox = document.getElementById('summary');
   var isPlaying = false;
+  var lastKnownSuffix = 'LastKnown';
+  var staticSuffix = 'Static';
 
   function enableControls() {
     userLocBtnEl.disabled = false;
@@ -65,36 +67,34 @@ module.exports = function() {
         ozone: null,
         apparentTemperature: null
       };
-  		if (conditions.length === 1) {
-        // Set numerical integer and floating point values
-        for (var key in locationData) {
-          if (locationData.hasOwnProperty(key)) {
-            locationData[key] = new NumericCondition(
-              conditions[0][key]() === undefined ? getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max, key, true) : conditions[0][key](),
-              maxMin.wParams[key].min,
-              maxMin.wParams[key].max
-            );
-          }
+      // Set numerical integer and floating point values
+      for (var key in locationData) {
+        if (locationData.hasOwnProperty(key)) {
+          locationData[key] = new NumericCondition(
+            conditions[0][key]() === undefined ? getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max, key, true) : conditions[0][key](),
+            maxMin.wParams[key].min,
+            maxMin.wParams[key].max
+          );
         }
-        //Add the location name
-			  Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
-        //Add string or time values
-        Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() });
-        //Add max & min sound values
-        Object.defineProperty(locationData, 'sParams', {writable: false, enumerable: true, value: maxMin.sParams});
-  			//Keep last state for next time
-  			//in case user should be offline
-  			var locationDataString = JSON.stringify(locationData);
-  			localStorage.setItem('locationData', locationDataString);
-        //console.log('local storage set', locationDataString);
-  			// Post the data to rest of app
-  			channel.publish('userUpdate', locationData);
-        updateStatus('playing', locationData.name);
-  			visualLaunchEl.style.display = 'block';
-        summaryBox.innerHTML = conditions[0].summary();
-  		}
-      else {
-  			console.log('There seems to be more than one location: ', conditions.length);
+      }
+      //Add the location name
+      Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
+      //Add string or time values
+      Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() });
+      //Add max & min sound values
+      Object.defineProperty(locationData, 'sParams', {writable: false, enumerable: true, value: maxMin.sParams});
+      //Keep last state for next time
+      //in case user should be offline
+      var locationDataString = JSON.stringify(locationData);
+      localStorage.setItem('locationData', locationDataString);
+      //console.log('local storage set', locationDataString);
+      // Post the data to rest of app
+      channel.publish('userUpdate', locationData);
+      updateStatus('playing', locationData.name);
+      visualLaunchEl.style.display = 'block';
+      summaryBox.innerHTML = conditions[0].summary();
+  		if (conditions.length > 1) {
+        console.log('There seems to be more than one location: ', conditions.length);
   		}
       enableControls();
 		});
@@ -113,6 +113,8 @@ module.exports = function() {
       updateStatus('badConnectionLastKnown', data.name);
     } else if (statusString === 'badConnection' && localStorageExists === false) {
       updateStatus('badConnectionStatic', data.name);
+    } else if (statusString === 'badGMapsConnectionLastKnown') {
+      updateStatus('badGMapsConnectionLastKnown', data.name);
     } else {
       console.error('Unhandled error, status: ', statusString);
     }
@@ -157,7 +159,7 @@ module.exports = function() {
    */
   function getLatLong(placeString) {
 		var gpKey = makeRequest('GET', '/gm-key.php');
-		gpKey.then(function(key) {
+		gpKey.then(function success(key) {
 			GoogleMapsLoader.KEY = key;
 			GoogleMapsLoader.load(function(google) {
 				var geocoder = new google.maps.Geocoder();
@@ -177,6 +179,10 @@ module.exports = function() {
 	        }
 		    });
 			});
+		}, function failure(rejectObj) {
+        var statusString = 'badGMapsConnectionLastKnown';
+        updateStatus('error');
+		    useLocalStorageData(statusString);
 		});
 	}
 
