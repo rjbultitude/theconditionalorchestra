@@ -26,8 +26,10 @@ module.exports = function makeRequest(method, url, mimeOverride) {
     xhr.onloadend = function() {
       if(xhr.status === 404) {
         console.log('call reject', reject);
-        doSomething();
-        reject();
+        reject({
+          status: this.status,
+          statusText: xhr.statusText
+        });
       }
     };
 		xhr.send();
