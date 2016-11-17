@@ -125,6 +125,10 @@ Make static data more sonically interesting - set precipIntensity and wind value
 
 Playback rate bug - seems to exist only in Chrome
 
+Sequencer volume bug seems to be Chrome only
+
+Sequencer playback browser tab issue is in Chrome, Firefox and Safari
+
 Modulate master volume for windy conditions. Requires sounds to be routed through one channel
 
 Consider using ozone as another data input

@@ -110,13 +110,13 @@ module.exports = function() {
 
   function makeDropSound(time, playbackRate) {
     dropSound.rate(playbackRate);
-    dropSound.setVolume(0.1);
+    dropSound.setVolume(0.25);
     dropSound.play(time);
   }
 
   function makeDropLightSound(time, playbackRate) {
     dropLightSound.rate(playbackRate);
-    dropLightSound.setVolume(0.1);
+    dropLightSound.setVolume(0.25);
     dropLightSound.play(time);
   }
 
