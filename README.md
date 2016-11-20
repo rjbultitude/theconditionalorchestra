@@ -121,6 +121,8 @@ A precipType of `snow` - playes slowest - Slower and reverse dropSound
 
 ##Plans
 
+After refactor the offset determined by pressure is a smaller range. Previously it spanned almost the whole allNotesArray and now it's just 6 notes either side of the centre freq
+
 Make static data more sonically interesting - set precipIntensity and wind values
 
 Playback rate bug - seems to exist only in Chrome
@@ -133,7 +135,7 @@ Modulate master volume for windy conditions. Requires sounds to be routed throug
 
 Consider using ozone as another data input
 
-Catch the range error earlier - consider creating the allNotesArray when we know how long it needs to be
+Could use one master allNotesArray and ensure all scale arrays are constrained
 
 Use wind bearing for brass pan. 0 - 180deg is a pan from L to R, 181 - 360deg is pan from R to L
 
