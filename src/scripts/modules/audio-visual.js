@@ -398,7 +398,7 @@ module.exports = function() {
           }
         });
         //Organ
-        handlePadType(lwData, padScales);
+        handlePadType(padScales);
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', audioSupported);
@@ -442,15 +442,20 @@ module.exports = function() {
         //Pressure determines root note. Range 1 octave
         //In western scale it will be between + or - 6
         var _numSemitones = getNumSemisPerOctave();
-        return Math.round(sketch.map(
+        var _rangePlus = _numSemitones;
+        var _rangeMinus = -Math.abs(_rangePlus);
+        var _rootNote = Math.round(sketch.map(
           lwData.pressure.value,
           lwData.pressure.min,
           lwData.pressure.max,
-          -Math.abs(_numSemitones / 2),
-          _numSemitones / 2
-          //avSettings.scaleStartIndexBuffer, //x amount from the beginning
-          //allNotesScale.length - avSettings.scaleStartIndexBuffer //x amount from the end
+          _rangeMinus,
+          _rangePlus
         ));
+        if (_rootNote === -0) {
+          _rootNote = 0;
+        }
+        console.log('_rootNote', _rootNote);
+        return _rootNote;
       }
 
       function getAllNotesScale(largestNumber, rootAndOffset, semisInOct) {
@@ -513,7 +518,6 @@ module.exports = function() {
         var _allNotesScale = [];
         var _scaleArray = [];
         var _rootNote = getRootNote();
-        console.log('_rootNote', _rootNote);
         console.log('chordIndexOffset', chordIndexOffset);
         var _rootAndOffset = _rootNote + chordIndexOffset;
         var _semisInOct = getNumSemisPerOctave();
@@ -679,6 +683,8 @@ module.exports = function() {
         //Make arrays of frequencies for playback
         _organScaleSets = makeChordSequence(_numChords);
         _arpScaleArray = createArpScale();
+        console.log('_organScaleSets', _organScaleSets);
+        console.log('_arpScaleArray', _arpScaleArray);
         playSounds(_organScaleSets, _arpScaleArray);
 			}
 
