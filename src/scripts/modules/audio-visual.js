@@ -450,7 +450,6 @@ module.exports = function() {
         if (_rootNote === -0) {
           _rootNote = 0;
         }
-        console.log('_rootNote', _rootNote);
         return _rootNote;
       }
 
@@ -458,7 +457,10 @@ module.exports = function() {
         var _highestNoteIndex = largestNumber + rootAndOffset;
         var _numOctaves = Math.round((_highestNoteIndex / semisInOct) * 4);
         console.log('creating array with ' + _numOctaves + ' octaves ');
-        return createEqTempPitchesArr(_numOctaves);
+        return {
+          allNotesScale: createEqTempPitchesArr(_numOctaves),
+          numOctaves: _numOctaves
+        };
       }
 
       /**
@@ -468,7 +470,7 @@ module.exports = function() {
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function createIntervalsArray(chosenIntervals, numNotes, semisInOct, repeat) {
+      function errorCheckIntervalsArr(chosenIntervals, numNotes, semisInOct, repeat) {
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _numUpperOcts;
@@ -491,54 +493,61 @@ module.exports = function() {
         return _newIntervals;
       }
 
-      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, indexOffset) {
+      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset) {
         //console.log('arguments', arguments);
         var _scaleArray = [];
         var _newNote;
-        var _indexOffset = indexOffset || 0;
+        var _intervalIndexOffset = intervalIndexOffset || 0;
         //Should be positive number
         for (var i = 0; i < numNotes; i++) {
-          _newNote = allNotesScale[scaleIntervals[_indexOffset] + centreNoteIndex];
+          console.log('centreNoteIndex', centreNoteIndex);
+          console.log('scaleIntervals[_intervalIndexOffset]', scaleIntervals[_intervalIndexOffset]);
+          console.log('scaleIntervals[_intervalIndexOffset] + centreNoteIndex', scaleIntervals[_intervalIndexOffset] + centreNoteIndex);
+          _newNote = allNotesScale[scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
           //error check
           if (_newNote !== undefined) {
             _scaleArray.push(_newNote);
           } else {
             console.log('undefined note');
           }
-          _indexOffset++;
+          _intervalIndexOffset++;
         }
         return _scaleArray;
       }
 
-      function createMusicalScale(numNotes, centreNoteOffset, key, chordIndexOffset, repeat) {
+      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeat) {
         var _allNotesScale = [];
+        var _numOcts;
         var _scaleArray = [];
         var _rootNote = getRootNote();
-        console.log('chordIndexOffset', chordIndexOffset);
-        var _rootAndOffset = _rootNote + chordIndexOffset;
+        var _rootAndOffset = _rootNote + intervalIndexOffset;
         var _semisInOct = getNumSemisPerOctave();
-        var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, _semisInOct, repeat);
+        var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, _semisInOct, repeat);
         var _largestNumber = getLargestNumInArr(_scaleIntervals);
-        _allNotesScale = getAllNotesScale(_largestNumber, _rootAndOffset, _semisInOct);
+        var _allNotesScaleAndNumOcts = getAllNotesScale(_largestNumber, _rootAndOffset, _semisInOct);
+        _allNotesScale = _allNotesScaleAndNumOcts.allNotesScale;
+        _numOcts = _allNotesScaleAndNumOcts.numOctaves;
         //Get centre note
         //After all notes scale has been created
-        var _centreNoteIndex = Math.round(_allNotesScale.length / 2) + _rootAndOffset;
-        console.log('_allNotesScale.length', _allNotesScale.length);
-        console.log('_centreNoteIndex', _centreNoteIndex);
-        _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, chordIndexOffset);
+        var _centreNoteIndex = getFreqScales.findCentreFreqIndex(_numOcts, _semisInOct) + centreNoteOffset;
+        _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset);
         return _scaleArray;
       }
 
       function isRootNoteHigh() {
-        if (getRootNote() > 0) {
+        var _rootNote = getRootNote();
+        if (_rootNote > 0) {
+          console.log('root note is high: ', _rootNote);
           return true;
         } else {
           return false;
         }
       }
 
-      function getChordOffsetKey() {
+      function getChordSeqKey() {
         var _key;
+        var _rootNoteIsHigh = isRootNoteHigh();
+        console.log('_rootNoteIsHigh', _rootNoteIsHigh);
         //For humid weather we use
         //the available notes in the intervals
         //therefore no offset is required
@@ -550,32 +559,32 @@ module.exports = function() {
         }
         //otherwise we use various offsets
         else if (wCheck.isClement) {
-          if (isRootNoteHigh()) {
+          if (_rootNoteIsHigh) {
             _key = 'chordsPositiveDown';
           } else {
             _key = 'chordsPositiveUp';
           }
         }
         else {
-          if (isRootNoteHigh()) {
+          if (_rootNoteIsHigh) {
             _key = 'chordsMelancholyDown';
           } else {
             _key = 'chordsMelancholyUp';
           }
         }
-        //console.log('chord seq type', _key);
+        console.log('chord seq type', _key);
         return _key;
       }
 
-      function getChordsOffsetArr(numChords) {
+      function getChordSeqOffsetArr(numChords) {
         var _chordOffsetArr = [];
-        var _chordOffsetKey = getChordOffsetKey();
+        var _chordSeqKey = getChordSeqKey();
         var _diff;
-        _chordOffsetArr = intervals[_chordOffsetKey];
+        _chordOffsetArr = intervals[_chordSeqKey];
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
-          //_chordOffsetArr = _chordOffsetArr.concat(getChords(_chordOffsetKey));
+          //_chordOffsetArr = _chordOffsetArr.concat(getChords(_chordSeqKey));
           _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null);
         }
         //console.log('_chordOffsetArr', _chordOffsetArr);
@@ -592,7 +601,7 @@ module.exports = function() {
         } else {
           _chordType = 'heptMinorIntervals';
         }
-        //console.log('_chordType', _chordType);
+        console.log('_chordType', _chordType);
         return _chordType;
       }
 
@@ -608,11 +617,11 @@ module.exports = function() {
         } else {
           _numChords = avSettings.numChords; //4
         }
-        //console.log('_numChords', _numChords);
+        console.log('_numChords', _numChords);
         return _numChords;
       }
 
-      function getChordIndexOffsetKey() {
+      function getIntervalIndexOffsetKey() {
         var _key;
         //playlogic
         if (wCheck.isHumid) {
@@ -620,18 +629,18 @@ module.exports = function() {
         } else {
           _key = 'chordIndexesNoOffset';
         }
-        //console.log('interval arr for chord ', _key);
+        console.log('interval arr for chord ', _key);
         return _key;
       }
 
-      function getChordIndexOffsetArr(numChords) {
+      function getIntervalIndexOffsetArr(numChords) {
         var _chordIndexOffSetArr = [];
-        var _chordIndexOffSetKey = getChordIndexOffsetKey();
+        var _chordIndexOffSetKey = getIntervalIndexOffsetKey();
         var _diff;
         _chordIndexOffSetArr = intervals[_chordIndexOffSetKey];
         if (numChords > _chordIndexOffSetArr.length) {
           _diff = numChords - _chordIndexOffSetArr.length;
-          _chordIndexOffSetArr = addMissingArrayItems(_chordIndexOffSetArr, _diff, null);
+          _chordIndexOffSetArr = addMissingArrayItems(_chordIndexOffSetArr, _diff, null, null);
         }
         return _chordIndexOffSetArr;
       }
@@ -639,11 +648,12 @@ module.exports = function() {
       function makeChordSequence(numChords) {
         var _chordSeq = [];
         var _chordType = getChordType();
-        var _chordOffSetArr = getChordsOffsetArr(numChords);
-        var _chordIndexOffsetArr = getChordIndexOffsetArr(numChords);
-        console.log('_chordIndexOffsetArr', _chordIndexOffsetArr);
+        var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
+        var _intervalIndexOffsetArr = getIntervalIndexOffsetArr(numChords);
+        console.log('_chordSeqOffsetArr', _chordSeqOffsetArr);
+        console.log('_intervalIndexOffsetArr', _intervalIndexOffsetArr);
         for (var i = 0; i < numChords; i++) {
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordOffSetArr[i], _chordType, _chordIndexOffsetArr[i]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], _chordType, _intervalIndexOffsetArr[i]));
         }
         //console.log('_chordSeq', _chordSeq);
         return _chordSeq;
@@ -659,11 +669,10 @@ module.exports = function() {
 
       function createArpScale() {
         var _semisInOct = getNumSemisPerOctave();
-        //TODO ensure there's enough notes
         var _arpCNoteOffset = -Math.abs(_semisInOct * 2);
         var _repeat = 1;
-        var _chordIndexOffset = 0;
-        return createMusicalScale(avSettings.numArpNotes, _arpCNoteOffset, 'safeIntervals', _chordIndexOffset, _repeat);
+        var _intervalIndexOffset = 0;
+        return createMusicalScale(avSettings.numArpNotes, _arpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _repeat);
       }
 
       /*
