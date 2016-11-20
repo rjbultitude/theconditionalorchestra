@@ -411,12 +411,11 @@ module.exports = function() {
         //playlogic
         // non western eq temp scale
         if (wCheck.isStormy && wCheck.isFreezing) {
-          _numSemitones = avSettings.numSemitones; //12
-          console.log('western: ', _numSemitones);
-        } else {
-          //_numSemitones = Math.round(sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2));
           _numSemitones = avSettings.numSemitones + (avSettings.numSemitones / 2); //18
           console.log('non western: ', _numSemitones);
+        } else {
+          _numSemitones = avSettings.numSemitones; //12
+          console.log('western: ', _numSemitones);
         }
         return _numSemitones;
       }
@@ -435,10 +434,7 @@ module.exports = function() {
         var _numOctaves = numOctaves || avSettings.numOctaves;
         _allNotesArray = getFreqScales.createEqTempMusicalScale(1, _numOctaves, _numSemitones);
         console.log('_allNotesArray', _allNotesArray);
-        return {
-          allNotesArray: _allNotesArray,
-          numSemitones: _numSemitones
-        };
+        return _allNotesArray;
       }
 
       function getRootNote() {
@@ -457,9 +453,9 @@ module.exports = function() {
         ));
       }
 
-      function getAllNotesScale(largestNumber, centreNoteIndex, semisInOct) {
-        var _highestNoteIndex = largestNumber + centreNoteIndex;
-        var _numOctaves = Math.round((_highestNoteIndex / semisInOct) * 2);
+      function getAllNotesScale(largestNumber, rootAndOffset, semisInOct) {
+        var _highestNoteIndex = largestNumber + rootAndOffset;
+        var _numOctaves = Math.round((_highestNoteIndex / semisInOct) * 4);
         console.log('creating array with ' + _numOctaves + ' octaves ');
         return createEqTempPitchesArr(_numOctaves);
       }
@@ -494,6 +490,7 @@ module.exports = function() {
       }
 
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, indexOffset) {
+        console.log('arguments', arguments);
         var _scaleArray = [];
         var _newNote;
         var _indexOffset = indexOffset || 0;
@@ -516,6 +513,8 @@ module.exports = function() {
         var _allNotesScale = [];
         var _scaleArray = [];
         var _rootNote = getRootNote();
+        console.log('_rootNote', _rootNote);
+        console.log('chordIndexOffset', chordIndexOffset);
         var _rootAndOffset = _rootNote + chordIndexOffset;
         var _semisInOct = getNumSemisPerOctave();
         var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, _semisInOct);
@@ -640,6 +639,7 @@ module.exports = function() {
         var _chordType = getChordType();
         var _chordOffSetArr = getChordsOffsetArr(numChords);
         var _chordIndexOffsetArr = getChordIndexOffsetArr(numChords);
+        console.log('_chordIndexOffsetArr', _chordIndexOffsetArr);
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale(numPadNotes, _chordOffSetArr[i], _chordType, _chordIndexOffsetArr[i]));
         }

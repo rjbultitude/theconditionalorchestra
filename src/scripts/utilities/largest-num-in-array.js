@@ -9,10 +9,9 @@
  */
 module.exports = function getLargestNumInArr(arr) {
   return arr.reduce(function(prevVal, curVal) {
-    var _largest;
     if (curVal > prevVal) {
-      _largest = curVal;
+      prevVal = curVal;
     }
-    return _largest;
+    return prevVal;
   }, 0);
 };
