@@ -178,7 +178,7 @@ module.exports = function() {
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
 
-      function precipCategory(lwData) {
+      function precipCategory() {
         if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
           return 'hard';
         } else if (lwData.precipType === 'sleet' && lwData.precipIntensity.value <= 0.2) {
@@ -289,7 +289,7 @@ module.exports = function() {
         return scaleSetIndex;
       }
 
-      function playPad(lwData, scaleSet, key) {
+      function playPad(scaleSet, key) {
         var _panIndex = 0;
         for (var i = 0; i < padSounds.length; i++) {
           padSounds[i][key].disconnect();
@@ -298,7 +298,7 @@ module.exports = function() {
           padSounds[i][key].rate(scaleSet[scaleSetIndex][i]);
           padSounds[i][key].pan(panArr[_panIndex]);
           padSounds[i][key].setVolume(avSettings[key].volume);
-          padSounds[i][key].onended(function() { padCallback(lwData, scaleSet, key); });
+          padSounds[i][key].onended(function() { padCallback(scaleSet, key); });
           _panIndex = getPanIndex(_panIndex);
           //console.log('padSounds[i][key].playbackRate', padSounds[i][key].playbackRate);
         }
@@ -311,28 +311,28 @@ module.exports = function() {
         }
       }
 
-      function padCallback(lwData, scaleSet, key) {
+      function padCallback(scaleSet, key) {
         if (isPlaying) {
           padIndexCount++;
           // When all the sounds have played once, loop
           if (padIndexCount === padSounds.length) {
-            playPad(lwData, scaleSet, key);
+            playPad(scaleSet, key);
             padIndexCount = 0;
           }
         }
       }
 
-      function handlePrecipitation(lwData, arpScaleArray, arpPart) {
+      function handlePrecipitation(arpScaleArray, arpPart) {
         // Handle precipitation
         // playlogic
         if (wCheck.isPrecip) {
-          playArp(precipCategory(lwData), arpScaleArray);
+          playArp(precipCategory(), arpScaleArray);
         } else {
           arpPart.stop(0);
         }
       }
 
-      function handleFineWeather(lwData, scaleArray) {
+      function handleFineWeather(scaleArray) {
         // playlogic
         if (wCheck.isFine) {
           console.log('weather is fine. choralSound playing');
@@ -349,25 +349,25 @@ module.exports = function() {
         }
       }
 
-      function handlePadType(lwData, scaleSet) {
+      function handlePadType(scaleSet) {
         //playlogic
         //Start with harshes conditions
         //and work our way up
 
         //This setting uses non western scale
         if (wCheck.isStormy && wCheck.isFreezing) {
-          playPad(lwData, scaleSet, 'organ');
+          playPad(scaleSet, 'organ');
         } else if (wCheck.isStormy) {
           //TODO watch out for clash between
           //organDist and brass
           //stormy plays less notes
-          playPad(lwData, scaleSet, 'organDist');
+          playPad(scaleSet, 'organDist');
         } else if (wCheck.isFreezing) {
-          playPad(lwData, scaleSet, 'trumpet');
+          playPad(scaleSet, 'trumpet');
         } else if (wCheck.isCold) {
-          playPad(lwData, scaleSet, 'sax');
+          playPad(scaleSet, 'sax');
         } else {
-          playPad(lwData, scaleSet, 'organ');
+          playPad(scaleSet, 'organ');
         }
       }
 
@@ -379,11 +379,11 @@ module.exports = function() {
        * @param  {Array} arpScaleArray a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
-			function playSounds(lwData, padScales, arpScaleArray) {
+			function playSounds(padScales, arpScaleArray) {
         // Rain
-        handlePrecipitation(lwData, arpScaleArray, arpPart);
+        handlePrecipitation(arpScaleArray, arpPart);
         // Fine conditions
-        handleFineWeather(lwData, padScales[0]);
+        handleFineWeather(padScales[0]);
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
           //playlogic
@@ -404,58 +404,64 @@ module.exports = function() {
         channel.publish('playing', audioSupported);
 			}
 
-      function getLongerAllNotesScale(largestNumber, arrLength, centreNoteIndex) {
-        var _availableNotes = arrLength - centreNoteIndex;
-        var  _diff = largestNumber - _availableNotes;
-        //TODO formula needs checking
-        var _numOctaves = Math.round((_diff / 12) * 2) + avSettings.numOctaves;
-        return getallNotesScale(lwData, _numOctaves);
+      function getNumSemisPerOctave() {
+        //  Use equal temperament scale for cold & warm
+        //  use arbitrary scale for freezing
+        var _numSemitones;
+        //playlogic
+        // non western eq temp scale
+        if (wCheck.isStormy && wCheck.isFreezing) {
+          _numSemitones = avSettings.numSemitones; //12
+          console.log('western: ', _numSemitones);
+        } else {
+          //_numSemitones = Math.round(sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2));
+          _numSemitones = avSettings.numSemitones + (avSettings.numSemitones / 2); //18
+          console.log('non western: ', _numSemitones);
+        }
+        return _numSemitones;
       }
 
       /*
         Use an equal temperament scale
         Major scale for clement weather
-				Minor octave for anything else
+        Minor octave for anything else
         Returns an object containing
         the complete musical scale and the
         number of semitones in an octave
-			*/
-			function createEqTempPitchesArr(lwData, isWesternScale, numOctaves) {
+      */
+      function createEqTempPitchesArr(numOctaves) {
         var _allNotesArray = [];
-        var _numSemitones;
+        var _numSemitones = getNumSemisPerOctave();
         var _numOctaves = numOctaves || avSettings.numOctaves;
-        if (isWesternScale) {
-          _numSemitones = avSettings.numSemitones;
-          console.log('western', _numSemitones);
-        } else {
-          //_numSemitones = Math.round(sketch.random(avSettings.numSemitones + 2, avSettings.numSemitones * 2));
-          _numSemitones = avSettings.numSemitones + (avSettings.numSemitones / 2);
-          console.log('non western _numSemitones', _numSemitones);
-        }
         _allNotesArray = getFreqScales.createEqTempMusicalScale(1, _numOctaves, _numSemitones);
         console.log('_allNotesArray', _allNotesArray);
         return {
           allNotesArray: _allNotesArray,
           numSemitones: _numSemitones
         };
-			}
+      }
 
-      function getallNotesScale(lwData, numOctaves) {
-        //  Use equal temperament scale for cold & warm
-        //  use arbitrary scale for freezing
-        var _allNotesObj = {};
-        var _westernScale;
-        //playlogic
-        // non western eq temp scale
-        if (wCheck.isStormy && wCheck.isFreezing) {
-          _westernScale = false;
-        }
-        // western 12 note scale for warmer weather
-        else {
-          _westernScale = true;
-        }
-        _allNotesObj = createEqTempPitchesArr(lwData, _westernScale);
-        return _allNotesObj;
+      function getRootNote() {
+        //Add global values to the main data object
+        //Pressure determines root note. Range 1 octave
+        //In western scale it will be between + or - 6
+        var _numSemitones = getNumSemisPerOctave();
+        return Math.round(sketch.map(
+          lwData.pressure.value,
+          lwData.pressure.min,
+          lwData.pressure.max,
+          -Math.abs(_numSemitones / 2),
+          _numSemitones / 2
+          //avSettings.scaleStartIndexBuffer, //x amount from the beginning
+          //allNotesScale.length - avSettings.scaleStartIndexBuffer //x amount from the end
+        ));
+      }
+
+      function getAllNotesScale(largestNumber, centreNoteIndex, semisInOct) {
+        var _highestNoteIndex = largestNumber + centreNoteIndex;
+        var _numOctaves = Math.round((_highestNoteIndex / semisInOct) * 2);
+        console.log('creating array with ' + _numOctaves + ' octaves ');
+        return createEqTempPitchesArr(_numOctaves);
       }
 
       /**
@@ -479,38 +485,20 @@ module.exports = function() {
         //Error check
         if (_difference > 0) {
           _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts);
+          console.log('added missing items to', _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
         }
-        console.log('_newIntervals', _newIntervals);
+        //console.log('_newIntervals', _newIntervals);
         return _newIntervals;
-      }
-
-      function checkScaleRange(arrLength, startingIndex, indicesToTest) {
-        var _remainder = arrLength - startingIndex;
-        var _largestNumber;
-        if (_remainder <= 0) {
-          console.error('array is shorter than the starting index');
-          return _largestNumber;
-        }
-        findLargerValLoop:
-        for (var i = 0; i < indicesToTest.length; i++) {
-          if (indicesToTest[i] > _remainder) {
-            _largestNumber = getLargestNumInArr(indicesToTest);
-            console.log('not enough array items, failed at ' + indicesToTest[i]);
-            console.log('_largestNumber', _largestNumber);
-            break;
-          } else {
-            continue findLargerValLoop;
-          }
-        }
-        return _largestNumber;
       }
 
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, indexOffset) {
         var _scaleArray = [];
         var _newNote;
         var _indexOffset = indexOffset || 0;
+        //Should be positive number
+        console.log('scaleIntervals[_indexOffset] + centreNoteIndex', scaleIntervals[_indexOffset] + centreNoteIndex);
         for (var i = 0; i < numNotes; i++) {
           _newNote = allNotesScale[scaleIntervals[_indexOffset] + centreNoteIndex];
           //error check
@@ -524,31 +512,31 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(lwData, allNotesScale, numNotes, centreNoteOffset, key, semisInOct, chordIndexOffset) {
-        var _allNotesScale;
+      function createMusicalScale(numNotes, centreNoteOffset, key, chordIndexOffset) {
+        var _allNotesScale = [];
         var _scaleArray = [];
-        var _centreNoteIndex = lwData.sParams.soundPitchOffset + centreNoteOffset;
-        var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, semisInOct);
-        //error check
-        var _largestNumber = checkScaleRange(allNotesScale.length, centreNoteOffset, _scaleIntervals);
-        if (_largestNumber !== undefined) {
-          _allNotesScale = getLongerAllNotesScale(_largestNumber, allNotesScale.length, centreNoteOffset);
-        } else {
-          _allNotesScale = allNotesScale;
-        }
-        _scaleArray = getPitchesFromIntervals(allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, chordIndexOffset);
+        var _rootNote = getRootNote();
+        var _rootAndOffset = _rootNote + chordIndexOffset;
+        var _semisInOct = getNumSemisPerOctave();
+        var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, _semisInOct);
+        var _largestNumber = getLargestNumInArr(_scaleIntervals);
+        _allNotesScale = getAllNotesScale(_largestNumber, _rootAndOffset, _semisInOct);
+        //Get centre note
+        //After all notes scale has been created
+        var _centreNoteIndex = Math.round(_allNotesScale.length / 2) + _rootAndOffset;
+        _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, chordIndexOffset);
         return _scaleArray;
       }
 
-      function isRootNoteHigh(allNotesScale) {
-        if (lwData.sParams.soundPitchOffset > Math.round(allNotesScale.length / 2)) {
+      function isRootNoteHigh() {
+        if (getRootNote() > 0) {
           return true;
         } else {
           return false;
         }
       }
 
-      function getChordOffsetKey(allNotesScale) {
+      function getChordOffsetKey() {
         var _key;
         //For humid weather we use
         //the available notes in the intervals
@@ -561,26 +549,26 @@ module.exports = function() {
         }
         //otherwise we use various offsets
         else if (wCheck.isClement) {
-          if (isRootNoteHigh(allNotesScale)) {
+          if (isRootNoteHigh()) {
             _key = 'chordsPositiveDown';
           } else {
             _key = 'chordsPositiveUp';
           }
         }
         else {
-          if (isRootNoteHigh(allNotesScale)) {
+          if (isRootNoteHigh()) {
             _key = 'chordsMelancholyDown';
           } else {
             _key = 'chordsMelancholyUp';
           }
         }
-        console.log('chord seq type', _key);
+        //console.log('chord seq type', _key);
         return _key;
       }
 
-      function getChordsOffsetArr(numChords, allNotesScale) {
+      function getChordsOffsetArr(numChords) {
         var _chordOffsetArr = [];
-        var _chordOffsetKey = getChordOffsetKey(allNotesScale);
+        var _chordOffsetKey = getChordOffsetKey();
         var _diff;
         _chordOffsetArr = intervals[_chordOffsetKey];
         // error check
@@ -589,7 +577,7 @@ module.exports = function() {
           //_chordOffsetArr = _chordOffsetArr.concat(getChords(_chordOffsetKey));
           _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null);
         }
-        console.log('_chordOffsetArr', _chordOffsetArr);
+        //console.log('_chordOffsetArr', _chordOffsetArr);
         return _chordOffsetArr;
       }
 
@@ -603,7 +591,7 @@ module.exports = function() {
         } else {
           _chordType = 'heptMinorIntervals';
         }
-        console.log('_chordType', _chordType);
+        //console.log('_chordType', _chordType);
         return _chordType;
       }
 
@@ -619,7 +607,7 @@ module.exports = function() {
         } else {
           _numChords = avSettings.numChords; //4
         }
-        console.log('_numChords', _numChords);
+        //console.log('_numChords', _numChords);
         return _numChords;
       }
 
@@ -631,7 +619,7 @@ module.exports = function() {
         } else {
           _key = 'chordIndexesNoOffset';
         }
-        console.log('interval arr for chord ', _key);
+        //console.log('interval arr for chord ', _key);
         return _key;
       }
 
@@ -647,37 +635,31 @@ module.exports = function() {
         return _chordIndexOffSetArr;
       }
 
-      function makeChordSequence(lwData, numChords, allNotesScale, semisInOct) {
+      function makeChordSequence(numChords) {
         var _chordSeq = [];
         var _chordType = getChordType();
-        var _chordOffSetArr = getChordsOffsetArr(numChords, allNotesScale);
+        var _chordOffSetArr = getChordsOffsetArr(numChords);
         var _chordIndexOffsetArr = getChordIndexOffsetArr(numChords);
         for (var i = 0; i < numChords; i++) {
-          _chordSeq.push(createMusicalScale(lwData, allNotesScale, numPadNotes, _chordOffSetArr[i], _chordType, semisInOct, _chordIndexOffsetArr[i]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordOffSetArr[i], _chordType, _chordIndexOffsetArr[i]));
         }
-        console.log('_chordSeq', _chordSeq);
+        //console.log('_chordSeq', _chordSeq);
         return _chordSeq;
       }
 
-      function setRootNote(lwData, allNotesScale) {
-        //Add global values to the main data object
-        //Pressure determines root note. Range 1 octave
-        lwData.sParams.soundPitchOffset = Math.round(sketch.map(
-          lwData.pressure.value,
-          lwData.pressure.min,
-          lwData.pressure.max,
-          avSettings.scaleStartIndexBuffer, //x amount from the beginning
-          allNotesScale.length - avSettings.scaleStartIndexBuffer //x amount from the end
-        ));
-        console.log('lwData.sParams.soundPitchOffset', lwData.sParams.soundPitchOffset);
-      }
-
-      function setFilter(lwData) {
+      function setFilter() {
         //Use math.abs for all pitch and volume values?
         // Set filter. Visibility is filter freq
         lwData.sParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.sParams.freq.min, lwData.sParams.freq.max);
         soundFilter.freq(lwData.sParams.freq.value);
         soundFilter.res(20);
+      }
+
+      function createArpScale() {
+        var _semisInOct = getNumSemisPerOctave();
+        //TODO ensure there's enough notes
+        var _arpCentreNoteOffset = -Math.abs(_semisInOct * 2);
+        return createMusicalScale(avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', 0);
       }
 
       /*
@@ -688,25 +670,16 @@ module.exports = function() {
       	The root key is set by the air pressure
       	The filter frequency is set by visibility
        */
-			function configureSounds(lwData) {
+			function configureSounds() {
         var _organScaleSets = [];
         var _arpScaleArray = [];
-        // Create scales for playback
-        var _allNotesObj = getallNotesScale(lwData);
-        var _allNotesScale = _allNotesObj.allNotesArray;
-        var _semisInOct = _allNotesObj.numSemitones;
-        var _arpCentreNoteOffset = -Math.abs(_semisInOct * 2);
         var _numChords = getNumChords();
-        // Set root note for use with all sounds
-        setRootNote(lwData, _allNotesScale);
         // Set filter for pad sounds
-        setFilter(lwData);
+        setFilter();
         //Make arrays of frequencies for playback
-        _organScaleSets = makeChordSequence(lwData, _numChords, _allNotesScale, _semisInOct);
-        _arpScaleArray = createMusicalScale(lwData, _allNotesScale, avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', _semisInOct);
-        //TODO something's still going wrong with this
-        console.log('_arpScaleArray', _arpScaleArray);
-        playSounds(lwData, _organScaleSets, _arpScaleArray);
+        _organScaleSets = makeChordSequence(_numChords);
+        _arpScaleArray = createArpScale();
+        playSounds(_organScaleSets, _arpScaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
@@ -788,7 +761,7 @@ module.exports = function() {
         // handle sounds
         // --------------------
         if (audioSupported) {
-          configureSounds(lwData);
+          configureSounds();
         } else {
           updateStatus('error', lwData.name, true);
         }
