@@ -450,11 +450,13 @@ module.exports = function() {
         if (_rootNote === -0) {
           _rootNote = 0;
         }
+        console.log('_rootNote', _rootNote);
         return _rootNote;
       }
 
       function getAllNotesScale(largestNumber, rootAndOffset, semisInOct) {
-        var _highestNoteIndex = largestNumber + rootAndOffset;
+        console.log('arguments', arguments);
+        var _highestNoteIndex = largestNumber + Math.abs(rootAndOffset);
         var _numOctaves = Math.round((_highestNoteIndex / semisInOct) * 4);
         console.log('creating array with ' + _numOctaves + ' octaves ');
         return {
@@ -520,16 +522,16 @@ module.exports = function() {
         var _numOcts;
         var _scaleArray = [];
         var _rootNote = getRootNote();
-        var _rootAndOffset = _rootNote + intervalIndexOffset;
+        var _rootAndOffset = _rootNote + centreNoteOffset;
         var _semisInOct = getNumSemisPerOctave();
         var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, _semisInOct, repeat);
         var _largestNumber = getLargestNumInArr(_scaleIntervals);
-        var _allNotesScaleAndNumOcts = getAllNotesScale(_largestNumber, _rootAndOffset, _semisInOct);
+        var _allNotesScaleAndNumOcts = getAllNotesScale(_largestNumber, centreNoteOffset, _semisInOct);
         _allNotesScale = _allNotesScaleAndNumOcts.allNotesScale;
         _numOcts = _allNotesScaleAndNumOcts.numOctaves;
         //Get centre note
         //After all notes scale has been created
-        var _centreNoteIndex = getFreqScales.findCentreFreqIndex(_numOcts, _semisInOct) + centreNoteOffset;
+        var _centreNoteIndex = getFreqScales.findCentreFreqIndex(_numOcts, _semisInOct) + _rootAndOffset;
         _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset);
         return _scaleArray;
       }
