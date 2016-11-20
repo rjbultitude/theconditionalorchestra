@@ -243,7 +243,6 @@ module.exports = function() {
         //Play 1st note of each chord
         bass.rate(scaleSet[scaleSetIndex][0]);
         bass.setVolume(0.5);
-        console.log('bass playing');
       }
 
       function playBrassBass(scaleSetArray) {
@@ -255,7 +254,6 @@ module.exports = function() {
         } else {
           brassOneScaleArrayIndex++;
         }
-        console.log('brass bass playing');
       }
 
       function playBrassBassTwo(scaleArray) {
@@ -268,7 +266,6 @@ module.exports = function() {
         } else {
           brassTwoScaleArrayIndex++;
         }
-        console.log('brass bass two playing');
       }
 
       function getPanIndex(panIndex) {
@@ -303,7 +300,7 @@ module.exports = function() {
           //console.log('padSounds[i][key].playbackRate', padSounds[i][key].playbackRate);
         }
         setScaleSetIndex(scaleSet);
-        console.log(key + ' is playing');
+        //console.log(key + ' is playing');
         //playlogic
         //Avoid sound clash with Brass
         if (wCheck.isCloudy && !wCheck.isWindy) {
@@ -415,7 +412,6 @@ module.exports = function() {
           console.log('non western: ', _numSemitones);
         } else {
           _numSemitones = avSettings.numSemitones; //12
-          console.log('western: ', _numSemitones);
         }
         return _numSemitones;
       }
@@ -472,10 +468,11 @@ module.exports = function() {
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function createIntervalsArray(chosenIntervals, numNotes, semisInOct) {
+      function createIntervalsArray(chosenIntervals, numNotes, semisInOct, repeat) {
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _numUpperOcts;
+        var _repeat = repeat || 0;
         //When using non western scale
         //ensure numbers don't balloon
         if (semisInOct > avSettings.numSemitones) {
@@ -485,7 +482,7 @@ module.exports = function() {
         }
         //Error check
         if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts);
+          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts, _repeat);
           console.log('added missing items to', _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
@@ -495,12 +492,11 @@ module.exports = function() {
       }
 
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, indexOffset) {
-        console.log('arguments', arguments);
+        //console.log('arguments', arguments);
         var _scaleArray = [];
         var _newNote;
         var _indexOffset = indexOffset || 0;
         //Should be positive number
-        console.log('scaleIntervals[_indexOffset] + centreNoteIndex', scaleIntervals[_indexOffset] + centreNoteIndex);
         for (var i = 0; i < numNotes; i++) {
           _newNote = allNotesScale[scaleIntervals[_indexOffset] + centreNoteIndex];
           //error check
@@ -514,19 +510,21 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(numNotes, centreNoteOffset, key, chordIndexOffset) {
+      function createMusicalScale(numNotes, centreNoteOffset, key, chordIndexOffset, repeat) {
         var _allNotesScale = [];
         var _scaleArray = [];
         var _rootNote = getRootNote();
         console.log('chordIndexOffset', chordIndexOffset);
         var _rootAndOffset = _rootNote + chordIndexOffset;
         var _semisInOct = getNumSemisPerOctave();
-        var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, _semisInOct);
+        var _scaleIntervals = createIntervalsArray(intervals[key], numNotes, _semisInOct, repeat);
         var _largestNumber = getLargestNumInArr(_scaleIntervals);
         _allNotesScale = getAllNotesScale(_largestNumber, _rootAndOffset, _semisInOct);
         //Get centre note
         //After all notes scale has been created
         var _centreNoteIndex = Math.round(_allNotesScale.length / 2) + _rootAndOffset;
+        console.log('_allNotesScale.length', _allNotesScale.length);
+        console.log('_centreNoteIndex', _centreNoteIndex);
         _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, chordIndexOffset);
         return _scaleArray;
       }
@@ -662,8 +660,10 @@ module.exports = function() {
       function createArpScale() {
         var _semisInOct = getNumSemisPerOctave();
         //TODO ensure there's enough notes
-        var _arpCentreNoteOffset = -Math.abs(_semisInOct * 2);
-        return createMusicalScale(avSettings.numArpNotes, _arpCentreNoteOffset, 'safeIntervals', 0);
+        var _arpCNoteOffset = -Math.abs(_semisInOct * 2);
+        var _repeat = 1;
+        var _chordIndexOffset = 0;
+        return createMusicalScale(avSettings.numArpNotes, _arpCNoteOffset, 'safeIntervals', _chordIndexOffset, _repeat);
       }
 
       /*
