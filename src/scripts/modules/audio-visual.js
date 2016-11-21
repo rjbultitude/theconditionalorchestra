@@ -38,6 +38,8 @@ module.exports = function() {
   var brassStabSound;
   var clementArpPhrase;
   var clementArpPart;
+  //long note
+  var longNote;
   //Rain / drops
   var dropSound;
   var dropLightSound;
@@ -109,6 +111,9 @@ module.exports = function() {
       choralSounds.forEach(fadeChoralSounds);
       // Fade bass
       fadeBass();
+      // Fade longNote
+      longNote.fade(0, avSettings.fadeTime);
+      longNote.stop();
       //Fade brassbass
       brassBass.fade(0, avSettings.fadeTime);
       brassBass.stop();
@@ -237,6 +242,41 @@ module.exports = function() {
         return _newScaleArr;
       }
 
+      function getPanIndex(panIndex) {
+        if (panIndex < panArr.length -1) {
+          panIndex++;
+        } else {
+          panIndex = 0;
+        }
+        return panIndex;
+      }
+
+      function getLongNoteIndex(scale) {
+        var _longNoteIndex;
+        var _timesToDivide = scale.length;
+        var _bearingSlice = 360 / _timesToDivide;
+        //playlogic
+        //bearing decides which note in scale to play
+        for (var i = 0; i < scale.length; i++) {
+          var _currentBearingSlice = _bearingSlice * i;
+          if (lwData.windBearing.value <= _currentBearingSlice) {
+            _longNoteIndex = i;
+          } else {
+            _longNoteIndex = _timesToDivide - 1;
+          }
+        }
+        return _longNoteIndex;
+      }
+
+      function setScaleSetIndex(scaleSet) {
+        if (scaleSetIndex >= scaleSet.length -1) {
+          scaleSetIndex = 0;
+        } else {
+          scaleSetIndex++;
+        }
+        return scaleSetIndex;
+      }
+
       function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
         var _newNotesArray = getAllegrettoRhythm(clementArpScaleArray);
@@ -278,9 +318,9 @@ module.exports = function() {
           default:
             console.log('problem with arrpeggio ', arpeggioType);
         }
-        console.log('rainArpPart', rainArpPart);
         rainArpPart.start();
         rainArpPart.loop();
+        console.log('rainArpPart', rainArpPart);
       }
 
       function playBass(scaleSet) {
@@ -313,22 +353,14 @@ module.exports = function() {
         }
       }
 
-      function getPanIndex(panIndex) {
-        if (panIndex < panArr.length -1) {
-          panIndex++;
-        } else {
-          panIndex = 0;
-        }
-        return panIndex;
-      }
-
-      function setScaleSetIndex(scaleSet) {
-        if (scaleSetIndex >= scaleSet.length -1) {
-          scaleSetIndex = 0;
-        } else {
-          scaleSetIndex++;
-        }
-        return scaleSetIndex;
+      function playLongNote(scale) {
+        var _longNoteIndex = getLongNoteIndex(scale);
+        longNote.disconnect();
+        longNote.connect(soundFilter);
+        longNote.play();
+        longNote.rate(scale[_longNoteIndex]);
+        longNote.pan(sketch.random(panArr));
+        longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
       }
 
       function playPad(scaleSet, key) {
@@ -351,6 +383,7 @@ module.exports = function() {
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass(scaleSet);
         }
+        playLongNote(scaleSet[scaleSetIndex], key);
       }
 
       function padCallback(scaleSet, key) {
@@ -833,6 +866,7 @@ module.exports = function() {
           brassBass = sketch.loadSound('/audio/brassbass.mp3');
           brassBass2 = sketch.loadSound('/audio/brassbass.mp3');
           brassStabSound = sketch.loadSound('/audio/brass-stab-C3.mp3');
+          longNote = sketch.loadSound('/audio/longnote-C3.mp3');
         }
 			};
 
