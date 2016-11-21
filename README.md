@@ -109,6 +109,7 @@ Two choral notes are played when the weather is _fine_
 
 ###Bass
 One bass note is played when the weather _isCloudy_ but *not* _isWindy_
+The note is the first note of each chord in the chord sequence
 
 ###Arpeggio
 Precipitation plays an arpeggiated sequence
@@ -122,12 +123,6 @@ After refactor the offset determined by pressure is a smaller range. Previously 
 
 Make static data more sonically interesting - set precipIntensity and wind values
 
-Playback rate bug - seems to exist only in Chrome
-
-Sequencer volume bug seems to be Chrome only
-
-Sequencer playback browser tab issue is in Chrome, Firefox and Safari
-
 Modulate master volume for windy conditions. Requires sounds to be routed through one channel
 
 Consider using ozone as another data input
@@ -136,14 +131,16 @@ Could use one master allNotesArray and ensure all scale arrays are constrained
 
 Use wind bearing for brass pan. 0 - 180deg is a pan from L to R, 181 - 360deg is pan from R to L
 
-Check visibility filter
-
 Create sequencer for stormy weather that uses brash percussive sounds
 
 Test offline, bad connection states (after refactor of handleNoGeoData fn)
 
-Decide on program pattern - are we always passing in member vars to functions or not?
-Drop lwData from all arguments
+###Bugs
+Playback rate bug - seems to exist only in Chrome
+
+Sequencer volume bug seems to be Chrome only
+
+Sequencer playback browser tab issue is in Chrome, Firefox and Safari
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
 

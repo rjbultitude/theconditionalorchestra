@@ -28,18 +28,27 @@ module.exports = function() {
 	// Sound containers
 	var padSounds = [];
   var choralSounds = [];
-  var dropSound;
-  var dropLightSound;
+  //bass
   var bass;
+  //Windy/ Brass
   var brassBass;
   var brassBass2;
-  var arpDropPhrase;
-  var arpDropLightPhrase;
-  var arpPart;
+  //clement / brass
+  var brassStabSound;
+  var clementArpPhrase;
+  var clementArpPart;
+  //Rain / drops
+  var dropSound;
+  var dropLightSound;
+  var rainArpDropPhrase;
+  var rainArpDropLightPhrase;
+  var rainArpPart;
+  //Globals
   var soundFilter;
   var masterGain;
   var panArr = [-0.8,0,0.8];
   var rainDropsPattern = [];
+  var flttrBrassPattern = [];
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -87,10 +96,12 @@ module.exports = function() {
   }
 
   function killCurrentSounds() {
-      // Stop arrpeggio
-      arpPart.stop(0);
-      arpPart.removePhrase('rainDrops');
-      arpPart.removePhrase('rainDropsLight');
+      // Stop arrpeggios
+      rainArpPart.stop(0);
+      rainArpPart.removePhrase('rainDrops');
+      rainArpPart.removePhrase('rainDropsLight');
+      clementArpPart.stop(0);
+      clementArpPart.removePhrase('flttrBrass');
       // Fade organ sounds
       padSounds.forEach(fadeOutPadSounds);
       // Fade choral
@@ -106,6 +117,12 @@ module.exports = function() {
       publishBrassTwo.unsubscribe();
       isPlaying = false;
       channel.publish('allStopped');
+  }
+
+  function makeFlttrBrassSound(time, playbackRate) {
+    brassStabSound.rate(playbackRate);
+    brassStabSound.setVolume(0.25);
+    brassStabSound.play(time);
   }
 
   function makeDropSound(time, playbackRate) {
@@ -132,15 +149,15 @@ module.exports = function() {
 
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
-   * @param  {[boolean]} audioSupported [whether AudioContext is supported]
-   * @return {[object]}                [All the sound objects]
    */
   function createP5SoundObjs() {
     soundFilter = new P5.LowPass();
     // Create phrase: name, callback, sequence
-    arpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
-    arpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
-    arpPart = new P5.Part();
+    rainArpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+    rainArpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
+    clementArpPhrase = new P5.Phrase('flttrBrass', makeFlttrBrassSound, flttrBrassPattern);
+    clementArpPart = new P5.Part();
+    rainArpPart = new P5.Part();
     masterGain = new P5.Gain();
   }
 
@@ -204,38 +221,48 @@ module.exports = function() {
         return _newNotesArray;
       }
 
-      function playArp(arpeggioType, arpScaleArray) {
+      function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray = addRandomStops(arpScaleArray).reverse();
-        arpDropPhrase.sequence = _newNotesArray;
-        arpDropLightPhrase.sequence = _newNotesArray;
+        var _newNotesArray = addRandomStops(clementArpScaleArray);
+        clementArpPhrase.sequence = _newNotesArray;
+        clementArpPart.setBPM(120);
+        console.log('clementArpPart', clementArpPart);
+        clementArpPart.start();
+        clementArpPart.loop();
+      }
+
+      function playRainArp(arpeggioType, rainArpScaleArray) {
+        //Overwrite sequence with new notes
+        var _newNotesArray = addRandomStops(rainArpScaleArray).reverse();
+        rainArpDropPhrase.sequence = _newNotesArray;
+        rainArpDropLightPhrase.sequence = _newNotesArray;
         //Only use dropSound for rain
         if (arpeggioType === 'hard') {
-          arpPart.addPhrase(arpDropPhrase);
+          rainArpPart.addPhrase(rainArpDropPhrase);
         } else {
-          arpPart.addPhrase(arpDropLightPhrase);
+          rainArpPart.addPhrase(rainArpDropLightPhrase);
         }
-        arpPart.setBPM(60);
+        rainArpPart.setBPM(60);
         // Type logic
         switch (arpeggioType) {
           case 'hard':
-            arpPart.setBPM(150);
+            rainArpPart.setBPM(150);
             console.log('hard');
             break;
           case 'soft':
-            arpPart.setBPM(120);
+            rainArpPart.setBPM(120);
             console.log('soft');
             break;
           case 'softest':
-            arpPart.setBPM(90);
+            rainArpPart.setBPM(90);
             console.log('softest');
             break;
           default:
             console.log('problem with arrpeggio ', arpeggioType);
         }
-        console.log('arpPart', arpPart);
-        arpPart.start();
-        arpPart.loop();
+        console.log('rainArpPart', rainArpPart);
+        rainArpPart.start();
+        rainArpPart.loop();
       }
 
       function playBass(scaleSet) {
@@ -319,13 +346,13 @@ module.exports = function() {
         }
       }
 
-      function handlePrecipitation(arpScaleArray, arpPart) {
+      function handlePrecipitation(rainArpScaleArray, rainArpPart) {
         // Handle precipitation
         // playlogic
         if (wCheck.isPrecip) {
-          playArp(precipCategory(), arpScaleArray);
+          playRainArp(precipCategory(), rainArpScaleArray);
         } else {
-          arpPart.stop(0);
+          rainArpPart.stop(0);
         }
       }
 
@@ -373,12 +400,12 @@ module.exports = function() {
        * Though some of this is delegated
        * @param  {Object} lwData        Main weather data object
        * @param  {Array} padScales    sets of notes to play
-       * @param  {Array} arpScaleArray a set of notes fot the sequencer to play
+       * @param  {Array} rainArpScaleArray a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
-			function playSounds(padScales, arpScaleArray) {
+			function playSounds(padScales, rainArpScaleArray, clementArpScaleArray) {
         // Rain
-        handlePrecipitation(arpScaleArray, arpPart);
+        handlePrecipitation(rainArpScaleArray, rainArpPart);
         // Fine conditions
         handleFineWeather(padScales[0]);
         // Play brass
@@ -396,6 +423,10 @@ module.exports = function() {
         });
         //Organ
         handlePadType(padScales);
+        //playlogic
+        if (wCheck.isClement) {
+          playClementArp(clementArpScaleArray);
+        }
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', audioSupported);
@@ -593,11 +624,13 @@ module.exports = function() {
         var _chordType;
         //playlogic
         if (wCheck.isFine) {
-          _chordType = 'minorSeventhIntervals';
+          _chordType = 'majorSeventhIntervals';
         } else if (wCheck.isClement) {
           _chordType = 'heptMajorIntervals';
-        } else {
+        } else if (wCheck.isStormy) {
           _chordType = 'heptMinorIntervals';
+        } else {
+          _chordType = 'minorSeventhIntervals';
         }
         console.log('_chordType', _chordType);
         return _chordType;
@@ -665,12 +698,19 @@ module.exports = function() {
         soundFilter.res(20);
       }
 
-      function createArpScale() {
+      function createClementArpScale() {
+        var _clementArpCNoteOffset = 0;
+        var _repeat = 0;
+        var _intervalIndexOffset = 0;
+        return createMusicalScale(avSettings.numArpNotes, _clementArpCNoteOffset, 'closeIntervals', _intervalIndexOffset, _repeat);
+      }
+
+      function createRainArpScale() {
         var _semisInOct = getNumSemisPerOctave();
-        var _arpCNoteOffset = -Math.abs(_semisInOct * 2);
+        var _rainArpCNoteOffset = -Math.abs(_semisInOct * 2);
         var _repeat = 1;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numArpNotes, _arpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _repeat);
+        return createMusicalScale(avSettings.numClementArpNotes, _rainArpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _repeat);
       }
 
       /*
@@ -683,16 +723,19 @@ module.exports = function() {
        */
 			function configureSounds() {
         var _organScaleSets = [];
-        var _arpScaleArray = [];
+        var _rainArpScaleArray = [];
+        var _clementArpScaleArray = [];
         var _numChords = getNumChords();
         // Set filter for pad sounds
         setFilter();
         //Make arrays of frequencies for playback
         _organScaleSets = makeChordSequence(_numChords);
-        _arpScaleArray = createArpScale();
+        _rainArpScaleArray = createRainArpScale();
+        _clementArpScaleArray = createClementArpScale();
         console.log('_organScaleSets', _organScaleSets);
-        console.log('_arpScaleArray', _arpScaleArray);
-        playSounds(_organScaleSets, _arpScaleArray);
+        console.log('_rainArpScaleArray', _rainArpScaleArray);
+        console.log('_clementArpScaleArray', _clementArpScaleArray);
+        playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
 			}
 
 			//Accepts number of horizontal and vertical squares to draw
@@ -721,6 +764,7 @@ module.exports = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
         if (audioSupported) {
+          //Pad sounds for various weather types
           for (var i = 0; i < numPadNotes; i++) {
             padSounds[i] = new PadSound(
               sketch.loadSound('/audio/organ-C2.mp3'),
@@ -729,6 +773,7 @@ module.exports = function() {
               sketch.loadSound('/audio/trumpet-C2.mp3')
             );
           }
+          //choral sounds for fine weather
           for (var j = 0; j < 2; j++) {
             choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
           }
@@ -737,6 +782,7 @@ module.exports = function() {
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBass = sketch.loadSound('/audio/brassbass.mp3');
           brassBass2 = sketch.loadSound('/audio/brassbass.mp3');
+          brassStabSound = sketch.loadSound('/audio/brass-stab-C3.mp3');
         }
 			};
 
