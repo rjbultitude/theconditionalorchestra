@@ -435,8 +435,8 @@ module.exports = function() {
 
       function getRootNote() {
         //Add global values to the main data object
-        //Pressure determines root note. Range 1 octave
-        //In western scale it will be between + or - 6
+        //Pressure determines root note. Range 2 octaves
+        //In western scale it will be between + or - 12
         var _numSemitones = getNumSemisPerOctave();
         var _rangePlus = _numSemitones;
         var _rangeMinus = -Math.abs(_rangePlus);
@@ -502,9 +502,6 @@ module.exports = function() {
         var _intervalIndexOffset = intervalIndexOffset || 0;
         //Should be positive number
         for (var i = 0; i < numNotes; i++) {
-          console.log('centreNoteIndex', centreNoteIndex);
-          console.log('scaleIntervals[_intervalIndexOffset]', scaleIntervals[_intervalIndexOffset]);
-          console.log('scaleIntervals[_intervalIndexOffset] + centreNoteIndex', scaleIntervals[_intervalIndexOffset] + centreNoteIndex);
           _newNote = allNotesScale[scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
           //error check
           if (_newNote !== undefined) {
@@ -586,7 +583,6 @@ module.exports = function() {
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
-          //_chordOffsetArr = _chordOffsetArr.concat(getChords(_chordSeqKey));
           _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null);
         }
         //console.log('_chordOffsetArr', _chordOffsetArr);

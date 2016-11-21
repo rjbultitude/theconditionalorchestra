@@ -70,32 +70,29 @@ Styles and scripts will be processed and minified.
 * [Moment.js](http://momentjs.com/)
 * [JS Promises Polyfill](https://www.npmjs.com/package/es6-promise-polyfill)
 
-##To do
+##Browser support
 
-* Remove unused code from Forecast.io JS API
+Map and reduce are used in the JS but are supported by IE11+.
+Web Audio is not supported in IE11 so the JS _should_ stop running before any non-supported JS is.
 
 ##Business logic
-1 master locationData object is composed from the weather data.
+1 master lwData (location weather) object is composed from the weather data.
+1 wCheck object is used to contain all the various booleans needed to handle the app logic
 
 A property `sParams` is added to store values for:
 * frequency - filter frequency
 * volume - not used
 * distVolume - not used
 * pitch
-* soundPitchOffset - pitch root
 
 Important values:
 * Visibility - Filter freq  
-* Cloud cover - sound dist volume
 * Pressure - pitch root
-* Wind speed - sound volume
 
-A threshold temperature value `soundPitchOffset` defines whether the sound scale is predefined or tuned to arbitrary values
+The comment `playlogic` is used to denote the points at which the sounds are configured one way or another
 
-If the weather is _warm_ or _cold_ a chromatic equal temperament scale is produced
-if the weather is _warm_ the scale will be a western 2 note scale
-If the weather is _cold_ the scale will be (non western) 14 - 24 note scale
-If weather is _freezing_ an arbitrary set of notes is produced using the _Important Values_ TBC
+If the weather _isHumid_ the chords played use only the intervals within the chosen interval type. This leads to a more harmonious sequence. No chord offset is applied.
+If the weather _isFine_ a minor seventh scale is used, if _isClement_ a major one else a minor one is used. If the root note is higher than `0` (range is `-12` to `+12`) the chords move down the scale; if equal to or lower than `0` they move higher.
 
 Notes in the brass sound and arpeggio are defined as follows:
 If weather is _clement_ a scale using major intervals is produced
@@ -104,20 +101,20 @@ Else a minor scale is produced
 Each note is assigned a different _pan_ position from an array of 3 (Left, Center, Right)
 
 ###Organ
-The number of organ notes is _7_ if the weather is _stormy_
-or the default _5_ for all other conditions TBC
+The number of organ notes is _3_ if the weather is _stormy_
+or the default _4_ for all other conditions TBC
 
 ###Choral
 Two choral notes are played when the weather is _fine_
 
 ###Bass
-One bass note is played when the weather _isCloudy_
+One bass note is played when the weather _isCloudy_ but *not* _isWindy_
 
 ###Arpeggio
 Precipitation plays an arpeggiated sequence
 A precipType of `rain` with high precipIntensity - Fast and forwards dropSound
 A precipType of `sleet` - with high precipIntensity - Slower and reverse dropSound
-A precipType of `snow` - playes slowest - Slower and reverse dropSound
+A precipType of `snow` - plays slowest - Slower and reverse dropSound
 
 ##Plans
 
