@@ -51,6 +51,10 @@ module.exports = function() {
   var freezingFilter;
   var freezingFilterFreq = 2000;
   var masterGain;
+  //pan
+  var angle = 0;
+  var sinVal = 0;
+  var cosVal = 0;
   var panArr = [-0.8,0,0.8];
   var rainDropsPattern = [];
   var flttrBrassPattern = [];
@@ -951,12 +955,22 @@ module.exports = function() {
             shapeSet[i].paint(sketch, temperatureColour, avSettings.colourDim);
           }
         }
+        //Brass section
+        if (angle > 360) {
+          angle = 0;
+        }
+        sinVal = sketch.sin(angle);
+        cosVal = sketch.cos(angle);
+        brassBass.pan(sinVal);
+        brassBass2.pan(cosVal);
+        angle += 0.05;
         if (sketch.frameCount % 350 === 0) {
           channel.publish('triggerBrassOne');
         }
         if (sketch.frameCount % 650 === 0) {
           channel.publish('triggerBrassTwo');
         }
+        //Update filter
         freezingFilterFreq++;
         if (freezingFilterFreq >= 5500) {
           freezingFilterFreq = 0;
