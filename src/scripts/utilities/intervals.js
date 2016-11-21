@@ -8,6 +8,7 @@ module.exports = {
     majorSeventhIntervals: [0, 4, 7, 11, 0, 4, 7, 11],
     safeIntervals: [0, 5, 7, 9], //for rain arrpeggio
     closeIntervals: [0, -1, 0, 2], //for clement arrpeggio
+    closeIntervalsAlt: [0, -1, 1, 0],
     chordsMelancholyUp: [0, 5, 3],
     chordsMelancholyDown: [0, -4, -2],
     chordsPositiveUp: [0, 5, 3, 5],

@@ -48,6 +48,8 @@ module.exports = function() {
   var rainArpPart;
   //Globals
   var soundFilter;
+  var freezingFilter;
+  var freezingFilterFreq = 2000;
   var masterGain;
   var panArr = [-0.8,0,0.8];
   var rainDropsPattern = [];
@@ -158,6 +160,7 @@ module.exports = function() {
    */
   function createP5SoundObjs() {
     soundFilter = new P5.LowPass();
+    freezingFilter = new P5.HighPass();
     // Create phrase: name, callback, sequence
     rainArpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
     rainArpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
@@ -227,16 +230,25 @@ module.exports = function() {
         return _newNotesArray;
       }
 
-      function getAllegrettoRhythm(scaleArray) {
+      function getAllegrettoRhythm(scaleArray, includeFills) {
         var _newScaleArr = [];
         for (var i = 0; i < scaleArray.length; i++) {
           if (i === 0 || i === 2) {
             _newScaleArr.push(scaleArray[i]);
             _newScaleArr.push(0);
             _newScaleArr.push(scaleArray[i]);
-            _newScaleArr.push(scaleArray[i]);
+            if (!includeFills) {
+              _newScaleArr.push(scaleArray[i]);
+            }
+            if (includeFills) {
+              _newScaleArr.push(0);
+            }
           } else if (i === 1 || i === 3) {
             _newScaleArr.push(scaleArray[i]);
+            if (includeFills) {
+              _newScaleArr.push(0);
+              _newScaleArr.push(scaleArray[i]);
+            }
           }
         }
         return _newScaleArr;
@@ -279,7 +291,13 @@ module.exports = function() {
 
       function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray = getAllegrettoRhythm(clementArpScaleArray);
+        var _newNotesArray;
+        //playlogic
+        if (wCheck.isStormy || wCheck.isWindy) {
+          _newNotesArray = getAllegrettoRhythm(clementArpScaleArray, true);
+        } else {
+          _newNotesArray = getAllegrettoRhythm(clementArpScaleArray, false);
+        }
         console.log('clement arp _newNotesArray', _newNotesArray);
         clementArpPhrase.sequence = _newNotesArray;
         clementArpPart.addPhrase(clementArpPhrase);
@@ -326,6 +344,8 @@ module.exports = function() {
       function playBass(scaleSet) {
         bass.play();
         //Play 1st note of each chord
+        console.log('bass scaleSetIndex', scaleSetIndex);
+        console.log('bass rate', scaleSet[scaleSetIndex][0]);
         bass.rate(scaleSet[scaleSetIndex][0]);
         bass.setVolume(0.5);
       }
@@ -354,10 +374,12 @@ module.exports = function() {
       }
 
       function playLongNote(scale) {
+        console.log('scale in playLongNote', scale);
         var _longNoteIndex = getLongNoteIndex(scale);
         longNote.disconnect();
         longNote.connect(soundFilter);
         longNote.play();
+        console.log('longNote rate', scale[_longNoteIndex]);
         longNote.rate(scale[_longNoteIndex]);
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
@@ -374,16 +396,17 @@ module.exports = function() {
           padSounds[i][key].setVolume(avSettings[key].volume);
           padSounds[i][key].onended(function() { padCallback(scaleSet, key); });
           _panIndex = getPanIndex(_panIndex);
-          //console.log('padSounds[i][key].playbackRate', padSounds[i][key].playbackRate);
         }
-        setScaleSetIndex(scaleSet);
-        //console.log(key + ' is playing');
         //playlogic
         //Avoid sound clash with Brass
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass(scaleSet);
         }
-        playLongNote(scaleSet[scaleSetIndex], key);
+        playLongNote(scaleSet[scaleSetIndex]);
+        console.log('scaleSet', scaleSet);
+        //increment
+        console.log('scaleSetIndex', scaleSetIndex);
+        setScaleSetIndex(scaleSet);
       }
 
       function padCallback(scaleSet, key) {
@@ -409,12 +432,16 @@ module.exports = function() {
 
       function handleFineWeather(scaleArray) {
         // playlogic
-        if (wCheck.isFine) {
+        if (wCheck.isFine || wCheck.isFreezing) {
           console.log('weather is fine. choralSound playing');
           choralSounds.forEach(function(choralSound, i) {
             // must loop before rate is set
             // issue in Chrome only
             //choralSound.fade(0.17, avSettings.fadeTime);
+            if (wCheck.isFreezing) {
+              choralSound.disconnect();
+              choralSound.connect(freezingFilter);
+            }
             choralSound.loop();
             choralSound.rate(scaleArray[i]);
             choralSound.setVolume(0.17);
@@ -551,8 +578,8 @@ module.exports = function() {
         var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(rootAndOffset);
         var _highestFraction = _highestNoteIndex / semisInOct;
         var _lowestFraction = _lowestNoteIndex / semisInOct;
-        console.log('_highestFraction', _highestFraction);
-        console.log('_lowestFraction', _lowestFraction);
+        //console.log('_highestFraction', _highestFraction);
+        //console.log('_lowestFraction', _lowestFraction);
         var _numUpperOctaves = Math.ceil(_highestFraction);
         var _numLowerOctaves = Math.ceil(_lowestFraction);
         console.log('_numUpperOctaves', _numUpperOctaves);
@@ -602,9 +629,9 @@ module.exports = function() {
         var _intervalIndexOffset = intervalIndexOffset || 0;
         for (var i = 0; i < numNotes; i++) {
           _newNote = allNotesScale[scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
-          console.log('scaleIntervals[_intervalIndexOffset]', scaleIntervals[_intervalIndexOffset]);
-          console.log('scaleIntervals[_intervalIndexOffset] + centreNoteIndex', scaleIntervals[_intervalIndexOffset] + centreNoteIndex);
-          console.log('_newNote', _newNote);
+          //console.log('scaleIntervals[_intervalIndexOffset]', scaleIntervals[_intervalIndexOffset]);
+          //console.log('scaleIntervals[_intervalIndexOffset] + centreNoteIndex', scaleIntervals[_intervalIndexOffset] + centreNoteIndex);
+          //console.log('_newNote', _newNote);
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
             _scaleArray.push(_newNote);
@@ -662,7 +689,7 @@ module.exports = function() {
         //TODO not sure humidity is the best
         //value to use
         //playlogic
-        if (wCheck.isHumid) {
+        if (wCheck.isHumid || wCheck.isPrecip) {
           _key = 'chordsNoOffset';
         }
         //otherwise we use various offsets
@@ -733,7 +760,7 @@ module.exports = function() {
       function getIntervalIndexOffsetKey() {
         var _key;
         //playlogic
-        if (wCheck.isHumid) {
+        if (wCheck.isHumid || wCheck.isPrecip) {
           _key = 'chordIndexes';
         } else {
           _key = 'chordIndexesNoOffset';
@@ -778,13 +805,19 @@ module.exports = function() {
 
       function createClementArpScale() {
         var _clementArpCNoteOffset = 0;
+        var _clementIntervals;
         //playlogic
         if (wCheck.isFreezing) {
           _clementArpCNoteOffset = -Math.abs(getNumSemisPerOctave());
         }
+        if (wCheck.isStormy || wCheck.isWindy) {
+          _clementIntervals = 'closeIntervalsAlt';
+        } else {
+          _clementIntervals = 'closeIntervals';
+        }
         var _repeat = 0;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numClementArpNotes, _clementArpCNoteOffset, 'closeIntervals', _intervalIndexOffset, _repeat);
+        return createMusicalScale(avSettings.numClementArpNotes, _clementArpCNoteOffset, _clementIntervals, _intervalIndexOffset, _repeat);
       }
 
       function createRainArpScale() {
@@ -924,6 +957,12 @@ module.exports = function() {
         if (sketch.frameCount % 650 === 0) {
           channel.publish('triggerBrassTwo');
         }
+        freezingFilterFreq++;
+        if (freezingFilterFreq >= 5500) {
+          freezingFilterFreq = 0;
+        }
+        freezingFilter.freq(freezingFilterFreq);
+        freezingFilter.res(33);
 			};
 
 		}, 'canvas-container');
