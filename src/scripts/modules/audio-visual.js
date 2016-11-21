@@ -244,9 +244,9 @@ module.exports = function() {
         clementArpPhrase.sequence = _newNotesArray;
         clementArpPart.addPhrase(clementArpPhrase);
         clementArpPart.setBPM(104);
-        console.log('clementArpPart', clementArpPart);
         clementArpPart.start();
         clementArpPart.loop();
+        console.log('clementArpPart', clementArpPart);
       }
 
       function playRainArp(arpeggioType, rainArpScaleArray) {
@@ -503,13 +503,26 @@ module.exports = function() {
         return _rootNote;
       }
 
+      /**
+       * Critical function - if the correct number of octaves
+       * are not produced the app fails
+       * @param  {Number}  largestNumber  [highest positive number]
+       * @param  {Number}  smallestNumber [highest negative number]
+       * @param  {Number}  rootAndOffset  [root note plus the chord offset]
+       * @param  {Number} semisInOct      [Number of semitones in octave]
+       * @return {Object}                 [The scale and the total number of octaves]
+       */
       function getAllNotesScale(largestNumber, smallestNumber, rootAndOffset, semisInOct) {
         console.log('get all notes arguments', arguments);
         var _highestNoteIndex = largestNumber + Math.abs(rootAndOffset);
         var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(rootAndOffset);
-        var _numUpperOctaves = Math.ceil(_highestNoteIndex / semisInOct) * 2;
+        var _highestFraction = _highestNoteIndex / semisInOct;
+        var _lowestFraction = _lowestNoteIndex / semisInOct;
+        console.log('_highestFraction', _highestFraction);
+        console.log('_lowestFraction', _lowestFraction);
+        var _numUpperOctaves = Math.ceil(_highestFraction);
+        var _numLowerOctaves = Math.ceil(_lowestFraction);
         console.log('_numUpperOctaves', _numUpperOctaves);
-        var _numLowerOctaves = Math.ceil(_lowestNoteIndex / semisInOct) * 2;
         console.log('_numLowerOctaves', _numLowerOctaves);
         var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
         console.log('creating array with ' + _totalOctaves + ' octaves ');
@@ -550,18 +563,22 @@ module.exports = function() {
       }
 
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset) {
-        console.log('get pitches arguments', arguments);
         var _scaleArray = [];
         var _newNote;
+        var _prevNote;
         var _intervalIndexOffset = intervalIndexOffset || 0;
-        //Should be positive number
         for (var i = 0; i < numNotes; i++) {
           _newNote = allNotesScale[scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
+          console.log('scaleIntervals[_intervalIndexOffset]', scaleIntervals[_intervalIndexOffset]);
+          console.log('scaleIntervals[_intervalIndexOffset] + centreNoteIndex', scaleIntervals[_intervalIndexOffset] + centreNoteIndex);
+          console.log('_newNote', _newNote);
           //error check
-          if (_newNote !== undefined) {
+          if (_newNote !== undefined || isNaN(_newNote) === false) {
             _scaleArray.push(_newNote);
+            _prevNote = _newNote;
           } else {
-            console.log('undefined note');
+            console.error('undefined or NaN note');
+            //_scaleArray.push(-Math.abs(_prevNote));
           }
           _intervalIndexOffset++;
         }
@@ -569,22 +586,25 @@ module.exports = function() {
       }
 
       function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeat) {
-        console.log('create musical scale args', arguments);
-        var _allNotesScale = [];
         var _numOcts;
+        var _allNotesScale = [];
         var _scaleArray = [];
         var _rootNote = getRootNote();
         var _rootAndOffset = _rootNote + centreNoteOffset;
+        console.log('_rootAndOffset', _rootAndOffset);
         var _semisInOct = getNumSemisPerOctave();
         var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, _semisInOct, repeat);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
-        var _allNotesScaleAndNumOcts = getAllNotesScale(_largestPosNumber, _largestNegNumber, centreNoteOffset, _semisInOct);
+        //Once we know the total range required
+        //get all the notes/frequencies
+        var _allNotesScaleAndNumOcts = getAllNotesScale(_largestPosNumber, _largestNegNumber, _rootAndOffset, _semisInOct);
         _allNotesScale = _allNotesScaleAndNumOcts.allNotesScale;
         _numOcts = _allNotesScaleAndNumOcts.numOctaves;
         //Get centre note
         //After all notes scale has been created
-        var _centreNoteIndex = getFreqScales.findCentreFreqIndex(_numOcts, _semisInOct) + _rootAndOffset;
+        var _centreFreqIndex = getFreqScales.findCentreFreqIndex(_numOcts, _semisInOct);
+        var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
         _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset);
         return _scaleArray;
       }
@@ -752,8 +772,8 @@ module.exports = function() {
        */
 			function configureSounds() {
         var _organScaleSets = [];
-        var _rainArpScaleArray = [];
-        var _clementArpScaleArray = [];
+        var _rainArpScaleArray = [0];
+        var _clementArpScaleArray = [0];
         var _numChords = getNumChords();
         // Set filter for pad sounds
         setFilter();
