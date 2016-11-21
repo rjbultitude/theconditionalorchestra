@@ -243,7 +243,7 @@ module.exports = function() {
         console.log('clement arp _newNotesArray', _newNotesArray);
         clementArpPhrase.sequence = _newNotesArray;
         clementArpPart.addPhrase(clementArpPhrase);
-        clementArpPart.setBPM(120);
+        clementArpPart.setBPM(104);
         console.log('clementArpPart', clementArpPart);
         clementArpPart.start();
         clementArpPart.loop();
@@ -507,8 +507,10 @@ module.exports = function() {
         console.log('get all notes arguments', arguments);
         var _highestNoteIndex = largestNumber + Math.abs(rootAndOffset);
         var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(rootAndOffset);
-        var _numUpperOctaves = Math.round((_highestNoteIndex / semisInOct) * 2);
-        var _numLowerOctaves = Math.round((_lowestNoteIndex / semisInOct) * 2);
+        var _numUpperOctaves = Math.ceil(_highestNoteIndex / semisInOct) * 2;
+        console.log('_numUpperOctaves', _numUpperOctaves);
+        var _numLowerOctaves = Math.ceil(_lowestNoteIndex / semisInOct) * 2;
+        console.log('_numLowerOctaves', _numLowerOctaves);
         var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
         console.log('creating array with ' + _totalOctaves + ' octaves ');
         return {
@@ -567,6 +569,7 @@ module.exports = function() {
       }
 
       function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeat) {
+        console.log('create musical scale args', arguments);
         var _allNotesScale = [];
         var _numOcts;
         var _scaleArray = [];
@@ -722,6 +725,10 @@ module.exports = function() {
 
       function createClementArpScale() {
         var _clementArpCNoteOffset = 0;
+        //playlogic
+        if (wCheck.isFreezing) {
+          _clementArpCNoteOffset = -Math.abs(getNumSemisPerOctave());
+        }
         var _repeat = 0;
         var _intervalIndexOffset = 0;
         return createMusicalScale(avSettings.numClementArpNotes, _clementArpCNoteOffset, 'closeIntervals', _intervalIndexOffset, _repeat);

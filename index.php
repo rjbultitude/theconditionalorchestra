@@ -38,7 +38,7 @@
                     <form class="form-coords inactive" id="form-coords" data-ref="form-coords">
                       <h2 class="form-coords__legend">Enter a place</h2>
                       <label for="place">place</label>
-                      <input type="text" id="place" data-ref="place-field">
+                      <input type="text" id="place" data-ref="place-field" autocomplete="on">
                       <button class="cta" id="form-coords-btn" data-ref="submit" aria-controls="message-block">Play</button>
                       <button class="button-close" data-ref="close">
                         <span class="text">
