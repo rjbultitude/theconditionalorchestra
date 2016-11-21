@@ -119,15 +119,13 @@ A precipType of `snow` - plays slowest - Slower and reverse dropSound
 
 ##Plans
 
-After refactor the offset determined by pressure is a smaller range. Previously it spanned almost the whole allNotesArray and now it's just 6 notes either side of the centre freq
 
-Make static data more sonically interesting - set precipIntensity and wind values
+
+After refactor the offset determined by pressure is a smaller range. Previously it spanned almost the whole allNotesArray and now it's just 12 notes either side of the centre freq
 
 Modulate master volume for windy conditions. Requires sounds to be routed through one channel
 
-Consider using ozone as another data input
-
-Could use one master allNotesArray and ensure all scale arrays are constrained
+Consider using `ozone`, `dew point` and `windBearing` as another data input
 
 Use wind bearing for brass pan. 0 - 180deg is a pan from L to R, 181 - 360deg is pan from R to L
 

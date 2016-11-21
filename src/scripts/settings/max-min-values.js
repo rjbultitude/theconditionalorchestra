@@ -15,10 +15,10 @@ module.exports = {
       min: 0,
       max: 1
     },
-    //Wind speed typically up to 24mph
+    //Wind speed typically up to 24 metres per second
     windSpeed: {
       min: 0,
-      max: 74
+      max: 33
     },
     //pressure in millibars
     pressure: {
