@@ -16,7 +16,8 @@ var weatherCheck = require('./weather-checker-fns');
 var intervals = require('../utilities/intervals');
 var getFreqScales = require('../utilities/create-freq-scales');
 var duplicateArray = require('../utilities/duplicate-array-vals');
-var getLargestNumInArr = require('../utilities/largest-num-in-array');
+var getLargestPosNumInArr = require('../utilities/largest-pos-num-in-array');
+var getLargestNegNumInArr = require('../utilities/largest-neg-num-in-array');
 var addMissingArrayItems = require('../utilities/add-missing-array-items');
 var avSettings = require('../settings/av-settings');
 
@@ -221,10 +222,27 @@ module.exports = function() {
         return _newNotesArray;
       }
 
+      function getAllegrettoRhythm(scaleArray) {
+        var _newScaleArr = [];
+        for (var i = 0; i < scaleArray.length; i++) {
+          if (i === 0 || i === 2) {
+            _newScaleArr.push(scaleArray[i]);
+            _newScaleArr.push(0);
+            _newScaleArr.push(scaleArray[i]);
+            _newScaleArr.push(scaleArray[i]);
+          } else if (i === 1 || i === 3) {
+            _newScaleArr.push(scaleArray[i]);
+          }
+        }
+        return _newScaleArr;
+      }
+
       function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray = addRandomStops(clementArpScaleArray);
+        var _newNotesArray = getAllegrettoRhythm(clementArpScaleArray);
+        console.log('clement arp _newNotesArray', _newNotesArray);
         clementArpPhrase.sequence = _newNotesArray;
+        clementArpPart.addPhrase(clementArpPhrase);
         clementArpPart.setBPM(120);
         console.log('clementArpPart', clementArpPart);
         clementArpPart.start();
@@ -485,14 +503,17 @@ module.exports = function() {
         return _rootNote;
       }
 
-      function getAllNotesScale(largestNumber, rootAndOffset, semisInOct) {
-        console.log('arguments', arguments);
+      function getAllNotesScale(largestNumber, smallestNumber, rootAndOffset, semisInOct) {
+        console.log('get all notes arguments', arguments);
         var _highestNoteIndex = largestNumber + Math.abs(rootAndOffset);
-        var _numOctaves = Math.round((_highestNoteIndex / semisInOct) * 4);
-        console.log('creating array with ' + _numOctaves + ' octaves ');
+        var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(rootAndOffset);
+        var _numUpperOctaves = Math.round((_highestNoteIndex / semisInOct) * 2);
+        var _numLowerOctaves = Math.round((_lowestNoteIndex / semisInOct) * 2);
+        var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
+        console.log('creating array with ' + _totalOctaves + ' octaves ');
         return {
-          allNotesScale: createEqTempPitchesArr(_numOctaves),
-          numOctaves: _numOctaves
+          allNotesScale: createEqTempPitchesArr(_totalOctaves),
+          numOctaves: _totalOctaves
         };
       }
 
@@ -527,7 +548,7 @@ module.exports = function() {
       }
 
       function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset) {
-        //console.log('arguments', arguments);
+        console.log('get pitches arguments', arguments);
         var _scaleArray = [];
         var _newNote;
         var _intervalIndexOffset = intervalIndexOffset || 0;
@@ -553,8 +574,9 @@ module.exports = function() {
         var _rootAndOffset = _rootNote + centreNoteOffset;
         var _semisInOct = getNumSemisPerOctave();
         var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, _semisInOct, repeat);
-        var _largestNumber = getLargestNumInArr(_scaleIntervals);
-        var _allNotesScaleAndNumOcts = getAllNotesScale(_largestNumber, centreNoteOffset, _semisInOct);
+        var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
+        var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
+        var _allNotesScaleAndNumOcts = getAllNotesScale(_largestPosNumber, _largestNegNumber, centreNoteOffset, _semisInOct);
         _allNotesScale = _allNotesScaleAndNumOcts.allNotesScale;
         _numOcts = _allNotesScaleAndNumOcts.numOctaves;
         //Get centre note
@@ -702,7 +724,7 @@ module.exports = function() {
         var _clementArpCNoteOffset = 0;
         var _repeat = 0;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numArpNotes, _clementArpCNoteOffset, 'closeIntervals', _intervalIndexOffset, _repeat);
+        return createMusicalScale(avSettings.numClementArpNotes, _clementArpCNoteOffset, 'closeIntervals', _intervalIndexOffset, _repeat);
       }
 
       function createRainArpScale() {
@@ -710,7 +732,7 @@ module.exports = function() {
         var _rainArpCNoteOffset = -Math.abs(_semisInOct * 2);
         var _repeat = 1;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numClementArpNotes, _rainArpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _repeat);
+        return createMusicalScale(avSettings.numRainArpNotes, _rainArpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _repeat);
       }
 
       /*
@@ -730,6 +752,7 @@ module.exports = function() {
         setFilter();
         //Make arrays of frequencies for playback
         _organScaleSets = makeChordSequence(_numChords);
+        //TODO only create necessary scales
         _rainArpScaleArray = createRainArpScale();
         _clementArpScaleArray = createClementArpScale();
         console.log('_organScaleSets', _organScaleSets);
