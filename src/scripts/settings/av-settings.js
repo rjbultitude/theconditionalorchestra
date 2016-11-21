@@ -18,7 +18,7 @@ module.exports = {
   numPadNotes: 4,
   numChords: 3,
   numRainArpNotes: 12,
-  numClementArpNotes: 3,
+  numClementArpNotes: 4, //should match closeIntervals
   numOctaves: 2,
   numSemitones: 12,
   scaleStartIndexBuffer: 10,
