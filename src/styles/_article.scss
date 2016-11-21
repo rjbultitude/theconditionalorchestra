@@ -5,6 +5,8 @@ article {
 .article-header {
   background-color: white;
   padding: $padding 0;
+  position: relative;
+  overflow: hidden;
 
   .page-heading,
   .intro {
@@ -16,4 +18,19 @@ article {
 
 .article-body {
   text-align: center;
+}
+
+/* Version sash */
+
+.version-sash {
+  background-color: $color-cyan;
+  padding: 4px;
+  color: white;
+  width: 150px;
+  text-align: center;
+  transform: rotate(45deg);
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  right: -40px;
 }

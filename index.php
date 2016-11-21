@@ -21,11 +21,11 @@
               <header class="article-header">
                 <div class="wrapper">
                   <h1 class="page-heading">The Conditional Orchestra</h1>
-                  <p class="intro">Using the weather conditions in your local area The Conditional Orchestra plays unique compositions all day every day.</p>
+                  <p class="intro">Using current weather conditions The Conditional Orchestra generates unique compositions for your listening pleasure.</p>
                 </div>
+                <div class="version-sash">Alpha</div>
               </header>
               <!-- end header -->
-
               <!-- begin body -->
               <div class="article-body">
                 <div class="wrapper">
@@ -124,8 +124,8 @@
           <div class="wrapper">
             <div class="tab__panel" id="help" data-ref="tab-panel">
               <h2 class="tab__heading">Help</h2>
-              <p>If it can't find your location ensure you've clicked 'allow' when the browser asks to use your location".</p>
-              <p>If it still doesn't work try using the "choose another location form where youcan enter any location you like.</p>
+              <p>If it can't find your location ensure you've clicked "allow" when the browser asks to use your location.</p>
+              <p>Alternatively click "choose another location" where you can enter any location you like.</p>
               <button class="button-close" data-ref="tab-close">
                 <span class="text">
                   Close
