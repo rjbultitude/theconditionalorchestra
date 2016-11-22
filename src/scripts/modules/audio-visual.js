@@ -380,7 +380,7 @@ module.exports = function() {
       function playBrassBaritone(scale) {
         brassBass.play();
         brassBass.rate(scale[brassOneScaleArrayIndex]);
-        brassBass.setVolume(1);
+        brassBass.setVolume(0.9);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
         } else {
@@ -390,9 +390,11 @@ module.exports = function() {
 
       function playBrassBaritoneTwo(scale) {
         var _newScaleArr = scale.slice().reverse();
+        var _rateMultArr = [1, 2];
+        var _randomRateMultVal = sketch.random(_rateMultArr);
         brassBass.play();
-        brassBass.rate(_newScaleArr[brassTwoScaleArrayIndex] * 2);
-        brassBass.setVolume(1);
+        brassBass.rate(_newScaleArr[brassTwoScaleArrayIndex] * _randomRateMultVal);
+        brassBass.setVolume(0.4);
         if (brassTwoScaleArrayIndex >= scale.length -1) {
           brassTwoScaleArrayIndex = 0;
         } else {
@@ -968,6 +970,7 @@ module.exports = function() {
 			};
 
 			sketch.draw = function draw() {
+        sketch.frameRate(30);
 				sketch.background(0, 0, 0, 0);
         if (dialogIsOpen) {
           for (var i = 0; i < shapeSet.length; i++) {
