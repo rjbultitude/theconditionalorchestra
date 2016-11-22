@@ -75,7 +75,7 @@ Styles and scripts will be processed and minified.
 Map and reduce are used in the JS but are supported by IE11+.
 Web Audio is not supported in IE11 so the JS _should_ stop running before any non-supported JS is.
 
-##Business logic
+##App logic
 1 master lwData (location weather) object is composed from the weather data.
 1 wCheck object is used to contain all the various booleans needed to handle the app logic
 
@@ -105,29 +105,37 @@ The number of organ notes is _3_ if the weather is _stormy_
 or the default _4_ for all other conditions TBC
 
 ###Choral
-Two choral notes are played when the weather is _fine_
+Two choral notes are played when the weather is _fine_ or _freezing_
+When _freezing_ a high pass filter is applied whose freq moves up on each iteration of _draw_
 
 ###Bass
 One bass note is played when the weather _isCloudy_ but *not* _isWindy_
 The note is the first note of each chord in the chord sequence
 
-###Arpeggio
+###Rain Arpeggio
 Precipitation plays an arpeggiated sequence
 A precipType of `rain` with high precipIntensity - Fast and forwards dropSound
 A precipType of `sleet` - with high precipIntensity - Slower and reverse dropSound
 A precipType of `snow` - plays slowest - Slower and reverse dropSound
 
+###Clement Arpeggio
+Applied to all clement conditions. Plays one type of sequence (pitches and stops) when
+weather _ishumid_ and another when it's not.
+
+###Long Notes
+Plays for any type of weather. The note in each chord it plays depends on the _windBearing_.
+The bearing angle determines which item in the array to playback in the `scale`.
+The pan and volume are randomly selected from two arrays.
+
 ##Plans
-
-
 
 After refactor the offset determined by pressure is a smaller range. Previously it spanned almost the whole allNotesArray and now it's just 12 notes either side of the centre freq
 
+Fade all sounds in on start (using `masterGain`?)
+
 Modulate master volume for windy conditions. Requires sounds to be routed through one channel
 
-Consider using `ozone`, `dew point` and `windBearing` as another data input
-
-Use wind bearing for brass pan. 0 - 180deg is a pan from L to R, 181 - 360deg is pan from R to L
+Consider using `ozone` and `dew point` as another data input
 
 Create sequencer for stormy weather that uses brash percussive sounds
 

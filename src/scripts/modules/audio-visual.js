@@ -237,6 +237,8 @@ module.exports = function() {
       function getAllegrettoRhythm(scaleArray, includeFills) {
         var _newScaleArr = [];
         for (var i = 0; i < scaleArray.length; i++) {
+          //TODO is brittle
+          //will only work if array is long enough
           if (i === 0 || i === 2) {
             _newScaleArr.push(scaleArray[i]);
             _newScaleArr.push(0);
@@ -273,6 +275,7 @@ module.exports = function() {
         var _bearingSlice = 360 / _timesToDivide;
         //playlogic
         //bearing decides which note in scale to play
+        //Could use reduce
         for (var i = 0; i < scale.length; i++) {
           var _currentBearingSlice = _bearingSlice * i;
           if (lwData.windBearing.value <= _currentBearingSlice) {
@@ -434,10 +437,9 @@ module.exports = function() {
         }
       }
 
-      function handleFineWeather(scaleArray) {
+      function handleChoralSound(scaleArray) {
         // playlogic
         if (wCheck.isFine || wCheck.isFreezing) {
-          console.log('weather is fine. choralSound playing');
           choralSounds.forEach(function(choralSound, i) {
             // must loop before rate is set
             // issue in Chrome only
@@ -457,7 +459,7 @@ module.exports = function() {
 
       function handlePadType(scaleSet) {
         //playlogic
-        //Start with harshes conditions
+        //Start with harshest conditions
         //and work our way up
 
         //This setting uses non western scale
@@ -489,7 +491,7 @@ module.exports = function() {
         // Rain
         handlePrecipitation(rainArpScaleArray, rainArpPart);
         // Fine conditions
-        handleFineWeather(padScales[0]);
+        handleChoralSound(padScales[0]);
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
           //playlogic

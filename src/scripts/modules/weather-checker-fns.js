@@ -9,6 +9,7 @@ module.exports = {
   // @param precipType String
   // @param precipIntensity floating point
   isPrecip: function(precipType, precipIntensity) {
+    //TODO do we need this check?
     if (precipType !== undefined) {
       return precipIntensity > 0;
     } else {
@@ -50,13 +51,13 @@ module.exports = {
 
   // @param temperatureInFrnht floating point
   isFine: function(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover < 0.25;
+   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 8 && cloudCover < 0.25;
   },
 
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function(cloudCover, windSpeed, precipIntensity) {
-    return cloudCover < 0.5 && windSpeed < 16 && precipIntensity === 0;
+    return cloudCover < 0.5 && windSpeed < 14 && precipIntensity === 0;
   },
 
   // @param cloudCover floating point
