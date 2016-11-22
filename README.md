@@ -103,6 +103,7 @@ Each note is assigned a different _pan_ position from an array of 3 (Left, Cente
 ###Organ
 The number of organ notes is _3_ if the weather is _stormy_
 or the default _4_ for all other conditions TBC
+An extra chord (which is currently pitched down an octave) is played a given number of times
 
 ###Choral
 Two choral notes are played when the weather is _fine_ or _freezing_
@@ -131,9 +132,7 @@ The pan and volume are randomly selected from two arrays.
 
 Remove stop state for custom location submit button
 
-Fade all sounds in on start (using `masterGain`?)
-
-Modulate master volume for windy conditions. Requires sounds to be routed through one channel
+Modulate padSounds volume for windy conditions
 
 Use different array of intervals for rain arpeggio for seventh chords
 

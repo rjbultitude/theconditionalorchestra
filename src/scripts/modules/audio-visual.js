@@ -24,13 +24,9 @@ var avSettings = require('../settings/av-settings');
 module.exports = function() {
   /*
     Module scoped vars
+    and constants
   */
   var isPlaying = false;
-	// Sound containers
-	var padSounds = [];
-  var choralSounds = [];
-  //sequencer
-  var mainSeqCount = 0;
   //bass
   var bass;
   //Windy/ Brass
@@ -51,15 +47,16 @@ module.exports = function() {
   //Globals
   var soundFilter;
   var freezingFilter;
-  var freezingFilterFreq = 2000;
-  var masterGain;
   //pan
   var angle = 0;
   var sinVal = 0;
   var cosVal = 0;
-  var panArr = [-0.8,0,0.8];
+  var panArr = [-0.8, 0, 0.8];
   var rainDropsPattern = [];
   var flttrBrassPattern = [];
+  //Sound objects
+  var padSounds = [];
+  var choralSounds = [];
 	// Array for all visual shapes
 	var shapeSet = [];
   // dialog / modal
@@ -173,21 +170,22 @@ module.exports = function() {
     clementArpPhrase = new P5.Phrase('flttrBrass', makeFlttrBrassSound, flttrBrassPattern);
     clementArpPart = new P5.Part();
     rainArpPart = new P5.Part();
-    masterGain = new P5.Gain();
   }
 
 	// main app init
 	function init(lwData) {
     console.log('lwData', lwData);
     //Init scoped values
+    var mainSeqCount = 0;
     var brassOneScaleArrayIndex = 0;
     var brassTwoScaleArrayIndex = 0;
     var scaleSetIndex = 0;
     var padIndexCount = 0;
-    // TODO find better way of avoiding mutation
-    //Empty, clear;
-    choralSounds = [];
+    var freezingFilterFreq = 2000;
+    var masterGain = 0;
+    //clear data
     padSounds = [];
+    choralSounds = [];
     // weather checks
     var wCheck = {
       //single concept items
@@ -307,7 +305,9 @@ module.exports = function() {
       function setScaleSetIndex(scaleSet) {
         //Using two because we have an extra chord
         //as the last item in the array
-        if (scaleSetIndex >= scaleSet.length -2) {
+        //TODO extend to handle extra chords
+        var _numExtraChords = 1;
+        if (scaleSetIndex >= scaleSet.length - 1 - _numExtraChords) {
           scaleSetIndex = 0;
         } else {
           scaleSetIndex++;
@@ -466,15 +466,17 @@ module.exports = function() {
           choralSounds.forEach(function(choralSound, i) {
             // must loop before rate is set
             // issue in Chrome only
-            //choralSound.fade(0.17, avSettings.fadeTime);
             if (wCheck.isFreezing) {
               choralSound.disconnect();
               choralSound.connect(freezingFilter);
             }
             choralSound.loop();
-            choralSound.rate(scaleArray[i]);
+            if (wCheck.isFreezing) {
+              choralSound.rate(scaleArray[i] / 2);
+            } else {
+              choralSound.rate(scaleArray[i]);
+            }
             choralSound.setVolume(0.17);
-            console.log('choralSound', choralSound);
           });
         } else {
           console.log('weather is not fine. No choralSounds');
@@ -573,10 +575,11 @@ module.exports = function() {
 
       function getRootNote() {
         //Add global values to the main data object
-        //Pressure determines root note. Range 2 octaves
+        //Pressure determines root note. Range 2.5 octaves
         //In western scale it will be between + or - 12
         var _numSemitones = getNumSemisPerOctave();
-        var _rangePlus = _numSemitones;
+        //var _rangePlus = _numSemitones + _numSemitones / 2;
+        var _rangePlus = Math.round(_numSemitones + _numSemitones / 2);
         var _rangeMinus = -Math.abs(_rangePlus);
         var _rootNote = Math.round(sketch.map(
           lwData.pressure.value,
@@ -927,8 +930,6 @@ module.exports = function() {
 			};
 
 			sketch.setup = function setup() {
-        //TODO create master channel
-        //masterGain.amp(0, 0, 0);
 				//If this size or smaller
 				if (matchMediaMaxWidth(540).matches) {
 						avSettings.cWidth = 400;
@@ -990,12 +991,17 @@ module.exports = function() {
           channel.publish('triggerBrassTwo');
         }
         //Update filter
-        freezingFilterFreq++;
         if (freezingFilterFreq >= 5500) {
           freezingFilterFreq = 0;
         }
         freezingFilter.freq(freezingFilterFreq);
         freezingFilter.res(33);
+        freezingFilterFreq++;
+        //Master volume
+        sketch.masterVolume(masterGain);
+        if (masterGain < 0.9) {
+          masterGain += 0.01;
+        }
 			};
 
 		}, 'canvas-container');
