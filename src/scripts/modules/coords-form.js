@@ -60,11 +60,11 @@ module.exports = function() {
         pressure: null,
         precipIntensity: null,
         temperature: null,
-        //non in use
-        dewPoint: null,
         humidity: null,
         windBearing: null,
+        //non in use
         ozone: null,
+        dewPoint: null,
         apparentTemperature: null
       };
       // Set numerical integer and floating point values

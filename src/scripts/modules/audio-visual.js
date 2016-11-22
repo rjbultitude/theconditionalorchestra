@@ -317,7 +317,7 @@ module.exports = function() {
 
       function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray;
+        var _newNotesArray = [];
         //playlogic
         if (wCheck.isStormy || wCheck.isWindy) {
           _newNotesArray = getAllegrettoRhythm(clementArpScaleArray, true);
