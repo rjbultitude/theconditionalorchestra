@@ -133,6 +133,8 @@ After refactor the offset determined by pressure is a smaller range. Previously 
 
 Fade all sounds in on start (using `masterGain`?)
 
+Remove stop state for custom location submit button
+
 Modulate master volume for windy conditions. Requires sounds to be routed through one channel
 
 Consider using `ozone` and `dew point` as another data input

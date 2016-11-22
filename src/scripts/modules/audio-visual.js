@@ -29,6 +29,8 @@ module.exports = function() {
 	// Sound containers
 	var padSounds = [];
   var choralSounds = [];
+  //sequencer
+  var mainSeqCount = 0;
   //bass
   var bass;
   //Windy/ Brass
@@ -287,8 +289,25 @@ module.exports = function() {
         return _longNoteIndex;
       }
 
+      function getMainSeqRepeatNum(scaleSet) {
+        var _seqRepeatNum = 0;
+        var _seqLength = scaleSet.length - 1;
+        //playlogic
+        if (wCheck.isFine || wCheck.isFreezing) {
+          _seqRepeatNum = _seqLength * 3;
+        } else if (wCheck.isCold) {
+          _seqRepeatNum = _seqLength * 2;
+        } else {
+          _seqRepeatNum = _seqLength;
+        }
+        console.log('_seqRepeatNum', _seqRepeatNum);
+        return _seqRepeatNum;
+      }
+
       function setScaleSetIndex(scaleSet) {
-        if (scaleSetIndex >= scaleSet.length -1) {
+        //Using two because we have an extra chord
+        //as the last item in the array
+        if (scaleSetIndex >= scaleSet.length -2) {
           scaleSetIndex = 0;
         } else {
           scaleSetIndex++;
@@ -381,7 +400,6 @@ module.exports = function() {
       }
 
       function playLongNote(scale) {
-        console.log('scale in playLongNote', scale);
         var _longNoteIndex = getLongNoteIndex(scale);
         longNote.disconnect();
         longNote.connect(soundFilter);
@@ -394,6 +412,12 @@ module.exports = function() {
 
       function playPad(scaleSet, key) {
         var _panIndex = 0;
+        var _mainSeqRepeat = getMainSeqRepeatNum(scaleSet);
+        // Master sequence
+        if (mainSeqCount === _mainSeqRepeat) {
+          scaleSetIndex = scaleSet.length - 1;
+          mainSeqCount = 0;
+        }
         for (var i = 0; i < padSounds.length; i++) {
           padSounds[i][key].disconnect();
           padSounds[i][key].connect(soundFilter);
@@ -411,9 +435,10 @@ module.exports = function() {
         }
         playLongNote(scaleSet[scaleSetIndex]);
         console.log('scaleSet', scaleSet);
-        //increment
         console.log('scaleSetIndex', scaleSetIndex);
+        //increment indices
         setScaleSetIndex(scaleSet);
+        mainSeqCount++;
       }
 
       function padCallback(scaleSet, key) {
@@ -451,6 +476,7 @@ module.exports = function() {
             choralSound.loop();
             choralSound.rate(scaleArray[i]);
             choralSound.setVolume(0.17);
+            console.log('choralSound', choralSound);
           });
         } else {
           console.log('weather is not fine. No choralSounds');
@@ -544,7 +570,6 @@ module.exports = function() {
         var _numSemitones = getNumSemisPerOctave();
         var _numOctaves = numOctaves || avSettings.numOctaves;
         _allNotesArray = getFreqScales.createEqTempMusicalScale(1, _numOctaves, _numSemitones);
-        console.log('_allNotesArray', _allNotesArray);
         return _allNotesArray;
       }
 
@@ -579,17 +604,12 @@ module.exports = function() {
        * @return {Object}                 [The scale and the total number of octaves]
        */
       function getAllNotesScale(largestNumber, smallestNumber, rootAndOffset, semisInOct) {
-        console.log('get all notes arguments', arguments);
         var _highestNoteIndex = largestNumber + Math.abs(rootAndOffset);
         var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(rootAndOffset);
         var _highestFraction = _highestNoteIndex / semisInOct;
         var _lowestFraction = _lowestNoteIndex / semisInOct;
-        //console.log('_highestFraction', _highestFraction);
-        //console.log('_lowestFraction', _lowestFraction);
         var _numUpperOctaves = Math.ceil(_highestFraction);
         var _numLowerOctaves = Math.ceil(_lowestFraction);
-        console.log('_numUpperOctaves', _numUpperOctaves);
-        console.log('_numLowerOctaves', _numLowerOctaves);
         var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
         console.log('creating array with ' + _totalOctaves + ' octaves ');
         return {
@@ -624,7 +644,6 @@ module.exports = function() {
         } else {
           _newIntervals = chosenIntervals;
         }
-        //console.log('_newIntervals', _newIntervals);
         return _newIntervals;
       }
 
@@ -657,7 +676,6 @@ module.exports = function() {
         var _scaleArray = [];
         var _rootNote = getRootNote();
         var _rootAndOffset = _rootNote + centreNoteOffset;
-        console.log('_rootAndOffset', _rootAndOffset);
         var _semisInOct = getNumSemisPerOctave();
         var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, _semisInOct, constrainBy);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
@@ -678,7 +696,6 @@ module.exports = function() {
       function isRootNoteHigh() {
         var _rootNote = getRootNote();
         if (_rootNote > 0) {
-          console.log('root note is high: ', _rootNote);
           return true;
         } else {
           return false;
@@ -727,7 +744,6 @@ module.exports = function() {
           _diff = numChords - _chordOffsetArr.length;
           _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null);
         }
-        //console.log('_chordOffsetArr', _chordOffsetArr);
         return _chordOffsetArr;
       }
 
@@ -790,14 +806,17 @@ module.exports = function() {
       function makeChordSequence(numChords) {
         var _chordSeq = [];
         var _chordType = getChordType();
+        var _numSemitones = getNumSemisPerOctave();
+        //Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
+        var _eChordVal = _chordSeqOffsetArr[0] - _numSemitones;
+        //Chord from within intervals shift
         var _intervalIndexOffsetArr = getIntervalIndexOffsetArr(numChords);
-        console.log('_chordSeqOffsetArr', _chordSeqOffsetArr);
-        console.log('_intervalIndexOffsetArr', _intervalIndexOffsetArr);
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], _chordType, _intervalIndexOffsetArr[i]));
         }
-        //console.log('_chordSeq', _chordSeq);
+        //Adding extra chord
+        _chordSeq.push(createMusicalScale(numPadNotes, _eChordVal, _chordType, _intervalIndexOffsetArr[0]));
         return _chordSeq;
       }
 
