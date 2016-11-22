@@ -605,11 +605,11 @@ module.exports = function() {
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function errorCheckIntervalsArr(chosenIntervals, numNotes, semisInOct, repeat) {
+      function errorCheckIntervalsArr(chosenIntervals, numNotes, semisInOct, constrainBy) {
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _numUpperOcts;
-        var _repeat = repeat || 0;
+        var _constrainBy = constrainBy || 0;
         //When using non western scale
         //ensure numbers don't balloon
         if (semisInOct > avSettings.numSemitones) {
@@ -619,7 +619,7 @@ module.exports = function() {
         }
         //Error check
         if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts, _repeat);
+          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts, _constrainBy);
           console.log('added missing items to', _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
@@ -651,7 +651,7 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeat) {
+      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, constrainBy) {
         var _numOcts;
         var _allNotesScale = [];
         var _scaleArray = [];
@@ -659,7 +659,7 @@ module.exports = function() {
         var _rootAndOffset = _rootNote + centreNoteOffset;
         console.log('_rootAndOffset', _rootAndOffset);
         var _semisInOct = getNumSemisPerOctave();
-        var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, _semisInOct, repeat);
+        var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, _semisInOct, constrainBy);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
@@ -821,17 +821,17 @@ module.exports = function() {
         } else {
           _clementIntervals = 'closeIntervals';
         }
-        var _repeat = 0;
+        var _constrainBy = 0;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numClementArpNotes, _clementArpCNoteOffset, _clementIntervals, _intervalIndexOffset, _repeat);
+        return createMusicalScale(avSettings.numClementArpNotes, _clementArpCNoteOffset, _clementIntervals, _intervalIndexOffset, _constrainBy);
       }
 
       function createRainArpScale() {
         var _semisInOct = getNumSemisPerOctave();
         var _rainArpCNoteOffset = -Math.abs(_semisInOct * 2);
-        var _repeat = 1;
+        var _constrainBy = 1;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numRainArpNotes, _rainArpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _repeat);
+        return createMusicalScale(avSettings.numRainArpNotes, _rainArpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _constrainBy);
       }
 
       /*

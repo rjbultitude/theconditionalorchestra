@@ -17,6 +17,7 @@ module.exports = {
   sax: {volume : 0.75},
   numPadNotes: 4,
   numChords: 3,
+  chordSeqRepeat: 4,
   numRainArpNotes: 12,
   numClementArpNotes: 4, //should match closeIntervals
   numOctaves: 2,
