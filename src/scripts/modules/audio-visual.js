@@ -370,15 +370,16 @@ module.exports = function() {
       function playBass(scaleSet) {
         bass.play();
         //Play 1st note of each chord
-        console.log('bass scaleSetIndex', scaleSetIndex);
-        console.log('bass rate', scaleSet[scaleSetIndex][0]);
+        console.log('bass paying at rate', scaleSet[scaleSetIndex][0]);
         bass.rate(scaleSet[scaleSetIndex][0]);
+        //TODO could set the volume
+        //based on the amount of cloudCover
         bass.setVolume(0.5);
       }
 
-      function playBrassBass(scaleSetArray) {
+      function playBrassBaritone(scale) {
         brassBass.play();
-        brassBass.rate(scaleSetArray[brassOneScaleArrayIndex]);
+        brassBass.rate(scale[brassOneScaleArrayIndex]);
         brassBass.setVolume(1);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
@@ -387,12 +388,12 @@ module.exports = function() {
         }
       }
 
-      function playBrassBassTwo(scaleArray) {
-        var _newScaleArr = scaleArray.slice().reverse();
+      function playBrassBaritoneTwo(scale) {
+        var _newScaleArr = scale.slice().reverse();
         brassBass.play();
-        brassBass.rate(_newScaleArr[brassTwoScaleArrayIndex]);
+        brassBass.rate(_newScaleArr[brassTwoScaleArrayIndex] * 2);
         brassBass.setVolume(1);
-        if (brassTwoScaleArrayIndex >= scaleArray.length -1) {
+        if (brassTwoScaleArrayIndex >= scale.length -1) {
           brassTwoScaleArrayIndex = 0;
         } else {
           brassTwoScaleArrayIndex++;
@@ -404,7 +405,6 @@ module.exports = function() {
         longNote.disconnect();
         longNote.connect(soundFilter);
         longNote.play();
-        console.log('longNote rate', scale[_longNoteIndex]);
         longNote.rate(scale[_longNoteIndex]);
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
@@ -434,8 +434,6 @@ module.exports = function() {
           playBass(scaleSet);
         }
         playLongNote(scaleSet[scaleSetIndex]);
-        console.log('scaleSet', scaleSet);
-        console.log('scaleSetIndex', scaleSetIndex);
         //increment indices
         setScaleSetIndex(scaleSet);
         mainSeqCount++;
@@ -522,13 +520,13 @@ module.exports = function() {
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
           //playlogic
           if (wCheck.isWindy) {
-            playBrassBass(padScales[0]);
+            playBrassBaritone(padScales[scaleSetIndex]);
           }
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
           //playlogic
           if (wCheck.isWindy) {
-            playBrassBassTwo(padScales[0]);
+            playBrassBaritoneTwo(padScales[scaleSetIndex]);
           }
         });
         //Organ
@@ -984,7 +982,7 @@ module.exports = function() {
         cosVal = sketch.cos(angle);
         brassBass.pan(sinVal);
         brassBass2.pan(cosVal);
-        angle += 0.05;
+        angle += 0.03;
         if (sketch.frameCount % 350 === 0) {
           channel.publish('triggerBrassOne');
         }

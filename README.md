@@ -129,15 +129,17 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-After refactor the offset determined by pressure is a smaller range. Previously it spanned almost the whole allNotesArray and now it's just 12 notes either side of the centre freq
+Remove stop state for custom location submit button
 
 Fade all sounds in on start (using `masterGain`?)
 
-Remove stop state for custom location submit button
-
 Modulate master volume for windy conditions. Requires sounds to be routed through one channel
 
+Use different array of intervals for rain arpeggio for seventh chords
+
 Consider using `ozone` and `dew point` as another data input
+
+After refactor the offset determined by pressure is a smaller range. Previously it spanned almost the whole allNotesArray and now it's just 12 notes either side of the centre freq
 
 Create sequencer for stormy weather that uses brash percussive sounds
 
