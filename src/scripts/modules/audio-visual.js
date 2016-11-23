@@ -181,6 +181,7 @@ module.exports = function() {
     var brassTwoScaleArrayIndex = 0;
     var scaleSetIndex = 0;
     var padIndexCount = 0;
+    var arpStepCount = 0;
     var freezingFilterFreq = 2000;
     var masterGain = 0;
     //clear data
@@ -237,9 +238,7 @@ module.exports = function() {
       function getAllegrettoRhythm(scaleArray, includeFills) {
         var _newScaleArr = [];
         for (var i = 0; i < scaleArray.length; i++) {
-          //TODO is brittle
-          //will only work if array is long enough
-          if (i === 0 || i === 2) {
+          if (i % 2 === 0) {
             _newScaleArr.push(scaleArray[i]);
             _newScaleArr.push(0);
             _newScaleArr.push(scaleArray[i]);
@@ -249,7 +248,7 @@ module.exports = function() {
             if (includeFills) {
               _newScaleArr.push(0);
             }
-          } else if (i === 1 || i === 3) {
+          } else if (i % 2 !== 0) {
             _newScaleArr.push(scaleArray[i]);
             if (includeFills) {
               _newScaleArr.push(0);
@@ -315,8 +314,30 @@ module.exports = function() {
         return scaleSetIndex;
       }
 
-      function playClementArp(clementArpScaleArray) {
-        //Overwrite sequence with new notes
+      function getBlankArpSeq(notesArray) {
+        return notesArray.map(function() {
+          return 0;
+        });
+      }
+
+      function arpStepCallback(notesArray, blankArpSeq) {
+        var _numRepeats = notesArray.length * 2;
+        if (arpStepCount % _numRepeats === 0) {
+          if (clementArpPart.playingMelody) {
+            clementArpPart.replaceSequence('flttrBrass', blankArpSeq);
+            clementArpPart.playingMelody = false;
+            console.log('clementArpPart stopped', clementArpPart);
+          } else {
+            clementArpPart.replaceSequence('flttrBrass', notesArray);
+            clementArpPart.playingMelody = true;
+            console.log('clementArpPart started', clementArpPart);
+          }
+        }
+        console.log('arpStepCount', arpStepCount);
+        arpStepCount++;
+      }
+
+      function getAllegrettoRhythmType(clementArpScaleArray) {
         var _newNotesArray = [];
         //playlogic
         if (wCheck.isStormy || wCheck.isWindy) {
@@ -324,13 +345,20 @@ module.exports = function() {
         } else {
           _newNotesArray = getAllegrettoRhythm(clementArpScaleArray, false);
         }
-        console.log('clement arp _newNotesArray', _newNotesArray);
+        return _newNotesArray;
+      }
+
+      function playClementArp(clementArpScaleArray) {
+        //Overwrite sequence with new notes
+        var _newNotesArray = getAllegrettoRhythmType(clementArpScaleArray);
+        var _blankArpSeq = getBlankArpSeq(_newNotesArray);
         clementArpPhrase.sequence = _newNotesArray;
+        clementArpPart.playingMelody = true;
         clementArpPart.addPhrase(clementArpPhrase);
         clementArpPart.setBPM(104);
+        clementArpPart.onStep(function() { arpStepCallback(_newNotesArray, _blankArpSeq); });
         clementArpPart.start();
         clementArpPart.loop();
-        console.log('clementArpPart', clementArpPart);
       }
 
       function playRainArp(arpeggioType, rainArpScaleArray) {

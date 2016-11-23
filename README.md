@@ -130,6 +130,10 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Choral sound seems not to play when conditions are hot and clear 
+
+Stop the arpeggios after x number of `onstep` events. Then bring back in after x number of frames
+
 Remove stop state for custom location submit button
 
 Modulate padSounds volume for windy conditions
