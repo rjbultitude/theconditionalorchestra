@@ -181,7 +181,7 @@ module.exports = function() {
     var brassTwoScaleArrayIndex = 0;
     var scaleSetIndex = 0;
     var padIndexCount = 0;
-    var arpStepCount = 0;
+    var arpStepCount = 1;
     var freezingFilterFreq = 2000;
     var masterGain = 0;
     //clear data
@@ -320,23 +320,6 @@ module.exports = function() {
         });
       }
 
-      function arpStepCallback(notesArray, blankArpSeq) {
-        var _numRepeats = notesArray.length * 2;
-        if (arpStepCount % _numRepeats === 0) {
-          if (clementArpPart.playingMelody) {
-            clementArpPart.replaceSequence('flttrBrass', blankArpSeq);
-            clementArpPart.playingMelody = false;
-            console.log('clementArpPart stopped', clementArpPart);
-          } else {
-            clementArpPart.replaceSequence('flttrBrass', notesArray);
-            clementArpPart.playingMelody = true;
-            console.log('clementArpPart started', clementArpPart);
-          }
-        }
-        console.log('arpStepCount', arpStepCount);
-        arpStepCount++;
-      }
-
       function getAllegrettoRhythmType(clementArpScaleArray) {
         var _newNotesArray = [];
         //playlogic
@@ -348,15 +331,32 @@ module.exports = function() {
         return _newNotesArray;
       }
 
+      function arpStepCallback(notesArray, blankArpSeq) {
+        var _numRepeats = notesArray.length * 2;
+        if (arpStepCount % _numRepeats === 0) {
+          if (clementArpPart.playingMelody) {
+            //clementArpPart.replaceSequence('flttrBrass', blankArpSeq);
+            clementArpPart.replaceSequence('flttrBrass', [1, 2, 1, 2]);
+            clementArpPart.playingMelody = false;
+          } else {
+            clementArpPart.replaceSequence('flttrBrass', notesArray);
+            clementArpPart.playingMelody = true;
+          }
+        }
+        arpStepCount++;
+      }
+
       function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray = getAllegrettoRhythmType(clementArpScaleArray);
-        var _blankArpSeq = getBlankArpSeq(_newNotesArray);
+        var _newNotesArray = duplicateArray(getAllegrettoRhythmType(clementArpScaleArray), 6);
+        var _blankArpSeq = duplicateArray(getBlankArpSeq(_newNotesArray), 2);
+        _newNotesArray = _blankArpSeq.concat(_newNotesArray);
         clementArpPhrase.sequence = _newNotesArray;
-        clementArpPart.playingMelody = true;
+        console.log('clementArpPhrase.sequence', clementArpPhrase.sequence);
         clementArpPart.addPhrase(clementArpPhrase);
         clementArpPart.setBPM(104);
-        clementArpPart.onStep(function() { arpStepCallback(_newNotesArray, _blankArpSeq); });
+        //clementArpPart.playingMelody = true;
+        //clementArpPart.onStep(function() { arpStepCallback(_newNotesArray, _blankArpSeq); });
         clementArpPart.start();
         clementArpPart.loop();
       }
@@ -506,10 +506,11 @@ module.exports = function() {
             } else {
               choralSound.rate(scaleArray[i]);
             }
-            choralSound.setVolume(0.17);
+            console.log('weather is fine or freezing. playing choralSounds rate ', choralSound);
+            choralSound.setVolume(0.23);
           });
         } else {
-          console.log('weather is not fine. No choralSounds');
+          console.log('weather is not fine or freezing. No choralSounds');
         }
       }
 

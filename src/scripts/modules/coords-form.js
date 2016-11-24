@@ -114,7 +114,7 @@ module.exports = function() {
   }
 
   function useStaticData(statusString) {
-    var fetchStaticData = makeRequest('GET', 'data/static-data.json');
+    var fetchStaticData = makeRequest('GET', 'data/static-data-fine.json');
     fetchStaticData.then(function success(staticData) {
       var staticDataJSON = JSON.parse(staticData);
       handleNoGeoData(statusString, staticDataJSON);
