@@ -314,12 +314,6 @@ module.exports = function() {
         return scaleSetIndex;
       }
 
-      function getBlankArpSeq(notesArray) {
-        return notesArray.map(function() {
-          return 0;
-        });
-      }
-
       function getAllegrettoRhythmType(clementArpScaleArray) {
         var _newNotesArray = [];
         //playlogic
@@ -331,12 +325,11 @@ module.exports = function() {
         return _newNotesArray;
       }
 
-      function arpStepCallback(notesArray, blankArpSeq) {
+      function arpStepCallback(notesArray) {
         var _numRepeats = notesArray.length * 2;
         if (arpStepCount % _numRepeats === 0) {
           if (clementArpPart.playingMelody) {
-            //clementArpPart.replaceSequence('flttrBrass', blankArpSeq);
-            clementArpPart.replaceSequence('flttrBrass', [1, 2, 1, 2]);
+            clementArpPart.replaceSequence('flttrBrass', [0, 0, 0, 0]);
             clementArpPart.playingMelody = false;
           } else {
             clementArpPart.replaceSequence('flttrBrass', notesArray);
@@ -348,15 +341,13 @@ module.exports = function() {
 
       function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray = duplicateArray(getAllegrettoRhythmType(clementArpScaleArray), 6);
-        var _blankArpSeq = duplicateArray(getBlankArpSeq(_newNotesArray), 2);
-        _newNotesArray = _blankArpSeq.concat(_newNotesArray);
+        var _newNotesArray = getAllegrettoRhythmType(clementArpScaleArray);
         clementArpPhrase.sequence = _newNotesArray;
         console.log('clementArpPhrase.sequence', clementArpPhrase.sequence);
         clementArpPart.addPhrase(clementArpPhrase);
         clementArpPart.setBPM(104);
-        //clementArpPart.playingMelody = true;
-        //clementArpPart.onStep(function() { arpStepCallback(_newNotesArray, _blankArpSeq); });
+        clementArpPart.playingMelody = true;
+        //clementArpPart.onStep(function() { arpStepCallback(_newNotesArray); });
         clementArpPart.start();
         clementArpPart.loop();
       }
@@ -480,16 +471,6 @@ module.exports = function() {
         }
       }
 
-      function handlePrecipitation(rainArpScaleArray, rainArpPart) {
-        // Handle precipitation
-        // playlogic
-        if (wCheck.isPrecip) {
-          playRainArp(precipCategory(), rainArpScaleArray);
-        } else {
-          rainArpPart.stop(0);
-        }
-      }
-
       function handleChoralSound(scaleArray) {
         // playlogic
         if (wCheck.isFine || wCheck.isFreezing) {
@@ -545,8 +526,6 @@ module.exports = function() {
        * @return {boolean}               default value
        */
 			function playSounds(padScales, rainArpScaleArray, clementArpScaleArray) {
-        // Rain
-        handlePrecipitation(rainArpScaleArray, rainArpPart);
         // Fine conditions
         handleChoralSound(padScales[0]);
         // Play brass
@@ -564,9 +543,13 @@ module.exports = function() {
         });
         //Organ
         handlePadType(padScales);
-        //playlogic
-        if (wCheck.isClement) {
+        //Clement arpeggio
+        if (clementArpScaleArray.length > 0) {
           playClementArp(clementArpScaleArray);
+        }
+        //Rain arpeggio
+        if (rainArpScaleArray.length > 0) {
+          playRainArp(precipCategory(), rainArpScaleArray);
         }
         //Tell rest of app we're playing
         isPlaying = true;
@@ -811,6 +794,17 @@ module.exports = function() {
         return _numChords;
       }
 
+      function getNumExtraChords(maxNumChords) {
+        //playlogic
+        return sketch.map(
+          lwData.ozone.value,
+          lwData.ozone.min,
+          lwData.ozone.max,
+          0,
+          maxNumChords
+        );
+      }
+
       function getIntervalIndexOffsetKey() {
         var _key;
         //playlogic
@@ -835,20 +829,21 @@ module.exports = function() {
         return _chordIndexOffSetArr;
       }
 
-      function makeChordSequence(numChords) {
+      function makeChordSequence(numChords, numExtraChords) {
         var _chordSeq = [];
         var _chordType = getChordType();
         var _numSemitones = getNumSemisPerOctave();
         //Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
-        var _eChordVal = _chordSeqOffsetArr[0] - _numSemitones;
         //Chord from within intervals shift
         var _intervalIndexOffsetArr = getIntervalIndexOffsetArr(numChords);
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], _chordType, _intervalIndexOffsetArr[i]));
         }
         //Adding extra chord
-        _chordSeq.push(createMusicalScale(numPadNotes, _eChordVal, _chordType, _intervalIndexOffsetArr[0]));
+        for (var j = 0; j < numExtraChords; j++) {
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j] - _numSemitones, _chordType, _intervalIndexOffsetArr[j]));
+        }
         return _chordSeq;
       }
 
@@ -896,18 +891,21 @@ module.exports = function() {
 			function configureSounds() {
         var _organScaleSets = [];
         var _rainArpScaleArray = [0];
-        var _clementArpScaleArray = [0];
+        var _clementArpScaleArray = [];
         var _numChords = getNumChords();
+        var _numExtraChords = getNumExtraChords(_numChords);
+        console.log('_numExtraChords', _numExtraChords);
         // Set filter for pad sounds
         setFilter();
         //Make arrays of frequencies for playback
-        _organScaleSets = makeChordSequence(_numChords);
-        //TODO only create necessary scales
-        _rainArpScaleArray = createRainArpScale();
-        _clementArpScaleArray = createClementArpScale();
-        console.log('_organScaleSets', _organScaleSets);
-        console.log('_rainArpScaleArray', _rainArpScaleArray);
-        console.log('_clementArpScaleArray', _clementArpScaleArray);
+        _organScaleSets = makeChordSequence(_numChords, _numExtraChords);
+        //playlogic
+        if (wCheck.isPrecip) {
+          _rainArpScaleArray = createRainArpScale();
+        }
+        if (wCheck.isClement) {
+          _clementArpScaleArray = createClementArpScale();
+        }
         playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
 			}
 
@@ -998,6 +996,44 @@ module.exports = function() {
         }
 			};
 
+      function updateBrass() {
+        if (angle > 360) {
+          angle = 0;
+        }
+        sinVal = sketch.sin(angle);
+        cosVal = sketch.cos(angle);
+        brassBass.pan(sinVal);
+        brassBass2.pan(cosVal);
+        if (sketch.frameCount % 350 === 0) {
+          channel.publish('triggerBrassOne');
+        }
+        if (sketch.frameCount % 650 === 0) {
+          channel.publish('triggerBrassTwo');
+        }
+        angle += 0.03;
+      }
+
+      function updateFilter() {
+        if (freezingFilterFreq >= 5500) {
+          freezingFilterFreq = 0;
+        }
+        freezingFilter.freq(freezingFilterFreq);
+        freezingFilter.res(33);
+        freezingFilterFreq++;
+      }
+
+      function updateClementArp() {
+        if (sketch.frameCount % 1000 && sketch.frameCount !== 0) {
+          if (clementArpPart.playingMelody) {
+            clementArpPart.stop();
+            clementArpPart.playingMelody = false;
+          } else {
+            clementArpPart.play();
+            clementArpPart.playingMelody = true;
+          }
+        }
+      }
+
 			sketch.draw = function draw() {
         sketch.frameRate(30);
 				sketch.background(0, 0, 0, 0);
@@ -1008,28 +1044,13 @@ module.exports = function() {
           }
         }
         //Brass section
-        if (angle > 360) {
-          angle = 0;
-        }
-        sinVal = sketch.sin(angle);
-        cosVal = sketch.cos(angle);
-        brassBass.pan(sinVal);
-        brassBass2.pan(cosVal);
-        angle += 0.03;
-        if (sketch.frameCount % 350 === 0) {
-          channel.publish('triggerBrassOne');
-        }
-        if (sketch.frameCount % 650 === 0) {
-          channel.publish('triggerBrassTwo');
-        }
+        updateBrass();
         //Update filter
-        if (freezingFilterFreq >= 5500) {
-          freezingFilterFreq = 0;
-        }
-        freezingFilter.freq(freezingFilterFreq);
-        freezingFilter.res(33);
-        freezingFilterFreq++;
+        updateFilter();
+        //Update clement arp
+        updateClementArp();
         //Master volume
+        //Fade in on play
         sketch.masterVolume(masterGain);
         if (masterGain < 0.9) {
           masterGain += 0.01;

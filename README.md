@@ -130,9 +130,9 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Choral sound seems not to play when conditions are hot and clear 
-
-Stop the arpeggios after x number of `onstep` events. Then bring back in after x number of frames
+Consider reflow of program flow so that either:
+ * The maximum number of octaves for _all_ sounds is determined and then one master array used for all
+* Create a web worker thread for the creation of each all notes array
 
 Remove stop state for custom location submit button
 
@@ -140,9 +140,7 @@ Modulate padSounds volume for windy conditions
 
 Use different array of intervals for rain arpeggio for seventh chords
 
-Consider using `ozone` and `dew point` as another data input
-
-After refactor the offset determined by pressure is a smaller range. Previously it spanned almost the whole allNotesArray and now it's just 12 notes either side of the centre freq
+Consider using `dew point` as another data input
 
 Create sequencer for stormy weather that uses brash percussive sounds
 
