@@ -209,6 +209,32 @@ module.exports = function() {
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
 
+      function getNumChords() {
+        var _numChords;
+        var _numExtraChords;
+        //playlogic
+        // We use a non western scale for freezing
+        // so only play two chords
+        if (wCheck.isStormy && wCheck.isFreezing) {
+          _numChords = 2;
+        } else if (wCheck.isStormy || wCheck.isFine) {
+          _numChords = 3;
+        } else {
+          _numChords = avSettings.numChords; //4
+        }
+        _numExtraChords = sketch.map(
+          lwData.ozone.value,
+          lwData.ozone.min,
+          lwData.ozone.max,
+          0,
+          _numChords
+        );
+        return {
+          numChords: _numChords,
+          numExtraChords: _numExtraChords
+        };
+      }
+
       function precipCategory() {
         if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
           return 'hard';
@@ -302,10 +328,7 @@ module.exports = function() {
       }
 
       function setScaleSetIndex(scaleSet) {
-        //Using two because we have an extra chord
-        //as the last item in the array
-        //TODO extend to handle extra chords
-        var _numExtraChords = 1;
+        var _numExtraChords = getNumChords().numExtraChords;
         if (scaleSetIndex >= scaleSet.length - 1 - _numExtraChords) {
           scaleSetIndex = 0;
         } else {
@@ -778,33 +801,6 @@ module.exports = function() {
         return _chordType;
       }
 
-      function getNumChords() {
-        var _numChords;
-        //playlogic
-        // We use a non western scale for freezing
-        // so only play two chords
-        if (wCheck.isStormy && wCheck.isFreezing) {
-          _numChords = 2;
-        } else if (wCheck.isStormy || wCheck.isFine) {
-          _numChords = 3;
-        } else {
-          _numChords = avSettings.numChords; //4
-        }
-        console.log('_numChords', _numChords);
-        return _numChords;
-      }
-
-      function getNumExtraChords(maxNumChords) {
-        //playlogic
-        return sketch.map(
-          lwData.ozone.value,
-          lwData.ozone.min,
-          lwData.ozone.max,
-          0,
-          maxNumChords
-        );
-      }
-
       function getIntervalIndexOffsetKey() {
         var _key;
         //playlogic
@@ -830,6 +826,8 @@ module.exports = function() {
       }
 
       function makeChordSequence(numChords, numExtraChords) {
+        console.log('numChords', numChords);
+        console.log('numExtraChords', numExtraChords);
         var _chordSeq = [];
         var _chordType = getChordType();
         var _numSemitones = getNumSemisPerOctave();
@@ -892,13 +890,10 @@ module.exports = function() {
         var _organScaleSets = [];
         var _rainArpScaleArray = [0];
         var _clementArpScaleArray = [];
-        var _numChords = getNumChords();
-        var _numExtraChords = getNumExtraChords(_numChords);
-        console.log('_numExtraChords', _numExtraChords);
         // Set filter for pad sounds
         setFilter();
         //Make arrays of frequencies for playback
-        _organScaleSets = makeChordSequence(_numChords, _numExtraChords);
+        _organScaleSets = makeChordSequence(getNumChords().numChords, getNumChords().numExtraChords);
         //playlogic
         if (wCheck.isPrecip) {
           _rainArpScaleArray = createRainArpScale();
