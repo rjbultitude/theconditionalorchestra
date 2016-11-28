@@ -44,6 +44,8 @@ module.exports = function() {
   var rainArpDropPhrase;
   var rainArpDropLightPhrase;
   var rainArpPart;
+  //windChime
+  var windChime;
   //Globals
   var soundFilter;
   var freezingFilter;
@@ -183,6 +185,14 @@ module.exports = function() {
     var padIndexCount = 0;
     var arpStepCount = 1;
     var freezingFilterFreq = 2000;
+    var windChimeRate = 1;
+    var windRateAngleSpeed = sketch.map(
+      lwData.windSpeed.value,
+      lwData.windSpeed.min,
+      lwData.windSpeed.max,
+      0,
+      10
+    );
     var masterGain = 0;
     //clear data
     padSounds = [];
@@ -574,6 +584,7 @@ module.exports = function() {
         if (rainArpScaleArray.length > 0) {
           playRainArp(precipCategory(), rainArpScaleArray);
         }
+        windChime.loop();
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', audioSupported);
@@ -937,6 +948,7 @@ module.exports = function() {
           brassBass2 = sketch.loadSound('/audio/brassbass.mp3');
           brassStabSound = sketch.loadSound('/audio/brass-stab-C3.mp3');
           longNote = sketch.loadSound('/audio/longnote-C3.mp3');
+          windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
 			};
 
@@ -1016,6 +1028,12 @@ module.exports = function() {
         }
       }
 
+      function upDateWindChime() {
+        windChime.rate(windChimeRate);
+        windRateAngle += windRateAngleSpeed;
+        windChimeRate += sketch.sin(windRateAngle);
+      }
+
 			sketch.draw = function draw() {
         sketch.frameRate(30);
 				sketch.background(0, 0, 0, 0);
@@ -1031,6 +1049,8 @@ module.exports = function() {
         updateFilter();
         //Update clement arp
         updateClementArp();
+        //Update windChime rate
+        upDateWindChime();
         //Master volume
         //Fade in on play
         sketch.masterVolume(masterGain);
