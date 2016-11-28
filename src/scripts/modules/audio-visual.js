@@ -809,22 +809,21 @@ module.exports = function() {
         return _chordIndexOffSetArr;
       }
 
-      function makeChordSequence(numChords, numExtraChords) {
+      function makeChordSequence(numChords, numExtraChords, numSemisPerOctave) {
         console.log('numChords', numChords);
         console.log('numExtraChords', numExtraChords);
         var _chordSeq = [];
         var _chordType = getChordType();
-        var _numSemitones = getNumSemisPerOctave();
         //Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
         //Chord from within intervals shift
-        var _intervalIndexOffsetArr = getIntervalIndexOffsetArr(numChords);
+        var _intIndOffsetArr = getIntervalIndexOffsetArr(numChords);
         for (var i = 0; i < numChords; i++) {
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], _chordType, _intervalIndexOffsetArr[i]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], _chordType, _intIndOffsetArr[i]));
         }
         //Adding extra chord
         for (var j = 0; j < numExtraChords; j++) {
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j] - _numSemitones, _chordType, _intervalIndexOffsetArr[j]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j] - numSemisPerOctave, _chordType, _intIndOffsetArr[j]));
         }
         return _chordSeq;
       }
@@ -837,29 +836,28 @@ module.exports = function() {
         soundFilter.res(20);
       }
 
-      function createClementArpScale() {
-        var _clementArpCNoteOffset = 0;
-        var _clementIntervals;
+      function createClementArpScale(numSemisPerOctave) {
+        var _cArpCNoteOffset = 0;
+        var _cIntervals;
         //playlogic
         if (wCheck.isFreezing) {
-          _clementArpCNoteOffset = -Math.abs(getNumSemisPerOctave());
+          _cArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
         if (wCheck.isStormy || wCheck.isWindy) {
-          _clementIntervals = 'closeIntervalsAlt';
+          _cIntervals = 'closeIntervalsAlt';
         } else {
-          _clementIntervals = 'closeIntervals';
+          _cIntervals = 'closeIntervals';
         }
         var _constrainBy = 0;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numClementArpNotes, _clementArpCNoteOffset, _clementIntervals, _intervalIndexOffset, _constrainBy);
+        return createMusicalScale(avSettings.numCArpNotes, _cArpCNoteOffset, _cIntervals, _intervalIndexOffset, _constrainBy);
       }
 
-      function createRainArpScale() {
-        var _semisInOct = getNumSemisPerOctave();
-        var _rainArpCNoteOffset = -Math.abs(_semisInOct * 2);
+      function createRainArpScale(numSemisPerOctave) {
+        var _rArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
         var _constrainBy = 1;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numRainArpNotes, _rainArpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _constrainBy);
+        return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _constrainBy);
       }
 
       /*
@@ -874,16 +872,17 @@ module.exports = function() {
         var _organScaleSets = [];
         var _rainArpScaleArray = [0];
         var _clementArpScaleArray = [];
+        var _numSemisPerOctave = getNumSemisPerOctave();
         // Set filter for pad sounds
         setFilter();
         //Make arrays of frequencies for playback
-        _organScaleSets = makeChordSequence(getNumChords().numChords, getNumChords().numExtraChords);
+        _organScaleSets = makeChordSequence(getNumChords().numChords, getNumChords().numExtraChords, _numSemisPerOctave);
         //playlogic
         if (wCheck.isPrecip) {
-          _rainArpScaleArray = createRainArpScale();
+          _rainArpScaleArray = createRainArpScale(_numSemisPerOctave);
         }
         if (wCheck.isClement) {
-          _clementArpScaleArray = createClementArpScale();
+          _clementArpScaleArray = createClementArpScale(_numSemisPerOctave);
         }
         playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
 			}
