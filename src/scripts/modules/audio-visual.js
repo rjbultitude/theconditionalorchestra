@@ -100,11 +100,6 @@ module.exports = function() {
     }, avSettings.fadeTime * 1000);
   }
 
-  function fadeBass() {
-    bass.fade(0, avSettings.fadeTime);
-    bass.stop();
-  }
-
   function killCurrentSounds() {
       // Stop arrpeggios
       rainArpPart.stop(0);
@@ -112,22 +107,22 @@ module.exports = function() {
       rainArpPart.removePhrase('rainDropsLight');
       clementArpPart.stop(0);
       clementArpPart.removePhrase('flttrBrass');
-      // Fade organ sounds
+      // Fades organ sounds
       padSounds.forEach(fadeOutPadSounds);
-      // Fade choral
       choralSounds.forEach(fadeChoralSounds);
-      // Fade bass
-      fadeBass();
-      // Fade longNote
       longNote.fade(0, avSettings.fadeTime);
-      longNote.stop();
-      //Fade brassbass
       brassBass.fade(0, avSettings.fadeTime);
-      brassBass.stop();
       brassBass2.fade(0, avSettings.fadeTime);
-      brassBass2.stop();
       windChime.fade(0, avSettings.fadeTime);
-      windChime.stop();
+      bass.fade(0, avSettings.fadeTime);
+      setTimeout(function(){
+        longNote.stop();
+        brassBass.stop();
+        brassBass2.stop();
+        windChime.stop();
+        bass.stop();
+      }, avSettings.fadeTime * 1000);
+      //Unsubs
       publishBrassOne.unsubscribe();
       publishBrassTwo.unsubscribe();
       isPlaying = false;
@@ -580,6 +575,7 @@ module.exports = function() {
           playRainArp(precipCategory(), rainArpScaleArray);
         }
         windChime.loop();
+        windChime.rate(windChimeRate);
         windChime.setVolume(0.4);
         //Tell rest of app we're playing
         isPlaying = true;
@@ -990,11 +986,11 @@ module.exports = function() {
 				avSettings.animAmount = Math.round(lwData.windSpeed.value);
 				avSettings.noiseInc = sketch.map(avSettings.animAmount, lwData.windSpeed.min, lwData.windSpeed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
-        windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.7, 1.3);
+        windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.6, 1.4);
         console.log('windChimeRate', windChimeRate);
-        //--------------------
-        // handle sounds
-        // --------------------
+        //--------------------------
+        // Handle sounds / Start app
+        // -------------------------
         if (audioSupported) {
           configureSounds();
         } else {
@@ -1056,10 +1052,6 @@ module.exports = function() {
         }
       }
 
-      function upDateWindChime() {
-        windChime.rate(windChimeRate);
-      }
-
 			sketch.draw = function draw() {
         sketch.frameRate(30);
 				sketch.background(0, 0, 0, 0);
@@ -1082,8 +1074,6 @@ module.exports = function() {
         }
         //Update filter
         updateFilter();
-        //Update windChime rate
-        upDateWindChime();
         //Master volume
         //Fade in on play
         sketch.masterVolume(masterGain);
