@@ -594,22 +594,6 @@ module.exports = function() {
         return _numSemitones;
       }
 
-      /*
-        Use an equal temperament scale
-        Major scale for clement weather
-        Minor octave for anything else
-        Returns an object containing
-        the complete musical scale and the
-        number of semitones in an octave
-      */
-      function createEqTempPitchesArr(numOctaves) {
-        var _allNotesArray = [];
-        var _numSemitones = getNumSemisPerOctave();
-        var _numOctaves = numOctaves || avSettings.numOctaves;
-        _allNotesArray = getFreqScales.createEqTempMusicalScale(1, _numOctaves, _numSemitones);
-        return _allNotesArray;
-      }
-
       function getRootNote() {
         //Add global values to the main data object
         //Pressure determines root note. Range 2.5 octaves
@@ -651,7 +635,7 @@ module.exports = function() {
         var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
         console.log('creating array with ' + _totalOctaves + ' octaves ');
         return {
-          allNotesScale: createEqTempPitchesArr(_totalOctaves),
+          allNotesScale: getFreqScales.createEqTempMusicalScale(1, _totalOctaves, semisInOct),
           numOctaves: _totalOctaves
         };
       }
