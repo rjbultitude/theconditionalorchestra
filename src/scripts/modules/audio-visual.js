@@ -126,6 +126,8 @@ module.exports = function() {
       brassBass.stop();
       brassBass2.fade(0, avSettings.fadeTime);
       brassBass2.stop();
+      windChime.fade(0, avSettings.fadeTime);
+      windChime.stop();
       publishBrassOne.unsubscribe();
       publishBrassTwo.unsubscribe();
       isPlaying = false;
@@ -140,13 +142,13 @@ module.exports = function() {
 
   function makeDropSound(time, playbackRate) {
     dropSound.rate(playbackRate);
-    dropSound.setVolume(0.25);
+    dropSound.setVolume(0.2);
     dropSound.play(time);
   }
 
   function makeDropLightSound(time, playbackRate) {
     dropLightSound.rate(playbackRate);
-    dropLightSound.setVolume(0.25);
+    dropLightSound.setVolume(0.2);
     dropLightSound.play(time);
   }
 
@@ -186,13 +188,6 @@ module.exports = function() {
     var arpStepCount = 1;
     var freezingFilterFreq = 2000;
     var windChimeRate = 1;
-    var windRateAngleSpeed = sketch.map(
-      lwData.windSpeed.value,
-      lwData.windSpeed.min,
-      lwData.windSpeed.max,
-      0,
-      10
-    );
     var masterGain = 0;
     //clear data
     padSounds = [];
@@ -396,7 +391,6 @@ module.exports = function() {
         } else {
           rainArpPart.addPhrase(rainArpDropLightPhrase);
         }
-        rainArpPart.setBPM(60);
         // Type logic
         switch (arpeggioType) {
           case 'hard':
@@ -412,11 +406,12 @@ module.exports = function() {
             console.log('softest');
             break;
           default:
+            rainArpPart.setBPM(110);
             console.log('problem with arrpeggio ', arpeggioType);
         }
+        rainArpPart.playingMelody = true;
         rainArpPart.start();
         rainArpPart.loop();
-        console.log('rainArpPart', rainArpPart);
       }
 
       function playBass(scaleSet) {
@@ -585,6 +580,7 @@ module.exports = function() {
           playRainArp(precipCategory(), rainArpScaleArray);
         }
         windChime.loop();
+        windChime.setVolume(0.4);
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', audioSupported);
@@ -868,11 +864,25 @@ module.exports = function() {
         return createMusicalScale(avSettings.numCArpNotes, _cArpCNoteOffset, _cIntervals, _intervalIndexOffset, _constrainBy);
       }
 
+      function hasWordSeventh(intervalString) {
+        var hasSeventh = /Seventh/;
+        return hasSeventh.test(intervalString);
+      }
+
       function createRainArpScale(numSemisPerOctave) {
         var _rArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
         var _constrainBy = 1;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, 'safeIntervals', _intervalIndexOffset, _constrainBy);
+        var _intervalType;
+        if (hasWordSeventh(getChordType())) {
+          console.log('hasWordSeventh');
+          _intervalType = 'safeSeventhIntervals';
+          _constrainBy = 2;
+        } else {
+          console.log('does not hasWordSeventh');
+          _intervalType = 'safeIntervals';
+        }
+        return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _constrainBy);
       }
 
       /*
@@ -885,7 +895,7 @@ module.exports = function() {
        */
 			function configureSounds() {
         var _organScaleSets = [];
-        var _rainArpScaleArray = [0];
+        var _rainArpScaleArray = [];
         var _clementArpScaleArray = [];
         var _numSemisPerOctave = getNumSemisPerOctave();
         // Set filter for pad sounds
@@ -980,6 +990,8 @@ module.exports = function() {
 				avSettings.animAmount = Math.round(lwData.windSpeed.value);
 				avSettings.noiseInc = sketch.map(avSettings.animAmount, lwData.windSpeed.min, lwData.windSpeed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
+        windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.7, 1.3);
+        console.log('windChimeRate', windChimeRate);
         //--------------------
         // handle sounds
         // --------------------
@@ -1017,21 +1029,35 @@ module.exports = function() {
       }
 
       function updateClementArp() {
-        if (sketch.frameCount % 1000 && sketch.frameCount !== 0) {
+        if (sketch.frameCount % 1200 === 0 && sketch.frameCount !== 0) {
           if (clementArpPart.playingMelody) {
             clementArpPart.stop();
             clementArpPart.playingMelody = false;
+            console.log('clementArpPart should have stopped');
           } else {
-            clementArpPart.play();
+            clementArpPart.start();
             clementArpPart.playingMelody = true;
+            console.log('clementArpPart should be playing');
+          }
+        }
+      }
+
+      function updateRainArp() {
+        if (sketch.frameCount % 1800 === 0 && sketch.frameCount !== 0) {
+          if (rainArpPart.playingMelody) {
+            rainArpPart.stop();
+            rainArpPart.playingMelody = false;
+            console.log('rainArpPart should have stopped');
+          } else {
+            rainArpPart.start();
+            rainArpPart.playingMelody = true;
+            console.log('rainArpPart should be playing');
           }
         }
       }
 
       function upDateWindChime() {
         windChime.rate(windChimeRate);
-        windRateAngle += windRateAngleSpeed;
-        windChimeRate += sketch.sin(windRateAngle);
       }
 
 			sketch.draw = function draw() {
@@ -1044,11 +1070,18 @@ module.exports = function() {
           }
         }
         //Brass section
-        updateBrass();
+        if (wCheck.isWindy) {
+          updateBrass();
+        }
+        //Update clement arp
+        if (wCheck.isClement) {
+          updateClementArp();
+        }
+        if (wCheck.isPrecip) {
+          updateRainArp();
+        }
         //Update filter
         updateFilter();
-        //Update clement arp
-        updateClementArp();
         //Update windChime rate
         upDateWindChime();
         //Master volume
