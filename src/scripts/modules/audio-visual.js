@@ -818,6 +818,10 @@ module.exports = function() {
         var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
         //Chord from within intervals shift
         var _intIndOffsetArr = getIntervalIndexOffsetArr(numChords);
+        //TODO every time we create a musical scale
+        //we're making an allNotesArray
+        //Consider making one musical scale at this point by
+        //calculating the largestNumber here
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], _chordType, _intIndOffsetArr[i]));
         }
