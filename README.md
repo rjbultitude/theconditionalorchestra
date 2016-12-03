@@ -122,6 +122,7 @@ A precipType of `snow` - plays slowest - Slower and reverse dropSound
 ###Clement Arpeggio
 Applied to all clement conditions. Plays one type of sequence (pitches and stops) when
 weather _ishumid_ and another when it's not.
+A randomly selected note from the sequence array is played when the sequence has played twice.
 
 ###Long Notes
 Plays for any type of weather. The note in each chord it plays depends on the _windBearing_.
@@ -150,6 +151,8 @@ Playback rate bug - seems to exist only in Chrome
 Sequencer volume bug seems to be Chrome only
 
 Sequencer playback browser tab issue is in Chrome, Firefox and Safari
+
+Sequencer onStep only counts the steps in one single pass rather than the loop
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
 

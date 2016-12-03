@@ -49,6 +49,10 @@ textarea {
       text-decoration: none;
     }
   }
+
+  .cta {
+    min-width: 220px;
+  }
 }
 
 .form-coords {
@@ -64,7 +68,6 @@ textarea {
   }
 
   .cta {
-    @extend %cta-base;
     padding: 11px;
     font-size: 16px;
     min-width: 100px;

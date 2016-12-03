@@ -32,6 +32,7 @@ module.exports = function() {
   //Windy/ Brass
   var brassBaritone;
   var brassBaritone2;
+  var brassBaritone3;
   //clement / brass
   var brassStabSound;
   var clementArpPhrase;
@@ -49,6 +50,7 @@ module.exports = function() {
   //Globals
   var soundFilter;
   var freezingFilter;
+  var reverb;
   //pan
   var angle = 0;
   var sinVal = 0;
@@ -113,12 +115,14 @@ module.exports = function() {
       longNote.fade(0, avSettings.fadeTime);
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
+      brassBaritone3.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       setTimeout(function(){
         longNote.stop();
         brassBaritone.stop();
         brassBaritone2.stop();
+        brassBaritone3.stop();
         windChime.stop();
         bass.stop();
       }, avSettings.fadeTime * 1000);
@@ -132,7 +136,7 @@ module.exports = function() {
 
   function makeFlttrBrassSound(time, playbackRate) {
     brassStabSound.rate(playbackRate);
-    brassStabSound.setVolume(0.25);
+    brassStabSound.setVolume(0.15);
     brassStabSound.play(time);
   }
 
@@ -164,6 +168,7 @@ module.exports = function() {
   function createP5SoundObjs() {
     soundFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
+    reverb = new P5.Reverb();
     // Create phrase: name, callback, sequence
     rainArpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
     rainArpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
@@ -184,6 +189,7 @@ module.exports = function() {
     var arpStepCount = 1;
     var freezingFilterFreq = 2000;
     var windChimeRate = 1;
+    var windChimeVol = 0.4;
     var masterGain = 0;
     //clear data
     padSounds = [];
@@ -209,6 +215,10 @@ module.exports = function() {
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
+
+      channel.subscribe('allStopped', function() {
+        sketch.noLoop();
+      });
 
       function getNumChords() {
         var _numChords;
@@ -349,12 +359,16 @@ module.exports = function() {
         return _newNotesArray;
       }
 
-      function arpStepCallback(notesArray) {
-        var _numRepeats = notesArray.length * 2;
-        if (arpStepCount % _numRepeats === 0 && arpStepCount !== 0) {
-          brassReverb.play();
-        }
-        arpStepCount++;
+      function clemArpEnd(notesArray) {
+        var _numRepeats = Math.round(notesArray.length / 2);
+        var _randomNote = sketch.random(notesArray);
+        //Setup reverb
+        brassBaritone3.disconnect();
+        reverb.process(brassBaritone3, 4, 10);
+        brassBaritone3.play();
+        brassBaritone3.rate(_randomNote * 3);
+        brassBaritone3.setVolume(1);
+        console.log('brassBaritone3', brassBaritone3);
       }
 
       function playClementArp(clementArpScaleArray) {
@@ -362,11 +376,10 @@ module.exports = function() {
         var _newNotesArray = getAllegrettoRhythmType(clementArpScaleArray);
         clementArpPhrase.sequence = _newNotesArray;
         console.log('clementArpPhrase.sequence', clementArpPhrase.sequence);
+        //Play Sequence
         clementArpPart.addPhrase(clementArpPhrase);
         clementArpPart.setBPM(104);
         clementArpPart.playingMelody = true;
-        clementArpPart.onStep(function() { arpStepCallback(_newNotesArray); });
-        clementArpPart.start();
         clementArpPart.loop();
       }
 
@@ -400,7 +413,6 @@ module.exports = function() {
             console.log('problem with arrpeggio ', arpeggioType);
         }
         rainArpPart.playingMelody = true;
-        rainArpPart.start();
         rainArpPart.loop();
       }
 
@@ -571,7 +583,7 @@ module.exports = function() {
         }
         windChime.loop();
         windChime.rate(windChimeRate);
-        windChime.setVolume(0.4);
+        windChime.setVolume(windChimeVol);
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', audioSupported);
@@ -947,6 +959,7 @@ module.exports = function() {
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brassbass.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brassbass.mp3');
+          brassBaritone3 = sketch.loadSound('/audio/brassbass.mp3');
           brassStabSound = sketch.loadSound('/audio/brass-stab-C3.mp3');
           longNote = sketch.loadSound('/audio/longnote-C3.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
@@ -981,7 +994,8 @@ module.exports = function() {
 				avSettings.animAmount = Math.round(lwData.windSpeed.value);
 				avSettings.noiseInc = sketch.map(avSettings.animAmount, lwData.windSpeed.min, lwData.windSpeed.max, 0.01, 0.05);
 				temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
-        windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.6, 1.4);
+        windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.5, 1.4);
+        windChimeVol = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.1, 0.6);
         console.log('windChimeRate', windChimeRate);
         //--------------------------
         // Handle sounds / Start app
@@ -1020,13 +1034,15 @@ module.exports = function() {
       }
 
       function updateClementArp() {
+        var _clemArpPhrase = clementArpPart.getPhrase('flttrBrass');
         if (sketch.frameCount % 1200 === 0 && sketch.frameCount !== 0) {
           if (clementArpPart.playingMelody) {
             clementArpPart.stop();
             clementArpPart.playingMelody = false;
+            clemArpEnd(_clemArpPhrase.sequence);
             console.log('clementArpPart should have stopped');
           } else {
-            clementArpPart.start();
+            clementArpPart.loop();
             clementArpPart.playingMelody = true;
             console.log('clementArpPart should be playing');
           }
@@ -1040,7 +1056,7 @@ module.exports = function() {
             rainArpPart.playingMelody = false;
             console.log('rainArpPart should have stopped');
           } else {
-            rainArpPart.start();
+            rainArpPart.loop();
             rainArpPart.playingMelody = true;
             console.log('rainArpPart should be playing');
           }
