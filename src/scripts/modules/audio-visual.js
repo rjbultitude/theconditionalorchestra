@@ -30,8 +30,8 @@ module.exports = function() {
   //bass
   var bass;
   //Windy/ Brass
-  var brassBass;
-  var brassBass2;
+  var brassBaritone;
+  var brassBaritone2;
   //clement / brass
   var brassStabSound;
   var clementArpPhrase;
@@ -111,14 +111,14 @@ module.exports = function() {
       padSounds.forEach(fadeOutPadSounds);
       choralSounds.forEach(fadeChoralSounds);
       longNote.fade(0, avSettings.fadeTime);
-      brassBass.fade(0, avSettings.fadeTime);
-      brassBass2.fade(0, avSettings.fadeTime);
+      brassBaritone.fade(0, avSettings.fadeTime);
+      brassBaritone2.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       setTimeout(function(){
         longNote.stop();
-        brassBass.stop();
-        brassBass2.stop();
+        brassBaritone.stop();
+        brassBaritone2.stop();
         windChime.stop();
         bass.stop();
       }, avSettings.fadeTime * 1000);
@@ -351,14 +351,8 @@ module.exports = function() {
 
       function arpStepCallback(notesArray) {
         var _numRepeats = notesArray.length * 2;
-        if (arpStepCount % _numRepeats === 0) {
-          if (clementArpPart.playingMelody) {
-            clementArpPart.replaceSequence('flttrBrass', [0, 0, 0, 0]);
-            clementArpPart.playingMelody = false;
-          } else {
-            clementArpPart.replaceSequence('flttrBrass', notesArray);
-            clementArpPart.playingMelody = true;
-          }
+        if (arpStepCount % _numRepeats === 0 && arpStepCount !== 0) {
+          brassReverb.play();
         }
         arpStepCount++;
       }
@@ -371,7 +365,7 @@ module.exports = function() {
         clementArpPart.addPhrase(clementArpPhrase);
         clementArpPart.setBPM(104);
         clementArpPart.playingMelody = true;
-        //clementArpPart.onStep(function() { arpStepCallback(_newNotesArray); });
+        clementArpPart.onStep(function() { arpStepCallback(_newNotesArray); });
         clementArpPart.start();
         clementArpPart.loop();
       }
@@ -421,9 +415,9 @@ module.exports = function() {
       }
 
       function playBrassBaritone(scale) {
-        brassBass.play();
-        brassBass.rate(scale[brassOneScaleArrayIndex]);
-        brassBass.setVolume(0.9);
+        brassBaritone.play();
+        brassBaritone.rate(scale[brassOneScaleArrayIndex]);
+        brassBaritone.setVolume(0.9);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
         } else {
@@ -435,9 +429,9 @@ module.exports = function() {
         var _newScaleArr = scale.slice().reverse();
         var _rateMultArr = [1, 2];
         var _randomRateMultVal = sketch.random(_rateMultArr);
-        brassBass.play();
-        brassBass.rate(_newScaleArr[brassTwoScaleArrayIndex] * _randomRateMultVal);
-        brassBass.setVolume(0.4);
+        brassBaritone2.play();
+        brassBaritone2.rate(_newScaleArr[brassTwoScaleArrayIndex] * _randomRateMultVal);
+        brassBaritone2.setVolume(0.4);
         if (brassTwoScaleArrayIndex >= scale.length -1) {
           brassTwoScaleArrayIndex = 0;
         } else {
@@ -951,8 +945,8 @@ module.exports = function() {
           dropSound = sketch.loadSound('/audio/drop.mp3');
           dropLightSound = sketch.loadSound('/audio/drop-light.mp3');
           bass = sketch.loadSound('/audio/bass.mp3');
-          brassBass = sketch.loadSound('/audio/brassbass.mp3');
-          brassBass2 = sketch.loadSound('/audio/brassbass.mp3');
+          brassBaritone = sketch.loadSound('/audio/brassbass.mp3');
+          brassBaritone2 = sketch.loadSound('/audio/brassbass.mp3');
           brassStabSound = sketch.loadSound('/audio/brass-stab-C3.mp3');
           longNote = sketch.loadSound('/audio/longnote-C3.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
@@ -1005,8 +999,8 @@ module.exports = function() {
         }
         sinVal = sketch.sin(angle);
         cosVal = sketch.cos(angle);
-        brassBass.pan(sinVal);
-        brassBass2.pan(cosVal);
+        brassBaritone.pan(sinVal);
+        brassBaritone2.pan(cosVal);
         if (sketch.frameCount % 350 === 0) {
           channel.publish('triggerBrassOne');
         }
