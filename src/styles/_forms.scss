@@ -99,6 +99,13 @@ textarea {
   .button-close {
     top: $padding/2;
     right: $padding/2;
+    transition: transform 0.5s;
+
+    &:hover,
+    &:active,
+    &:focus {
+      transform: rotate(45deg);
+    }
 
     @media all and (max-width: $bp-mobile) {
       top: $padding/3;

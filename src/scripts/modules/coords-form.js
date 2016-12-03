@@ -335,20 +335,20 @@ module.exports = function() {
     }
   }
 
-  function setStartState() {
-    channel.publish('stop');
+  function setStartState(autoStart) {
+    channel.publish('stop', autoStart);
   }
 
   function setStopState() {
     isPlaying = true;
     userLocBtnEl.innerHTML = 'Stop orchestra';
-    coordsFormSubmitBtnEl.innerHTML = 'Stop';
+    //coordsFormSubmitBtnEl.innerHTML = 'Stop';
   }
 
   function customLocationSubmit(e) {
     e.preventDefault();
     if (isPlaying) {
-      setStartState();
+      setStartState(true);
     } else {
       useCustomLocation();
     }
@@ -400,12 +400,15 @@ module.exports = function() {
     setStopState();
   });
 
-  channel.subscribe('allStopped', function() {
+  channel.subscribe('allStopped', function(autoStart) {
     isPlaying = false;
     updateStatus('start');
     userLocBtnEl.innerHTML = 'Play my weather';
     coordsFormSubmitBtnEl.innerHTML = 'Play';
     visualLaunchEl.style.display = 'none';
+    if (autoStart) {
+      useCustomLocation();
+    }
   });
 
   //Init

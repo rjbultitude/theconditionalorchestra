@@ -100,7 +100,7 @@ module.exports = function() {
     }, avSettings.fadeTime * 1000);
   }
 
-  function killCurrentSounds() {
+  function killCurrentSounds(autoStart) {
       // Stop arrpeggios
       rainArpPart.stop(0);
       rainArpPart.removePhrase('rainDrops');
@@ -126,7 +126,8 @@ module.exports = function() {
       publishBrassOne.unsubscribe();
       publishBrassTwo.unsubscribe();
       isPlaying = false;
-      channel.publish('allStopped');
+      console.log('autoStart', autoStart);
+      channel.publish('allStopped', autoStart);
   }
 
   function makeFlttrBrassSound(time, playbackRate) {
@@ -543,9 +544,9 @@ module.exports = function() {
       /**
        * playSounds Handles playback logic
        * Though some of this is delegated
-       * @param  {Object} lwData        Main weather data object
        * @param  {Array} padScales    sets of notes to play
        * @param  {Array} rainArpScaleArray a set of notes fot the sequencer to play
+       * @param  {Array} clementArpScaleArray a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
 			function playSounds(padScales, rainArpScaleArray, clementArpScaleArray) {
@@ -1109,8 +1110,8 @@ module.exports = function() {
     dialogIsOpen = false;
   });
 
-  channel.subscribe('stop', function() {
-    killCurrentSounds();
+  channel.subscribe('stop', function(autoStart) {
+    killCurrentSounds(autoStart);
   });
 
 	return true;

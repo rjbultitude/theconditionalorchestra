@@ -134,11 +134,9 @@ Consider reflow of program flow so that either:
  * The maximum number of octaves for _all_ sounds is determined and then one master array used for all
 * Create a web worker thread for the creation of each all notes array
 
-Remove stop state for custom location submit button
+Modulate padSounds volume/rate/pan for windy conditions
 
-Modulate padSounds volume for windy conditions
-
-Use different array of intervals for rain arpeggio for seventh chords
+Don't use the padSounds callback for conditions which use the interval scales for chords
 
 Consider using `dew point` as another data input
 

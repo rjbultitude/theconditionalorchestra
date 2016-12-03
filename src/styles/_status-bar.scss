@@ -25,7 +25,16 @@
     }
   }
 
-  #sun-icon {
-    animation: rotating 7s linear infinite;
+  .sun-icon {
+    animation: rotating 7s linear 0s infinite;
+  }
+
+  $wave-delay-list: 0s 0.5s 1s;
+
+  @each $current-wave-delay in $wave-delay-list {
+    $i: index($wave-delay-list, $current-wave-delay);
+    .sound-wave-#{$i} {
+        animation: fading 2s ease-out $current-wave-delay infinite;
+    }
   }
 }
