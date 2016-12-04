@@ -131,6 +131,8 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Change longNote depending on temperature conditions
+
 Consider swapping brass stab sound for piano and slowing it down
 
 Consider reflow of program flow so that either:
