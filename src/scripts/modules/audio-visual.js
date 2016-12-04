@@ -186,7 +186,6 @@ module.exports = function() {
     var brassTwoScaleArrayIndex = 0;
     var scaleSetIndex = 0;
     var padIndexCount = 0;
-    var arpStepCount = 1;
     var freezingFilterFreq = 2000;
     var windChimeRate = 1;
     var windChimeVol = 0.4;
@@ -249,7 +248,7 @@ module.exports = function() {
       function precipCategory() {
         if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
           return 'hard';
-        } else if (lwData.precipType === 'sleet' && lwData.precipIntensity.value <= 0.2) {
+        } else if (lwData.precipType === 'sleet' || lwData.precipIntensity.value <= 0.2) {
           return 'soft';
         } else if (lwData.precipType === 'snow' || lwData.precipIntensity.value <= 0.1) {
           return 'softest';
@@ -360,7 +359,6 @@ module.exports = function() {
       }
 
       function clemArpEnd(notesArray) {
-        var _numRepeats = Math.round(notesArray.length / 2);
         var _randomNote = sketch.random(notesArray);
         //Setup reverb
         brassBaritone3.disconnect();
@@ -368,7 +366,6 @@ module.exports = function() {
         brassBaritone3.play();
         brassBaritone3.rate(_randomNote * 3);
         brassBaritone3.setVolume(1);
-        console.log('brassBaritone3', brassBaritone3);
       }
 
       function playClementArp(clementArpScaleArray) {

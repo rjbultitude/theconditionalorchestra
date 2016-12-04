@@ -41,6 +41,21 @@ module.exports = function() {
     this.max = max;
   }
 
+  function fixlwDataRanges(lwData) {
+    for (var condition in lwData) {
+      if (lwData.hasOwnProperty(condition)) {
+        if (lwData[condition].value < lwData[condition].min) {
+          lwData[condition].value = lwData[condition].min;
+          console.log('Value out of range', lwData[condition]);
+        } else if (lwData[condition].value > lwData[condition].max) {
+          lwData[condition].value = lwData[condition].max;
+          console.log('Value out of range', lwData[condition]);
+        }
+      }
+    }
+    return lwData;
+  }
+
   function updateApp(lat, long, name) {
 		var newLocation = new Nll(lat, long, name);
 		updateStatus('weather');
@@ -48,8 +63,6 @@ module.exports = function() {
 			PROXY_SCRIPT: '/proxy.php'
 		});
 
-    //TODO
-    // Break this function up
   	forecast.getCurrentConditions(newLocation, function(conditions) {
       //must make new object at this point;
       var locationData = {
@@ -77,6 +90,8 @@ module.exports = function() {
           );
         }
       }
+      //Error check here
+      locationData = fixlwDataRanges(locationData);
       //Add the location name
       Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
       //Add string or time values

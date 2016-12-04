@@ -146,6 +146,9 @@ Create sequencer for stormy weather that uses brash percussive sounds
 Test offline, bad connection states (after refactor of handleNoGeoData fn)
 
 ###Bugs
+
+No playback on 1st load Safari
+
 Playback rate bug - seems to exist only in Chrome
 
 Sequencer volume bug seems to be Chrome only
