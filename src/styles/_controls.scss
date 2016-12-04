@@ -30,6 +30,7 @@
   right: 5px;
   border: 0 none;
   padding: 0;
+  transition: transform 0.5s;
 
   .text {
     @extend %hidden;
@@ -37,5 +38,12 @@
 
   .icon {
     display: block;
+  }
+
+
+  &:hover,
+  &:active,
+  &:focus {
+    transform: rotate(45deg);
   }
 }

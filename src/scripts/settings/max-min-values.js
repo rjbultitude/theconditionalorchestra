@@ -37,7 +37,7 @@ module.exports = {
     },
     //Ozone in Dobson units
     ozone: {
-      min: 230,
+      min: 220,
       max: 500
     },
     //humidity as a percentage
