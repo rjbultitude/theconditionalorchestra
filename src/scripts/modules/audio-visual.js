@@ -182,6 +182,8 @@ module.exports = function() {
     console.log('lwData', lwData);
     //Init scoped values
     var mainSeqCount = 0;
+    var extraSeqCount = 0;
+    var extraSeqPlaying = false;
     var brassOneScaleArrayIndex = 0;
     var brassTwoScaleArrayIndex = 0;
     var scaleSetIndex = 0;
@@ -232,16 +234,17 @@ module.exports = function() {
         } else {
           _numChords = avSettings.numChords; //4
         }
-        _numExtraChords = sketch.map(
+        _numExtraChords = Math.round(sketch.map(
           lwData.ozone.value,
           lwData.ozone.min,
           lwData.ozone.max,
           0,
-          _numChords
-        );
+          _numChords * 2 //TODO
+        ));
         return {
           numChords: _numChords,
-          numExtraChords: _numExtraChords
+          numExtraChords: 3
+          //numExtraChords: _numExtraChords
         };
       }
 
@@ -322,24 +325,23 @@ module.exports = function() {
         return _longNoteIndex;
       }
 
-      function getMainSeqRepeatNum(scaleSet) {
+      function getMainSeqRepeatNum(scaleSet, numExtraChords) {
         var _seqRepeatNum = 0;
-        var _seqLength = scaleSet.length - 1;
+        var _seqLength = scaleSet.length - numExtraChords;
         //playlogic
         if (wCheck.isFine || wCheck.isFreezing) {
-          _seqRepeatNum = _seqLength * 3;
+          _seqRepeatNum = _seqLength * 4;
         } else if (wCheck.isCold) {
-          _seqRepeatNum = _seqLength * 2;
+          _seqRepeatNum = _seqLength * 3;
         } else {
-          _seqRepeatNum = _seqLength;
+          _seqRepeatNum = _seqLength * 2;
         }
         console.log('_seqRepeatNum', _seqRepeatNum);
         return _seqRepeatNum;
       }
 
-      function setScaleSetIndex(scaleSet) {
-        var _numExtraChords = getNumChords().numExtraChords;
-        if (scaleSetIndex >= scaleSet.length - 1 - _numExtraChords) {
+      function setScaleSetIndex(scaleSet, numExtraChords) {
+        if (scaleSetIndex >= scaleSet.length - 1 - numExtraChords) {
           scaleSetIndex = 0;
         } else {
           scaleSetIndex++;
@@ -448,23 +450,39 @@ module.exports = function() {
         }
       }
 
-      function playLongNote(scale) {
+      function playLongNote(scale, extraSeqPlaying) {
         var _longNoteIndex = getLongNoteIndex(scale);
         longNote.disconnect();
         longNote.connect(soundFilter);
         longNote.play();
-        longNote.rate(scale[_longNoteIndex]);
+        if (extraSeqPlaying) {
+          longNote.rate(scale[_longNoteIndex] / 2);
+        } else {
+          longNote.rate(scale[_longNoteIndex]);
+        }
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
       }
 
       function playPad(scaleSet, key) {
         var _panIndex = 0;
-        var _mainSeqRepeat = getMainSeqRepeatNum(scaleSet);
+        var _numExtraChords = getNumChords().numExtraChords;
+        var _mainSeqRepeat = getMainSeqRepeatNum(scaleSet, _numExtraChords);
         // Master sequence
         if (mainSeqCount === _mainSeqRepeat) {
-          scaleSetIndex = scaleSet.length - 1;
-          mainSeqCount = 0;
+          //If we've played the whole sequence
+          //_mainSeqRepeat number of times
+          //play the last chord
+          scaleSetIndex = scaleSet.length - _numExtraChords + extraSeqCount;
+          extraSeqCount++;
+          extraSeqPlaying = true;
+          if (extraSeqCount === _numExtraChords) {
+            mainSeqCount = 0;
+            extraSeqCount = 0;
+          }
+        } else {
+          extraSeqPlaying = false;
+          mainSeqCount++;
         }
         for (var i = 0; i < padSounds.length; i++) {
           padSounds[i][key].disconnect();
@@ -481,10 +499,9 @@ module.exports = function() {
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass(scaleSet);
         }
-        playLongNote(scaleSet[scaleSetIndex]);
+        playLongNote(scaleSet[scaleSetIndex], extraSeqPlaying);
         //increment indices
-        setScaleSetIndex(scaleSet);
-        mainSeqCount++;
+        setScaleSetIndex(scaleSet, _numExtraChords);
       }
 
       function padCallback(scaleSet, key) {
@@ -619,7 +636,6 @@ module.exports = function() {
         if (_rootNote === -0) {
           _rootNote = 0;
         }
-        console.log('_rootNote', _rootNote);
         return _rootNote;
       }
 
@@ -825,10 +841,6 @@ module.exports = function() {
         var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
         //Chord from within intervals shift
         var _intIndOffsetArr = getIntervalIndexOffsetArr(numChords);
-        //TODO every time we create a musical scale
-        //we're making an allNotesArray
-        //Consider making one musical scale at this point by
-        //calculating the largestNumber here
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], _chordType, _intIndOffsetArr[i]));
         }
@@ -993,7 +1005,6 @@ module.exports = function() {
 				temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
         windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.5, 1.4);
         windChimeVol = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.1, 0.6);
-        console.log('windChimeRate', windChimeRate);
         //--------------------------
         // Handle sounds / Start app
         // -------------------------
