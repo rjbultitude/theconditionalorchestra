@@ -234,17 +234,18 @@ module.exports = function() {
         } else {
           _numChords = avSettings.numChords; //4
         }
+        //TODO could use better data point
+        //Dew point perhaps?
         _numExtraChords = Math.round(sketch.map(
           lwData.ozone.value,
           lwData.ozone.min,
           lwData.ozone.max,
           0,
-          _numChords * 2 //TODO
+          _numChords * 2
         ));
         return {
           numChords: _numChords,
-          numExtraChords: 3
-          //numExtraChords: _numExtraChords
+          numExtraChords: _numExtraChords
         };
       }
 
