@@ -373,6 +373,9 @@ module.exports = function() {
 
       function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
+        //TODO this won't work because the type
+        //is defined by stormy or windy conditions
+        //and clemency is neither
         var _newNotesArray = getAllegrettoRhythmType(clementArpScaleArray);
         clementArpPhrase.sequence = _newNotesArray;
         console.log('clementArpPhrase.sequence', clementArpPhrase.sequence);
@@ -1093,7 +1096,9 @@ module.exports = function() {
           updateRainArp();
         }
         //Update filter
-        updateFilter();
+        if (wCheck.isFreezing) {
+          updateFilter();
+        }
         //Master volume
         //Fade in on play
         sketch.masterVolume(masterGain);
