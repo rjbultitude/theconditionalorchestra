@@ -10,6 +10,9 @@ module.exports = (function generateFrequencyScales() {
     * @param  {[Boolean]} includeOctave [a Boolean which determines whether an closing note is applied or not ]
     * @return {[Array]}               [an array containing all the frequencies in the scale]
     */
+
+    var CHROMATIC_SCALE = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
     function createScale(startFreq, numTones, includeOctave, upwardsScale) {
       var _scale = [];
       var _freqHigh;
@@ -83,6 +86,7 @@ module.exports = (function generateFrequencyScales() {
     return {
         createScale: createScale,
         findCentreFreqIndex: findCentreFreqIndex,
-        createEqTempMusicalScale: createEqTempMusicalScale
+        createEqTempMusicalScale: createEqTempMusicalScale,
+        CHROMATIC_SCALE: CHROMATIC_SCALE
     };
 })();

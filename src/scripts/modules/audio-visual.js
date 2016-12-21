@@ -720,6 +720,16 @@ module.exports = function() {
         return _scaleArray;
       }
 
+      function notesLetters(numSemitones, scaleArray) {
+        if (numSemitones !== 12) {
+          return 'non western';
+        } else {
+          return scaleArray.map(function(note, index){
+            return getFreqScales.CHROMATIC_SCALE[index];
+          });
+        }
+      }
+
       function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, constrainBy) {
         var _numOcts;
         var _allNotesScale = [];
@@ -740,6 +750,8 @@ module.exports = function() {
         var _centreFreqIndex = getFreqScales.findCentreFreqIndex(_numOcts, _semisInOct);
         var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
         _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset);
+        //Assign letters
+        var notesLetters = getNotesLetters(_semisInOct, _scaleArray);
         return _scaleArray;
       }
 
