@@ -630,6 +630,7 @@ module.exports = function() {
         //var _rangePlus = _numSemitones + _numSemitones / 2;
         var _rangePlus = Math.round(_numSemitones + _numSemitones / 2);
         var _rangeMinus = -Math.abs(_rangePlus);
+        //playlogic
         var _rootNote = Math.round(sketch.map(
           lwData.pressure.value,
           lwData.pressure.min,
@@ -858,6 +859,7 @@ module.exports = function() {
       function setFilter() {
         //Use math.abs for all pitch and volume values?
         // Set filter. Visibility is filter freq
+        // playlogic
         lwData.sParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.sParams.freq.min, lwData.sParams.freq.max);
         soundFilter.freq(lwData.sParams.freq.value);
         soundFilter.res(20);
@@ -1006,7 +1008,8 @@ module.exports = function() {
         //--------------------
 				avSettings.animAmount = Math.round(lwData.windSpeed.value);
 				avSettings.noiseInc = sketch.map(avSettings.animAmount, lwData.windSpeed.min, lwData.windSpeed.max, 0.01, 0.05);
-				temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
+        temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
+        // playlogic
         windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.5, 1.4);
         windChimeVol = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.1, 0.6);
         //--------------------------
@@ -1084,6 +1087,7 @@ module.exports = function() {
             shapeSet[i].paint(sketch, temperatureColour, avSettings.colourDim);
           }
         }
+        //playlogic
         //Brass section
         if (wCheck.isWindy) {
           updateBrass();
