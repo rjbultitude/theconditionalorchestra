@@ -970,8 +970,6 @@ module.exports = function() {
         //TODO could onlyshow items that are true
         mappedData.forEach(function(condition) {
           var html = appTemplate(condition);
-          console.log('typof html', typof html);
-          //cdContainer.insertBefore(html, null);
           cdContainer.insertAdjacentHTML('beforeend', html);
         });
       }

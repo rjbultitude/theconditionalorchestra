@@ -69,36 +69,6 @@
                   <section class="conditions-display section">
                     <p id="summary"></p>
                     <ul class="conditions-display__list">
-                      <li class="conditions-display__item">
-                        <h2 class="conditions-display__heading">Temperature</h2>
-                        <div class="conditions-display__icon">
-                          <?php echo file_get_contents("img/temperature-icon.svg"); ?>
-                        </div>
-                        <p class="conditions-display__value" data-ref="temperature">
-                          <span data-ref="value"></span>
-                          <span class="conditions-display__unit">C&deg;</span>
-                        </p>
-                      </li>
-                      <li class="conditions-display__item">
-                        <h2 class="conditions-display__heading">Cloud cover</h2>
-                        <div class="conditions-display__icon">
-                          <?php echo file_get_contents("img/cloud-cover-icon.svg"); ?>
-                        </div>
-                        <p class="conditions-display__value" data-ref="cloudCover">
-                          <span data-ref="value"></span>
-                          <span class="conditions-display__unit">&percnt;</span>
-                        </p>
-                      </li>
-                      <li class="conditions-display__item">
-                        <h2 class="conditions-display__heading">Air pressure</h2>
-                        <div class="conditions-display__icon">
-                          <?php echo file_get_contents("img/pressure-icon.svg"); ?>
-                        </div>
-                        <p class="conditions-display__value" data-ref="airPressure">
-                          <span data-ref="value"></span>
-                          <span class="conditions-display__unit">Mbs</span>
-                        </p>
-                      </li>
                     </ul>
                   </section>
                   <!-- End conditions display -->
