@@ -353,7 +353,7 @@ module.exports = function() {
       function getAllegrettoRhythmType(clementArpScaleArray) {
         var _newNotesArray = [];
         //playlogic
-        if (wCheck.isStormy || wCheck.isWindy) {
+        if (wCheck.isHumid) {
           _newNotesArray = getAllegrettoRhythm(clementArpScaleArray, true);
         } else {
           _newNotesArray = getAllegrettoRhythm(clementArpScaleArray, false);
@@ -373,9 +373,6 @@ module.exports = function() {
 
       function playClementArp(clementArpScaleArray) {
         //Overwrite sequence with new notes
-        //TODO this won't work because the type
-        //is defined by stormy or windy conditions
-        //and clemency is neither
         var _newNotesArray = getAllegrettoRhythmType(clementArpScaleArray);
         clementArpPhrase.sequence = _newNotesArray;
         console.log('clementArpPhrase.sequence', clementArpPhrase.sequence);
@@ -942,6 +939,10 @@ module.exports = function() {
         playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
 			}
 
+      function configureDisplay() {
+        //HBS logic here
+      }
+
 			//Accepts number of horizontal and vertical squares to draw
 			function createShapeSet(hSquares, vSquares) {
         var shapeSet = [];
@@ -1029,6 +1030,7 @@ module.exports = function() {
         // -------------------------
         if (audioSupported) {
           configureSounds();
+          configureDisplay();
         } else {
           updateStatus('error', lwData.name, true);
         }
