@@ -10,6 +10,8 @@ require('../libs/p5.sound');
 var audioSupported = true;
 var postal = require('postal');
 var channel = postal.channel();
+//var templates = require('../templates');
+var appTemplate = require('../templates/index').src.scripts.templates.codisplay;
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
 var weatherCheck = require('./weather-checker-fns');
@@ -717,7 +719,7 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function notesLetters(numSemitones, scaleArray) {
+      function getNotesLetters(numSemitones, scaleArray) {
         if (numSemitones !== 12) {
           return 'non western';
         } else {
@@ -940,7 +942,17 @@ module.exports = function() {
 			}
 
       function configureDisplay() {
+        var data = {
+          condition: {
+            title: 'temperature',
+            icon: 'O',
+            music: 'chords'
+          },
+        };
+        var html = appTemplate(data);
         //HBS logic here
+        //var output = templates.src.scripts.templates.codisplay();
+        console.log('html', html);
       }
 
 			//Accepts number of horizontal and vertical squares to draw
