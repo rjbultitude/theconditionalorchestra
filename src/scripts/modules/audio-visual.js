@@ -4,14 +4,14 @@
  */
 
 'use strict';
-
+//3rd party
 var P5 = require('../libs/p5');
 require('../libs/p5.sound');
-var audioSupported = true;
 var postal = require('postal');
 var channel = postal.channel();
-//var templates = require('../templates');
 var appTemplate = require('../templates/index').src.scripts.templates.codisplay;
+//custom
+var codisplayData = require('./co-display-data');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
 var weatherCheck = require('./weather-checker-fns');
@@ -28,6 +28,7 @@ module.exports = function() {
     Module scoped vars
     and constants
   */
+  var audioSupported = true;
   var isPlaying = false;
   //bass
   var bass;
@@ -941,18 +942,38 @@ module.exports = function() {
         playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
 			}
 
+      function mapConditionsToDisplayData() {
+        var lwDataArr = Object.keys(lwData);
+        var wCheckArr = Object.keys(wCheck);
+        for (var i = 0; i < codisplayData.length; i++) {
+          for (var j = 0; j < lwDataArr.length; j++) {
+            //console.log('lwData[lwDataArr[j]]', lwData[lwDataArr[j]]);
+            if (codisplayData[i].key === lwDataArr[j]) {
+              codisplayData[i].value = lwData[lwDataArr[j]].value;
+            }
+          }
+        }
+        for (var k = 0; k < codisplayData.length; k++) {
+          for (var l = 0; l < wCheckArr.length; l++) {
+            //console.log('wCheck[wCheckArr[l]]', wCheck[wCheckArr[l]]);
+            if (codisplayData[k].key === wCheckArr[l]) {
+              codisplayData[k].value = wCheck[wCheckArr[l]];
+            }
+          }
+        }
+        return codisplayData;
+      }
+
       function configureDisplay() {
-        var data = {
-          condition: {
-            title: 'temperature',
-            icon: 'O',
-            music: 'chords'
-          },
-        };
-        var html = appTemplate(data);
-        //HBS logic here
-        //var output = templates.src.scripts.templates.codisplay();
-        console.log('html', html);
+        var mappedData = mapConditionsToDisplayData();
+        var cdContainer = document.querySelector('.conditions-display__list');
+        //TODO could onlyshow items that are true
+        mappedData.forEach(function(condition) {
+          var html = appTemplate(condition);
+          console.log('typof html', typof html);
+          //cdContainer.insertBefore(html, null);
+          cdContainer.insertAdjacentHTML('beforeend', html);
+        });
       }
 
 			//Accepts number of horizontal and vertical squares to draw
