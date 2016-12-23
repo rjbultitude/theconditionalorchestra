@@ -12,6 +12,7 @@ var channel = postal.channel();
 var appTemplate = require('../templates/index').src.scripts.templates.codisplay;
 var he = require('he');
 //custom
+var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 var codisplayData = require('./co-display-data');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
@@ -333,6 +334,7 @@ module.exports = function() {
       }
 
       function getMainSeqRepeatNum(scaleSet, numExtraChords) {
+        console.log('scaleSet', scaleSet);
         var _seqRepeatNum = 0;
         var _seqLength = scaleSet.length - numExtraChords;
         //playlogic
@@ -469,6 +471,7 @@ module.exports = function() {
         }
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
+        return _longNoteIndex;
       }
 
       function playPad(scaleSet, key) {
@@ -506,9 +509,13 @@ module.exports = function() {
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass(scaleSet);
         }
-        playLongNote(scaleSet[scaleSetIndex], extraSeqPlaying);
+        var _longNoteIndex = playLongNote(scaleSet[scaleSetIndex], extraSeqPlaying);
         //increment indices
         setScaleSetIndex(scaleSet, _numExtraChords);
+        return {
+          mainSeqRepeat: _mainSeqRepeat,
+          longNoteIndex: _longNoteIndex
+        };
       }
 
       function padCallback(scaleSet, key) {
@@ -546,7 +553,7 @@ module.exports = function() {
         }
       }
 
-      function handlePadType(scaleSet) {
+      function getPadType() {
         var padType = '';
         //playlogic
         //Start with harshest conditions
@@ -567,7 +574,6 @@ module.exports = function() {
         } else {
           padType = 'organ';
         }
-        playPad(scaleSet, padType);
         return padType;
       }
 
@@ -596,7 +602,8 @@ module.exports = function() {
           }
         });
         //Organ
-        handlePadType(padScales);
+        var _padType = getPadType();
+        playPad(padScales, _padType);
         //Clement arpeggio
         if (clementArpScaleArray.length > 0) {
           playClementArp(clementArpScaleArray);
@@ -971,6 +978,7 @@ module.exports = function() {
       function unitiseData(codisplayData) {
         return codisplayData.map(function(coProp) {
           if (coProp.key === 'temperature') {
+            coProp.value = frnhtToCelcius(coProp.value).toFixed(2);
             coProp.unit = 'C' + he.decode('&deg');
           }
           if (coProp.key === 'windBearing') {
@@ -992,13 +1000,12 @@ module.exports = function() {
             coProp.musicValue = getRootNote();
           }
           if (coProp.key === 'visibility') {
-            coProp.musicValue = lwData.sParams.freq.value;
+            coProp.musicValue = lwData.sParams.freq.value.toFixed(2);
           }
-          if (coProp.music === 'pad type') {
-            //TODO rename to setPadType
-            coProp.musicValue = handlePadType();
+          if (coProp.music === 'Pad type') {
+            coProp.musicValue = getPadType();
           }
-          if (coProp.music === 'chord type') {
+          if (coProp.music === 'Chord type') {
             coProp.musicValue = getChordType();
           }
           if (coProp.key === 'isStormy') {
@@ -1011,7 +1018,7 @@ module.exports = function() {
             coProp.musicValue = windChimeRate.toFixed(2);
           }
           if (coProp.key === 'windBearing') {
-
+            coProp.musicValue = 2;
           }
           return coProp;
         });
