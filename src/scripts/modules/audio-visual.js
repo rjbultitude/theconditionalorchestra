@@ -10,6 +10,7 @@ require('../libs/p5.sound');
 var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/index').src.scripts.templates.codisplay;
+var he = require('he');
 //custom
 var codisplayData = require('./co-display-data');
 var updateStatus = require('./update-status');
@@ -947,7 +948,6 @@ module.exports = function() {
         var wCheckArr = Object.keys(wCheck);
         for (var i = 0; i < codisplayData.length; i++) {
           for (var j = 0; j < lwDataArr.length; j++) {
-            //console.log('lwData[lwDataArr[j]]', lwData[lwDataArr[j]]);
             if (codisplayData[i].key === lwDataArr[j]) {
               codisplayData[i].value = lwData[lwDataArr[j]].value;
             }
@@ -955,7 +955,6 @@ module.exports = function() {
         }
         for (var k = 0; k < codisplayData.length; k++) {
           for (var l = 0; l < wCheckArr.length; l++) {
-            //console.log('wCheck[wCheckArr[l]]', wCheck[wCheckArr[l]]);
             if (codisplayData[k].key === wCheckArr[l]) {
               codisplayData[k].value = wCheck[wCheckArr[l]];
             }
@@ -964,13 +963,30 @@ module.exports = function() {
         return codisplayData;
       }
 
+      function unitiseData(mappedData) {
+        for (var i = 0; i < mappedData.length; i++) {
+          if (mappedData[i].key === 'temperature') {
+            mappedData[i].unit = 'C' + he.decode('&deg');
+          }
+          if (mappedData[i].key === 'windBearing') {
+            mappedData[i].unit = he.decode('&deg');
+          }
+          if (mappedData[i].key === 'cloudCover' || mappedData[i].key === 'humidity') {
+            mappedData[i].unit = he.decode('&#37');
+          }
+        }
+        return mappedData;
+      }
+
       function configureDisplay() {
-        var mappedData = mapConditionsToDisplayData();
-        var cdContainer = document.querySelector('.conditions-display__list');
-        //TODO could onlyshow items that are true
-        mappedData.forEach(function(condition) {
-          var html = appTemplate(condition);
-          cdContainer.insertAdjacentHTML('beforeend', html);
+        var _mappedData = mapConditionsToDisplayData();
+        var _unitisedData = unitiseData(_mappedData);
+        var _cdContainer = document.querySelector('.conditions-display__list');
+        _unitisedData.forEach(function(condition) {
+          if (condition.value) {
+            var html = appTemplate(condition);
+            _cdContainer.insertAdjacentHTML('beforeend', html);
+          }
         });
       }
 

@@ -10,9 +10,12 @@
 
 .conditions-display__item {
   display: inline-block;
-  width: 33.3%;
-  margin-right: -8px;
-  //min-height: 200px;
+  vertical-align: top;
+  width: 30%;
+  min-height: 200px;
+  margin: 16px 0 16px;
+  box-sizing: border-box;
+  border-bottom: 1px solid $color-blue-pale;
 
   & + .conditions-display__item {
     @media all and (max-width: $bp-mobile) {
@@ -30,8 +33,8 @@
   }
 
   .conditions-display__heading {
-    color: $color-blue-pale;
     padding-bottom: $padding/4;
+    min-height: 38px;
 
     @media all and (max-width: $bp-mobile) {
       padding-bottom: 2px;
@@ -39,7 +42,8 @@
   }
 
   .conditions-display__value {
-    font-size: 28px;
+    color: $color-blue-pale;
+    font-size: 24px;
   }
 
   .conditions-display__icon {
