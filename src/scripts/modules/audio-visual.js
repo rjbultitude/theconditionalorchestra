@@ -77,6 +77,8 @@ module.exports = function() {
   //Subscriptions
   var publishBrassOne;
   var publishBrassTwo;
+  //DOM
+  var cdContainer = document.querySelector('.conditions-display__list');
 
   /*
     Utility functions
@@ -545,25 +547,28 @@ module.exports = function() {
       }
 
       function handlePadType(scaleSet) {
+        var padType = '';
         //playlogic
         //Start with harshest conditions
         //and work our way up
 
         //This setting uses non western scale
         if (wCheck.isStormy && wCheck.isFreezing) {
-          playPad(scaleSet, 'organ');
+          padType = 'organ';
         } else if (wCheck.isStormy) {
           //TODO watch out for clash between
           //organDist and brass
           //stormy plays less notes
-          playPad(scaleSet, 'organDist');
+          padType = 'organDist';
         } else if (wCheck.isFreezing) {
-          playPad(scaleSet, 'trumpet');
+          padType = 'trumpet';
         } else if (wCheck.isCold) {
-          playPad(scaleSet, 'sax');
+          padType = 'sax';
         } else {
-          playPad(scaleSet, 'organ');
+          padType = 'organ';
         }
+        playPad(scaleSet, padType);
+        return padType;
       }
 
       /**
@@ -963,29 +968,63 @@ module.exports = function() {
         return codisplayData;
       }
 
-      function unitiseData(mappedData) {
-        for (var i = 0; i < mappedData.length; i++) {
-          if (mappedData[i].key === 'temperature') {
-            mappedData[i].unit = 'C' + he.decode('&deg');
+      function unitiseData(codisplayData) {
+        return codisplayData.map(function(coProp) {
+          if (coProp.key === 'temperature') {
+            coProp.unit = 'C' + he.decode('&deg');
           }
-          if (mappedData[i].key === 'windBearing') {
-            mappedData[i].unit = he.decode('&deg');
+          if (coProp.key === 'windBearing') {
+            coProp.unit = he.decode('&deg');
           }
-          if (mappedData[i].key === 'cloudCover' || mappedData[i].key === 'humidity') {
-            mappedData[i].unit = he.decode('&#37');
+          if (coProp.key === 'cloudCover' || coProp.key === 'humidity') {
+            coProp.unit = he.decode('&#37');
           }
-        }
-        return mappedData;
+          return coProp;
+        });
+      }
+
+      function addMusicValues(codisplayData) {
+        return codisplayData.map(function(coProp) {
+          if (coProp.key === 'ozone') {
+            coProp.musicValue = getNumChords().numExtraChords;
+          }
+          if (coProp.key === 'pressure') {
+            coProp.musicValue = getRootNote();
+          }
+          if (coProp.key === 'visibility') {
+            coProp.musicValue = lwData.sParams.freq.value;
+          }
+          if (coProp.music === 'pad type') {
+            //TODO rename to setPadType
+            coProp.musicValue = handlePadType();
+          }
+          if (coProp.music === 'chord type') {
+            coProp.musicValue = getChordType();
+          }
+          if (coProp.key === 'isStormy') {
+            coProp.musicValue = getNumChords().numChords;
+          }
+          if (coProp.key === 'isHumid') {
+            coProp.musicValue = getChordSeqKey();
+          }
+          if (coProp.key === 'windSpeed') {
+            coProp.musicValue = windChimeRate.toFixed(2);
+          }
+          if (coProp.key === 'windBearing') {
+
+          }
+          return coProp;
+        });
       }
 
       function configureDisplay() {
         var _mappedData = mapConditionsToDisplayData();
         var _unitisedData = unitiseData(_mappedData);
-        var _cdContainer = document.querySelector('.conditions-display__list');
-        _unitisedData.forEach(function(condition) {
+        var _musicValData = addMusicValues(_unitisedData);
+        _musicValData.forEach(function(condition) {
           if (condition.value) {
             var html = appTemplate(condition);
-            _cdContainer.insertAdjacentHTML('beforeend', html);
+            cdContainer.insertAdjacentHTML('beforeend', html);
           }
         });
       }
@@ -1201,6 +1240,7 @@ module.exports = function() {
 
   channel.subscribe('stop', function(autoStart) {
     killCurrentSounds(autoStart);
+    cdContainer.innerHTML = '';
   });
 
 	return true;
