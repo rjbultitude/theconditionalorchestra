@@ -9,7 +9,7 @@ var P5 = require('../libs/p5');
 require('../libs/p5.sound');
 var postal = require('postal');
 var channel = postal.channel();
-var appTemplate = require('../templates/index').src.scripts.templates.codisplay;
+var appTemplate = require('../templates/index').codisplay;
 var he = require('he');
 //custom
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
@@ -88,6 +88,10 @@ module.exports = function() {
 	// Is this size or smaller
 	function matchMediaMaxWidth(maxWidthVal) {
     return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
+  }
+
+  function mapRange(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
   }
 
   function fadeOutPadSounds(soundItem) {
@@ -169,6 +173,35 @@ module.exports = function() {
     return _numPadNotes;
   }
 
+  function getNumChords(lwData, avSettings, wCheck) {
+    console.log('wCheck', wCheck);
+    var _numChords;
+    var _numExtraChords;
+    //playlogic
+    // We use a non western scale for freezing
+    // so only play two chords
+    if (wCheck.isStormy && wCheck.isFreezing) {
+      _numChords = 2;
+    } else if (wCheck.isStormy || wCheck.isFine) {
+      _numChords = 3;
+    } else {
+      _numChords = avSettings.numChords; //4
+    }
+    //TODO could use better data point
+    //Dew point perhaps?
+    _numExtraChords = Math.round(mapRange(
+      lwData.ozone.value,
+      lwData.ozone.min,
+      lwData.ozone.max,
+      0,
+      _numChords * 2
+    ));
+    return {
+      numChords: _numChords,
+      numExtraChords: _numExtraChords
+    };
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -220,6 +253,8 @@ module.exports = function() {
     console.log('wCheck', wCheck);
     var numPadNotes = getNumPadNotes(lwData, avSettings, wCheck.isStormy);
     console.log('numPadNotes', numPadNotes);
+    var numChords = getNumChords(lwData, avSettings, wCheck).numChords;
+    var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -227,34 +262,6 @@ module.exports = function() {
       channel.subscribe('allStopped', function() {
         sketch.noLoop();
       });
-
-      function getNumChords() {
-        var _numChords;
-        var _numExtraChords;
-        //playlogic
-        // We use a non western scale for freezing
-        // so only play two chords
-        if (wCheck.isStormy && wCheck.isFreezing) {
-          _numChords = 2;
-        } else if (wCheck.isStormy || wCheck.isFine) {
-          _numChords = 3;
-        } else {
-          _numChords = avSettings.numChords; //4
-        }
-        //TODO could use better data point
-        //Dew point perhaps?
-        _numExtraChords = Math.round(sketch.map(
-          lwData.ozone.value,
-          lwData.ozone.min,
-          lwData.ozone.max,
-          0,
-          _numChords * 2
-        ));
-        return {
-          numChords: _numChords,
-          numExtraChords: _numExtraChords
-        };
-      }
 
       function precipCategory() {
         if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
@@ -317,12 +324,12 @@ module.exports = function() {
 
       function getLongNoteIndex(scale) {
         var _longNoteIndex;
-        var _timesToDivide = scale.length;
+        var _timesToDivide = numPadNotes || scale;
         var _bearingSlice = 360 / _timesToDivide;
         //playlogic
         //bearing decides which note in scale to play
         //Could use reduce
-        for (var i = 0; i < scale.length; i++) {
+        for (var i = 0; i < _timesToDivide; i++) {
           var _currentBearingSlice = _bearingSlice * i;
           if (lwData.windBearing.value <= _currentBearingSlice) {
             _longNoteIndex = i;
@@ -333,10 +340,9 @@ module.exports = function() {
         return _longNoteIndex;
       }
 
-      function getMainSeqRepeatNum(scaleSet, numExtraChords) {
-        console.log('scaleSet', scaleSet);
+      function getMainSeqRepeatNum() {
         var _seqRepeatNum = 0;
-        var _seqLength = scaleSet.length - numExtraChords;
+        var _seqLength = numChords - numExtraChords;
         //playlogic
         if (wCheck.isFine || wCheck.isFreezing) {
           _seqRepeatNum = _seqLength * 4;
@@ -476,17 +482,16 @@ module.exports = function() {
 
       function playPad(scaleSet, key) {
         var _panIndex = 0;
-        var _numExtraChords = getNumChords().numExtraChords;
-        var _mainSeqRepeat = getMainSeqRepeatNum(scaleSet, _numExtraChords);
+        var _mainSeqRepeat = getMainSeqRepeatNum();
         // Master sequence
         if (mainSeqCount === _mainSeqRepeat) {
           //If we've played the whole sequence
           //_mainSeqRepeat number of times
           //play the last chord
-          scaleSetIndex = scaleSet.length - _numExtraChords + extraSeqCount;
+          scaleSetIndex = scaleSet.length - numExtraChords + extraSeqCount - 1;
           extraSeqCount++;
           extraSeqPlaying = true;
-          if (extraSeqCount === _numExtraChords) {
+          if (extraSeqCount === numExtraChords) {
             mainSeqCount = 0;
             extraSeqCount = 0;
           }
@@ -511,7 +516,7 @@ module.exports = function() {
         }
         var _longNoteIndex = playLongNote(scaleSet[scaleSetIndex], extraSeqPlaying);
         //increment indices
-        setScaleSetIndex(scaleSet, _numExtraChords);
+        setScaleSetIndex(scaleSet, numExtraChords);
         return {
           mainSeqRepeat: _mainSeqRepeat,
           longNoteIndex: _longNoteIndex
@@ -570,7 +575,7 @@ module.exports = function() {
         } else if (wCheck.isFreezing) {
           padType = 'trumpet';
         } else if (wCheck.isCold) {
-          padType = 'sax';
+          padType = 'saxophone';
         } else {
           padType = 'organ';
         }
@@ -733,13 +738,11 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function getNotesLetters(numSemitones, scaleArray) {
+      function getRootNoteLetter(numSemitones) {
         if (numSemitones !== 12) {
-          return 'non western';
+          return getRootNote();
         } else {
-          return scaleArray.map(function(note, index){
-            return getFreqScales.CHROMATIC_SCALE[index];
-          });
+          return getFreqScales.CHROMATIC_SCALE[getRootNote()];
         }
       }
 
@@ -763,8 +766,6 @@ module.exports = function() {
         var _centreFreqIndex = getFreqScales.findCentreFreqIndex(_numOcts, _semisInOct);
         var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
         _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset);
-        //Assign letters
-        var notesLetters = getNotesLetters(_semisInOct, _scaleArray);
         return _scaleArray;
       }
 
@@ -944,7 +945,7 @@ module.exports = function() {
         // Set filter for pad sounds
         setFilter();
         //Make arrays of frequencies for playback
-        _organScaleSets = makeChordSequence(getNumChords().numChords, getNumChords().numExtraChords, _numSemisPerOctave);
+        _organScaleSets = makeChordSequence(numChords, numExtraChords, _numSemisPerOctave);
         //playlogic
         if (wCheck.isPrecip) {
           _rainArpScaleArray = createRainArpScale(_numSemisPerOctave);
@@ -954,6 +955,12 @@ module.exports = function() {
         }
         playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
 			}
+
+      function getGetOrdinal(n) {
+        var s = ['th','st','nd','rd'];
+        var v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+      }
 
       function mapConditionsToDisplayData() {
         var lwDataArr = Object.keys(lwData);
@@ -994,13 +1001,13 @@ module.exports = function() {
       function addMusicValues(codisplayData) {
         return codisplayData.map(function(coProp) {
           if (coProp.key === 'ozone') {
-            coProp.musicValue = getNumChords().numExtraChords;
+            coProp.musicValue = numExtraChords;
           }
           if (coProp.key === 'pressure') {
-            coProp.musicValue = getRootNote();
+            coProp.musicValue = getRootNoteLetter(getNumSemisPerOctave());
           }
           if (coProp.key === 'visibility') {
-            coProp.musicValue = lwData.sParams.freq.value.toFixed(2);
+            coProp.musicValue = Math.round(lwData.sParams.freq.value);
           }
           if (coProp.music === 'Pad type') {
             coProp.musicValue = getPadType();
@@ -1009,7 +1016,7 @@ module.exports = function() {
             coProp.musicValue = getChordType();
           }
           if (coProp.key === 'isStormy') {
-            coProp.musicValue = getNumChords().numChords;
+            coProp.musicValue = numChords;
           }
           if (coProp.key === 'isHumid') {
             coProp.musicValue = getChordSeqKey();
@@ -1018,7 +1025,7 @@ module.exports = function() {
             coProp.musicValue = windChimeRate.toFixed(2);
           }
           if (coProp.key === 'windBearing') {
-            coProp.musicValue = 2;
+            coProp.musicValue = getGetOrdinal(getLongNoteIndex());
           }
           return coProp;
         });
@@ -1053,8 +1060,10 @@ module.exports = function() {
 			//Sound constructor
 			function PadSound(organ, organDist, sax, trumpet) {
 				this.organ = organ;
+        //TODO consider using different sound
+        //distorted guiter perhaps
 				this.organDist = organDist;
-				this.sax = sax;
+				this.saxophone = sax;
 				this.trumpet = trumpet;
 			}
 
