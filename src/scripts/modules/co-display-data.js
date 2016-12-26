@@ -25,7 +25,7 @@ module.exports = [
     value: '',
     unit: '',
     iconPath: '/img/temperature-icon.svg',
-    music: 'Pad type',
+    music: 'Number of semitones: ',
     musicValue: ''
   },
   {
@@ -91,5 +91,15 @@ module.exports = [
     iconPath: '/img/sun-icon.svg',
     music: 'Choral sound',
     musicValue: ''
+  },
+  {
+    key: 'precipType',
+    title: 'Type of precipitation',
+    value: '',
+    unit: '',
+    iconPath: '/img/sun-icon.svg',
+    music: 'Bell arpeggio playing at ',
+    musicValue: '',
+    musicAppendage: ' bpm'
   }
 ];
