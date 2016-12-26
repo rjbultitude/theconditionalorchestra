@@ -93,6 +93,15 @@ module.exports = [
     musicValue: ''
   },
   {
+    key: 'isFreezing',
+    title: 'Freezing conditions',
+    value: '',
+    unit: '',
+    iconPath: '/img/cloud-cover-icon.svg',
+    music: 'Filtered choral sound',
+    musicValue: ''
+  },
+  {
     key: 'precipType',
     title: 'Type of precipitation',
     value: '',
@@ -101,5 +110,23 @@ module.exports = [
     music: 'Bell arpeggio playing at ',
     musicValue: '',
     musicAppendage: ' bpm'
+  },
+  {
+    key: 'isWindy',
+    title: 'High winds',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Brass baritones playing',
+    musicValue: ''
+  },
+  {
+    key: 'temperature summary',
+    title: 'Apparent temperature',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Chord types are ',
+    musicValue: ''
   }
 ];

@@ -95,7 +95,7 @@ module.exports = function() {
       //Add the location name
       Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
       //Add string or time values
-      Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() });
+      Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() || 'none' });
       //Add max & min sound values
       Object.defineProperty(locationData, 'sParams', {writable: false, enumerable: true, value: maxMin.sParams});
       //Keep last state for next time
@@ -331,7 +331,7 @@ module.exports = function() {
     disableControls();
 
     if (inputType === 'userLocation') {
-      getTestLocation(2); //Test
+      getTestLocation(3); //Test
       //getGeo(); //Live
     } else if (inputType === 'customLocation') {
       getLatLong(placeInput);

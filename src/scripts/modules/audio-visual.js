@@ -1026,7 +1026,7 @@ module.exports = function() {
           if (coProp.music === 'Pad type') {
             coProp.musicValue = padType;
           }
-          if (coProp.music === 'Chord type') {
+          if (coProp.title === 'Apparent temperature') {
             coProp.musicValue = chordType;
           }
           if (coProp.key === 'isStormy') {
