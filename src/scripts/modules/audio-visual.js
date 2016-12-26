@@ -659,6 +659,7 @@ module.exports = function() {
         if (_rootNote === -0) {
           _rootNote = 0;
         }
+        console.log('_rootNote', _rootNote);
         return _rootNote;
       }
 
@@ -739,11 +740,19 @@ module.exports = function() {
       }
 
       function getRootNoteLetter(numSemitones) {
+        var _rootNote = getRootNote();
+        var _rootNoteLetter = '';
         if (numSemitones !== 12) {
-          return getRootNote();
+          _rootNoteLetter = getRootNote() + 'non western';
         } else {
-          return getFreqScales.CHROMATIC_SCALE[getRootNote()];
+          if (_rootNote < 0) {
+            _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + _rootNote];
+          } else {
+            _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[_rootNote];
+          }
         }
+        console.log('_rootNoteLetter', _rootNoteLetter);
+        return _rootNoteLetter;
       }
 
       function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, constrainBy) {
@@ -956,6 +965,7 @@ module.exports = function() {
         playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
 			}
 
+      //TODO move to module
       function getGetOrdinal(n) {
         var s = ['th','st','nd','rd'];
         var v = n % 100;

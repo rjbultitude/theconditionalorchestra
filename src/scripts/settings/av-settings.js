@@ -14,7 +14,7 @@ module.exports = {
   organ: {volume : 0.75},
   organDist: {volume : 0.425},
   trumpet: {volume : 0.75},
-  sax: {volume : 0.75},
+  saxophone: {volume : 0.75},
   numPadNotes: 4,
   numChords: 3,
   mainSeqRepeat: 2,
