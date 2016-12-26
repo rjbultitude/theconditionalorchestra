@@ -982,7 +982,7 @@ module.exports = function() {
         for (var i = 0; i < codisplayData.length; i++) {
           for (var j = 0; j < lwDataArr.length; j++) {
             if (codisplayData[i].key === lwDataArr[j]) {
-              codisplayData[i].value = lwData[lwDataArr[j]].value;
+              codisplayData[i].value = lwData[lwDataArr[j]].value || lwData[lwDataArr[j]];
             }
           }
         }
@@ -998,7 +998,7 @@ module.exports = function() {
 
       function unitiseData(codisplayData) {
         return codisplayData.map(function(coProp) {
-          if (coProp.key === 'temperature') {
+          if (coProp.key === 'temperature' || coProp.key === 'apparentTemperature') {
             coProp.value = frnhtToCelcius(coProp.value).toFixed(2);
             coProp.unit = 'C' + he.decode('&deg');
           }
@@ -1026,7 +1026,10 @@ module.exports = function() {
           if (coProp.music === 'Pad type') {
             coProp.musicValue = padType;
           }
-          if (coProp.title === 'Apparent temperature') {
+          if (coProp.key === 'apparentTemperature') {
+            coProp.musicValue = getMainSeqRepeatNum();
+          }
+          if (coProp.key === 'summary') {
             coProp.musicValue = chordType;
           }
           if (coProp.key === 'isStormy') {
@@ -1056,6 +1059,7 @@ module.exports = function() {
         var _mappedData = mapConditionsToDisplayData();
         var _unitisedData = unitiseData(_mappedData);
         var _musicValData = addMusicValues(_unitisedData);
+        console.log('_musicValData', _musicValData);
         _musicValData.forEach(function(condition) {
           if (condition.value) {
             var html = appTemplate(condition);

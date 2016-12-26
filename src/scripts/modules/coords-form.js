@@ -20,7 +20,6 @@ module.exports = function() {
   var coordsFormSubmitBtnEl = coordsFormEl.querySelector('[data-ref="submit"]');
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
 	var visualLaunchEl = document.querySelector('[data-ref="visuals-launcher"]');
-  var summaryBox = document.getElementById('summary');
   var isPlaying = false;
   var lastKnownSuffix = 'LastKnown';
   var staticSuffix = 'Static';
@@ -95,9 +94,11 @@ module.exports = function() {
       //Add the location name
       Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
       //Add string or time values
-      Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() || 'none' });
+      Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() || '' });
       //Add max & min sound values
       Object.defineProperty(locationData, 'sParams', {writable: false, enumerable: true, value: maxMin.sParams});
+      //Add summary
+      Object.defineProperty(locationData, 'summary', {writable: false, enumerable: true, value: conditions[0].summary() || 'no summary'});
       //Keep last state for next time
       //in case user should be offline
       var locationDataString = JSON.stringify(locationData);
@@ -107,12 +108,6 @@ module.exports = function() {
       channel.publish('userUpdate', locationData);
       updateStatus('playing', locationData.name);
       visualLaunchEl.style.display = 'block';
-      var summaryMsg = conditions[0].summary();
-      if (summaryMsg) {
-        summaryBox.innerHTML = conditions[0].summary();
-      } else {
-        console.log('Problem retrieving summary ', summaryMsg);
-      }
   		if (conditions.length > 1) {
         console.log('There seems to be more than one location: ', conditions.length);
   		}

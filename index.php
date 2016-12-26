@@ -67,7 +67,6 @@
 
                   <!-- Begin conditions display -->
                   <section class="conditions-display section">
-                    <p id="summary"></p>
                     <ul class="conditions-display__list">
                     </ul>
                   </section>

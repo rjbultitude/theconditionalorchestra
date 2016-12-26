@@ -121,8 +121,18 @@ module.exports = [
     musicValue: ''
   },
   {
-    key: 'temperature summary',
+    key: 'apparentTemperature',
     title: 'Apparent temperature',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Main sequence repeats ',
+    musicValue: '',
+    musicAppendage: ' times'
+  },
+  {
+    key: 'summary',
+    title: 'Conditions summary',
     value: '',
     unit: '',
     iconPath: '/img/pressure-icon.svg',
