@@ -15,7 +15,20 @@
   min-height: 200px;
   margin: 16px 0 16px;
   box-sizing: border-box;
-  border-bottom: 1px solid $color-blue-pale;
+  position: relative;
+
+  &:after {
+    position: absolute;
+    content: '';
+    top: 100%;
+    left: 12.5%;
+    width: 75%;
+    border-bottom: 1px solid $color-blue-pale;
+
+    @media all and (max-width: $bp-mobile) {
+      display: none;
+    }
+  }
 
   & + .conditions-display__item {
     @media all and (max-width: $bp-mobile) {

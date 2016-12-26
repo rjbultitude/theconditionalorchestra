@@ -66,12 +66,12 @@ module.exports = [
     musicAppendage: ' note from chord'
   },
   {
-    key: 'isHumid',
-    title: 'Humid conditions',
+    key: 'humidity',
+    title: 'Humidity',
     value: '',
     unit: '',
     iconPath: '/img/pressure-icon.svg',
-    music: 'Chords key',
+    music: 'Chord sequence type ',
     musicValue: ''
   },
   {

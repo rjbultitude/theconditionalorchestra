@@ -969,6 +969,14 @@ module.exports = function() {
         playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
 			}
 
+      function outputHumidity() {
+        if (getChordSeqKey() === 'chordsNoOffset') {
+          return 'using inversions';
+        } else {
+          return getChordSeqKey();
+        }
+      }
+
       //TODO move to module
       function getGetOrdinal(n) {
         var s = ['th','st','nd','rd'];
@@ -986,6 +994,7 @@ module.exports = function() {
             }
           }
         }
+        //TODO should we use these at all?
         for (var k = 0; k < codisplayData.length; k++) {
           for (var l = 0; l < wCheckArr.length; l++) {
             if (codisplayData[k].key === wCheckArr[l]) {
@@ -1035,9 +1044,8 @@ module.exports = function() {
           if (coProp.key === 'isStormy') {
             coProp.musicValue = numChords;
           }
-          if (coProp.key === 'isHumid') {
-            //TODO avoid calling twice
-            coProp.musicValue = getChordSeqKey();
+          if (coProp.key === 'humidity') {
+            coProp.musicValue = outputHumidity();
           }
           if (coProp.key === 'windSpeed') {
             coProp.musicValue = windChimeRate.toFixed(2);
