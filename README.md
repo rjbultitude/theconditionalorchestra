@@ -131,7 +131,13 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Move all the fns that set core values outside of init
+
+Stop using sParams - only frequency value is used
+
 Change longNote depending on temperature conditions
+
+Consider swapping organDist for a guitar
 
 Consider swapping brass stab sound for piano and slowing it down
 

@@ -270,6 +270,21 @@ module.exports = function() {
     return _chordType;
   }
 
+  function getMainSeqRepeatNum(wCheck) {
+    var _seqRepeatNum = 0;
+    var _seqLength = numChords - numExtraChords;
+    //playlogic
+    if (wCheck.isFine || wCheck.isFreezing) {
+      _seqRepeatNum = _seqLength * 4;
+    } else if (wCheck.isCold) {
+      _seqRepeatNum = _seqLength * 3;
+    } else {
+      _seqRepeatNum = _seqLength * 2;
+    }
+    console.log('_seqRepeatNum', _seqRepeatNum);
+    return _seqRepeatNum;
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -327,6 +342,7 @@ module.exports = function() {
     var precipCategory = getPrecipCategory(lwData);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
+    var seqRepeatNum = getMainSeqRepeatNum(wCheck);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -381,6 +397,7 @@ module.exports = function() {
         return panIndex;
       }
 
+      //TODO scope to init?
       function getLongNoteIndex(scale) {
         var _longNoteIndex;
         var _timesToDivide = numPadNotes || scale;
@@ -397,22 +414,6 @@ module.exports = function() {
           }
         }
         return _longNoteIndex;
-      }
-
-      //TODO scope to init?
-      function getMainSeqRepeatNum() {
-        var _seqRepeatNum = 0;
-        var _seqLength = numChords - numExtraChords;
-        //playlogic
-        if (wCheck.isFine || wCheck.isFreezing) {
-          _seqRepeatNum = _seqLength * 4;
-        } else if (wCheck.isCold) {
-          _seqRepeatNum = _seqLength * 3;
-        } else {
-          _seqRepeatNum = _seqLength * 2;
-        }
-        console.log('_seqRepeatNum', _seqRepeatNum);
-        return _seqRepeatNum;
       }
 
       function setScaleSetIndex(scaleSet, numExtraChords) {
@@ -457,6 +458,7 @@ module.exports = function() {
         clementArpPart.loop();
       }
 
+      //TODO scope to init?
       function getPrecipArpBpm() {
         // playlogic
         var _arpBpm = 110;
@@ -548,11 +550,10 @@ module.exports = function() {
 
       function playPad(scaleSet, key) {
         var _panIndex = 0;
-        var _mainSeqRepeat = getMainSeqRepeatNum();
         // Master sequence
-        if (mainSeqCount === _mainSeqRepeat) {
+        if (mainSeqCount === seqRepeatNum) {
           //If we've played the whole sequence
-          //_mainSeqRepeat number of times
+          //seqRepeatNum number of times
           //play the last chord
           scaleSetIndex = scaleSet.length - numExtraChords + extraSeqCount - 1;
           extraSeqCount++;
@@ -583,10 +584,6 @@ module.exports = function() {
         var _longNoteIndex = playLongNote(scaleSet[scaleSetIndex], extraSeqPlaying);
         //increment indices
         setScaleSetIndex(scaleSet, numExtraChords);
-        return {
-          mainSeqRepeat: _mainSeqRepeat,
-          longNoteIndex: _longNoteIndex
-        };
       }
 
       function padCallback(scaleSet, key) {
@@ -666,6 +663,7 @@ module.exports = function() {
         channel.publish('playing', audioSupported);
 			}
 
+      //TODO scope to init?
       function getRootNote() {
         //Add global values to the main data object
         //Pressure determines root note. Range 2.5 octaves
@@ -1036,7 +1034,7 @@ module.exports = function() {
             coProp.musicValue = padType;
           }
           if (coProp.key === 'apparentTemperature') {
-            coProp.musicValue = getMainSeqRepeatNum();
+            coProp.musicValue = seqRepeatNum;
           }
           if (coProp.key === 'summary') {
             coProp.musicValue = chordType;
