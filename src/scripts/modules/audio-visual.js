@@ -356,7 +356,6 @@ module.exports = function() {
     };
     console.log('wCheck', wCheck);
     var numPadNotes = getNumPadNotes(lwData, avSettings, wCheck.isStormy);
-    console.log('numPadNotes', numPadNotes);
     var numChords = getNumChords(lwData, avSettings, wCheck).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
@@ -420,6 +419,7 @@ module.exports = function() {
       }
 
       //TODO scope to init?
+      //Doesn't need scale any more
       function getLongNoteIndex(scale) {
         var _longNoteIndex;
         var _timesToDivide = numPadNotes || scale;
@@ -556,6 +556,8 @@ module.exports = function() {
       }
 
       function playLongNote(scale, extraSeqPlaying) {
+        //TODO getLongNoteIndex need only be caled once
+        //rather than every time a new chord plays
         var _longNoteIndex = getLongNoteIndex(scale);
         longNote.disconnect();
         longNote.connect(soundFilter);
