@@ -157,6 +157,8 @@ Test offline, bad connection states (after refactor of handleNoGeoData fn)
 
 ###Bugs
 
+There's a bug when the number of extra chords is 0
+
 No playback on 1st load Safari
 
 Playback rate bug - seems to exist only in Chrome

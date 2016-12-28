@@ -285,6 +285,27 @@ module.exports = function() {
     return _seqRepeatNum;
   }
 
+  function getRootNote(lwData) {
+    //Add global values to the main data object
+    //Pressure determines root note. Range 2.5 octaves
+    //In western scale it will be between + or - 12
+    var _rangePlus = Math.round(numSemisPerOctave + numSemisPerOctave / 2);
+    var _rangeMinus = -Math.abs(_rangePlus);
+    //playlogic
+    var _rootNote = Math.round(mapRange(
+      lwData.pressure.value,
+      lwData.pressure.min,
+      lwData.pressure.max,
+      _rangeMinus,
+      _rangePlus
+    ));
+    if (_rootNote === -0) {
+      _rootNote = 0;
+    }
+    console.log('_rootNote', _rootNote);
+    return _rootNote;
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -343,6 +364,7 @@ module.exports = function() {
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
     var seqRepeatNum = getMainSeqRepeatNum(wCheck);
+    var rootNote = getRootNote(lwData);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -663,28 +685,6 @@ module.exports = function() {
         channel.publish('playing', audioSupported);
 			}
 
-      //TODO scope to init?
-      function getRootNote() {
-        //Add global values to the main data object
-        //Pressure determines root note. Range 2.5 octaves
-        //In western scale it will be between + or - 12
-        var _rangePlus = Math.round(numSemisPerOctave + numSemisPerOctave / 2);
-        var _rangeMinus = -Math.abs(_rangePlus);
-        //playlogic
-        var _rootNote = Math.round(sketch.map(
-          lwData.pressure.value,
-          lwData.pressure.min,
-          lwData.pressure.max,
-          _rangeMinus,
-          _rangePlus
-        ));
-        if (_rootNote === -0) {
-          _rootNote = 0;
-        }
-        console.log('_rootNote', _rootNote);
-        return _rootNote;
-      }
-
       /**
        * Critical function - if the correct number of octaves
        * are not produced the app fails
@@ -760,15 +760,14 @@ module.exports = function() {
       }
 
       function getRootNoteLetter(numSemitones) {
-        var _rootNote = getRootNote();
         var _rootNoteLetter = '';
         if (numSemitones !== 12) {
-          _rootNoteLetter = getRootNote() + 'non western';
+          _rootNoteLetter = rootNote + 'non western';
         } else {
           if (_rootNote < 0) {
-            _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + _rootNote];
+            _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + rootNote];
           } else {
-            _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[_rootNote];
+            _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote];
           }
         }
         console.log('_rootNoteLetter', _rootNoteLetter);
@@ -779,8 +778,7 @@ module.exports = function() {
         var _numOcts;
         var _allNotesScale = [];
         var _scaleArray = [];
-        var _rootNote = getRootNote();
-        var _rootAndOffset = _rootNote + centreNoteOffset;
+        var _rootAndOffset = rootNote + centreNoteOffset;
         var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, numSemisPerOctave, constrainBy);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
@@ -798,8 +796,7 @@ module.exports = function() {
       }
 
       function isRootNoteHigh() {
-        var _rootNote = getRootNote();
-        if (_rootNote > 0) {
+        if (rootNote > 0) {
           return true;
         } else {
           return false;
