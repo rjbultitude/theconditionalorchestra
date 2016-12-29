@@ -1014,42 +1014,44 @@ module.exports = function() {
 
       function addMusicValues(codisplayData) {
         return codisplayData.map(function(coProp) {
-          if (coProp.key === 'ozone') {
-            coProp.musicValue = numExtraChords;
-          }
-          if (coProp.key === 'pressure') {
-            coProp.musicValue = getRootNoteLetter(numSemisPerOctave);
-          }
-          if (coProp.key === 'visibility') {
-            coProp.musicValue = Math.round(lwData.sParams.freq.value);
-          }
-          if (coProp.music === 'Pad type') {
-            coProp.musicValue = padType;
-          }
-          if (coProp.key === 'apparentTemperature') {
-            coProp.musicValue = seqRepeatNum;
-          }
-          if (coProp.key === 'summary') {
-            coProp.musicValue = chordType;
-          }
-          if (coProp.key === 'isStormy') {
-            coProp.musicValue = numChords;
-          }
-          if (coProp.key === 'humidity') {
-            coProp.musicValue = outputHumidity();
-          }
-          if (coProp.key === 'windSpeed') {
-            coProp.musicValue = windChimeRate.toFixed(2);
-          }
-          if (coProp.key === 'windBearing') {
-            coProp.musicValue = getGetOrdinal(longNoteIndex);
-          }
-          if (coProp.key === 'temperature') {
-            coProp.musicValue = numSemisPerOctave;
-          }
-          if (coProp.key === 'precipType') {
-            coProp.musicValue = precipArpBpm;
-          }
+          switch (coProp.key) {
+            case 'ozone':
+                coProp.musicValue = numExtraChords;
+                break;
+            case 'pressure':
+                coProp.musicValue = getRootNoteLetter(numSemisPerOctave);
+                break;
+            case 'visibility':
+                coProp.musicValue = Math.round(lwData.sParams.freq.value);
+                break;
+            case 'apparentTemperature':
+                coProp.musicValue = seqRepeatNum;
+                break;
+            case 'summary':
+                coProp.musicValue = chordType;
+                break;
+            case 'isStormy':
+                coProp.musicValue = numChords;
+                break;
+            case 'humidity':
+                coProp.musicValue = outputHumidity();
+                break;
+            case 'windSpeed':
+                coProp.musicValue = windChimeRate.toFixed(2);
+                break;
+            case 'windBearing':
+                coProp.musicValue = getGetOrdinal(longNoteIndex);
+                break;
+            case 'temperature':
+                coProp.musicValue = numSemisPerOctave;
+                break;
+            case 'precipType':
+                coProp.musicValue = precipArpBpm;
+                break;
+            case 'temperatureAlt':
+                coProp.musicValue = padType;
+                break;
+            }
           return coProp;
         });
       }

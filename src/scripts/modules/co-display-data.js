@@ -138,5 +138,14 @@ module.exports = [
     iconPath: '/img/pressure-icon.svg',
     music: 'Chord types are ',
     musicValue: ''
+  },
+  {
+    key: 'temperatureAlt',
+    title: 'Settled or unsettled conditions',
+    value: '',
+    unit: '',
+    iconPath: '/img/cloud-cover-icon.svg',
+    music: 'Pad sound is ',
+    musicValue: ''
   }
 ];

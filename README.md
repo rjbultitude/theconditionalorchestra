@@ -131,8 +131,6 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Move all the fns that set core values outside of init
-
 Stop using sParams - only frequency value is used
 
 Change longNote depending on temperature conditions
