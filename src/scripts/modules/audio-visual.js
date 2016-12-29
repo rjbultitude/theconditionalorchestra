@@ -270,7 +270,7 @@ module.exports = function() {
     return _chordType;
   }
 
-  function getMainSeqRepeatNum(wCheck) {
+  function getMainSeqRepeatNum(wCheck, numChords, numExtraChords) {
     var _seqRepeatNum = 0;
     var _seqLength = numChords - numExtraChords;
     //playlogic
@@ -285,7 +285,7 @@ module.exports = function() {
     return _seqRepeatNum;
   }
 
-  function getRootNote(lwData) {
+  function getRootNote(lwData, numSemisPerOctave) {
     //Add global values to the main data object
     //Pressure determines root note. Range 2.5 octaves
     //In western scale it will be between + or - 12
@@ -304,6 +304,24 @@ module.exports = function() {
     }
     console.log('_rootNote', _rootNote);
     return _rootNote;
+  }
+
+  function getLongNoteIndex(lwData, numPadNotes) {
+    var _longNoteIndex;
+    var _timesToDivide = numPadNotes;
+    var _bearingSlice = 360 / _timesToDivide;
+    //playlogic
+    //bearing decides which note in scale to play
+    //Could use reduce
+    for (var i = 0; i < _timesToDivide; i++) {
+      var _currentBearingSlice = _bearingSlice * i;
+      if (lwData.windBearing.value <= _currentBearingSlice) {
+        _longNoteIndex = i;
+      } else {
+        _longNoteIndex = _timesToDivide - 1;
+      }
+    }
+    return _longNoteIndex;
   }
 
   /**
@@ -362,8 +380,9 @@ module.exports = function() {
     var precipCategory = getPrecipCategory(lwData);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
-    var seqRepeatNum = getMainSeqRepeatNum(wCheck);
-    var rootNote = getRootNote(lwData);
+    var seqRepeatNum = getMainSeqRepeatNum(wCheck, numChords, numExtraChords);
+    var rootNote = getRootNote(lwData, numSemisPerOctave);
+    var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -416,26 +435,6 @@ module.exports = function() {
           panIndex = 0;
         }
         return panIndex;
-      }
-
-      //TODO scope to init?
-      //Doesn't need scale any more
-      function getLongNoteIndex(scale) {
-        var _longNoteIndex;
-        var _timesToDivide = numPadNotes || scale;
-        var _bearingSlice = 360 / _timesToDivide;
-        //playlogic
-        //bearing decides which note in scale to play
-        //Could use reduce
-        for (var i = 0; i < _timesToDivide; i++) {
-          var _currentBearingSlice = _bearingSlice * i;
-          if (lwData.windBearing.value <= _currentBearingSlice) {
-            _longNoteIndex = i;
-          } else {
-            _longNoteIndex = _timesToDivide - 1;
-          }
-        }
-        return _longNoteIndex;
       }
 
       function setScaleSetIndex(scaleSet, numExtraChords) {
@@ -556,20 +555,16 @@ module.exports = function() {
       }
 
       function playLongNote(scale, extraSeqPlaying) {
-        //TODO getLongNoteIndex need only be caled once
-        //rather than every time a new chord plays
-        var _longNoteIndex = getLongNoteIndex(scale);
         longNote.disconnect();
         longNote.connect(soundFilter);
         longNote.play();
         if (extraSeqPlaying) {
-          longNote.rate(scale[_longNoteIndex] / 2);
+          longNote.rate(scale[longNoteIndex] / 2);
         } else {
-          longNote.rate(scale[_longNoteIndex]);
+          longNote.rate(scale[longNoteIndex]);
         }
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
-        return _longNoteIndex;
       }
 
       function playPad(scaleSet, key) {
@@ -605,7 +600,7 @@ module.exports = function() {
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass(scaleSet);
         }
-        var _longNoteIndex = playLongNote(scaleSet[scaleSetIndex], extraSeqPlaying);
+        playLongNote(scaleSet[scaleSetIndex], extraSeqPlaying);
         //increment indices
         setScaleSetIndex(scaleSet, numExtraChords);
       }
@@ -761,12 +756,12 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function getRootNoteLetter(numSemitones) {
+      function getRootNoteLetter(numSemisPerOctave) {
         var _rootNoteLetter = '';
-        if (numSemitones !== 12) {
+        if (numSemisPerOctave !== 12) {
           _rootNoteLetter = rootNote + 'non western';
         } else {
-          if (_rootNote < 0) {
+          if (rootNote < 0) {
             _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + rootNote];
           } else {
             _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote];
@@ -1048,7 +1043,7 @@ module.exports = function() {
             coProp.musicValue = windChimeRate.toFixed(2);
           }
           if (coProp.key === 'windBearing') {
-            coProp.musicValue = getGetOrdinal(getLongNoteIndex());
+            coProp.musicValue = getGetOrdinal(longNoteIndex);
           }
           if (coProp.key === 'temperature') {
             coProp.musicValue = numSemisPerOctave;
