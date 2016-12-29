@@ -12,7 +12,7 @@
   display: inline-block;
   vertical-align: top;
   width: 30%;
-  min-height: 200px;
+  min-height: 208px;
   margin: 16px 0 16px;
   box-sizing: border-box;
   position: relative;
@@ -45,9 +45,9 @@
     margin-left: 12%;
   }
 
-  .conditions-display__heading {
+  .conditions-display__header {
     padding-bottom: $padding/4;
-    min-height: 38px;
+    min-height: 72px;
 
     @media all and (max-width: $bp-mobile) {
       padding-bottom: 2px;

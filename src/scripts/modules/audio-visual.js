@@ -180,7 +180,7 @@ module.exports = function() {
     //playlogic
     // We use a non western scale for freezing
     // so only play two chords
-    if (wCheck.isStormy && wCheck.isFreezing) {
+    if (wCheck.isWindy && wCheck.isFreezing) {
       _numChords = 2;
     } else if (wCheck.isStormy || wCheck.isFine) {
       _numChords = 3;
@@ -208,7 +208,7 @@ module.exports = function() {
     var _numSemitones;
     //playlogic
     // non western eq temp scale
-    if (wCheck.isStormy && wCheck.isFreezing) {
+    if (wCheck.isWindy && wCheck.isFreezing) {
       _numSemitones = avSettings.numSemitones + (avSettings.numSemitones / 2); //18
       console.log('non western: ', _numSemitones);
     } else {
@@ -237,7 +237,7 @@ module.exports = function() {
     //and work our way up
 
     //This setting uses non western scale
-    if (wCheck.isStormy && wCheck.isFreezing) {
+    if (wCheck.isWindy && wCheck.isFreezing) {
       padType = 'organ';
     } else if (wCheck.isStormy) {
       //TODO watch out for clash between
@@ -991,7 +991,9 @@ module.exports = function() {
         for (var i = 0; i < codisplayData.length; i++) {
           for (var j = 0; j < lwDataArr.length; j++) {
             if (codisplayData[i].key === lwDataArr[j]) {
+              console.log('codisplayData[i]', codisplayData[i]);
               codisplayData[i].value = lwData[lwDataArr[j]].value || lwData[lwDataArr[j]];
+              console.log('codisplayData[i].value', codisplayData[i].value);
             }
           }
         }
@@ -1032,7 +1034,7 @@ module.exports = function() {
                 coProp.musicValue = getRootNoteLetter(numSemisPerOctave);
                 break;
             case 'visibility':
-                coProp.musicValue = masterFilterFreq;
+                coProp.musicValue = Math.round(masterFilterFreq);
                 break;
             case 'apparentTemperature':
                 coProp.musicValue = seqRepeatNum;
@@ -1075,6 +1077,8 @@ module.exports = function() {
           if (condition.value) {
             var html = appTemplate(condition);
             cdContainer.insertAdjacentHTML('beforeend', html);
+          } else {
+            console.log('Not displayed because not truthy ', condition);
           }
         });
       }

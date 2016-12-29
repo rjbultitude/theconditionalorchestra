@@ -102,6 +102,16 @@ module.exports = [
     musicValue: ''
   },
   {
+    key: 'apparentTemperature',
+    title: 'Apparent temperature',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Main sequence repeats ',
+    musicValue: '',
+    musicAppendage: ' times'
+  },
+  {
     key: 'precipType',
     title: 'Type of precipitation',
     value: '',
@@ -121,16 +131,6 @@ module.exports = [
     musicValue: ''
   },
   {
-    key: 'apparentTemperature',
-    title: 'Apparent temperature',
-    value: '',
-    unit: '',
-    iconPath: '/img/pressure-icon.svg',
-    music: 'Main sequence repeats ',
-    musicValue: '',
-    musicAppendage: ' times'
-  },
-  {
     key: 'summary',
     title: 'Conditions summary',
     value: '',
@@ -140,8 +140,8 @@ module.exports = [
     musicValue: ''
   },
   {
-    key: 'temperatureAlt',
-    title: 'Settled or unsettled conditions',
+    key: 'summary',
+    title: 'Overview',
     value: '',
     unit: '',
     iconPath: '/img/cloud-cover-icon.svg',

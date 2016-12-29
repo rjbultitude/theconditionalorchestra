@@ -1,11 +1,13 @@
 <li class="conditions-display__item">
-  <h2 class="conditions-display__heading">{{title}}</h2>
+  <div class="conditions-display__header">
+    <h2 class="conditions-display__heading">{{title}}</h2>
+    <p class="conditions-display__value">
+      <span>{{value}}</span>
+      <span class="conditions-display__unit">{{unit}}</span>
+    </p>
+  </div>
   <div class="conditions-display__icon">
     <img src="{{iconPath}}" alt="{{title}}" />
   </div>
-  <p class="conditions-display__value">
-    <span>{{value}}</span>
-    <span class="conditions-display__unit">{{unit}}</span>
-  </p>
   <p>{{music}} {{musicValue}} {{musicAppendage}}</p>
 </li>
