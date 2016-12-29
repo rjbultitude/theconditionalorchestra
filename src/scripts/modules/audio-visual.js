@@ -324,6 +324,28 @@ module.exports = function() {
     return _longNoteIndex;
   }
 
+  function getPrecipArpBpm(precipCategory) {
+    // playlogic
+    var _arpBpm = 110;
+    switch (precipCategory) {
+      case 'hard':
+        _arpBpm = 150;
+        console.log('hard');
+        break;
+      case 'soft':
+        _arpBpm = 120;
+        console.log('soft');
+        break;
+      case 'softest':
+        _arpBpm = 90;
+        console.log('softest');
+        break;
+      default:
+        console.log('problem with arrpeggio type', precipCategory);
+    }
+    return _arpBpm;
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -357,7 +379,7 @@ module.exports = function() {
     //clear data
     padSounds = [];
     choralSounds = [];
-    // weather checks
+    // grouped weather booleans
     var wCheck = {
       //single concept items
       isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value),
@@ -378,6 +400,7 @@ module.exports = function() {
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     var precipCategory = getPrecipCategory(lwData);
+    var precipArpBpm = getPrecipArpBpm(precipCategory);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
     var seqRepeatNum = getMainSeqRepeatNum(wCheck, numChords, numExtraChords);
@@ -479,29 +502,6 @@ module.exports = function() {
         clementArpPart.loop();
       }
 
-      //TODO scope to init?
-      function getPrecipArpBpm() {
-        // playlogic
-        var _arpBpm = 110;
-        switch (precipCategory) {
-          case 'hard':
-            _arpBpm = 150;
-            console.log('hard');
-            break;
-          case 'soft':
-            _arpBpm = 120;
-            console.log('soft');
-            break;
-          case 'softest':
-            _arpBpm = 90;
-            console.log('softest');
-            break;
-          default:
-            console.log('problem with arrpeggio type', precipCategory);
-        }
-        return _arpBpm;
-      }
-
       function playRainArp(rainArpScaleArray) {
         //Overwrite sequence with new notes
         var _newNotesArray = addRandomStops(rainArpScaleArray).reverse();
@@ -513,8 +513,7 @@ module.exports = function() {
         } else {
           rainArpPart.addPhrase(rainArpDropLightPhrase);
         }
-        var _arpBpm = getPrecipArpBpm(precipCategory);
-        rainArpPart.setBPM(_arpBpm);
+        rainArpPart.setBPM(precipArpBpm);
         rainArpPart.playingMelody = true;
         rainArpPart.loop();
       }
@@ -1049,7 +1048,7 @@ module.exports = function() {
             coProp.musicValue = numSemisPerOctave;
           }
           if (coProp.key === 'precipType') {
-            coProp.musicValue = getPrecipArpBpm();
+            coProp.musicValue = precipArpBpm;
           }
           return coProp;
         });
