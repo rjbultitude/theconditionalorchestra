@@ -359,6 +359,45 @@ module.exports = function() {
     );
   }
 
+  function isRootNoteHigh(rootNote) {
+    if (rootNote > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function getChordSeqKey(wCheck, rootNoteHigh) {
+    var _key;
+    console.log('rootNoteHigh', rootNoteHigh);
+    //For humid weather we use
+    //the available notes in the intervals
+    //therefore no offset is required
+    //TODO not sure humidity is the best
+    //value to use
+    //playlogic
+    if (wCheck.isHumid || wCheck.isPrecip) {
+      _key = 'chordsNoOffset';
+    }
+    //otherwise we use various offsets
+    else if (wCheck.isClement) {
+      if (rootNoteHigh) {
+        _key = 'chordsPositiveDown';
+      } else {
+        _key = 'chordsPositiveUp';
+      }
+    }
+    else {
+      if (rootNoteHigh) {
+        _key = 'chordsMelancholyDown';
+      } else {
+        _key = 'chordsMelancholyUp';
+      }
+    }
+    console.log('chord seq type', _key);
+    return _key;
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -418,8 +457,10 @@ module.exports = function() {
     var chordType = getChordType(wCheck);
     var seqRepeatNum = getMainSeqRepeatNum(wCheck, numChords, numExtraChords);
     var rootNote = getRootNote(lwData, numSemisPerOctave);
+    var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var masterFilterFreq = getMasterFilterFreq(lwData);
+    var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -805,51 +846,10 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function isRootNoteHigh() {
-        if (rootNote > 0) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-
-      function getChordSeqKey() {
-        var _key;
-        var _rootNoteIsHigh = isRootNoteHigh();
-        console.log('_rootNoteIsHigh', _rootNoteIsHigh);
-        //For humid weather we use
-        //the available notes in the intervals
-        //therefore no offset is required
-        //TODO not sure humidity is the best
-        //value to use
-        //playlogic
-        if (wCheck.isHumid || wCheck.isPrecip) {
-          _key = 'chordsNoOffset';
-        }
-        //otherwise we use various offsets
-        else if (wCheck.isClement) {
-          if (_rootNoteIsHigh) {
-            _key = 'chordsPositiveDown';
-          } else {
-            _key = 'chordsPositiveUp';
-          }
-        }
-        else {
-          if (_rootNoteIsHigh) {
-            _key = 'chordsMelancholyDown';
-          } else {
-            _key = 'chordsMelancholyUp';
-          }
-        }
-        console.log('chord seq type', _key);
-        return _key;
-      }
-
       function getChordSeqOffsetArr(numChords) {
         var _chordOffsetArr = [];
-        var _chordSeqKey = getChordSeqKey();
         var _diff;
-        _chordOffsetArr = intervals[_chordSeqKey];
+        _chordOffsetArr = intervals[chordSeqKey];
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
@@ -971,10 +971,10 @@ module.exports = function() {
 			}
 
       function outputHumidity() {
-        if (getChordSeqKey() === 'chordsNoOffset') {
+        if (chordSeqKey === 'chordsNoOffset') {
           return 'using inversions';
         } else {
-          return getChordSeqKey();
+          return chordSeqKey;
         }
       }
 
