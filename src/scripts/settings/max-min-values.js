@@ -64,27 +64,5 @@ module.exports = {
       min: 0,
       max: 0.5
     }
-  },
-  sParams: {
-    pitch: {
-      min: 0.5,
-      max: 3.0
-    },
-    //Volume arbitary scale (0 - 1)
-    volume: {
-      min: 0.6,
-      max: 1.0
-    },
-    //Distorted volume arbitary scale (0 - 1)
-    distVolume: {
-      min: 0.0,
-      max: 0.6
-    },
-    //Frequency
-    //Lowest (10Hz) to highest (22050Hz)
-    freq: {
-      min: 320,
-      max: 5000
-    }
   }
 };

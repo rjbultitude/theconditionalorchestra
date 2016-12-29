@@ -95,8 +95,6 @@ module.exports = function() {
       Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
       //Add string or time values
       Object.defineProperty(locationData, 'precipType', {writable: true, enumerable: true, value: conditions[0].precipitationType() || '' });
-      //Add max & min sound values
-      Object.defineProperty(locationData, 'sParams', {writable: false, enumerable: true, value: maxMin.sParams});
       //Add summary
       Object.defineProperty(locationData, 'summary', {writable: false, enumerable: true, value: conditions[0].summary() || 'no summary'});
       //Keep last state for next time

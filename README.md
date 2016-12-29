@@ -131,8 +131,6 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Stop using sParams - only frequency value is used
-
 Change longNote depending on temperature conditions
 
 Consider swapping organDist for a guitar

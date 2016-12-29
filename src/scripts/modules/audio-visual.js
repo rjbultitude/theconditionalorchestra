@@ -346,6 +346,19 @@ module.exports = function() {
     return _arpBpm;
   }
 
+  function getMasterFilterFreq(lwData) {
+    //Use math.abs for all pitch and volume values?
+    // Set filter. Visibility is filter freq
+    // playlogic
+    return mapRange(
+      Math.round(lwData.visibility.value),
+      lwData.visibility.min,
+      lwData.visibility.max,
+      avSettings.masterFilter.min,
+      avSettings.masterFilter.max
+    );
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -406,6 +419,7 @@ module.exports = function() {
     var seqRepeatNum = getMainSeqRepeatNum(wCheck, numChords, numExtraChords);
     var rootNote = getRootNote(lwData, numSemisPerOctave);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
+    var masterFilterFreq = getMasterFilterFreq(lwData);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -887,11 +901,7 @@ module.exports = function() {
       }
 
       function setFilter() {
-        //Use math.abs for all pitch and volume values?
-        // Set filter. Visibility is filter freq
-        // playlogic
-        lwData.sParams.freq.value = sketch.map(Math.round(lwData.visibility.value), lwData.visibility.min, lwData.visibility.max, lwData.sParams.freq.min, lwData.sParams.freq.max);
-        soundFilter.freq(lwData.sParams.freq.value);
+        soundFilter.freq(masterFilterFreq);
         soundFilter.res(20);
       }
 
@@ -1022,7 +1032,7 @@ module.exports = function() {
                 coProp.musicValue = getRootNoteLetter(numSemisPerOctave);
                 break;
             case 'visibility':
-                coProp.musicValue = Math.round(lwData.sParams.freq.value);
+                coProp.musicValue = masterFilterFreq;
                 break;
             case 'apparentTemperature':
                 coProp.musicValue = seqRepeatNum;

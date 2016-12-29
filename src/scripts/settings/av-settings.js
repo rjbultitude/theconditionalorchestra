@@ -25,6 +25,12 @@ module.exports = {
   scaleStartIndexBuffer: 10,
   pitchOffsetInc: 0.5,
   fadeTime: 1,
+  //Frequency
+  //Lowest (10Hz) to highest (22050Hz)
+  masterFilter: {
+    min: 320,
+    max: 5000
+  },
 	//DOM
 	cContainerName: 'canvas-container'
 };
