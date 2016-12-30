@@ -112,6 +112,15 @@ module.exports = [
     musicAppendage: ' times'
   },
   {
+    key: 'summaryAlt',
+    title: 'Overview',
+    value: '*',
+    unit: '',
+    iconPath: '/img/cloud-cover-icon.svg',
+    music: 'Pad sound is ',
+    musicValue: ''
+  },
+  {
     key: 'precipType',
     title: 'Type of precipitation',
     value: '',
@@ -140,12 +149,12 @@ module.exports = [
     musicValue: ''
   },
   {
-    key: 'summary',
-    title: 'Overview',
+    key: 'isClement',
+    title: 'Clemency',
     value: '',
     unit: '',
-    iconPath: '/img/cloud-cover-icon.svg',
-    music: 'Pad sound is ',
+    iconPath: '/img/weather-icon.svg',
+    music: 'Algretto playing',
     musicValue: ''
   }
 ];

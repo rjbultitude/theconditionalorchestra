@@ -14,7 +14,7 @@
 		"min": 230,
 		"max": 500
 	},
-	"bearing": {
+	"windBearing": {
 		"value": 181,
 		"min": 0,
 		"max": 360
@@ -24,7 +24,7 @@
 		"min": -35,
 		"max": 120
 	},
-	"apparentTemp": {
+	"apparentTemperature": {
 		"value": 39.57,
 		"min": -35,
 		"max": 120
@@ -34,7 +34,7 @@
 		"min": 0,
 		"max": 1
 	},
-	"speed": {
+	"windSpeed": {
 		"value": 30.52,
 		"min": 0,
 		"max": 74
@@ -54,23 +54,5 @@
 		"min": 0,
 		"max": 0.5
 	},
-	"name": "London, UK",
-	"sParams": {
-		"pitch": {
-			"min": 0.5,
-			"max": 3
-		},
-		"volume": {
-			"min": 0.6,
-			"max": 1
-		},
-		"distVolume": {
-			"min": 0,
-			"max": 0.6
-		},
-		"freq": {
-			"min": 320,
-			"max": 5000
-		}
-	}
+	"name": "London, UK"
 }

@@ -79,12 +79,6 @@ Web Audio is not supported in IE11 so the JS _should_ stop running before any no
 1 master lwData (location weather) object is composed from the weather data.
 1 wCheck object is used to contain all the various booleans needed to handle the app logic
 
-A property `sParams` is added to store values for:
-* frequency - filter frequency
-* volume - not used
-* distVolume - not used
-* pitch
-
 Important values:
 * Visibility - Filter freq  
 * Pressure - pitch root
@@ -100,7 +94,7 @@ Else a minor scale is produced
 
 Each note is assigned a different _pan_ position from an array of 3 (Left, Center, Right)
 
-###Organ
+###Pad
 The number of organ notes is _3_ if the weather is _stormy_
 or the default _4_ for all other conditions TBC
 An extra chord (which is currently pitched down an octave) is played a given number of times
@@ -130,6 +124,8 @@ The bearing angle determines which item in the array to playback in the `scale`.
 The pan and volume are randomly selected from two arrays.
 
 ##Plans
+
+Update Forecastio.js to darksky.js
 
 Change longNote depending on temperature conditions
 

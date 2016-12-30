@@ -63,6 +63,12 @@ module.exports = function() {
 		});
 
   	forecast.getCurrentConditions(newLocation, function(conditions) {
+      //If there's a problem with the darksky service
+      //load the static weather
+      //TODO test this
+      if (conditions === false) {
+        conditions = makeRequest('GET', 'data/static-weather.json');
+      }
       //must make new object at this point;
       var locationData = {
         //in use

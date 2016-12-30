@@ -184,7 +184,6 @@ module.exports = function() {
   }
 
   function getNumChords(lwData, avSettings, wCheck) {
-    console.log('wCheck', wCheck);
     var _numChords;
     var _numExtraChords;
     //playlogic
@@ -994,13 +993,10 @@ module.exports = function() {
         for (var i = 0; i < codisplayData.length; i++) {
           for (var j = 0; j < lwDataArr.length; j++) {
             if (codisplayData[i].key === lwDataArr[j]) {
-              console.log('codisplayData[i]', codisplayData[i]);
               codisplayData[i].value = lwData[lwDataArr[j]].value || lwData[lwDataArr[j]];
-              console.log('codisplayData[i].value', codisplayData[i].value);
             }
           }
         }
-        //TODO should we use these at all?
         for (var k = 0; k < codisplayData.length; k++) {
           for (var l = 0; l < wCheckArr.length; l++) {
             if (codisplayData[k].key === wCheckArr[l]) {
@@ -1063,7 +1059,7 @@ module.exports = function() {
             case 'precipType':
                 coProp.musicValue = precipArpBpm;
                 break;
-            case 'temperatureAlt':
+            case 'summaryAlt':
                 coProp.musicValue = addSpacesToString(padType);
                 break;
             }
