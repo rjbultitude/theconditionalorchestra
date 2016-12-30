@@ -1060,6 +1060,7 @@ module.exports = function() {
                 coProp.musicValue = precipArpBpm;
                 break;
             case 'summaryAlt':
+                //TODO output a weather value
                 coProp.musicValue = addSpacesToString(padType);
                 break;
             }
