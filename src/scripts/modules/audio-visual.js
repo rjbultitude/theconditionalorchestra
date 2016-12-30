@@ -94,6 +94,16 @@ module.exports = function() {
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
   }
 
+  function getGetOrdinal(number) {
+    var oSuffix = ['th','st','nd','rd'];
+    var remainder = number % 100;
+    return number + (oSuffix[(remainder - 20) % 10] || oSuffix[remainder] || oSuffix[0]);
+  }
+
+  function addSpacesToString(string) {
+    return string.replace(/([A-Z][a-z]+)/g, ' ' + '$&');
+  }
+
   function fadeOutPadSounds(soundItem) {
     function stopPadSounds(padSound) {
       setTimeout(function() {
@@ -978,13 +988,6 @@ module.exports = function() {
         }
       }
 
-      //TODO move to module
-      function getGetOrdinal(n) {
-        var s = ['th','st','nd','rd'];
-        var v = n % 100;
-        return n + (s[(v - 20) % 10] || s[v] || s[0]);
-      }
-
       function mapConditionsToDisplayData() {
         var lwDataArr = Object.keys(lwData);
         var wCheckArr = Object.keys(wCheck);
@@ -1040,7 +1043,7 @@ module.exports = function() {
                 coProp.musicValue = seqRepeatNum;
                 break;
             case 'summary':
-                coProp.musicValue = chordType;
+                coProp.musicValue = addSpacesToString(chordType);
                 break;
             case 'isStormy':
                 coProp.musicValue = numChords;
@@ -1061,7 +1064,7 @@ module.exports = function() {
                 coProp.musicValue = precipArpBpm;
                 break;
             case 'temperatureAlt':
-                coProp.musicValue = padType;
+                coProp.musicValue = addSpacesToString(padType);
                 break;
             }
           return coProp;
