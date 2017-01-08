@@ -141,6 +141,8 @@ Create sequencer for stormy weather that uses brash percussive sounds
 
 Test offline, bad connection states (after refactor of handleNoGeoData fn)
 
+Upgrade to google maps 3 : https://developers.google.com/maps/documentation/javascript/v2tov3
+
 ###Bugs
 
 There's a bug when the number of extra chords is 0

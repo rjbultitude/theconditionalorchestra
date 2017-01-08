@@ -284,11 +284,11 @@ module.exports = function() {
     var _seqLength = numChords - numExtraChords;
     //playlogic
     if (wCheck.isFine || wCheck.isFreezing) {
-      _seqRepeatNum = _seqLength * 4;
+      _seqRepeatNum = _seqLength * 1; //4
     } else if (wCheck.isCold) {
-      _seqRepeatNum = _seqLength * 3;
+      _seqRepeatNum = _seqLength * 2; //3
     } else {
-      _seqRepeatNum = _seqLength * 2;
+      _seqRepeatNum = _seqLength * 1; //2
     }
     console.log('_seqRepeatNum', _seqRepeatNum);
     return _seqRepeatNum;
@@ -628,14 +628,23 @@ module.exports = function() {
 
       function playPad(scaleSet, key) {
         var _panIndex = 0;
+        console.log('numChords', numChords);
+        console.log('numExtraChords', numExtraChords);
+        console.log('scaleSet.length', scaleSet.length);
+        console.log('scaleSetIndex', scaleSetIndex);
+        console.log('extraSeqCount', extraSeqCount);
+        console.log('mainSeqCount', mainSeqCount);
+        console.log('seqRepeatNum', seqRepeatNum);
         // Master sequence
-        if (mainSeqCount === seqRepeatNum) {
+        if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence
           //seqRepeatNum number of times
-          //play the last chord
-          scaleSetIndex = scaleSet.length - numExtraChords + extraSeqCount - 1;
+          //play the first chord of extraChords
+          scaleSetIndex = scaleSet.length - numExtraChords + extraSeqCount;
           extraSeqCount++;
           extraSeqPlaying = true;
+          //Once we've played all the extraChords
+          //start over
           if (extraSeqCount === numExtraChords) {
             mainSeqCount = 0;
             extraSeqCount = 0;

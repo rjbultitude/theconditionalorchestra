@@ -330,8 +330,8 @@ module.exports = function() {
     disableControls();
 
     if (inputType === 'userLocation') {
-      getTestLocation(1); //Test
-      //getGeo(); //Live
+      //getTestLocation(1); //Test
+      getGeo(); //Live
     } else if (inputType === 'customLocation') {
       getLatLong(placeInput);
     } else {
