@@ -66,12 +66,12 @@ module.exports = [
     musicAppendage: ' note from chord'
   },
   {
-    key: 'humidity',
+    key: 'isHumid',
     title: 'Humidity',
     value: '',
     unit: '',
     iconPath: '/img/pressure-icon.svg',
-    music: 'Chord sequence type ',
+    music: 'Harp arpeggio playing ',
     musicValue: ''
   },
   {
@@ -89,7 +89,7 @@ module.exports = [
     value: '',
     unit: '',
     iconPath: '/img/sun-icon.svg',
-    music: 'Choral sound',
+    music: 'Upper choral sound',
     musicValue: ''
   },
   {
@@ -98,7 +98,16 @@ module.exports = [
     value: '',
     unit: '',
     iconPath: '/img/cloud-cover-icon.svg',
-    music: 'Filtered choral sound',
+    music: 'Filtered lower choral sound',
+    musicValue: ''
+  },
+  {
+    key: 'isClement',
+    title: 'Clement conditions',
+    value: '',
+    unit: '',
+    iconPath: '/img/cloud-cover-icon.svg',
+    music: 'Chord sequence type is ',
     musicValue: ''
   },
   {
@@ -146,15 +155,6 @@ module.exports = [
     unit: '',
     iconPath: '/img/pressure-icon.svg',
     music: 'Chord types are ',
-    musicValue: ''
-  },
-  {
-    key: 'isClement',
-    title: 'Clemency',
-    value: '',
-    unit: '',
-    iconPath: '/img/weather-icon.svg',
-    music: 'Algretto playing',
     musicValue: ''
   }
 ];

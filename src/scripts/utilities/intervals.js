@@ -2,8 +2,8 @@
 
 module.exports = {
     //TODO check the names used
-    heptMajorIntervals: [0, 2, 4, 5, 7, 9, 11], // Heptatonic major scale
-    heptMinorIntervals: [0, 2, 3, 5, 7, 9, 10], // Heptatonic harmonic minor scale
+    heptatonicMajorIntervals: [0, 2, 4, 5, 7, 9, 11], // Heptatonic major scale
+    heptatonicMinorIntervals: [0, 2, 3, 5, 7, 9, 10], // Heptatonic harmonic minor scale
     octMinorIntervals: [0, 2, 3, 5, 7, 8, 9, 10],  // Octatonic minor scale
     minorSeventhIntervals: [0, 4, 7, 10, 0, 4, 7, 10],
     majorSeventhIntervals: [0, 4, 7, 11, 0, 4, 7, 11],

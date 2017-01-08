@@ -125,21 +125,15 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Update Forecastio.js to darksky.js
-
 Change longNote depending on temperature conditions
 
 Consider swapping organDist for a guitar
 
-Consider swapping brass stab sound for piano and slowing it down
+Consider swapping brass stab sound for harp and slowing it down
 
-Consider reflow of program flow so that either:
- * The maximum number of octaves for _all_ sounds is determined and then one master array used for all
-* Create a web worker thread for the creation of each all notes array
+Consider reflow of program flow so that the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
 
 Modulate padSounds volume/rate/pan for windy conditions
-
-Don't use the padSounds callback for conditions which use the interval scales for chords
 
 Consider using `dew point` as another data input
 

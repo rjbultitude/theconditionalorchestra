@@ -41,7 +41,7 @@ module.exports = function() {
   //clement / brass
   var brassStabSound;
   var clementArpPhrase;
-  var clementArpPart;
+  var humidArpPart;
   //long note
   var longNote;
   //Rain / drops
@@ -94,7 +94,7 @@ module.exports = function() {
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
   }
 
-  function getGetOrdinal(number) {
+  function getOrdinal(number) {
     var oSuffix = ['th','st','nd','rd'];
     var remainder = number % 100;
     return number + (oSuffix[(remainder - 20) % 10] || oSuffix[remainder] || oSuffix[0]);
@@ -128,8 +128,8 @@ module.exports = function() {
       rainArpPart.stop(0);
       rainArpPart.removePhrase('rainDrops');
       rainArpPart.removePhrase('rainDropsLight');
-      clementArpPart.stop(0);
-      clementArpPart.removePhrase('flttrBrass');
+      humidArpPart.stop(0);
+      humidArpPart.removePhrase('flttrBrass');
       // Fades organ sounds
       padSounds.forEach(fadeOutPadSounds);
       choralSounds.forEach(fadeChoralSounds);
@@ -269,9 +269,9 @@ module.exports = function() {
     if (wCheck.isFine) {
       _chordType = 'majorSeventhIntervals';
     } else if (wCheck.isClement) {
-      _chordType = 'heptMajorIntervals';
+      _chordType = 'heptatonicMajorIntervals';
     } else if (wCheck.isStormy) {
-      _chordType = 'heptMinorIntervals';
+      _chordType = 'heptatonicMinorIntervals';
     } else {
       _chordType = 'minorSeventhIntervals';
     }
@@ -382,21 +382,17 @@ module.exports = function() {
     //For humid weather we use
     //the available notes in the intervals
     //therefore no offset is required
-    //TODO not sure humidity is the best
     //value to use
     //playlogic
-    if (wCheck.isHumid || wCheck.isPrecip) {
-      _key = 'chordsNoOffset';
-    }
-    //otherwise we use various offsets
-    else if (wCheck.isClement) {
+    if (wCheck.isFine) {
       if (rootNoteHigh) {
         _key = 'chordsPositiveDown';
       } else {
         _key = 'chordsPositiveUp';
       }
-    }
-    else {
+    } else if (wCheck.isClement) {
+      _key = 'chordsNoOffset';
+    } else {
       if (rootNoteHigh) {
         _key = 'chordsMelancholyDown';
       } else {
@@ -418,7 +414,7 @@ module.exports = function() {
     rainArpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
     rainArpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
     clementArpPhrase = new P5.Phrase('flttrBrass', makeFlttrBrassSound, flttrBrassPattern);
-    clementArpPart = new P5.Part();
+    humidArpPart = new P5.Part();
     rainArpPart = new P5.Part();
   }
 
@@ -533,13 +529,13 @@ module.exports = function() {
         return scaleSetIndex;
       }
 
-      function getAllegrettoRhythmType(clementArpScaleArray) {
+      function getAllegrettoRhythmType(humidArpScaleArray) {
         var _newNotesArray = [];
         //playlogic
         if (wCheck.isHumid) {
-          _newNotesArray = getAllegrettoRhythm(clementArpScaleArray, true);
+          _newNotesArray = getAllegrettoRhythm(humidArpScaleArray, true);
         } else {
-          _newNotesArray = getAllegrettoRhythm(clementArpScaleArray, false);
+          _newNotesArray = getAllegrettoRhythm(humidArpScaleArray, false);
         }
         return _newNotesArray;
       }
@@ -554,16 +550,16 @@ module.exports = function() {
         brassBaritone3.setVolume(1);
       }
 
-      function playClementArp(clementArpScaleArray) {
+      function playHumidArp(humidArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray = getAllegrettoRhythmType(clementArpScaleArray);
+        var _newNotesArray = getAllegrettoRhythmType(humidArpScaleArray);
         clementArpPhrase.sequence = _newNotesArray;
         console.log('clementArpPhrase.sequence', clementArpPhrase.sequence);
         //Play Sequence
-        clementArpPart.addPhrase(clementArpPhrase);
-        clementArpPart.setBPM(104);
-        clementArpPart.playingMelody = true;
-        clementArpPart.loop();
+        humidArpPart.addPhrase(clementArpPhrase);
+        humidArpPart.setBPM(104);
+        humidArpPart.playingMelody = true;
+        humidArpPart.loop();
       }
 
       function playRainArp(rainArpScaleArray) {
@@ -690,13 +686,15 @@ module.exports = function() {
               choralSound.connect(freezingFilter);
             }
             choralSound.loop();
+            //playlogic
             if (wCheck.isFreezing) {
               choralSound.rate(scaleArray[i] / 2);
+              choralSound.setVolume(0.23);
             } else {
               choralSound.rate(scaleArray[i]);
+              choralSound.setVolume(0.1);
             }
             console.log('weather is fine or freezing. playing choralSounds rate ', choralSound);
-            choralSound.setVolume(0.23);
           });
         } else {
           console.log('weather is not fine or freezing. No choralSounds');
@@ -708,10 +706,10 @@ module.exports = function() {
        * Though some of this is delegated
        * @param  {Array} padScales    sets of notes to play
        * @param  {Array} rainArpScaleArray a set of notes fot the sequencer to play
-       * @param  {Array} clementArpScaleArray a set of notes fot the sequencer to play
+       * @param  {Array} humidArpScaleArray a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
-			function playSounds(padScales, rainArpScaleArray, clementArpScaleArray) {
+			function playSounds(padScales, rainArpScaleArray, humidArpScaleArray) {
         // Fine conditions
         handleChoralSound(padScales[0]);
         // Play brass
@@ -730,8 +728,8 @@ module.exports = function() {
         //Organ
         playPad(padScales, padType);
         //Clement arpeggio
-        if (clementArpScaleArray.length > 0) {
-          playClementArp(clementArpScaleArray);
+        if (humidArpScaleArray.length > 0) {
+          playHumidArp(humidArpScaleArray);
         }
         //Rain arpeggio
         if (rainArpScaleArray.length > 0) {
@@ -821,8 +819,9 @@ module.exports = function() {
 
       function getRootNoteLetter(numSemisPerOctave) {
         var _rootNoteLetter = '';
+        var _rootNoteNumber = rootNote + 1;
         if (numSemisPerOctave !== 12) {
-          _rootNoteLetter = rootNote + 'non western';
+          _rootNoteLetter = getOrdinal(_rootNoteNumber) + ' note in a non western scale';
         } else {
           if (rootNote < 0) {
             _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + rootNote];
@@ -870,7 +869,7 @@ module.exports = function() {
       function getIntervalIndexOffsetKey() {
         var _key;
         //playlogic
-        if (wCheck.isHumid || wCheck.isPrecip) {
+        if (wCheck.isClement) {
           _key = 'chordIndexes';
         } else {
           _key = 'chordIndexesNoOffset';
@@ -963,7 +962,7 @@ module.exports = function() {
 			function configureSounds() {
         var _organScaleSets = [];
         var _rainArpScaleArray = [];
-        var _clementArpScaleArray = [];
+        var _humidArpScaleArray = [];
         // Set filter for pad sounds
         setFilter();
         //Make arrays of frequencies for playback
@@ -973,13 +972,13 @@ module.exports = function() {
         if (wCheck.isPrecip) {
           _rainArpScaleArray = createRainArpScale(numSemisPerOctave);
         }
-        if (wCheck.isClement) {
-          _clementArpScaleArray = createClementArpScale(numSemisPerOctave);
+        if (wCheck.isHumid) {
+          _humidArpScaleArray = createClementArpScale(numSemisPerOctave);
         }
-        playSounds(_organScaleSets, _rainArpScaleArray, _clementArpScaleArray);
+        playSounds(_organScaleSets, _rainArpScaleArray, _humidArpScaleArray);
 			}
 
-      function outputHumidity() {
+      function outputChordSeqType() {
         if (chordSeqKey === 'chordsNoOffset') {
           return 'using inversions';
         } else {
@@ -1044,14 +1043,14 @@ module.exports = function() {
             case 'isStormy':
                 coProp.musicValue = numChords;
                 break;
-            case 'humidity':
-                coProp.musicValue = outputHumidity();
+            case 'isClement':
+                coProp.musicValue = outputChordSeqType();
                 break;
             case 'windSpeed':
                 coProp.musicValue = windChimeRate.toFixed(2);
                 break;
             case 'windBearing':
-                coProp.musicValue = getGetOrdinal(longNoteIndex);
+                coProp.musicValue = getOrdinal(longNoteIndex);
                 break;
             case 'temperature':
                 coProp.musicValue = numSemisPerOctave;
@@ -1204,18 +1203,18 @@ module.exports = function() {
         freezingFilterFreq++;
       }
 
-      function updateClementArp() {
-        var _clemArpPhrase = clementArpPart.getPhrase('flttrBrass');
+      function updateHumidArp() {
+        var _humidArpPhrase = humidArpPart.getPhrase('flttrBrass');
         if (sketch.frameCount % 1200 === 0 && sketch.frameCount !== 0) {
-          if (clementArpPart.playingMelody) {
-            clementArpPart.stop();
-            clementArpPart.playingMelody = false;
-            clemArpEnd(_clemArpPhrase.sequence);
-            console.log('clementArpPart should have stopped');
+          if (humidArpPart.playingMelody) {
+            humidArpPart.stop();
+            humidArpPart.playingMelody = false;
+            clemArpEnd(_humidArpPhrase.sequence);
+            console.log('humidArpPart should have stopped');
           } else {
-            clementArpPart.loop();
-            clementArpPart.playingMelody = true;
-            console.log('clementArpPart should be playing');
+            humidArpPart.loop();
+            humidArpPart.playingMelody = true;
+            console.log('humidArpPart should be playing');
           }
         }
       }
@@ -1244,18 +1243,15 @@ module.exports = function() {
           }
         }
         //playlogic
-        //Brass section
         if (wCheck.isWindy) {
           updateBrass();
         }
-        //Update clement arp
-        if (wCheck.isClement) {
-          updateClementArp();
+        if (wCheck.isHumid) {
+          updateHumidArp();
         }
         if (wCheck.isPrecip) {
           updateRainArp();
         }
-        //Update filter
         if (wCheck.isFreezing) {
           updateFilter();
         }
