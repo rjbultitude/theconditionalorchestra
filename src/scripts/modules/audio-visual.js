@@ -628,13 +628,6 @@ module.exports = function() {
 
       function playPad(scaleSet, key) {
         var _panIndex = 0;
-        console.log('numChords', numChords);
-        console.log('numExtraChords', numExtraChords);
-        console.log('scaleSet.length', scaleSet.length);
-        console.log('scaleSetIndex', scaleSetIndex);
-        console.log('extraSeqCount', extraSeqCount);
-        console.log('mainSeqCount', mainSeqCount);
-        console.log('seqRepeatNum', seqRepeatNum);
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence

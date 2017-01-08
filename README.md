@@ -125,6 +125,10 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Choral sound and chord offset don't play nice together
+
+Some chord sequences sound bad - could go for two chord sequences that offset by only safe numbers. Needs testing on an instrument.
+
 Change longNote depending on temperature conditions
 
 Consider swapping organDist for a guitar

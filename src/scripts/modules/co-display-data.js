@@ -57,7 +57,7 @@ module.exports = [
   },
   {
     key: 'windBearing',
-    title: 'Long note',
+    title: 'Wind bearing',
     value: '',
     unit: '',
     iconPath: '/img/pressure-icon.svg',
