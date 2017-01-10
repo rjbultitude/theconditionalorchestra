@@ -155,22 +155,22 @@ module.exports = function() {
       channel.publish('allStopped', autoStart);
   }
 
-  function makeFlttrBrassSound(time, playbackRate) {
+  function makeFlttrBrassSound(time, playbackRate, volume) {
     brassStabSound.rate(playbackRate);
     brassStabSound.setVolume(0.15);
-    brassStabSound.play(time);
+    brassStabSound.play(time, playbackRate, volume);
   }
 
-  function makeDropSound(time, playbackRate) {
+  function makeDropSound(time, playbackRate, volume) {
     dropSound.rate(playbackRate);
     dropSound.setVolume(0.2);
-    dropSound.play(time);
+    dropSound.play(time, playbackRate, volume);
   }
 
-  function makeDropLightSound(time, playbackRate) {
+  function makeDropLightSound(time, playbackRate, volume) {
     dropLightSound.rate(playbackRate);
     dropLightSound.setVolume(0.2);
-    dropLightSound.play(time);
+    dropLightSound.play(time, playbackRate, volume);
   }
 
   function getNumPadNotes(lwData, avSettings, isStormy) {
