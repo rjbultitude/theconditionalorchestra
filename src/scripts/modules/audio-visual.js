@@ -260,6 +260,8 @@ module.exports = function() {
       _chordType = 'majorSeventhIntervals';
     } else if (wCheck.isStormy) {
       _chordType = 'heptatonicMinorIntervals';
+    } else if (wCheck.isWindy || wCheck.isCloudy || wCheck.isHumid) {
+      _chordType = 'octatonicMinorIntervals';
     } else {
       _chordType = 'minorSeventhIntervals';
     }
@@ -275,14 +277,16 @@ module.exports = function() {
     //therefore no offset is required
     //value to use
     //playlogic
-    if (wCheck.isFine) {
+    // important!
+    // may need to include isPrecip
+    if (wCheck.isFine || wCheck.isFreezing || wCheck.isWindy || wCheck.isHumid) {
+      _key = 'chordsNoOffset';
+    } else if (wCheck.isClement) {
       if (rootNoteHigh) {
         _key = 'chordsPositiveDown';
       } else {
         _key = 'chordsPositiveUp';
       }
-    } else if (wCheck.isClement) {
-      _key = 'chordsNoOffset';
     } else {
       if (rootNoteHigh) {
         _key = 'chordsMelancholyDown';
@@ -291,6 +295,24 @@ module.exports = function() {
       }
     }
     console.log('chord seq type', _key);
+    return _key;
+  }
+
+  //Inversions manager
+  function getIntervalIndexOffsetKey(wCheck) {
+    var _key;
+    // playlogic
+    // important!
+    if (wCheck.isFine || wCheck.isFreezing) {
+      _key = 'chordIndexesDown';
+    } else if (wCheck.isWindy) {
+      _key = 'chordIndexesUpDown';
+    } else if (wCheck.isHumid) {
+      _key = 'chordIndexesUp';
+    } else {
+      _key = 'chordIndexesNoOffset';
+    }
+    console.log('inversion chords ', _key);
     return _key;
   }
 
@@ -869,21 +891,9 @@ module.exports = function() {
         return _chordOffsetArr;
       }
 
-      function getIntervalIndexOffsetKey() {
-        var _key;
-        //playlogic
-        if (wCheck.isClement) {
-          _key = 'chordIndexes';
-        } else {
-          _key = 'chordIndexesNoOffset';
-        }
-        console.log('interval arr for chord ', _key);
-        return _key;
-      }
-
       function getIntervalIndexOffsetArr(numChords) {
         var _chordIndexOffSetArr = [];
-        var _chordIndexOffSetKey = getIntervalIndexOffsetKey();
+        var _chordIndexOffSetKey = getIntervalIndexOffsetKey(wCheck);
         var _diff;
         _chordIndexOffSetArr = intervals[_chordIndexOffSetKey];
         if (numChords > _chordIndexOffSetArr.length) {
@@ -899,7 +909,7 @@ module.exports = function() {
         var _chordSeq = [];
         //Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
-        //Chord from within intervals shift
+        //Chord inversion shift
         var _intIndOffsetArr = getIntervalIndexOffsetArr(numChords);
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], chordType, _intIndOffsetArr[i]));
@@ -916,7 +926,7 @@ module.exports = function() {
         soundFilter.res(20);
       }
 
-      function createClementArpScale(numSemisPerOctave) {
+      function createHumidArpScale(numSemisPerOctave) {
         var _cArpCNoteOffset = 0;
         var _cIntervals;
         //playlogic
@@ -976,7 +986,7 @@ module.exports = function() {
           _rainArpScaleArray = createRainArpScale(numSemisPerOctave);
         }
         if (wCheck.isHumid) {
-          _humidArpScaleArray = createClementArpScale(numSemisPerOctave);
+          _humidArpScaleArray = createHumidArpScale(numSemisPerOctave);
         }
         playSounds(_organScaleSets, _rainArpScaleArray, _humidArpScaleArray);
 			}
