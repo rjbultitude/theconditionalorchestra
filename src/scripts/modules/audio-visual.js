@@ -915,7 +915,8 @@ module.exports = function() {
         //we should use more harmonious chords
         //by getting different chord types
         if (_chordNumGreatest > _chordSeqOffsetArr.length) {
-          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, numChords > _chordSeqOffsetArr.length, null);
+          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, _chordNumGreatest - _chordSeqOffsetArr.length, null);
+          console.log('_chordSeqOffsetArr length', _chordSeqOffsetArr.length);
         }
         for (var i = 0; i < numChords; i++) {
           console.log('_chordSeqOffsetArr[i]', _chordSeqOffsetArr[i]);

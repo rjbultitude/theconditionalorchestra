@@ -7,6 +7,12 @@
  * @return {Array}          [array]
  */
 module.exports = function addMissingArrayItems(array, difference, amountToAdd, repeat) {
+  //error check
+  for (var i = 0; i < arguments.length; i++) {
+    if (typeof arguments[i] !== 'number' && i !== 0) {
+      console.error(i + ' arg with val ' + arguments[i] + ' is not a number');
+    }
+  }
   var _index = 0;
   var _amountToAdd = amountToAdd || 0;
   var _newArr = array.map(function(item) {
