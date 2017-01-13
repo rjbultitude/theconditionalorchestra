@@ -37,7 +37,7 @@ module.exports = function() {
   //Windy/ Brass
   var brassBaritone;
   var brassBaritone2;
-  var brassBaritone3;
+  var harpSoundTwo;
   //clement / brass
   var harpSound;
   var humidArpPhrase;
@@ -136,14 +136,14 @@ module.exports = function() {
       longNote.fade(0, avSettings.fadeTime);
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
-      brassBaritone3.fade(0, avSettings.fadeTime);
+      harpSoundTwo.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       setTimeout(function(){
         longNote.stop();
         brassBaritone.stop();
         brassBaritone2.stop();
-        brassBaritone3.stop();
+        harpSoundTwo.stop();
         windChime.stop();
         bass.stop();
       }, avSettings.fadeTime * 1000);
@@ -578,14 +578,14 @@ module.exports = function() {
         return _newNotesArray;
       }
 
-      function clemArpEnd(notesArray) {
+      function humidArpEnd(notesArray) {
         var _randomNote = sketch.random(notesArray);
         //Setup reverb
-        brassBaritone3.disconnect();
-        reverb.process(brassBaritone3, 4, 10);
-        brassBaritone3.play();
-        brassBaritone3.rate(_randomNote * 3);
-        brassBaritone3.setVolume(1);
+        harpSoundTwo.disconnect();
+        reverb.process(harpSoundTwo, 4, 10);
+        harpSoundTwo.play();
+        harpSoundTwo.rate(_randomNote * 3);
+        harpSoundTwo.setVolume(1);
       }
 
       function playHumidArp(humidArpScaleArray) {
@@ -906,11 +906,11 @@ module.exports = function() {
         console.log('numChords', numChords);
         console.log('numExtraChords', numExtraChords);
         var _chordSeq = [];
-        //Chord shift
-        var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
-        //Chord inversion shift
-        var _intIndOffsetArr = getIntervalIndexOffsetArr(numChords);
         var _chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
+        //Chord shift
+        var _chordSeqOffsetArr = getChordSeqOffsetArr(_chordNumGreatest);
+        //Chord inversion shift
+        var _intIndOffsetArr = getIntervalIndexOffsetArr(_chordNumGreatest);
         //TODO for chord sequences with offset
         //we should use more harmonious chords
         //by getting different chord types
@@ -1156,8 +1156,8 @@ module.exports = function() {
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brassbass.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brassbass.mp3');
-          brassBaritone3 = sketch.loadSound('/audio/brassbass.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
+          harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
           longNote = sketch.loadSound('/audio/longnote-C3.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
@@ -1237,7 +1237,7 @@ module.exports = function() {
           if (humidArpPart.playingMelody) {
             humidArpPart.stop();
             humidArpPart.playingMelody = false;
-            clemArpEnd(_humidArpPhrase.sequence);
+            humidArpEnd(_humidArpPhrase.sequence);
             console.log('humidArpPart should have stopped');
           } else {
             humidArpPart.loop();
