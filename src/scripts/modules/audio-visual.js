@@ -352,7 +352,7 @@ module.exports = function() {
     return _rootNote;
   }
 
-  function getRootNoteLetter(numSemisPerOctave) {
+  function getRootNoteLetter(numSemisPerOctave, rootNote) {
     var _rootNoteLetter = '';
     var _rootNoteNumber = rootNote + 1;
     if (numSemisPerOctave !== 12) {
@@ -911,10 +911,13 @@ module.exports = function() {
         var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
         //Chord inversion shift
         var _intIndOffsetArr = getIntervalIndexOffsetArr(numChords);
+        //TODO for chord sequences with offset
+        //we should use more harmonious chords
+        //by getting different chord types
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], chordType, _intIndOffsetArr[i]));
         }
-        //Adding extra chord
+        //Adding extra chord(s) - pitched down
         for (var j = 0; j < numExtraChords; j++) {
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j] - numSemisPerOctave, chordType, _intIndOffsetArr[j]));
         }
@@ -1042,7 +1045,7 @@ module.exports = function() {
                 coProp.musicValue = numExtraChords;
                 break;
             case 'pressure':
-                coProp.musicValue = getRootNoteLetter(numSemisPerOctave);
+                coProp.musicValue = getRootNoteLetter(numSemisPerOctave, rootNote);
                 break;
             case 'visibility':
                 coProp.musicValue = Math.round(masterFilterFreq);
