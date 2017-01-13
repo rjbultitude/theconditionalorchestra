@@ -17,7 +17,7 @@ module.exports = {
     chordsPositiveDown: [0, -5, -3, -5],
     chordsNoOffset: [0, 0, 0, 0],
     chordIndexesDown: [0, 3, 2, 1],
-    chordIndexesUp: [0, 1, 2, 3],
+    chordIndexesUp: [0, 2, 3, 5],
     chordIndexesUpDown: [3, 1, 2, 0],
     chordIndexesNoOffset: [0, 0, 0, 0]
 };

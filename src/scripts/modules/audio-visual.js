@@ -256,6 +256,8 @@ module.exports = function() {
     //playlogic
     if (wCheck.isFine) {
       _chordType = 'heptatonicMajorIntervals';
+    } else if (wCheck.isCold) {
+      _chordType = 'minorSeventhIntervals';
     } else if (wCheck.isClement) {
       _chordType = 'majorSeventhIntervals';
     } else if (wCheck.isStormy) {
