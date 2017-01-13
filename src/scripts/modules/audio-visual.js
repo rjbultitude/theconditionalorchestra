@@ -39,8 +39,8 @@ module.exports = function() {
   var brassBaritone2;
   var brassBaritone3;
   //clement / brass
-  var brassStabSound;
-  var clementArpPhrase;
+  var harpSound;
+  var humidArpPhrase;
   var humidArpPart;
   //long note
   var longNote;
@@ -155,10 +155,10 @@ module.exports = function() {
       channel.publish('allStopped', autoStart);
   }
 
-  function makeFlttrBrassSound(time, playbackRate, volume) {
-    brassStabSound.rate(playbackRate);
-    brassStabSound.setVolume(0.15);
-    brassStabSound.play(time, playbackRate, volume);
+  function makeHarpSound(time, playbackRate, volume) {
+    harpSound.rate(playbackRate);
+    harpSound.setVolume(0.15);
+    harpSound.play(time, playbackRate, volume);
   }
 
   function makeDropSound(time, playbackRate, volume) {
@@ -451,7 +451,7 @@ module.exports = function() {
     // Create phrase: name, callback, sequence
     rainArpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
     rainArpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
-    clementArpPhrase = new P5.Phrase('flttrBrass', makeFlttrBrassSound, flttrBrassPattern);
+    humidArpPhrase = new P5.Phrase('flttrBrass', makeHarpSound, flttrBrassPattern);
     humidArpPart = new P5.Part();
     rainArpPart = new P5.Part();
   }
@@ -591,11 +591,11 @@ module.exports = function() {
       function playHumidArp(humidArpScaleArray) {
         //Overwrite sequence with new notes
         var _newNotesArray = getAllegrettoRhythmType(humidArpScaleArray);
-        clementArpPhrase.sequence = _newNotesArray;
-        console.log('clementArpPhrase.sequence', clementArpPhrase.sequence);
+        humidArpPhrase.sequence = _newNotesArray;
+        console.log('humidArpPhrase.sequence', humidArpPhrase.sequence);
         //Play Sequence
-        humidArpPart.addPhrase(clementArpPhrase);
-        humidArpPart.setBPM(104);
+        humidArpPart.addPhrase(humidArpPhrase);
+        humidArpPart.setBPM(60);
         humidArpPart.playingMelody = true;
         humidArpPart.loop();
       }
@@ -1157,7 +1157,7 @@ module.exports = function() {
           brassBaritone = sketch.loadSound('/audio/brassbass.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brassbass.mp3');
           brassBaritone3 = sketch.loadSound('/audio/brassbass.mp3');
-          brassStabSound = sketch.loadSound('/audio/brass-stab-C3.mp3');
+          harpSound = sketch.loadSound('/audio/harp-C3.mp3');
           longNote = sketch.loadSound('/audio/longnote-C3.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
