@@ -330,6 +330,22 @@ module.exports = function() {
     return _rootNote;
   }
 
+  function getRootNoteLetter(numSemisPerOctave) {
+    var _rootNoteLetter = '';
+    var _rootNoteNumber = rootNote + 1;
+    if (numSemisPerOctave !== 12) {
+      _rootNoteLetter = getOrdinal(_rootNoteNumber) + ' note in a non western scale';
+    } else {
+      if (rootNote < 0) {
+        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + rootNote];
+      } else {
+        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote];
+      }
+    }
+    console.log('_rootNoteLetter', _rootNoteLetter);
+    return _rootNoteLetter;
+  }
+
   function getLongNoteIndex(lwData, numPadNotes) {
     var _longNoteIndex;
     var _timesToDivide = numPadNotes;
@@ -818,22 +834,6 @@ module.exports = function() {
           _intervalIndexOffset++;
         }
         return _scaleArray;
-      }
-
-      function getRootNoteLetter(numSemisPerOctave) {
-        var _rootNoteLetter = '';
-        var _rootNoteNumber = rootNote + 1;
-        if (numSemisPerOctave !== 12) {
-          _rootNoteLetter = getOrdinal(_rootNoteNumber) + ' note in a non western scale';
-        } else {
-          if (rootNote < 0) {
-            _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + rootNote];
-          } else {
-            _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote];
-          }
-        }
-        console.log('_rootNoteLetter', _rootNoteLetter);
-        return _rootNoteLetter;
       }
 
       function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, constrainBy) {
