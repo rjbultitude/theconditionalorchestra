@@ -156,5 +156,14 @@ module.exports = [
     iconPath: '/img/pressure-icon.svg',
     music: 'Chord types are ',
     musicValue: ''
+  },
+  {
+    key: 'extremeWeather',
+    title: 'Extreme weather',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Number of notes in chord is ',
+    musicValue: ''
   }
 ];

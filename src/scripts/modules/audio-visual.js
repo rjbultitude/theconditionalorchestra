@@ -173,9 +173,10 @@ module.exports = function() {
     dropLightSound.play(time, playbackRate, volume);
   }
 
-  function getNumPadNotes(lwData, avSettings, isStormy) {
+  function getNumPadNotes(wCheck, avSettings) {
     var _numPadNotes;
-    if (isStormy) {
+    //playlogic
+    if (wCheck.isWindy && wCheck.isFreezing) {
       _numPadNotes = 3;
     } else {
       _numPadNotes = avSettings.numPadNotes; //4
@@ -218,25 +219,12 @@ module.exports = function() {
     //playlogic
     // non western eq temp scale
     if (wCheck.isWindy && wCheck.isFreezing) {
-      _numSemitones = avSettings.numSemitones + (avSettings.numSemitones / 2); //18
+      _numSemitones = avSettings.numSemitones * 2; //24
       console.log('non western: ', _numSemitones);
     } else {
       _numSemitones = avSettings.numSemitones; //12
     }
     return _numSemitones;
-  }
-
-  function getPrecipCategory(lwData) {
-    if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
-      return 'hard';
-    } else if (lwData.precipType === 'sleet' || lwData.precipIntensity.value <= 0.2) {
-      return 'soft';
-    } else if (lwData.precipType === 'snow' || lwData.precipIntensity.value <= 0.1) {
-      return 'softest';
-    } else {
-      console.log('no rain? type is: ', lwData.precipType);
-      return null;
-    }
   }
 
   function getPadType(wCheck) {
@@ -267,9 +255,9 @@ module.exports = function() {
     var _chordType;
     //playlogic
     if (wCheck.isFine) {
-      _chordType = 'majorSeventhIntervals';
-    } else if (wCheck.isClement) {
       _chordType = 'heptatonicMajorIntervals';
+    } else if (wCheck.isClement) {
+      _chordType = 'majorSeventhIntervals';
     } else if (wCheck.isStormy) {
       _chordType = 'heptatonicMinorIntervals';
     } else {
@@ -279,16 +267,43 @@ module.exports = function() {
     return _chordType;
   }
 
+  function getChordSeqKey(wCheck, rootNoteHigh) {
+    var _key;
+    console.log('rootNoteHigh', rootNoteHigh);
+    //For humid weather we use
+    //the available notes in the intervals
+    //therefore no offset is required
+    //value to use
+    //playlogic
+    if (wCheck.isFine) {
+      if (rootNoteHigh) {
+        _key = 'chordsPositiveDown';
+      } else {
+        _key = 'chordsPositiveUp';
+      }
+    } else if (wCheck.isClement) {
+      _key = 'chordsNoOffset';
+    } else {
+      if (rootNoteHigh) {
+        _key = 'chordsMelancholyDown';
+      } else {
+        _key = 'chordsMelancholyUp';
+      }
+    }
+    console.log('chord seq type', _key);
+    return _key;
+  }
+
   function getMainSeqRepeatNum(wCheck, numChords, numExtraChords) {
     var _seqRepeatNum = 0;
     var _seqLength = numChords - numExtraChords;
     //playlogic
     if (wCheck.isFine || wCheck.isFreezing) {
-      _seqRepeatNum = _seqLength * 1; //4
+      _seqRepeatNum = _seqLength * 3; //was 4
     } else if (wCheck.isCold) {
-      _seqRepeatNum = _seqLength * 2; //3
+      _seqRepeatNum = _seqLength * 2; //was 3
     } else {
-      _seqRepeatNum = _seqLength * 1; //2
+      _seqRepeatNum = _seqLength * 1; //was 2
     }
     console.log('_seqRepeatNum', _seqRepeatNum);
     return _seqRepeatNum;
@@ -333,6 +348,19 @@ module.exports = function() {
     return _longNoteIndex;
   }
 
+  function getPrecipCategory(lwData) {
+    if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
+      return 'hard';
+    } else if (lwData.precipType === 'sleet' || lwData.precipIntensity.value <= 0.2) {
+      return 'soft';
+    } else if (lwData.precipType === 'snow' || lwData.precipIntensity.value <= 0.1) {
+      return 'softest';
+    } else {
+      console.log('no rain? type is: ', lwData.precipType);
+      return null;
+    }
+  }
+
   function getPrecipArpBpm(precipCategory) {
     // playlogic
     var _arpBpm = 110;
@@ -374,33 +402,6 @@ module.exports = function() {
     } else {
       return false;
     }
-  }
-
-  function getChordSeqKey(wCheck, rootNoteHigh) {
-    var _key;
-    console.log('rootNoteHigh', rootNoteHigh);
-    //For humid weather we use
-    //the available notes in the intervals
-    //therefore no offset is required
-    //value to use
-    //playlogic
-    if (wCheck.isFine) {
-      if (rootNoteHigh) {
-        _key = 'chordsPositiveDown';
-      } else {
-        _key = 'chordsPositiveUp';
-      }
-    } else if (wCheck.isClement) {
-      _key = 'chordsNoOffset';
-    } else {
-      if (rootNoteHigh) {
-        _key = 'chordsMelancholyDown';
-      } else {
-        _key = 'chordsMelancholyUp';
-      }
-    }
-    console.log('chord seq type', _key);
-    return _key;
   }
 
   /**
@@ -452,7 +453,7 @@ module.exports = function() {
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
     };
     console.log('wCheck', wCheck);
-    var numPadNotes = getNumPadNotes(lwData, avSettings, wCheck.isStormy);
+    var numPadNotes = getNumPadNotes(wCheck, avSettings);
     var numChords = getNumChords(lwData, avSettings, wCheck).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
@@ -1063,6 +1064,10 @@ module.exports = function() {
             case 'summaryAlt':
                 //TODO output a weather value
                 coProp.musicValue = addSpacesToString(padType);
+                break;
+            case 'extremeWeather':
+                //TODO output a weather value
+                coProp.musicValue = numPadNotes;
                 break;
             }
           return coProp;
