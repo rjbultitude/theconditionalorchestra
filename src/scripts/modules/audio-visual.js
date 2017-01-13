@@ -316,16 +316,15 @@ module.exports = function() {
     return _key;
   }
 
-  function getMainSeqRepeatNum(wCheck, numChords, numExtraChords) {
+  function getMainSeqRepeatNum(wCheck, numChords) {
     var _seqRepeatNum = 0;
-    var _seqLength = numChords - numExtraChords;
     //playlogic
     if (wCheck.isFine || wCheck.isFreezing) {
-      _seqRepeatNum = _seqLength * 3; //was 4
+      _seqRepeatNum = numChords * 3; //was 4
     } else if (wCheck.isCold) {
-      _seqRepeatNum = _seqLength * 2; //was 3
+      _seqRepeatNum = numChords * 2; //was 3
     } else {
-      _seqRepeatNum = _seqLength * 1; //was 2
+      _seqRepeatNum = numChords * 1; //was 2
     }
     console.log('_seqRepeatNum', _seqRepeatNum);
     return _seqRepeatNum;
@@ -499,7 +498,7 @@ module.exports = function() {
     var precipArpBpm = getPrecipArpBpm(precipCategory);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
-    var seqRepeatNum = getMainSeqRepeatNum(wCheck, numChords, numExtraChords);
+    var seqRepeatNum = getMainSeqRepeatNum(wCheck, numChords);
     var rootNote = getRootNote(lwData, numSemisPerOctave);
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
