@@ -102,8 +102,8 @@ module.exports = [
     musicValue: ''
   },
   {
-    key: 'isClement',
-    title: 'Clement conditions',
+    key: 'toDo',
+    title: 'Mixed weather',
     value: '',
     unit: '',
     iconPath: '/img/cloud-cover-icon.svg',
@@ -119,15 +119,6 @@ module.exports = [
     music: 'Main sequence repeats ',
     musicValue: '',
     musicAppendage: ' times'
-  },
-  {
-    key: 'summaryAlt',
-    title: 'Overview',
-    value: '*',
-    unit: '',
-    iconPath: '/img/cloud-cover-icon.svg',
-    music: 'Pad sound is ',
-    musicValue: ''
   },
   {
     key: 'precipType',
@@ -150,7 +141,47 @@ module.exports = [
   },
   {
     key: 'summary',
-    title: 'Conditions summary',
+    title: 'Overview',
+    value: '*',
+    unit: '',
+    iconPath: '/img/cloud-cover-icon.svg',
+    music: 'Pad sound is ',
+    musicValue: ''
+  },
+  {
+    key: 'isFine',
+    secondKey: 'padType',
+    title: 'Fine weather',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Chord types are ',
+    musicValue: ''
+  },
+  {
+    key: 'isCold',
+    secondKey: 'padType',
+    title: 'Cold weather',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Chord types are ',
+    musicValue: ''
+  },
+  {
+    key: 'isClement',
+    secondKey: 'padType',
+    title: 'Clement conditions',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Chord types are ',
+    musicValue: ''
+  },
+  {
+    key: 'isStormy',
+    secondKey: 'padType',
+    title: 'Stormy weather',
     value: '',
     unit: '',
     iconPath: '/img/pressure-icon.svg',

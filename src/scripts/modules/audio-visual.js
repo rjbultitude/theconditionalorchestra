@@ -257,13 +257,11 @@ module.exports = function() {
     if (wCheck.isFine) {
       _chordType = 'heptatonicMajorIntervals';
     } else if (wCheck.isCold) {
-      _chordType = 'minorSeventhIntervals';
+      _chordType = 'octatonicMinorIntervals';
     } else if (wCheck.isClement) {
       _chordType = 'majorSeventhIntervals';
     } else if (wCheck.isStormy) {
       _chordType = 'heptatonicMinorIntervals';
-    } else if (wCheck.isWindy || wCheck.isCloudy || wCheck.isHumid) {
-      _chordType = 'octatonicMinorIntervals';
     } else {
       _chordType = 'minorSeventhIntervals';
     }
@@ -281,7 +279,7 @@ module.exports = function() {
     //playlogic
     // important!
     // may need to include isPrecip
-    if (wCheck.isFine || wCheck.isFreezing || wCheck.isWindy || wCheck.isHumid) {
+    if (wCheck.isFine || wCheck.isFreezing || wCheck.isWindy) {
       _key = 'chordsNoOffset';
     } else if (wCheck.isClement) {
       if (rootNoteHigh) {
@@ -305,11 +303,11 @@ module.exports = function() {
     var _key;
     // playlogic
     // important!
-    if (wCheck.isFine || wCheck.isFreezing) {
+    if (wCheck.isFine) {
       _key = 'chordIndexesDown';
     } else if (wCheck.isWindy) {
       _key = 'chordIndexesUpDown';
-    } else if (wCheck.isHumid) {
+    } else if (wCheck.isFreezing) {
       _key = 'chordIndexesUp';
     } else {
       _key = 'chordIndexesNoOffset';
@@ -335,7 +333,7 @@ module.exports = function() {
   function getRootNote(lwData, numSemisPerOctave) {
     //Add global values to the main data object
     //Pressure determines root note. Range 2.5 octaves
-    //In western scale it will be between + or - 12
+    //In western scale it will be between + or - 18
     var _rangePlus = Math.round(numSemisPerOctave + numSemisPerOctave / 2);
     var _rangeMinus = -Math.abs(_rangePlus);
     //playlogic
@@ -912,14 +910,20 @@ module.exports = function() {
         var _chordSeqOffsetArr = getChordSeqOffsetArr(numChords);
         //Chord inversion shift
         var _intIndOffsetArr = getIntervalIndexOffsetArr(numChords);
+        var _chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
         //TODO for chord sequences with offset
         //we should use more harmonious chords
         //by getting different chord types
+        if (_chordNumGreatest > _chordSeqOffsetArr.length) {
+          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, numChords > _chordSeqOffsetArr.length, null);
+        }
         for (var i = 0; i < numChords; i++) {
+          console.log('_chordSeqOffsetArr[i]', _chordSeqOffsetArr[i]);
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], chordType, _intIndOffsetArr[i]));
         }
         //Adding extra chord(s) - pitched down
         for (var j = 0; j < numExtraChords; j++) {
+          console.log('_chordSeqOffsetArr[j]', _chordSeqOffsetArr[j]);
           _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j] - numSemisPerOctave, chordType, _intIndOffsetArr[j]));
         }
         return _chordSeq;
@@ -999,7 +1003,7 @@ module.exports = function() {
         if (chordSeqKey === 'chordsNoOffset') {
           return 'using inversions';
         } else {
-          return chordSeqKey;
+          return addSpacesToString(chordSeqKey);
         }
       }
 
@@ -1040,50 +1044,52 @@ module.exports = function() {
       }
 
       function addMusicValues(codisplayData) {
+        var firstPass = true;
         return codisplayData.map(function(coProp) {
-          switch (coProp.key) {
-            case 'ozone':
-                coProp.musicValue = numExtraChords;
-                break;
-            case 'pressure':
-                coProp.musicValue = getRootNoteLetter(numSemisPerOctave, rootNote);
-                break;
-            case 'visibility':
-                coProp.musicValue = Math.round(masterFilterFreq);
-                break;
-            case 'apparentTemperature':
-                coProp.musicValue = seqRepeatNum;
-                break;
-            case 'summary':
-                coProp.musicValue = addSpacesToString(chordType);
-                break;
-            case 'isStormy':
-                coProp.musicValue = numChords;
-                break;
-            case 'isClement':
-                coProp.musicValue = outputChordSeqType();
-                break;
-            case 'windSpeed':
-                coProp.musicValue = windChimeRate.toFixed(2);
-                break;
-            case 'windBearing':
-                coProp.musicValue = getOrdinal(longNoteIndex);
-                break;
-            case 'temperature':
-                coProp.musicValue = numSemisPerOctave;
-                break;
-            case 'precipType':
-                coProp.musicValue = precipArpBpm;
-                break;
-            case 'summaryAlt':
-                //TODO output a weather value
-                coProp.musicValue = addSpacesToString(padType);
-                break;
-            case 'extremeWeather':
-                //TODO output a weather value
-                coProp.musicValue = numPadNotes;
-                break;
+          if (coProp.secondKey === 'padType' && coProp.value && firstPass) {
+            coProp.musicValue = addSpacesToString(chordType);
+            firstPass = false;
+          } else {
+            switch (coProp.key) {
+              case 'ozone':
+              coProp.musicValue = numExtraChords;
+              break;
+              case 'pressure':
+              coProp.musicValue = getRootNoteLetter(numSemisPerOctave, rootNote);
+              break;
+              case 'visibility':
+              coProp.musicValue = Math.round(masterFilterFreq);
+              break;
+              case 'apparentTemperature':
+              coProp.musicValue = seqRepeatNum;
+              break;
+              case 'summary':
+              coProp.musicValue = addSpacesToString(padType);
+              break;
+              case 'isStormy':
+              coProp.musicValue = numChords;
+              break;
+              case 'toDo':
+              coProp.musicValue = outputChordSeqType();
+              break;
+              case 'windSpeed':
+              coProp.musicValue = windChimeRate.toFixed(2);
+              break;
+              case 'windBearing':
+              coProp.musicValue = getOrdinal(longNoteIndex);
+              break;
+              case 'temperature':
+              coProp.musicValue = numSemisPerOctave;
+              break;
+              case 'precipType':
+              coProp.musicValue = precipArpBpm;
+              break;
+              case 'extremeWeather':
+              //TODO output a weather value
+              coProp.musicValue = numPadNotes;
+              break;
             }
+          }
           return coProp;
         });
       }
