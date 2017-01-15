@@ -269,16 +269,6 @@ module.exports = function() {
     return _chordType;
   }
 
-  function getChordTypeSeq(chordNumGreatest, chordSeqKey) {
-    var _chordTypeSeq = [];
-    for (var i = 0; i < chordNumGreatest; i++) {
-      if (chordSeqKey === 'chordsMelancholyUp') {
-        _chordTypeSeq.push();
-      }
-    }
-    return _chordTypeSeq;
-  }
-
   function getChordSeqKey(wCheck, rootNoteHigh) {
     var _key;
     console.log('rootNoteHigh', rootNoteHigh);
@@ -515,7 +505,6 @@ module.exports = function() {
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
-    var chordTypeSeq = getChordTypeSeq(chordNumGreatest, chordSeqKey);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -914,6 +903,16 @@ module.exports = function() {
         return _chordIndexOffSetArr;
       }
 
+      function getValidChordType(key) {
+        var _chordType;
+        if (key) {
+          _chordType = chordType;
+        } else {
+          _chordType = key;
+        }
+        return _chordType;
+      }
+
       function makeChordSequence(numChords, numExtraChords, numSemisPerOctave) {
         console.log('numChords', numChords);
         console.log('numExtraChords', numExtraChords);
@@ -927,16 +926,16 @@ module.exports = function() {
         //by getting different chord types
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
           _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null);
-          console.log('_chordSeqOffsetArr length', _chordSeqOffsetArr.length);
+          console.log('_chordSeqOffsetArr', _chordSeqOffsetArr);
         }
         for (var i = 0; i < numChords; i++) {
           console.log('_chordSeqOffsetArr[i]', _chordSeqOffsetArr[i]);
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i], chordType, _intIndOffsetArr[i]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i].index, getValidChordType(_chordSeqOffsetArr[i].key), _intIndOffsetArr[i]));
         }
         //Adding extra chord(s) - pitched down
         for (var j = 0; j < numExtraChords; j++) {
           console.log('_chordSeqOffsetArr[j]', _chordSeqOffsetArr[j]);
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j] - numSemisPerOctave, chordType, _intIndOffsetArr[j]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j].index - numSemisPerOctave, getValidChordType(_chordSeqOffsetArr[j].key), _intIndOffsetArr[j]));
         }
         return _chordSeq;
       }
@@ -963,9 +962,16 @@ module.exports = function() {
         return createMusicalScale(avSettings.numCArpNotes, _cArpCNoteOffset, _cIntervals, _intervalIndexOffset, _constrainBy);
       }
 
-      function hasWordSeventh(intervalString) {
-        var hasSeventh = /Seventh/;
-        return hasSeventh.test(intervalString);
+      function hasSixthSeventhNinth(intervalString) {
+        var _hasSixth = /Sixth/;
+        var _hasSeventh = /Seventh/;
+        var _hasNinth = /Ninth/;
+        return _hasSixth.test(intervalString) || _hasSeventh.test(intervalString) || _hasNinth.test(intervalString);
+      }
+
+      function hasMajor(intervalString) {
+        var _hasMajor = /Major/;
+        return _hasMajor.test(intervalString);
       }
 
       function createRainArpScale(numSemisPerOctave) {
@@ -973,12 +979,16 @@ module.exports = function() {
         var _constrainBy = 1;
         var _intervalIndexOffset = 0;
         var _intervalType;
-        if (hasWordSeventh(chordType)) {
-          console.log('hasWordSeventh');
-          _intervalType = 'safeSeventhIntervals';
+        if (hasSixthSeventhNinth(chordType)) {
+          console.log('hasSixthSeventhNinth');
+          if (hasMajor(chordType)) {
+            _intervalType = 'safeNthMajorIntervals';
+          } else {
+            _intervalType = 'safeNthMinorIntervals';
+          }
           _constrainBy = 2;
         } else {
-          console.log('does not hasWordSeventh');
+          console.log('does not hasSixthSeventhNinth');
           _intervalType = 'safeIntervals';
         }
         return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _constrainBy);

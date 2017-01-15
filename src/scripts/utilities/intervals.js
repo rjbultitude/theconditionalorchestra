@@ -17,7 +17,8 @@ module.exports = {
     minorNinthIntervals: [0, 3, 7, 10, 14, 0, 2, 3, 7, 10, 14],
     //Safe
     safeIntervals: [0, 5, 7, 9], //for rain arrpeggio
-    safeSeventhIntervals: [0, 4, 7], //for rain arrpeggio
+    safeNthMajorIntervals: [0, 4, 7], //for rain arrpeggio
+    safeNthMinorIntervals: [0, 3, 7], //for rain arrpeggio
     //Close
     closeIntervals: [0, -1, 0, 2], //for clement arrpeggio
     closeIntervalsAlt: [0, -1, 1, 0], //for clement arrpeggio
@@ -96,7 +97,7 @@ module.exports = {
         key: ''
       },
       {
-        index: 0
+        index: 0,
         key: ''
       }],
     //Inversions
