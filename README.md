@@ -125,21 +125,20 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Choral sound and chord offset don't play nice together
+Improve humid arpeggio so that notes don't clash with chord sequence
+Consider only playing it when the inversions are being used
 
-Some chord sequences sound bad - could go for two chord sequences that offset by only safe numbers. Needs testing on an instrument.
+Consider using `dew point` as another data input
 
 Change longNote depending on temperature conditions
 
-Consider swapping organDist for a guitar
+Update logic as described in App Logic and spreadsheet
 
-Consider swapping brass stab sound for harp and slowing it down
+Consider swapping organDist for a guitar
 
 Consider reflow of program flow so that the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
 
 Modulate padSounds volume/rate/pan for windy conditions
-
-Consider using `dew point` as another data input
 
 Create sequencer for stormy weather that uses brash percussive sounds
 
