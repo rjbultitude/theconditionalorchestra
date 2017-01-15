@@ -269,6 +269,16 @@ module.exports = function() {
     return _chordType;
   }
 
+  function getChordTypeSeq(chordNumGreatest, chordSeqKey) {
+    var _chordTypeSeq = [];
+    for (var i = 0; i < chordNumGreatest; i++) {
+      if (chordSeqKey === 'chordsMelancholyUp') {
+        _chordTypeSeq.push();
+      }
+    }
+    return _chordTypeSeq;
+  }
+
   function getChordSeqKey(wCheck, rootNoteHigh) {
     var _key;
     console.log('rootNoteHigh', rootNoteHigh);
@@ -493,6 +503,7 @@ module.exports = function() {
     var numPadNotes = getNumPadNotes(wCheck, avSettings);
     var numChords = getNumChords(lwData, avSettings, wCheck).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
+    var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     var precipCategory = getPrecipCategory(lwData);
     var precipArpBpm = getPrecipArpBpm(precipCategory);
@@ -504,6 +515,7 @@ module.exports = function() {
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
+    var chordTypeSeq = getChordTypeSeq(chordNumGreatest, chordSeqKey);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -906,16 +918,15 @@ module.exports = function() {
         console.log('numChords', numChords);
         console.log('numExtraChords', numExtraChords);
         var _chordSeq = [];
-        var _chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
         //Chord shift
-        var _chordSeqOffsetArr = getChordSeqOffsetArr(_chordNumGreatest);
+        var _chordSeqOffsetArr = getChordSeqOffsetArr(chordNumGreatest);
         //Chord inversion shift
-        var _intIndOffsetArr = getIntervalIndexOffsetArr(_chordNumGreatest);
+        var _intIndOffsetArr = getIntervalIndexOffsetArr(chordNumGreatest);
         //TODO for chord sequences with offset
         //we should use more harmonious chords
         //by getting different chord types
-        if (_chordNumGreatest > _chordSeqOffsetArr.length) {
-          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, _chordNumGreatest - _chordSeqOffsetArr.length, null);
+        if (chordNumGreatest > _chordSeqOffsetArr.length) {
+          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null);
           console.log('_chordSeqOffsetArr length', _chordSeqOffsetArr.length);
         }
         for (var i = 0; i < numChords; i++) {
