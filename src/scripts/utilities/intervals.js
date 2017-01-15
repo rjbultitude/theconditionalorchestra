@@ -6,12 +6,19 @@ module.exports = {
     heptatonicMajorIntervals: [0, 2, 4, 5, 7, 9, 11], // Heptatonic major scale
     heptatonicMinorIntervals: [0, 2, 3, 5, 7, 9, 10], // Heptatonic harmonic minor scale
     octatonicMinorIntervals: [0, 2, 3, 5, 7, 8, 9, 10],  // Octatonic minor scale
+    //6th
+    majorSixthIntervals: [0, 4, 7, 9, 0, 4, 7, 9],
+    minorSixthIntervals: [0, 3, 7, 9, 0, 3, 7, 9],
+    //7th
     majorSeventhIntervals: [0, 4, 7, 11, 0, 4, 7, 11],
     minorSeventhIntervals: [0, 3, 7, 10, 0, 4, 7, 10],
-    majorNinthIntervals: [0, 4, 7, 10, 14, 0, 2, 4, 7, 10, 14],
+    //9th
+    majorNinthIntervals: [0, 4, 7, 11, 14, 0, 2, 4, 7, 11, 14],
     minorNinthIntervals: [0, 3, 7, 10, 14, 0, 2, 3, 7, 10, 14],
+    //Safe
     safeIntervals: [0, 5, 7, 9], //for rain arrpeggio
     safeSeventhIntervals: [0, 4, 7], //for rain arrpeggio
+    //Close
     closeIntervals: [0, -1, 0, 2], //for clement arrpeggio
     closeIntervalsAlt: [0, -1, 1, 0], //for clement arrpeggio
     //Chord sequences
@@ -39,7 +46,7 @@ module.exports = {
       },
       {
         index: -2,
-        key: 'heptatonicMinorIntervals'
+        key: 'minorSeventhIntervals'
       }],
     chordsPositiveUp: [
       {
@@ -52,28 +59,28 @@ module.exports = {
       },
       {
         index: 3,
-        key: ''
+        key: 'majorSeventhIntervals'
       },
       {
         index: 5,
-        key: ''
+        key: 'heptatonicMajorIntervals'
       }],
     chordsPositiveDown: [
       {
         index: 0,
-        key: ''
-      },
-      {
-        index: -5,
-        key: ''
+        key: 'majorSeventhIntervals'
       },
       {
         index: -3,
-        key: ''
+        key: 'majorSeventhIntervals'
+      },
+      {
+        index: 0,
+        key: 'majorSeventhIntervals'
       },
       {
         index: -5,
-        key: ''
+        key: 'heptatonicMajorIntervals'
       }],
     chordsNoOffset: [
       {
