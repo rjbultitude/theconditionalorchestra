@@ -20,8 +20,8 @@ module.exports = {
     safeNthMajorIntervals: [0, 4, 7], //for rain arrpeggio
     safeNthMinorIntervals: [0, 3, 7], //for rain arrpeggio
     //Close
-    closeIntervals: [0, -1, 0, 2], //for clement arrpeggio
-    closeIntervalsAlt: [0, -1, 1, 0], //for clement arrpeggio
+    closeIntervals: [0, -1, 0, 2], //for humid arrpeggio
+    closeIntervalsAlt: [0, -1, 1, 0], //for humid arrpeggio
     //Chord sequences
     chordsMelancholyUp: [
       {

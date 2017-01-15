@@ -178,8 +178,10 @@ module.exports = function() {
     //playlogic
     if (wCheck.isWindy && wCheck.isFreezing) {
       _numPadNotes = 3;
+    } else if (wCheck.isFine) {
+      _numPadNotes = 4;
     } else {
-      _numPadNotes = avSettings.numPadNotes; //4
+      _numPadNotes = avSettings.numPadNotes; //5
     }
     return _numPadNotes;
   }
