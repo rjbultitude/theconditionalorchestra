@@ -127,7 +127,7 @@ The pan and volume are randomly selected from two arrays.
 
 Consider only playing it when the inversions are being used
 
-Consider using `dew point` as another data input
+Consider using `dew point` as another data input. Is proportional to pressure and humidity.
 
 Change longNote depending on temperature conditions
 

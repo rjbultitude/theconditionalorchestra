@@ -42,8 +42,9 @@ module.exports = function() {
   var harpSound;
   var humidArpPhrase;
   var humidArpPart;
-  //long note
-  var longNote;
+  //long notes
+  var flute;
+  var harmonica;
   //Rain / drops
   var dropSound;
   var dropLightSound;
@@ -133,14 +134,16 @@ module.exports = function() {
       // Fades organ sounds
       padSounds.forEach(fadeOutPadSounds);
       choralSounds.forEach(fadeChoralSounds);
-      longNote.fade(0, avSettings.fadeTime);
+      flute.fade(0, avSettings.fadeTime);
+      harmonica.fade(0, avSettings.fadeTime);
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
       harpSoundTwo.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       setTimeout(function(){
-        longNote.stop();
+        flute.stop();
+        harmonica.stop();
         brassBaritone.stop();
         brassBaritone2.stop();
         harpSoundTwo.stop();
@@ -171,6 +174,17 @@ module.exports = function() {
     dropLightSound.rate(playbackRate);
     dropLightSound.setVolume(0.2);
     dropLightSound.play(time, playbackRate, volume);
+  }
+
+  function getLongNoteType(wCheck) {
+    var _longNote;
+    //playlogic
+    if (wCheck.isCloudy) {
+      _longNote = harmonica;
+    } else {
+      _longNote = flute;
+    }
+    return _longNote;
   }
 
   function hasSixthSeventhNinth(intervalString) {
@@ -515,6 +529,7 @@ module.exports = function() {
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
+    var longNote = getLongNoteType(wCheck);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -663,6 +678,7 @@ module.exports = function() {
       }
 
       function playLongNote(scale, extraSeqPlaying) {
+        //playlogic
         longNote.disconnect();
         longNote.connect(soundFilter);
         longNote.play();
@@ -1177,7 +1193,8 @@ module.exports = function() {
           brassBaritone2 = sketch.loadSound('/audio/brassbass.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
           harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
-          longNote = sketch.loadSound('/audio/longnote-C3.mp3');
+          flute = sketch.loadSound('/audio/flute-C3.mp3');
+          harmonica = sketch.loadSound('/audio/harmonica-C3.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
 			};
