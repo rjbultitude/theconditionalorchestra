@@ -127,7 +127,7 @@ The pan and volume are randomly selected from two arrays.
 
 Consider swapping organDist for a guitar
 
-Consider using `dew point` as another data input. Is proportional to pressure and humidity.
+Consider using `dew point` as data input for the order the chords play in perhaps. Is proportional to pressure and humidity.
 
 Consider only playing humid arpeggio when the inversions are being used
 
@@ -138,8 +138,6 @@ Consider using a state manager to update the humid arpeggio and display (chords)
 Consider reflow of program flow so that the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
 
 Modulate padSounds volume/rate/pan for windy conditions
-
-Create sequencer for stormy weather that uses brash percussive sounds
 
 Test offline, bad connection states (after refactor of handleNoGeoData fn)
 
