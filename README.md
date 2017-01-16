@@ -125,15 +125,13 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Consider only playing it when the inversions are being used
+Consider swapping organDist for a guitar
 
 Consider using `dew point` as another data input. Is proportional to pressure and humidity.
 
-Change longNote depending on temperature conditions
+Consider only playing humid arpeggio when the inversions are being used
 
 Update logic as described in App Logic and spreadsheet
-
-Consider swapping organDist for a guitar
 
 Consider using a state manager to update the humid arpeggio and display (chords)
 
