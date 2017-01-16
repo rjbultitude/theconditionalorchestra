@@ -125,7 +125,6 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Improve humid arpeggio so that notes don't clash with chord sequence
 Consider only playing it when the inversions are being used
 
 Consider using `dew point` as another data input
@@ -135,6 +134,8 @@ Change longNote depending on temperature conditions
 Update logic as described in App Logic and spreadsheet
 
 Consider swapping organDist for a guitar
+
+Consider using a state manager to update the humid arpeggio and display (chords)
 
 Consider reflow of program flow so that the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
 

@@ -173,6 +173,18 @@ module.exports = function() {
     dropLightSound.play(time, playbackRate, volume);
   }
 
+  function hasSixthSeventhNinth(intervalString) {
+    var _hasSixth = /Sixth/;
+    var _hasSeventh = /Seventh/;
+    var _hasNinth = /Ninth/;
+    return _hasSixth.test(intervalString) || _hasSeventh.test(intervalString) || _hasNinth.test(intervalString);
+  }
+
+  function hasMajor(intervalString) {
+    var _hasMajor = /Major/;
+    return _hasMajor.test(intervalString);
+  }
+
   function getNumPadNotes(wCheck, avSettings) {
     var _numPadNotes;
     //playlogic
@@ -274,10 +286,6 @@ module.exports = function() {
   function getChordSeqKey(wCheck, rootNoteHigh) {
     var _key;
     console.log('rootNoteHigh', rootNoteHigh);
-    //For humid weather we use
-    //the available notes in the intervals
-    //therefore no offset is required
-    //value to use
     //playlogic
     // important!
     // may need to include isPrecip
@@ -954,26 +962,14 @@ module.exports = function() {
         if (wCheck.isFreezing) {
           _cArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
-        if (wCheck.isStormy || wCheck.isWindy) {
-          _cIntervals = 'closeIntervalsAlt';
+        if (hasMajor(chordType)) {
+          _cIntervals = 'closeMajorIntervals';
         } else {
-          _cIntervals = 'closeIntervals';
+          _cIntervals = 'closeMinorIntervals';
         }
         var _constrainBy = 0;
         var _intervalIndexOffset = 0;
         return createMusicalScale(avSettings.numCArpNotes, _cArpCNoteOffset, _cIntervals, _intervalIndexOffset, _constrainBy);
-      }
-
-      function hasSixthSeventhNinth(intervalString) {
-        var _hasSixth = /Sixth/;
-        var _hasSeventh = /Seventh/;
-        var _hasNinth = /Ninth/;
-        return _hasSixth.test(intervalString) || _hasSeventh.test(intervalString) || _hasNinth.test(intervalString);
-      }
-
-      function hasMajor(intervalString) {
-        var _hasMajor = /Major/;
-        return _hasMajor.test(intervalString);
       }
 
       function createRainArpScale(numSemisPerOctave) {
