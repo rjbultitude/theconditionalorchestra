@@ -38,6 +38,8 @@ module.exports = function() {
   var brassBaritone;
   var brassBaritone2;
   var harpSoundTwo;
+  //Percussion
+  var cymbals;
   //clement / brass
   var harpSound;
   var humidArpPhrase;
@@ -1196,6 +1198,7 @@ module.exports = function() {
           flute = sketch.loadSound('/audio/flute-C3.mp3');
           harmonica = sketch.loadSound('/audio/harmonica-C3.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
+          cymbals = sketch.loadSound('/audio/cymbals.mp3');
         }
 			};
 
@@ -1240,6 +1243,12 @@ module.exports = function() {
           updateStatus('error', lwData.name, true);
         }
 			};
+
+      function updateCymbals() {
+        if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
+          cymbals.play();
+        }
+      }
 
       function updateBrass() {
         if (angle > 360) {
@@ -1307,6 +1316,9 @@ module.exports = function() {
           }
         }
         //playlogic
+        if (wCheck.isCloudy || wCheck.isWindy) {
+          updateCymbals();
+        }
         if (wCheck.isWindy) {
           updateBrass();
         }
