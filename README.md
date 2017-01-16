@@ -137,6 +137,8 @@ Consider using a state manager to update the humid arpeggio and display (chords)
 
 Consider reflow of program flow so that the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
 
+Consider program reflow where only one master set of frequencies is used for all instruments
+
 Modulate padSounds volume/rate/pan for windy conditions
 
 Test offline, bad connection states (after refactor of handleNoGeoData fn)
