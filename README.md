@@ -129,6 +129,8 @@ Consider swapping organDist for a guitar
 
 Consider using `dew point` as data input for the order the chords play in perhaps. Is proportional to pressure and humidity.
 
+Consider using `precipProbability` as data input for the longNote
+
 Consider only playing humid arpeggio when the inversions are being used
 
 Update logic as described in App Logic and spreadsheet
@@ -147,8 +149,6 @@ Upgrade to google maps 3 : https://developers.google.com/maps/documentation/java
 
 ###Bugs
 
-There's a bug when the number of extra chords is 0
-
 No playback on 1st load Safari
 
 Playback rate bug - seems to exist only in Chrome
@@ -160,9 +160,6 @@ Sequencer playback browser tab issue is in Chrome, Firefox and Safari
 Sequencer onStep only counts the steps in one single pass rather than the loop
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
-
-Use the icons
-icon: A machine-readable text summary of this data point, suitable for selecting an icon for display. If defined, this property will have one of the following values: clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night. (Developers should ensure that a sensible default is defined, as additional values, such as hail, thunderstorm, or tornado, may be defined in the future.)
 
 Add service worker for offline joy
 
