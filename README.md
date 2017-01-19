@@ -125,9 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Consider swapping organDist for a guitar
-
-Consider using `dew point` as data input for the order the chords play in perhaps. Is proportional to pressure and humidity.
+Consider using a data input for the order the chords play in perhaps.
 
 Consider using `precipProbability` as data input for the longNote
 
