@@ -474,6 +474,16 @@ module.exports = function() {
     }
   }
 
+  function getCymbalsRate(lwData) {
+    return mapRange(
+      Math.round(lwData.dewPoint.value),
+      lwData.dewPoint.min,
+      lwData.dewPoint.max,
+      0.5,
+      1.2
+    );
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -539,6 +549,7 @@ module.exports = function() {
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
     var longNoteType = getLongNoteType(lwData);
+    var cymbalsRate = getCymbalsRate(lwData);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -1135,6 +1146,9 @@ module.exports = function() {
               case 'precipProbability':
                 coProp.musicValue = longNoteType;
                 break;
+              case 'dewPoint':
+                coProp.musicValue = cymbalsRate;
+                break;
               case 'extremeWeather':
               //TODO output a weather value
                 coProp.musicValue = numPadNotes;
@@ -1145,17 +1159,24 @@ module.exports = function() {
         });
       }
 
+      function cleanMusicValData(codisplayData) {
+        //TODO remove any items that won't play
+        // due to conflicting playlogic
+        return codisplayData;
+      }
+
       function configureDisplay() {
         var _mappedData = mapConditionsToDisplayData();
         var _unitisedData = unitiseData(_mappedData);
         var _musicValData = addMusicValues(_unitisedData);
-        console.log('_musicValData', _musicValData);
-        _musicValData.forEach(function(condition) {
-          if (condition.value) {
-            var html = appTemplate(condition);
+        var _cleanMusicValData = cleanMusicValData(_musicValData);
+        console.log('_cleanMusicValData', _cleanMusicValData);
+        _cleanMusicValData.forEach(function(coProp) {
+          if (coProp.value) {
+            var html = appTemplate(coProp);
             cdContainer.insertAdjacentHTML('beforeend', html);
           } else {
-            console.log('Not displayed because not truthy ', condition);
+            console.log('Not displayed because not truthy ', coProp);
           }
         });
       }
@@ -1268,6 +1289,7 @@ module.exports = function() {
       function updateCymbals() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
           cymbals.play();
+          cymbals.rate(cymbalsRate);
         }
       }
 

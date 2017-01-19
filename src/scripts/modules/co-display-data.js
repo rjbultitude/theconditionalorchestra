@@ -198,6 +198,15 @@ module.exports = [
     musicValue: ''
   },
   {
+    key: 'dewPoint',
+    title: 'Dew point',
+    value: '',
+    unit: '',
+    iconPath: '/img/cloud-cover-icon.svg',
+    music: 'Cymbals rate is ',
+    musicValue: ''
+  },
+  {
     key: 'extremeWeather',
     title: 'Extreme weather',
     value: '',
