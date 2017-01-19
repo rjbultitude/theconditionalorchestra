@@ -275,9 +275,9 @@ module.exports = function() {
       padType = 'organ';
     } else if (wCheck.isStormy) {
       //TODO watch out for clash between
-      //organDist and brass
+      //guitar and brass
       //stormy plays less notes
-      padType = 'organDist';
+      padType = 'guitar';
     } else if (wCheck.isFreezing) {
       padType = 'trumpet';
     } else if (wCheck.isCold) {
@@ -1196,11 +1196,11 @@ module.exports = function() {
 			}
 
 			//Sound constructor
-			function PadSound(organ, organDist, sax, trumpet) {
+			function PadSound(organ, guitar, sax, trumpet) {
 				this.organ = organ;
         //TODO consider using different sound
         //distorted guiter perhaps
-				this.organDist = organDist;
+				this.guitar = guitar;
 				this.saxophone = sax;
 				this.trumpet = trumpet;
 			}
@@ -1218,7 +1218,7 @@ module.exports = function() {
           for (var i = 0; i < numPadNotes; i++) {
             padSounds[i] = new PadSound(
               sketch.loadSound('/audio/organ-C2.mp3'),
-              sketch.loadSound('/audio/organ-C2d.mp3'),
+              sketch.loadSound('/audio/guitar-C2.mp3'),
               sketch.loadSound('/audio/sax-C2.mp3'),
               sketch.loadSound('/audio/trumpet-C2.mp3')
             );
