@@ -144,13 +144,14 @@ module.exports = function() {
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       setTimeout(function(){
-        flute.stop();
-        harmonica.stop();
+        longNotes.flute.stop();
+        longNotes.harmonica.stop();
         brassBaritone.stop();
         brassBaritone2.stop();
         harpSoundTwo.stop();
         windChime.stop();
         bass.stop();
+        cymbals.stop();
       }, avSettings.fadeTime * 1000);
       //Unsubs
       publishBrassOne.unsubscribe();
@@ -179,14 +180,14 @@ module.exports = function() {
   }
 
   function getLongNoteType(wCheck) {
-    var _longNote;
+    var _longNoteType;
     //playlogic
-    if (wCheck.isCloudy) {
-      _longNote = harmonica;
+    if (lwData.precipProbability > 0.5) {
+      _longNoteType = 'harmonica';
     } else {
-      _longNote = flute;
+      _longNoteType = 'flute';
     }
-    return _longNote;
+    return _longNoteType;
   }
 
   function hasSixthSeventhNinth(intervalString) {
@@ -531,7 +532,7 @@ module.exports = function() {
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
-    var longNote = getLongNoteType(wCheck);
+    var longNoteType = getLongNoteType(wCheck);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -681,6 +682,7 @@ module.exports = function() {
 
       function playLongNote(scale, extraSeqPlaying) {
         //playlogic
+        longNote = longNotes[longNoteType];
         longNote.disconnect();
         longNote.connect(soundFilter);
         longNote.play();
@@ -1090,42 +1092,45 @@ module.exports = function() {
           } else {
             switch (coProp.key) {
               case 'ozone':
-              coProp.musicValue = numExtraChords;
-              break;
+                coProp.musicValue = numExtraChords;
+                break;
               case 'pressure':
-              coProp.musicValue = getRootNoteLetter(numSemisPerOctave, rootNote);
-              break;
+                coProp.musicValue = getRootNoteLetter(numSemisPerOctave, rootNote);
+                break;
               case 'visibility':
-              coProp.musicValue = Math.round(masterFilterFreq);
-              break;
+                coProp.musicValue = Math.round(masterFilterFreq);
+                break;
               case 'apparentTemperature':
-              coProp.musicValue = seqRepeatNum;
-              break;
+                coProp.musicValue = seqRepeatNum;
+                break;
               case 'summary':
-              coProp.musicValue = addSpacesToString(padType);
-              break;
+                coProp.musicValue = addSpacesToString(padType);
+                break;
               case 'isStormy':
-              coProp.musicValue = numChords;
-              break;
+                coProp.musicValue = numChords;
+                break;
               case 'toDo':
-              coProp.musicValue = outputChordSeqType();
-              break;
+                coProp.musicValue = outputChordSeqType();
+                break;
               case 'windSpeed':
-              coProp.musicValue = windChimeRate.toFixed(2);
-              break;
+                coProp.musicValue = windChimeRate.toFixed(2);
+                break;
               case 'windBearing':
-              coProp.musicValue = getOrdinal(longNoteIndex);
-              break;
+                coProp.musicValue = getOrdinal(longNoteIndex);
+                break;
               case 'temperature':
-              coProp.musicValue = numSemisPerOctave;
-              break;
+                coProp.musicValue = numSemisPerOctave;
+                break;
               case 'precipType':
-              coProp.musicValue = precipArpBpm;
-              break;
+                coProp.musicValue = precipArpBpm;
+                break;
+              case 'precipProbability':
+                coProp.musicValue = longNote;
+                break;
               case 'extremeWeather':
               //TODO output a weather value
-              coProp.musicValue = numPadNotes;
-              break;
+                coProp.musicValue = numPadNotes;
+                break;
             }
           }
           return coProp;
@@ -1171,6 +1176,11 @@ module.exports = function() {
 				this.trumpet = trumpet;
 			}
 
+      function LongNotes(harmonica, flute) {
+        this.harmonica = harmonica;
+        this.flute = flute;
+      }
+
 			sketch.preload = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
@@ -1195,8 +1205,10 @@ module.exports = function() {
           brassBaritone2 = sketch.loadSound('/audio/brassbass.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
           harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
-          flute = sketch.loadSound('/audio/flute-C3.mp3');
-          harmonica = sketch.loadSound('/audio/harmonica-C3.mp3');
+          longNotes = new LongNotes(
+            sketch.loadSound('/audio/harmonica-C3.mp3'),
+            sketch.loadSound('/audio/flute-C3.mp3')
+          );
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
           cymbals = sketch.loadSound('/audio/cymbals.mp3');
         }

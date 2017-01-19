@@ -63,6 +63,10 @@ module.exports = {
     precipIntensity: {
       min: 0,
       max: 0.5
+    },
+    precipProbability: {
+      min: 0,
+      max: 1
     }
   }
 };

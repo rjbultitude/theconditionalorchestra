@@ -80,8 +80,8 @@ module.exports = function() {
         temperature: null,
         humidity: null,
         windBearing: null,
-        //non in use
         ozone: null,
+        precipProbability: null,
         dewPoint: null,
         apparentTemperature: null
       };
