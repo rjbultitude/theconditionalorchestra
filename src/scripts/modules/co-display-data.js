@@ -56,16 +56,6 @@ module.exports = [
     musicValue: ''
   },
   {
-    key: 'windBearing',
-    title: 'Wind bearing',
-    value: '',
-    unit: '',
-    iconPath: '/img/pressure-icon.svg',
-    music: 'Long note is ',
-    musicValue: '',
-    musicAppendage: ' note from chord'
-  },
-  {
     key: 'isHumid',
     title: 'Humidity',
     value: '',
@@ -186,6 +176,25 @@ module.exports = [
     unit: '',
     iconPath: '/img/pressure-icon.svg',
     music: 'Chord types are ',
+    musicValue: ''
+  },
+  {
+    key: 'windBearing',
+    title: 'Wind bearing',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Long note is ',
+    musicValue: '',
+    musicAppendage: ' note from chord'
+  },
+  {
+    key: 'precipProbability',
+    title: 'Pecipitation probability',
+    value: '',
+    unit: '',
+    iconPath: '/img/cloud-cover-icon.svg',
+    music: 'Long note is a ',
     musicValue: ''
   },
   {

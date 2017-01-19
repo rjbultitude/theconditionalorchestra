@@ -45,8 +45,7 @@ module.exports = function() {
   var humidArpPhrase;
   var humidArpPart;
   //long notes
-  var flute;
-  var harmonica;
+  var longNotes;
   //Rain / drops
   var dropSound;
   var dropLightSound;
@@ -126,6 +125,18 @@ module.exports = function() {
     }, avSettings.fadeTime * 1000);
   }
 
+  function fadeLongNotes() {
+    for (var longNote in longNotes) {
+      if (longNotes.hasOwnProperty(longNote)) {
+        console.log('longNote', longNote);
+        longNote.fade(0, avSettings.fadeTime);
+        setTimeout(function(){
+          longNote.stop();
+        }, avSettings.fadeTime * 1000);
+      }
+    }
+  }
+
   function killCurrentSounds(autoStart) {
       // Stop arrpeggios
       rainArpPart.stop(0);
@@ -133,19 +144,15 @@ module.exports = function() {
       rainArpPart.removePhrase('rainDropsLight');
       humidArpPart.stop(0);
       humidArpPart.removePhrase('flttrBrass');
-      // Fades organ sounds
       padSounds.forEach(fadeOutPadSounds);
       choralSounds.forEach(fadeChoralSounds);
-      flute.fade(0, avSettings.fadeTime);
-      harmonica.fade(0, avSettings.fadeTime);
+      fadeLongNotes();
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
       harpSoundTwo.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       setTimeout(function(){
-        longNotes.flute.stop();
-        longNotes.harmonica.stop();
         brassBaritone.stop();
         brassBaritone2.stop();
         harpSoundTwo.stop();
@@ -179,7 +186,7 @@ module.exports = function() {
     dropLightSound.play(time, playbackRate, volume);
   }
 
-  function getLongNoteType(wCheck) {
+  function getLongNoteType(lwData) {
     var _longNoteType;
     //playlogic
     if (lwData.precipProbability > 0.5) {
@@ -532,7 +539,7 @@ module.exports = function() {
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
-    var longNoteType = getLongNoteType(wCheck);
+    var longNoteType = getLongNoteType(lwData);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -682,7 +689,7 @@ module.exports = function() {
 
       function playLongNote(scale, extraSeqPlaying) {
         //playlogic
-        longNote = longNotes[longNoteType];
+        var longNote = longNotes[longNoteType];
         longNote.disconnect();
         longNote.connect(soundFilter);
         longNote.play();
@@ -1125,7 +1132,7 @@ module.exports = function() {
                 coProp.musicValue = precipArpBpm;
                 break;
               case 'precipProbability':
-                coProp.musicValue = longNote;
+                coProp.musicValue = longNoteType;
                 break;
               case 'extremeWeather':
               //TODO output a weather value

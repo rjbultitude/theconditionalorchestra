@@ -1,12 +1,5 @@
 'use strict';
 
-//Install jQuery and Moment.js using npm or
-//if using require.js manage the paths as you see fit
-
-//Notes
-//Could use ES6 promises (and polyfill)
-//rather than jQuery
-
 (function(root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -314,7 +307,7 @@
 		 *
 		 * @return type
 		 */
-		this.precipitationType = function() {
+		this.precipType = function() {
 			return rawData.precipType;
 		};
 		/**
@@ -322,7 +315,7 @@
 		 *
 		 * @return type
 		 */
-		this.precipitationProbability = function() {
+		this.precipProbability = function() {
 			return rawData.precipProbability;
 		};
 		/**
@@ -340,7 +333,7 @@
 		 *
 		 * @return type
 		 */
-		this.minTemperature = function() {
+		this.temperatureMin = function() {
 			return rawData.temperatureMin;
 		};
 		/**
@@ -350,7 +343,7 @@
 		 *
 		 * @return type
 		 */
-		this.maxTemperature = function() {
+		this.temperatureMax = function() {
 			return rawData.temperatureMax;
 		};
 		/**
@@ -360,7 +353,7 @@
 		 *
 		 * @return type
 		 */
-		this.sunrise = function() {
+		this.sunriseTime = function() {
 			return rawData.sunriseTime;
 		};
 		/**
@@ -370,7 +363,7 @@
 		 *
 		 * @return type
 		 */
-		this.sunset = function() {
+		this.sunsetTime = function() {
 			return rawData.sunsetTime;
 		};
 		/**
