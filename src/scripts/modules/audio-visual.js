@@ -126,12 +126,11 @@ module.exports = function() {
   }
 
   function fadeLongNotes() {
-    for (var longNote in longNotes) {
-      if (longNotes.hasOwnProperty(longNote)) {
-        console.log('longNote', longNote);
-        longNote.fade(0, avSettings.fadeTime);
+    for (var _longNote in longNotes) {
+      if (longNotes.hasOwnProperty(_longNote)) {
+        longNotes[_longNote].fade(0, avSettings.fadeTime);
         setTimeout(function(){
-          longNote.stop();
+          longNotes[_longNote].stop();
         }, avSettings.fadeTime * 1000);
       }
     }
@@ -900,6 +899,7 @@ module.exports = function() {
         var _allNotesScale = [];
         var _scaleArray = [];
         var _rootAndOffset = rootNote + centreNoteOffset;
+        console.log('key', key);
         var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, numSemisPerOctave, constrainBy);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
@@ -947,6 +947,7 @@ module.exports = function() {
         } else {
           _chordType = key;
         }
+        console.log('_chordType', _chordType);
         return _chordType;
       }
 
@@ -1216,6 +1217,7 @@ module.exports = function() {
             sketch.loadSound('/audio/harmonica-C3.mp3'),
             sketch.loadSound('/audio/flute-C3.mp3')
           );
+          console.log('longNotes', longNotes);
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
           cymbals = sketch.loadSound('/audio/cymbals.mp3');
         }
