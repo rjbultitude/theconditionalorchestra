@@ -47,6 +47,15 @@ module.exports = [
     musicValue: ''
   },
   {
+    key: 'dewPoint',
+    title: 'Dew point',
+    value: '',
+    unit: '',
+    iconPath: '/img/pressure-icon.svg',
+    music: 'Number of main sequence chords: ',
+    musicValue: ''
+  },
+  {
     key: 'windSpeed',
     title: 'Wind speed',
     value: '',

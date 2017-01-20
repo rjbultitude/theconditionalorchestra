@@ -69,6 +69,7 @@ module.exports = function() {
       if (conditions === false) {
         conditions = makeRequest('GET', 'data/static-weather.json');
       }
+      console.log('conditions', conditions);
       //must make new object at this point;
       var locationData = {
         //in use

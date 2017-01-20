@@ -211,6 +211,9 @@ module.exports = function() {
   function getNumPadNotes(wCheck, avSettings) {
     var _numPadNotes;
     //playlogic
+    // We use a non western scale
+    // and the guitar sound for windy and freezing
+    // so only use 3 notes in a chord
     if (wCheck.isWindy && wCheck.isFreezing) {
       _numPadNotes = 3;
     } else if (wCheck.isFine) {
@@ -221,21 +224,17 @@ module.exports = function() {
     return _numPadNotes;
   }
 
-  function getNumChords(lwData, avSettings, wCheck) {
+  function getNumChords(lwData) {
     var _numChords;
     var _numExtraChords;
     //playlogic
-    // We use a non western scale for freezing
-    // so only play two chords
-    if (wCheck.isWindy && wCheck.isFreezing) {
-      _numChords = 2;
-    } else if (wCheck.isStormy || wCheck.isFine) {
-      _numChords = 3;
-    } else {
-      _numChords = avSettings.numChords; //4
-    }
-    //TODO could use better data point
-    //Dew point perhaps?
+    _numChords = Math.round(mapRange(
+      lwData.dewPoint.value,
+      lwData.dewPoint.min,
+      lwData.dewPoint.max,
+      2,
+      6
+    ));
     _numExtraChords = Math.round(mapRange(
       lwData.ozone.value,
       lwData.ozone.min,
@@ -308,7 +307,6 @@ module.exports = function() {
 
   function getChordSeqKey(wCheck, rootNoteHigh) {
     var _key;
-    console.log('rootNoteHigh', rootNoteHigh);
     //playlogic
     // important!
     // may need to include isPrecip
@@ -436,15 +434,12 @@ module.exports = function() {
     switch (precipCategory) {
       case 'hard':
         _arpBpm = 150;
-        console.log('hard');
         break;
       case 'soft':
         _arpBpm = 120;
-        console.log('soft');
         break;
       case 'light':
         _arpBpm = 90;
-        console.log('light');
         break;
       default:
         console.log('problem with arrpeggio type', precipCategory);
@@ -543,7 +538,7 @@ module.exports = function() {
     };
     console.log('wCheck', wCheck);
     var numPadNotes = getNumPadNotes(wCheck, avSettings);
-    var numChords = getNumChords(lwData, avSettings, wCheck).numChords;
+    var numChords = getNumChords(lwData).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
     var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
@@ -674,7 +669,6 @@ module.exports = function() {
       function playBass(scaleSet) {
         bass.play();
         //Play 1st note of each chord
-        //console.log('bass paying at rate', scaleSet[scaleSetIndex][0]);
         bass.rate(scaleSet[scaleSetIndex][0]);
         //TODO could set the volume
         //based on the amount of cloudCover
@@ -857,7 +851,7 @@ module.exports = function() {
         var _numUpperOctaves = Math.ceil(_highestFraction);
         var _numLowerOctaves = Math.ceil(_lowestFraction);
         var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
-        console.log('creating array with ' + _totalOctaves + ' octaves ');
+        //console.log('creating array with ' + _totalOctaves + ' octaves ');
         return {
           allNotesScale: getFreqScales.createEqTempMusicalScale(1, _totalOctaves, semisInOct),
           numOctaves: _totalOctaves
@@ -919,7 +913,6 @@ module.exports = function() {
         var _allNotesScale = [];
         var _scaleArray = [];
         var _rootAndOffset = rootNote + centreNoteOffset;
-        console.log('key', key);
         var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, numSemisPerOctave, constrainBy);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
@@ -967,13 +960,10 @@ module.exports = function() {
         } else {
           _chordType = key;
         }
-        console.log('_chordType', _chordType);
         return _chordType;
       }
 
       function makeChordSequence(numChords, numExtraChords, numSemisPerOctave) {
-        console.log('numChords', numChords);
-        console.log('numExtraChords', numExtraChords);
         var _chordSeq = [];
         //Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(chordNumGreatest);
@@ -984,7 +974,6 @@ module.exports = function() {
         //by getting different chord types
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
           _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null);
-          console.log('_chordSeqOffsetArr', _chordSeqOffsetArr);
         }
         for (var i = 0; i < numChords; i++) {
           console.log('_chordSeqOffsetArr[i]', _chordSeqOffsetArr[i]);
@@ -1007,6 +996,8 @@ module.exports = function() {
         var _cArpCNoteOffset = 0;
         var _cIntervals;
         //playlogic
+        //TODO might double it for freezing
+        //and offset it by an octave for fine
         if (wCheck.isFreezing) {
           _cArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
@@ -1114,6 +1105,9 @@ module.exports = function() {
             firstPass = false;
           } else {
             switch (coProp.key) {
+              case 'dewPoint':
+                coProp.musicValue = numChords;
+                break;
               case 'ozone':
                 coProp.musicValue = numExtraChords;
                 break;
@@ -1156,10 +1150,6 @@ module.exports = function() {
                 break;
               case 'nearestStormDistance':
                 coProp.musicValue = cymbalsVolume;
-                break;
-              case 'extremeWeather':
-              //TODO output a weather value
-                coProp.musicValue = numPadNotes;
                 break;
             }
           }
@@ -1246,7 +1236,6 @@ module.exports = function() {
             sketch.loadSound('/audio/harmonica-C3.mp3'),
             sketch.loadSound('/audio/flute-C3.mp3')
           );
-          console.log('longNotes', longNotes);
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
           cymbals = sketch.loadSound('/audio/cymbals.mp3');
         }

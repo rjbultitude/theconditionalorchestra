@@ -390,6 +390,14 @@
 		this.ozone = function() {
 			return rawData.ozone;
 		};
+    /**
+		 * get the visibility
+		 *
+		 * @return number
+		 */
+		this.visibility = function() {
+			return rawData.visibility;
+		};
 		/**
 		 * get the nearest storm bearing
 		 *
