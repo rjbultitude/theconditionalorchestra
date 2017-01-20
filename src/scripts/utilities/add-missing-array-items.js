@@ -27,6 +27,11 @@ module.exports = function addMissingArrayItems(array, difference, amountToAdd, r
   addMissingLoop:
   for (var i = 0; i < difference; i++) {
     _newVal = _newArr[_index];
+    //Add the extra amount
+    //if we're dealing with numbers
+    if (typeof amountToAdd === 'number' && typeof _newVal === 'number') {
+      _newVal += amountToAdd;
+    }
     _diffArr.push(_newVal);
     //Start from 0 index
     //when there's no more items left
@@ -41,14 +46,6 @@ module.exports = function addMissingArrayItems(array, difference, amountToAdd, r
     }
     _index++;
   }
-  //Amend numeric values?
-  _diffArr = _diffArr.map(function(item) {
-    if (typeof amountToAdd === 'number' && typeof item === 'number') {
-      return item + amountToAdd;
-    } else {
-      return item;
-    }
-  });
   _finalArr = _newArr.concat(_diffArr);
   return _finalArr;
 };

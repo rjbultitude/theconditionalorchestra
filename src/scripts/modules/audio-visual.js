@@ -538,8 +538,11 @@ module.exports = function() {
     };
     console.log('wCheck', wCheck);
     var numPadNotes = getNumPadNotes(wCheck, avSettings);
+    console.log('numPadNotes', numPadNotes);
     var numChords = getNumChords(lwData).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
+    console.log('numChords', numChords);
+    console.log('numExtraChords', numExtraChords);
     var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     var precipCategory = getPrecipCategory(lwData);
@@ -865,11 +868,11 @@ module.exports = function() {
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function errorCheckIntervalsArr(chosenIntervals, numNotes, semisInOct, constrainBy) {
+      function errorCheckIntervalsArr(chosenIntervals, numNotes, semisInOct, repeatMultiple) {
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _numUpperOcts;
-        var _constrainBy = constrainBy || 0;
+        var _repeatMultiple = repeatMultiple || 0;
         //When using non western scale
         //ensure numbers don't balloon
         if (semisInOct > avSettings.numSemitones) {
@@ -879,7 +882,7 @@ module.exports = function() {
         }
         //Error check
         if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts, _constrainBy);
+          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts, _repeatMultiple);
           console.log('added missing items to', _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
@@ -908,12 +911,12 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, constrainBy) {
+      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeatMultiple) {
         var _numOcts;
         var _allNotesScale = [];
         var _scaleArray = [];
         var _rootAndOffset = rootNote + centreNoteOffset;
-        var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, numSemisPerOctave, constrainBy);
+        var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, numSemisPerOctave, repeatMultiple);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
@@ -976,13 +979,11 @@ module.exports = function() {
           _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
         for (var i = 0; i < numChords; i++) {
-          console.log('_chordSeqOffsetArr[i]', _chordSeqOffsetArr[i]);
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i].index, getValidChordType(_chordSeqOffsetArr[i].key), _inversionOffsetArr[i]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i].index, getValidChordType(_chordSeqOffsetArr[i].key), _inversionOffsetArr[i], 0));
         }
         //Adding extra chord(s) - pitched down
         for (var j = 0; j < numExtraChords; j++) {
-          console.log('_chordSeqOffsetArr[j]', _chordSeqOffsetArr[j]);
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j].index - numSemisPerOctave, getValidChordType(_chordSeqOffsetArr[j].key), _inversionOffsetArr[j]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j].index - numSemisPerOctave, getValidChordType(_chordSeqOffsetArr[j].key), _inversionOffsetArr[j], 0));
         }
         return _chordSeq;
       }
@@ -1006,14 +1007,14 @@ module.exports = function() {
         } else {
           _cIntervals = 'closeMinorIntervals';
         }
-        var _constrainBy = 0;
+        var _repeatMultiple = 0;
         var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numCArpNotes, _cArpCNoteOffset, _cIntervals, _intervalIndexOffset, _constrainBy);
+        return createMusicalScale(avSettings.numCArpNotes, _cArpCNoteOffset, _cIntervals, _intervalIndexOffset, _repeatMultiple);
       }
 
       function createRainArpScale(numSemisPerOctave) {
         var _rArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
-        var _constrainBy = 1;
+        var _repeatMultiple = 1;
         var _intervalIndexOffset = 0;
         var _intervalType;
         if (hasMajor(chordType)) {
@@ -1021,9 +1022,9 @@ module.exports = function() {
         } else {
           _intervalType = 'safeNthMinorIntervals';
         }
-        _constrainBy = 2;
+        _repeatMultiple = 2;
         console.log('rain arp _intervalType', _intervalType);
-        return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _constrainBy);
+        return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple);
       }
 
       /*
@@ -1139,9 +1140,7 @@ module.exports = function() {
                 coProp.musicValue = numSemisPerOctave;
                 break;
               case 'precipType':
-                console.log('precipType coProp.value', coProp.value);
                 coProp.value = coProp.value === undefined ? '' : precipCategory + ' ' + coProp.value;
-                console.log('precipType coProp.value', coProp.value);
                 coProp.musicValue = precipArpBpm;
                 break;
               case 'precipProbability':
