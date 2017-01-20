@@ -936,7 +936,7 @@ module.exports = function() {
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
-          _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null);
+          _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null, null);
         }
         return _chordOffsetArr;
       }
@@ -973,7 +973,7 @@ module.exports = function() {
         //we should use more harmonious chords
         //by getting different chord types
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
-          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null);
+          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
         for (var i = 0; i < numChords; i++) {
           console.log('_chordSeqOffsetArr[i]', _chordSeqOffsetArr[i]);
@@ -1067,7 +1067,7 @@ module.exports = function() {
         for (var i = 0; i < codisplayData.length; i++) {
           for (var j = 0; j < lwDataArr.length; j++) {
             if (codisplayData[i].key === lwDataArr[j]) {
-              codisplayData[i].value = lwData[lwDataArr[j]].value || lwData[lwDataArr[j]];
+              codisplayData[i].value = codisplayData[i].value === undefined ? lwData[lwDataArr[j]] : lwData[lwDataArr[j]].value;
             }
           }
         }
@@ -1139,7 +1139,9 @@ module.exports = function() {
                 coProp.musicValue = numSemisPerOctave;
                 break;
               case 'precipType':
-                coProp.value = precipCategory + ' ' + coProp.value;
+                console.log('precipType coProp.value', coProp.value);
+                coProp.value = coProp.value === undefined ? '' : precipCategory + ' ' + coProp.value;
+                console.log('precipType coProp.value', coProp.value);
                 coProp.musicValue = precipArpBpm;
                 break;
               case 'precipProbability':
