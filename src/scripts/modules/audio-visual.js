@@ -423,7 +423,7 @@ module.exports = function() {
     } else if (lwData.precipType === 'sleet' || lwData.precipIntensity.value <= 0.2) {
       return 'soft';
     } else if (lwData.precipType === 'snow' || lwData.precipIntensity.value <= 0.1) {
-      return 'softest';
+      return 'light';
     } else {
       console.log('no rain? type is: ', lwData.precipType);
       return null;
@@ -442,9 +442,9 @@ module.exports = function() {
         _arpBpm = 120;
         console.log('soft');
         break;
-      case 'softest':
+      case 'light':
         _arpBpm = 90;
-        console.log('softest');
+        console.log('light');
         break;
       default:
         console.log('problem with arrpeggio type', precipCategory);
@@ -1134,6 +1134,7 @@ module.exports = function() {
                 coProp.musicValue = numSemisPerOctave;
                 break;
               case 'precipType':
+                coProp.value = precipCategory + ' ' + coProp.value;
                 coProp.musicValue = precipArpBpm;
                 break;
               case 'precipProbability':
