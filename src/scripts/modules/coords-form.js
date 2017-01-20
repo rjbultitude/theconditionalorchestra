@@ -83,7 +83,9 @@ module.exports = function() {
         ozone: null,
         precipProbability: null,
         dewPoint: null,
-        apparentTemperature: null
+        apparentTemperature: null,
+        nearestStormBearing: null,
+        nearestStormDistance: null
       };
       // Set numerical integer and floating point values
       for (var key in locationData) {

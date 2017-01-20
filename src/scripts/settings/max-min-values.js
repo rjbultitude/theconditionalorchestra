@@ -67,6 +67,14 @@ module.exports = {
     precipProbability: {
       min: 0,
       max: 1
+    },
+    nearestStormBearing: {
+      min: 0,
+      max: 360
+    },
+    nearestStormDistance: {
+      min: 0,
+      max: 200
     }
   }
 };

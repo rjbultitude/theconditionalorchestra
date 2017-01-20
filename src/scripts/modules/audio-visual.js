@@ -475,11 +475,21 @@ module.exports = function() {
 
   function getCymbalsRate(lwData) {
     return mapRange(
-      Math.round(lwData.dewPoint.value),
-      lwData.dewPoint.min,
-      lwData.dewPoint.max,
+      Math.round(lwData.nearestStormBearing.value),
+      lwData.nearestStormBearing.min,
+      lwData.nearestStormBearing.max,
       0.5,
       1.2
+    );
+  }
+
+  function getCymbalsVolume(lwData) {
+    return mapRange(
+      Math.round(lwData.nearestStormDistance.value),
+      lwData.nearestStormDistance.min,
+      lwData.nearestStormDistance.max,
+      0,
+      0.8
     );
   }
 
@@ -549,6 +559,7 @@ module.exports = function() {
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
     var longNoteType = getLongNoteType(lwData);
     var cymbalsRate = getCymbalsRate(lwData);
+    var cymbalsVolume = getCymbalsVolume(lwData);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -1140,8 +1151,11 @@ module.exports = function() {
               case 'precipProbability':
                 coProp.musicValue = longNoteType;
                 break;
-              case 'dewPoint':
+              case 'nearestStormBearing':
                 coProp.musicValue = cymbalsRate.toFixed(2);
+                break;
+              case 'nearestStormDistance':
+                coProp.musicValue = cymbalsVolume;
                 break;
               case 'extremeWeather':
               //TODO output a weather value
@@ -1283,6 +1297,7 @@ module.exports = function() {
       function updateCymbals() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
           cymbals.play();
+          cymbals.setVolume(cymbalsVolume);
           cymbals.rate(cymbalsRate);
         }
       }

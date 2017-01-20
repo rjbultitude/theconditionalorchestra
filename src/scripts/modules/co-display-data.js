@@ -198,12 +198,21 @@ module.exports = [
     musicValue: ''
   },
   {
-    key: 'dewPoint',
-    title: 'Dew point',
+    key: 'nearestStormBearing',
+    title: 'Nearest storm bearing',
     value: '',
     unit: '',
     iconPath: '/img/cloud-cover-icon.svg',
     music: 'Cymbals rate is ',
+    musicValue: ''
+  },
+  {
+    key: 'nearestStormDistance',
+    title: 'Nearest storm distance',
+    value: '',
+    unit: '',
+    iconPath: '/img/cloud-cover-icon.svg',
+    music: 'Cymbals volume is ',
     musicValue: ''
   },
   {

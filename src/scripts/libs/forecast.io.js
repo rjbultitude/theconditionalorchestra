@@ -391,12 +391,20 @@
 			return rawData.ozone;
 		};
 		/**
-		 * get the visibility
+		 * get the nearest storm bearing
 		 *
 		 * @return number
 		 */
-		this.visibility = function() {
-			return rawData.visibility;
+		this.nearestStormBearing = function() {
+			return rawData.nearestStormBearing;
+		};
+    /**
+		 * get the nearest storm distance
+		 *
+		 * @return number
+		 */
+		this.nearestStormDistance = function() {
+			return rawData.nearestStormDistance;
 		};
 	}
 
