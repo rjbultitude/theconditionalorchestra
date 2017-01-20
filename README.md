@@ -127,9 +127,9 @@ The pan and volume are randomly selected from two arrays.
 
 Consider using a data input for the order the chords play in perhaps.
 
-Consider using `precipProbability` as data input for the longNote
-
 Consider only playing humid arpeggio when the inversions are being used
+
+Consider only playing rain arpeggio when the inversions are being used
 
 Update logic as described in App Logic and spreadsheet
 

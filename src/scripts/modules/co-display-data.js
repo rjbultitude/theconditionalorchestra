@@ -92,9 +92,9 @@ module.exports = [
     musicValue: ''
   },
   {
-    key: 'toDo',
-    title: 'Mixed weather',
-    value: '',
+    key: 'overview',
+    title: 'Weather',
+    value: '*',
     unit: '',
     iconPath: '/img/cloud-cover-icon.svg',
     music: 'Chord sequence type is ',

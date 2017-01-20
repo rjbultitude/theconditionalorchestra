@@ -188,7 +188,7 @@ module.exports = function() {
   function getLongNoteType(lwData) {
     var _longNoteType;
     //playlogic
-    if (lwData.precipProbability > 0.5) {
+    if (lwData.precipProbability.value > 0.5) {
       _longNoteType = 'harmonica';
     } else {
       _longNoteType = 'flute';
@@ -291,16 +291,16 @@ module.exports = function() {
   function getChordType(wCheck) {
     var _chordType;
     //playlogic
-    if (wCheck.isFine) {
+    if (wCheck.isClement && wCheck.isCold) {
+      _chordType = 'octatonicMinorIntervals';
+    } else if (wCheck.isFine) {
       _chordType = 'heptatonicMajorIntervals';
     } else if (wCheck.isCold) {
-      _chordType = 'octatonicMinorIntervals';
-    } else if (wCheck.isClement) {
-      _chordType = 'majorSeventhIntervals';
+      _chordType = 'minorSeventhIntervals';
     } else if (wCheck.isStormy) {
       _chordType = 'heptatonicMinorIntervals';
     } else {
-      _chordType = 'minorSeventhIntervals';
+      _chordType = 'majorSeventhIntervals';
     }
     console.log('_chordType', _chordType);
     return _chordType;
@@ -332,7 +332,7 @@ module.exports = function() {
   }
 
   //Inversions manager
-  function getIntervalIndexOffsetKey(wCheck) {
+  function getInversionOffsetKey(wCheck) {
     var _key;
     // playlogic
     // important!
@@ -349,18 +349,17 @@ module.exports = function() {
     return _key;
   }
 
-  function getMainSeqRepeatNum(wCheck, numChords) {
-    var _seqRepeatNum = 0;
+  function getMainSeqRepeatNum(lwData, numChords) {
+    // TODO consider rounding to the nearest
+    // multiple of numChords
     //playlogic
-    if (wCheck.isFine || wCheck.isFreezing) {
-      _seqRepeatNum = numChords * 3; //was 4
-    } else if (wCheck.isCold) {
-      _seqRepeatNum = numChords * 2; //was 3
-    } else {
-      _seqRepeatNum = numChords * 1; //was 2
-    }
-    console.log('_seqRepeatNum', _seqRepeatNum);
-    return _seqRepeatNum;
+    return Math.round(mapRange(
+      lwData.apparentTemperature.value,
+      lwData.apparentTemperature.min,
+      lwData.apparentTemperature.max,
+      numChords * 6,
+      numChords * 1
+    ));
   }
 
   function getRootNote(lwData, numSemisPerOctave) {
@@ -529,7 +528,7 @@ module.exports = function() {
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
       //broad conditions
       isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
-      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
+      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value, lwData.humidity.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
     };
     console.log('wCheck', wCheck);
@@ -542,7 +541,7 @@ module.exports = function() {
     var precipArpBpm = getPrecipArpBpm(precipCategory);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
-    var seqRepeatNum = getMainSeqRepeatNum(wCheck, numChords);
+    var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
     var rootNote = getRootNote(lwData, numSemisPerOctave);
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
@@ -616,7 +615,7 @@ module.exports = function() {
       function getAllegrettoRhythmType(humidArpScaleArray) {
         var _newNotesArray = [];
         //playlogic
-        if (wCheck.isHumid) {
+        if (wCheck.isWindy) {
           _newNotesArray = getAllegrettoRhythm(humidArpScaleArray, true);
         } else {
           _newNotesArray = getAllegrettoRhythm(humidArpScaleArray, false);
@@ -638,7 +637,6 @@ module.exports = function() {
         //Overwrite sequence with new notes
         var _newNotesArray = getAllegrettoRhythmType(humidArpScaleArray);
         humidArpPhrase.sequence = _newNotesArray;
-        console.log('humidArpPhrase.sequence', humidArpPhrase.sequence);
         //Play Sequence
         humidArpPart.addPhrase(humidArpPhrase);
         humidArpPart.setBPM(60);
@@ -665,7 +663,7 @@ module.exports = function() {
       function playBass(scaleSet) {
         bass.play();
         //Play 1st note of each chord
-        console.log('bass paying at rate', scaleSet[scaleSetIndex][0]);
+        //console.log('bass paying at rate', scaleSet[scaleSetIndex][0]);
         bass.rate(scaleSet[scaleSetIndex][0]);
         //TODO could set the volume
         //based on the amount of cloudCover
@@ -939,16 +937,16 @@ module.exports = function() {
         return _chordOffsetArr;
       }
 
-      function getIntervalIndexOffsetArr(numChords) {
-        var _chordIndexOffSetArr = [];
-        var _chordIndexOffSetKey = getIntervalIndexOffsetKey(wCheck);
+      function getInversionOffsetArr(numChords) {
+        var _chordInversionOffSetArr = [];
+        var _chordInversionOffSetKey = getInversionOffsetKey(wCheck);
         var _diff;
-        _chordIndexOffSetArr = intervals[_chordIndexOffSetKey];
-        if (numChords > _chordIndexOffSetArr.length) {
-          _diff = numChords - _chordIndexOffSetArr.length;
-          _chordIndexOffSetArr = addMissingArrayItems(_chordIndexOffSetArr, _diff, null, null);
+        _chordInversionOffSetArr = intervals[_chordInversionOffSetKey];
+        if (numChords > _chordInversionOffSetArr.length) {
+          _diff = numChords - _chordInversionOffSetArr.length;
+          _chordInversionOffSetArr = addMissingArrayItems(_chordInversionOffSetArr, _diff, null, null);
         }
-        return _chordIndexOffSetArr;
+        return _chordInversionOffSetArr;
       }
 
       function getValidChordType(key) {
@@ -969,7 +967,7 @@ module.exports = function() {
         //Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(chordNumGreatest);
         //Chord inversion shift
-        var _intIndOffsetArr = getIntervalIndexOffsetArr(chordNumGreatest);
+        var _inversionOffsetArr = getInversionOffsetArr(chordNumGreatest);
         //TODO for chord sequences with offset
         //we should use more harmonious chords
         //by getting different chord types
@@ -979,12 +977,12 @@ module.exports = function() {
         }
         for (var i = 0; i < numChords; i++) {
           console.log('_chordSeqOffsetArr[i]', _chordSeqOffsetArr[i]);
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i].index, getValidChordType(_chordSeqOffsetArr[i].key), _intIndOffsetArr[i]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i].index, getValidChordType(_chordSeqOffsetArr[i].key), _inversionOffsetArr[i]));
         }
         //Adding extra chord(s) - pitched down
         for (var j = 0; j < numExtraChords; j++) {
           console.log('_chordSeqOffsetArr[j]', _chordSeqOffsetArr[j]);
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j].index - numSemisPerOctave, getValidChordType(_chordSeqOffsetArr[j].key), _intIndOffsetArr[j]));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j].index - numSemisPerOctave, getValidChordType(_chordSeqOffsetArr[j].key), _inversionOffsetArr[j]));
         }
         return _chordSeq;
       }
@@ -1016,18 +1014,13 @@ module.exports = function() {
         var _constrainBy = 1;
         var _intervalIndexOffset = 0;
         var _intervalType;
-        if (hasSixthSeventhNinth(chordType)) {
-          console.log('hasSixthSeventhNinth');
-          if (hasMajor(chordType)) {
-            _intervalType = 'safeNthMajorIntervals';
-          } else {
-            _intervalType = 'safeNthMinorIntervals';
-          }
-          _constrainBy = 2;
+        if (hasMajor(chordType)) {
+          _intervalType = 'safeNthMajorIntervals';
         } else {
-          console.log('does not hasSixthSeventhNinth');
-          _intervalType = 'safeIntervals';
+          _intervalType = 'safeNthMinorIntervals';
         }
+        _constrainBy = 2;
+        console.log('rain arp _intervalType', _intervalType);
         return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _constrainBy);
       }
 
@@ -1052,7 +1045,7 @@ module.exports = function() {
         if (wCheck.isPrecip) {
           _rainArpScaleArray = createRainArpScale(numSemisPerOctave);
         }
-        if (wCheck.isHumid) {
+        if (wCheck.isHumid && !wCheck.isPrecip) {
           _humidArpScaleArray = createHumidArpScale(numSemisPerOctave);
         }
         playSounds(_organScaleSets, _rainArpScaleArray, _humidArpScaleArray);
@@ -1060,7 +1053,7 @@ module.exports = function() {
 
       function outputChordSeqType() {
         if (chordSeqKey === 'chordsNoOffset') {
-          return 'using inversions';
+          return 'Using inversions';
         } else {
           return addSpacesToString(chordSeqKey);
         }
@@ -1120,7 +1113,7 @@ module.exports = function() {
                 coProp.musicValue = Math.round(masterFilterFreq);
                 break;
               case 'apparentTemperature':
-                coProp.musicValue = seqRepeatNum;
+                coProp.musicValue = Math.round(seqRepeatNum / numChords);
                 break;
               case 'summary':
                 coProp.musicValue = addSpacesToString(padType);
@@ -1128,7 +1121,7 @@ module.exports = function() {
               case 'isStormy':
                 coProp.musicValue = numChords;
                 break;
-              case 'toDo':
+              case 'overview':
                 coProp.musicValue = outputChordSeqType();
                 break;
               case 'windSpeed':
@@ -1147,7 +1140,7 @@ module.exports = function() {
                 coProp.musicValue = longNoteType;
                 break;
               case 'dewPoint':
-                coProp.musicValue = cymbalsRate;
+                coProp.musicValue = cymbalsRate.toFixed(2);
                 break;
               case 'extremeWeather':
               //TODO output a weather value
@@ -1176,7 +1169,7 @@ module.exports = function() {
             var html = appTemplate(coProp);
             cdContainer.insertAdjacentHTML('beforeend', html);
           } else {
-            console.log('Not displayed because not truthy ', coProp);
+            //console.log('Not displayed because not truthy ', coProp);
           }
         });
       }
@@ -1365,11 +1358,11 @@ module.exports = function() {
         if (wCheck.isWindy) {
           updateBrass();
         }
-        if (wCheck.isHumid) {
-          updateHumidArp();
-        }
         if (wCheck.isPrecip) {
           updateRainArp();
+        }
+        if (wCheck.isHumid && !wCheck.isPrecip) {
+          updateHumidArp();
         }
         if (wCheck.isFreezing) {
           updateFilter();
