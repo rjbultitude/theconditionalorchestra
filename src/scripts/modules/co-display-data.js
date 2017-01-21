@@ -27,7 +27,7 @@ module.exports = function() {
             value: '',
             unit: '',
             iconPath: '/img/temperature-icon.svg',
-            music: 'Number of semitones: ',
+            music: 'Number of semitones in octave: ',
             musicValue: ''
           },
           {
@@ -181,7 +181,7 @@ module.exports = function() {
             key: 'nearestStormDistance',
             title: 'Nearest storm distance',
             value: '',
-            unit: '',
+            unit: 'miles',
             iconPath: '/img/cloud-cover-icon.svg',
             music: 'Cymbals volume is ',
             musicValue: ''

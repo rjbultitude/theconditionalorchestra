@@ -1114,7 +1114,7 @@ module.exports = function() {
             coProp.value = frnhtToCelcius(coProp.value).toFixed(2);
             coProp.unit = 'C' + he.decode('&deg');
           }
-          if (coProp.key === 'windBearing') {
+          if (coProp.key === 'windBearing' || coProp.key === 'nearestStormBearing') {
             coProp.unit = he.decode('&deg');
           }
           if (coProp.key === 'cloudCover' || coProp.key === 'humidity') {
@@ -1185,12 +1185,14 @@ module.exports = function() {
       function addChordTypeMusicValues(coDisplayData) {
         return coDisplayData.map(function(coProp) {
           coProp.musicValue = chordType;
+          return coProp;
         });
       }
 
       function addInversionMusicValues(coDisplayData) {
         return coDisplayData.map(function(coProp) {
           coProp.musicValue = inversionOffsetType;
+          return coProp;
         });
       }
 
