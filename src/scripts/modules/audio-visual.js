@@ -1182,17 +1182,27 @@ module.exports = function() {
         });
       }
 
-      function addChordTypeMusicValues(coDisplayData) {
-        return coDisplayData.map(function(coProp) {
-          coProp.musicValue = chordType;
-          return coProp;
-        });
+      function isvalidConditionTrue(currentKey) {
+        if (currentKey !== 'isOther' && currentKey) {
+          return true;
+        } else {
+          return false;
+        }
       }
 
-      function addInversionMusicValues(coDisplayData) {
-        return coDisplayData.map(function(coProp) {
-          coProp.musicValue = inversionOffsetType;
-          return coProp;
+      function addOtherMusicValues(displayData, musicValue) {
+        var _validConditionTrue = false;
+        var _newMusicValue = musicValue;
+        return displayData.map(function(displayProp) {
+          _validConditionTrue = isvalidConditionTrue(displayProp);
+          if (displayProp === 'isOther' && _validConditionTrue) {
+            displayProp.value = false;
+          }
+          if (typeof musicValue === 'string') {
+            _newMusicValue = addSpacesToString(musicValue);
+          }
+          displayProp.musicValue = musicValue;
+          return displayProp;
         });
       }
 
@@ -1206,14 +1216,15 @@ module.exports = function() {
             if (coDataSet === 'primaryMap') {
               _currArr = addPrimaryMusicValues(_unitisedDisplayData);
             } else if (coDataSet === 'chordTypeMap') {
-              _currArr = addChordTypeMusicValues(_unitisedDisplayData);
+              _currArr = addOtherMusicValues(_unitisedDisplayData, chordType);
             } else if (coDataSet === 'inversionMap') {
-              _currArr = addInversionMusicValues(_unitisedDisplayData);
+              _currArr = addOtherMusicValues(_unitisedDisplayData, inversionOffsetType);
+            } else if (coDataSet === 'numNotesMap') {
+              _currArr = addOtherMusicValues(_unitisedDisplayData, numPadNotes);
             }
             _finalCoData.splice.apply(_finalCoData, _currArr);
           }
         }
-        console.log('_finalCoData', _finalCoData);
         _finalCoData.forEach(function(coProp) {
           if (coProp.value) {
             var html = appTemplate(coProp);

@@ -241,6 +241,15 @@ module.exports = function() {
             iconPath: '/img/pressure-icon.svg',
             music: 'Chord types are ',
             musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Is not freezing, fine, cold nor clement ',
+            value: 'true',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord types are ',
+            musicValue: ''
           }
         ],
         inversionMap: [
@@ -269,6 +278,44 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/pressure-icon.svg',
             music: 'Inversion types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Is not fine, windy or freezing',
+            value: 'true',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Inversion types are ',
+            musicValue: ''
+          }
+        ],
+        numNotesMap: [
+          {
+            key: 'isFreezing',
+            title: 'Freezing conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Number of notes per chord is ',
+            musicValue: ''
+          },
+          {
+            key: 'isFine',
+            title: 'Fine weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Number of notes per chord is ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Not freezing or fine',
+            value: 'true',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Number of notes per chord is ',
             musicValue: ''
           }
         ]
