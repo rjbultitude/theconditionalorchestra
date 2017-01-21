@@ -13,7 +13,7 @@ var appTemplate = require('../templates/index').codisplay;
 var he = require('he');
 //custom
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
-var codisplayData = require('./co-display-data');
+var coDisplayDataFn = require('./co-display-data');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
 var weatherCheck = require('./weather-checker-fns');
@@ -80,6 +80,8 @@ module.exports = function() {
   //Subscriptions
   var publishBrassOne;
   var publishBrassTwo;
+  //Display data
+  var coDisplayData = coDisplayDataFn();
   //DOM
   var cdContainer = document.querySelector('.conditions-display__list');
 
@@ -665,6 +667,7 @@ module.exports = function() {
         //Setup reverb
         harpSoundTwo.disconnect();
         reverb.process(harpSoundTwo, 4, 10);
+        reverb.amp(1);
         harpSoundTwo.play();
         harpSoundTwo.rate(_randomNote * 3);
         harpSoundTwo.setVolume(1);
@@ -1084,28 +1087,30 @@ module.exports = function() {
         }
       }
 
-      function mapConditionsToDisplayData() {
-        var lwDataArr = Object.keys(lwData);
-        var wCheckArr = Object.keys(wCheck);
-        for (var i = 0; i < codisplayData.length; i++) {
-          for (var j = 0; j < lwDataArr.length; j++) {
-            if (codisplayData[i].key === lwDataArr[j]) {
-              codisplayData[i].value = codisplayData[i].value === undefined ? lwData[lwDataArr[j]] : lwData[lwDataArr[j]].value;
+      function mapConditionsToDisplayData(rawCoDisplayData) {
+        var _lwDataArr = Object.keys(lwData);
+        var _wCheckArr = Object.keys(wCheck);
+        var _coDisplayDataLw = rawCoDisplayData.map(function(coDisplayObj) {
+          for (var i = 0; i < _lwDataArr.length; i++) {
+            if (coDisplayObj.key === _lwDataArr[i]) {
+              coDisplayObj.value = coDisplayObj.value === undefined ? lwData[_lwDataArr[i]] : lwData[_lwDataArr[i]].value;
             }
           }
-        }
-        for (var k = 0; k < codisplayData.length; k++) {
-          for (var l = 0; l < wCheckArr.length; l++) {
-            if (codisplayData[k].key === wCheckArr[l]) {
-              codisplayData[k].value = wCheck[wCheckArr[l]];
+          return coDisplayObj;
+        });
+        var _coDisplayDataWCheck = _coDisplayDataLw.map(function(coDisplayObj) {
+          for (var i = 0; i < _wCheckArr.length; i++) {
+            if (coDisplayObj.key === _wCheckArr[i]) {
+              coDisplayObj.value = wCheck[_wCheckArr[i]];
             }
           }
-        }
-        return codisplayData;
+          return coDisplayObj;
+        });
+        return _coDisplayDataWCheck;
       }
 
-      function unitiseData(codisplayData) {
-        return codisplayData.map(function(coProp) {
+      function unitiseData(rawCoDisplayData) {
+        return rawCoDisplayData.map(function(coProp) {
           if (coProp.key === 'temperature' || coProp.key === 'apparentTemperature') {
             coProp.value = frnhtToCelcius(coProp.value).toFixed(2);
             coProp.unit = 'C' + he.decode('&deg');
@@ -1120,13 +1125,8 @@ module.exports = function() {
         });
       }
 
-      function addMusicValues(codisplayData) {
-        var firstPass = true;
-        return codisplayData.map(function(coProp) {
-          if (coProp.secondKey === 'padType' && coProp.value && firstPass) {
-            coProp.musicValue = addSpacesToString(chordType);
-            firstPass = false;
-          } else {
+      function addMusicValues(rawCoDisplayData) {
+        return rawCoDisplayData.map(function(coProp) {
             switch (coProp.key) {
               case 'dewPoint':
                 coProp.musicValue = numChords;
@@ -1145,9 +1145,6 @@ module.exports = function() {
                 break;
               case 'summary':
                 coProp.musicValue = addSpacesToString(padType);
-                break;
-              case 'isStormy':
-                coProp.musicValue = numChords;
                 break;
               case 'overview':
                 coProp.musicValue = outputChordSeqType();
@@ -1174,25 +1171,35 @@ module.exports = function() {
               case 'nearestStormDistance':
                 coProp.musicValue = cymbalsVolume.toFixed(2);
                 break;
+              case 'windSpeedHigh':
+                coProp.musicValue = humidArpBpm;
+                break;
+              case 'isWindyArp':
+                coProp.musicValue = humidArpIntervals;
+                break;
             }
-          }
           return coProp;
         });
       }
 
-      function cleanMusicValData(codisplayData) {
+      function cleanMusicValData(rawCoDisplayData) {
         //TODO remove any items that won't play
         // due to conflicting playlogic
-        return codisplayData;
+        return rawCoDisplayData;
       }
 
       function configureDisplay() {
-        var _mappedData = mapConditionsToDisplayData();
-        var _unitisedData = unitiseData(_mappedData);
-        var _musicValData = addMusicValues(_unitisedData);
-        var _cleanMusicValData = cleanMusicValData(_musicValData);
-        console.log('_cleanMusicValData', _cleanMusicValData);
-        _cleanMusicValData.forEach(function(coProp) {
+        var _finalCoData = [];
+        for (var coDataSet in coDisplayData) {
+          if (coDisplayData.hasOwnProperty(coDataSet)) {
+            var _mappedPrimaryData = mapConditionsToDisplayData(coDisplayData[coDataSet]);
+            var _unitisedPrimaryData = unitiseData(_mappedPrimaryData);
+            var _musicValPrimaryData = addMusicValues(_unitisedPrimaryData);
+            var _cleanMusicValData = cleanMusicValData(_musicValPrimaryData);
+            _finalCoData.splice.apply(_finalCoData, _cleanMusicValData);
+          }
+        }
+        _finalCoData.forEach(function(coProp) {
           if (coProp.value) {
             var html = appTemplate(coProp);
             cdContainer.insertAdjacentHTML('beforeend', html);
