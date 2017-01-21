@@ -67,7 +67,7 @@ module.exports = function() {
       //load the static weather
       //TODO test this
       if (conditions === false) {
-        conditions = makeRequest('GET', 'data/static-weather.json');
+        conditions = makeRequest('GET', 'data/static-data.json');
       }
       console.log('conditions', conditions);
       //must make new object at this point;
