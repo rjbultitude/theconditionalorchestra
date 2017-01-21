@@ -1192,16 +1192,16 @@ module.exports = function() {
 
       function addOtherMusicValues(displayData, musicValue) {
         var _validConditionTrue = false;
-        var _newMusicValue = musicValue;
         return displayData.map(function(displayProp) {
           _validConditionTrue = isvalidConditionTrue(displayProp);
           if (displayProp === 'isOther' && _validConditionTrue) {
             displayProp.value = false;
           }
           if (typeof musicValue === 'string') {
-            _newMusicValue = addSpacesToString(musicValue);
+            displayProp.musicValue = addSpacesToString(musicValue);
+          } else {
+            displayProp.musicValue = musicValue;
           }
-          displayProp.musicValue = musicValue;
           return displayProp;
         });
       }
