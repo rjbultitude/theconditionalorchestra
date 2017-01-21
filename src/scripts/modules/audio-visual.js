@@ -337,13 +337,13 @@ module.exports = function() {
     // playlogic
     // important!
     if (wCheck.isFine) {
-      _key = 'chordIndexesDown';
+      _key = 'inversionsDown';
     } else if (wCheck.isWindy) {
-      _key = 'chordIndexesUpDown';
+      _key = 'inversionsUpDown';
     } else if (wCheck.isFreezing) {
-      _key = 'chordIndexesUp';
+      _key = 'inversionsUp';
     } else {
-      _key = 'chordIndexesNoOffset';
+      _key = 'inversionsNoOffset';
     }
     console.log('inversion chords ', _key);
     return _key;
@@ -577,6 +577,7 @@ module.exports = function() {
     var precipArpBpm = getPrecipArpBpm(precipCategory);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
+    var inversionOffsetType = getInversionOffsetKey(wCheck);
     var humidArpBpm = getHumidArpBpm(lwData);
     var humidArpIntervals = getHumidArpIntervals(wCheck, chordType);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
@@ -976,10 +977,8 @@ module.exports = function() {
       }
 
       function getInversionOffsetArr(numChords) {
-        var _chordInversionOffSetArr = [];
-        var _chordInversionOffSetKey = getInversionOffsetKey(wCheck);
+        var _chordInversionOffSetArr = intervals[inversionOffsetType];
         var _diff;
-        _chordInversionOffSetArr = intervals[_chordInversionOffSetKey];
         if (numChords > _chordInversionOffSetArr.length) {
           _diff = numChords - _chordInversionOffSetArr.length;
           _chordInversionOffSetArr = addMissingArrayItems(_chordInversionOffSetArr, _diff, null, null);
@@ -1093,7 +1092,7 @@ module.exports = function() {
         var _coDisplayDataLw = rawCoDisplayData.map(function(coDisplayObj) {
           for (var i = 0; i < _lwDataArr.length; i++) {
             if (coDisplayObj.key === _lwDataArr[i]) {
-              coDisplayObj.value = coDisplayObj.value === undefined ? lwData[_lwDataArr[i]] : lwData[_lwDataArr[i]].value;
+              coDisplayObj.value = lwData[_lwDataArr[i]].value === undefined ? lwData[_lwDataArr[i]] : lwData[_lwDataArr[i]].value;
             }
           }
           return coDisplayObj;
@@ -1125,7 +1124,7 @@ module.exports = function() {
         });
       }
 
-      function addMusicValues(rawCoDisplayData) {
+      function addPrimaryMusicValues(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
             switch (coProp.key) {
               case 'dewPoint':
@@ -1178,27 +1177,41 @@ module.exports = function() {
                 coProp.musicValue = humidArpIntervals;
                 break;
             }
+            console.log('coProp', coProp);
           return coProp;
         });
       }
 
-      function cleanMusicValData(rawCoDisplayData) {
-        //TODO remove any items that won't play
-        // due to conflicting playlogic
-        return rawCoDisplayData;
+      function addChordTypeMusicValues(coDisplayData) {
+        return coDisplayData.map(function(coProp) {
+          coProp.musicValue = chordType;
+        });
+      }
+
+      function addInversionMusicValues(coDisplayData) {
+        return coDisplayData.map(function(coProp) {
+          coProp.musicValue = inversionOffsetType;
+        });
       }
 
       function configureDisplay() {
         var _finalCoData = [];
+        var _currArr;
         for (var coDataSet in coDisplayData) {
           if (coDisplayData.hasOwnProperty(coDataSet)) {
-            var _mappedPrimaryData = mapConditionsToDisplayData(coDisplayData[coDataSet]);
-            var _unitisedPrimaryData = unitiseData(_mappedPrimaryData);
-            var _musicValPrimaryData = addMusicValues(_unitisedPrimaryData);
-            var _cleanMusicValData = cleanMusicValData(_musicValPrimaryData);
-            _finalCoData.splice.apply(_finalCoData, _cleanMusicValData);
+            var _mappedDisplayData = mapConditionsToDisplayData(coDisplayData[coDataSet]);
+            var _unitisedDisplayData = unitiseData(_mappedDisplayData);
+            if (coDataSet === 'primaryMap') {
+              _currArr = addPrimaryMusicValues(_unitisedDisplayData);
+            } else if (coDataSet === 'chordTypeMap') {
+              _currArr = addChordTypeMusicValues(_unitisedDisplayData);
+            } else if (coDataSet === 'inversionMap') {
+              _currArr = addInversionMusicValues(_unitisedDisplayData);
+            }
+            _finalCoData.splice.apply(_finalCoData, _currArr);
           }
         }
+        console.log('_finalCoData', _finalCoData);
         _finalCoData.forEach(function(coProp) {
           if (coProp.value) {
             var html = appTemplate(coProp);

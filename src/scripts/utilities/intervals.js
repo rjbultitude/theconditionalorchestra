@@ -103,8 +103,8 @@ module.exports = {
         key: ''
       }],
     //Inversions
-    chordIndexesDown: [0, 3, 2, 1],
-    chordIndexesUp: [0, 2, 3, 5],
-    chordIndexesUpDown: [3, 1, 2, 0],
-    chordIndexesNoOffset: [0, 0, 0, 0]
+    inversionsDown: [0, 3, 2, 1],
+    inversionsUp: [0, 2, 3, 5],
+    inversionsUpDown: [3, 1, 2, 0],
+    inversionsNoOffset: [0, 0, 0, 0]
 };

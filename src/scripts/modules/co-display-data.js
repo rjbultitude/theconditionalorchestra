@@ -196,7 +196,7 @@ module.exports = function() {
             musicValue: ''
           }
         ],
-        secondaryMap: [
+        chordTypeMap: [
           {
             key: 'isFreezing',
             title: 'Freezing conditions',
@@ -240,6 +240,35 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/pressure-icon.svg',
             music: 'Chord types are ',
+            musicValue: ''
+          }
+        ],
+        inversionMap: [
+          {
+            key: 'isFine',
+            title: 'Fine weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Inversion types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isWindy',
+            title: 'Cold weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Inversion types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isFreezing',
+            title: 'Clement conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Inversion types are ',
             musicValue: ''
           }
         ]
