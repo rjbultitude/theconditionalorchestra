@@ -22,6 +22,8 @@ module.exports = {
     //Close
     closeMajorIntervals: [0, -1, 0, 2], //for humid arrpeggio
     closeMinorIntervals: [0, -2, 0, 2], //for humid arrpeggio
+    farMajorIntervals: [0, -8, 0, -12], //for humid arrpeggio
+    farMinorIntervals: [0, -9, 0, -12], //for humid arrpeggio
     //Chord sequences
     chordsMelancholyUp: [
       {

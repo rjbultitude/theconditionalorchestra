@@ -447,6 +447,35 @@ module.exports = function() {
     return _arpBpm;
   }
 
+  function getHumidArpBpm(lwData) {
+    return Math.round(mapRange(
+      lwData.windSpeed.value,
+      lwData.windSpeed.min,
+      lwData.windSpeed.max,
+      40,
+      70
+    ));
+  }
+
+  function getHumidArpIntervals(wCheck, chordType) {
+    var _hIntervals;
+    //playlogic
+    if (wCheck.isWindy) {
+      if (hasMajor(chordType)) {
+        _hIntervals = 'closeMajorIntervals';
+      } else {
+        _hIntervals = 'closeMinorIntervals';
+      }
+    } else {
+      if (hasMajor(chordType)) {
+        _hIntervals = 'farMajorIntervals';
+      } else {
+        _hIntervals = 'farMinorIntervals';
+      }
+    }
+    return _hIntervals;
+  }
+
   function getMasterFilterFreq(lwData) {
     //Use math.abs for all pitch and volume values?
     // Set filter. Visibility is filter freq
@@ -483,8 +512,8 @@ module.exports = function() {
       Math.round(lwData.nearestStormDistance.value),
       lwData.nearestStormDistance.min,
       lwData.nearestStormDistance.max,
-      0,
-      0.8
+      0.8,
+      0
     );
   }
 
@@ -538,17 +567,16 @@ module.exports = function() {
     };
     console.log('wCheck', wCheck);
     var numPadNotes = getNumPadNotes(wCheck, avSettings);
-    console.log('numPadNotes', numPadNotes);
     var numChords = getNumChords(lwData).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
-    console.log('numChords', numChords);
-    console.log('numExtraChords', numExtraChords);
     var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     var precipCategory = getPrecipCategory(lwData);
     var precipArpBpm = getPrecipArpBpm(precipCategory);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
+    var humidArpBpm = getHumidArpBpm(lwData);
+    var humidArpIntervals = getHumidArpIntervals(wCheck, chordType);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
     var rootNote = getRootNote(lwData, numSemisPerOctave);
     var rootNoteHigh = isRootNoteHigh(rootNote);
@@ -590,12 +618,12 @@ module.exports = function() {
               _newScaleArr.push(scaleArray[i]);
             }
             if (includeFills) {
-              _newScaleArr.push(0);
+              _newScaleArr.splice(_newScaleArr.length - 1, 0, 0, 0, 0);
             }
           } else if (i % 2 !== 0) {
             _newScaleArr.push(scaleArray[i]);
             if (includeFills) {
-              _newScaleArr.push(0);
+              _newScaleArr.splice(_newScaleArr.length - 1, 0, 0, 0, 0);
               _newScaleArr.push(scaleArray[i]);
             }
           }
@@ -648,7 +676,7 @@ module.exports = function() {
         humidArpPhrase.sequence = _newNotesArray;
         //Play Sequence
         humidArpPart.addPhrase(humidArpPhrase);
-        humidArpPart.setBPM(60);
+        humidArpPart.setBPM(humidArpBpm);
         humidArpPart.playingMelody = true;
         humidArpPart.loop();
       }
@@ -994,22 +1022,16 @@ module.exports = function() {
       }
 
       function createHumidArpScale(numSemisPerOctave) {
-        var _cArpCNoteOffset = 0;
-        var _cIntervals;
+        var _repeatMultiple = 0;
+        var _intervalIndexOffset = 0;
+        var _hArpCNoteOffset = 0;
         //playlogic
         //TODO might double it for freezing
         //and offset it by an octave for fine
         if (wCheck.isFreezing) {
-          _cArpCNoteOffset = -Math.abs(numSemisPerOctave);
+          _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
-        if (hasMajor(chordType)) {
-          _cIntervals = 'closeMajorIntervals';
-        } else {
-          _cIntervals = 'closeMinorIntervals';
-        }
-        var _repeatMultiple = 0;
-        var _intervalIndexOffset = 0;
-        return createMusicalScale(avSettings.numCArpNotes, _cArpCNoteOffset, _cIntervals, _intervalIndexOffset, _repeatMultiple);
+        return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple);
       }
 
       function createRainArpScale(numSemisPerOctave) {
@@ -1150,7 +1172,7 @@ module.exports = function() {
                 coProp.musicValue = cymbalsRate.toFixed(2);
                 break;
               case 'nearestStormDistance':
-                coProp.musicValue = cymbalsVolume;
+                coProp.musicValue = cymbalsVolume.toFixed(2);
                 break;
             }
           }
@@ -1327,6 +1349,7 @@ module.exports = function() {
             humidArpEnd(_humidArpPhrase.sequence);
             console.log('humidArpPart should have stopped');
           } else {
+            humidArpPart.setBPM(humidArpBpm);
             humidArpPart.loop();
             humidArpPart.playingMelody = true;
             console.log('humidArpPart should be playing');
