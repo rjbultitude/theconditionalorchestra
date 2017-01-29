@@ -241,6 +241,16 @@ module.exports = function() {
             musicValue: ''
           },
           {
+            key: 'visibility',
+            title: 'Visibility',
+            value: '',
+            unit: '',
+            iconPath: '/img/temperature-icon.svg',
+            music: 'Long note is offset by -',
+            musicValue: '',
+            musicAppendage: ' octaves'
+          },
+          {
             key: 'cloudCover',
             title: 'Cloud cover',
             value: '',

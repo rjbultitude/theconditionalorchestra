@@ -397,6 +397,16 @@ module.exports = function() {
     return _longNoteIndex;
   }
 
+  function getLongNoteOffset(lwData) {
+    return Math.round(microU.mapRange(
+      lwData.visibility.value,
+      lwData.visibility.min,
+      lwData.visibility.max,
+      3,
+      0
+    ));
+  }
+
   function getPrecipCategory(lwData) {
     if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
       return 'hard';
@@ -556,6 +566,7 @@ module.exports = function() {
     var rootNote = getRootNote(lwData, numSemisPerOctave);
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
+    var longNoteOffset = getLongNoteOffset(lwData);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
     var longNoteType = getLongNoteType(lwData);
@@ -717,7 +728,7 @@ module.exports = function() {
         if (extraSeqPlaying) {
           longNote.rate(scale[longNoteIndex] / 2);
         } else {
-          longNote.rate(scale[longNoteIndex]);
+          longNote.rate(scale[longNoteIndex] / longNoteOffset);
         }
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
@@ -1141,6 +1152,9 @@ module.exports = function() {
                 break;
               case 'temperature':
                 coProp.musicValue = numSemisPerOctave;
+                break;
+              case 'visibility':
+                coProp.musicValue = longNoteOffset;
                 break;
               case 'precipIntensity':
                 coProp.musicValue = precipArpBpm;
