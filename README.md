@@ -125,15 +125,17 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Consider using a data input for the order the chords play in perhaps.
+Change the order of the display items. Consider grouping them into instrument types
+
+Consider using a state manager to update the humid arpeggio and display (chords)
+
+Consider using a data input for the order the chords play in perhaps - could be `cloudCover`
 
 Consider only playing humid arpeggio when the inversions are being used
 
 Consider only playing rain arpeggio when the inversions are being used
 
-Update logic as described in App Logic and spreadsheet
-
-Consider using a state manager to update the humid arpeggio and display (chords)
+Update logic App Logic and spreadsheet
 
 Consider reflow of program flow so that the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
 

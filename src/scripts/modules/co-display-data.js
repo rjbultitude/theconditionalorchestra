@@ -19,7 +19,7 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/cloud-cover-icon.svg',
             music: 'Bass note playing',
-            musicValue: ''
+            musicValue: '',
             negativeKey: 'isWindy',
             negativeValue: ''
           },

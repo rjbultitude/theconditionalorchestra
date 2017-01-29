@@ -313,18 +313,18 @@ module.exports = function() {
     // important!
     // may need to include isPrecip
     if (wCheck.isFine || wCheck.isFreezing || wCheck.isWindy) {
-      _key = 'chordsNoOffset';
+      _key = 'noChordOffset';
     } else if (wCheck.isClement) {
       if (rootNoteHigh) {
-        _key = 'chordsPositiveDown';
+        _key = 'blissfulDownward';
       } else {
-        _key = 'chordsPositiveUp';
+        _key = 'blissfulUpward';
       }
     } else {
       if (rootNoteHigh) {
-        _key = 'chordsMelancholyDown';
+        _key = 'melancholyDownward';
       } else {
-        _key = 'chordsMelancholyUp';
+        _key = 'melancholyUpward';
       }
     }
     console.log('chord seq type', _key);
@@ -337,11 +337,11 @@ module.exports = function() {
     // playlogic
     // important!
     if (wCheck.isFine) {
-      _key = 'inversionsDown';
+      _key = 'inversionsDownward';
     } else if (wCheck.isWindy) {
-      _key = 'inversionsUpDown';
+      _key = 'inversionsMixed';
     } else if (wCheck.isFreezing) {
-      _key = 'inversionsUp';
+      _key = 'inversionsUpward';
     } else {
       _key = 'inversionsNoOffset';
     }
@@ -1079,7 +1079,7 @@ module.exports = function() {
 			}
 
       function outputChordSeqType() {
-        if (chordSeqKey === 'chordsNoOffset') {
+        if (chordSeqKey === 'noChordOffset') {
           return 'Using inversions';
         } else {
           return addSpacesToString(chordSeqKey);
@@ -1185,7 +1185,6 @@ module.exports = function() {
                 coProp.musicValue = humidArpIntervals;
                 break;
             }
-            console.log('coProp', coProp);
           return coProp;
         });
       }
@@ -1233,6 +1232,7 @@ module.exports = function() {
             _finalCoData.splice.apply(_finalCoData, _currArr);
           }
         }
+        console.log('_finalCoData', _finalCoData);
         _finalCoData.forEach(function(coProp) {
           //Only show truthy values
           if (coProp.value) {

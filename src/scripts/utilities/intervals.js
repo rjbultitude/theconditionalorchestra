@@ -25,7 +25,7 @@ module.exports = {
     farMajorIntervals: [0, -8, 0, -12], //for humid arrpeggio
     farMinorIntervals: [0, -9, 0, -12], //for humid arrpeggio
     //Chord sequences
-    chordsMelancholyUp: [
+    melancholyUpward: [
       {
         index: 0,
         key: 'heptatonicMinorIntervals'
@@ -38,7 +38,7 @@ module.exports = {
         index: 3,
         key: 'heptatonicMajorIntervals'
       }],
-    chordsMelancholyDown: [
+    melancholyDownward: [
       {
         index: 0,
         key: 'heptatonicMinorIntervals'
@@ -51,7 +51,7 @@ module.exports = {
         index: -2,
         key: 'minorSeventhIntervals'
       }],
-    chordsPositiveUp: [
+    blissfulUpward: [
       {
         index: 0,
         key: 'majorSeventhIntervals'
@@ -68,7 +68,7 @@ module.exports = {
         index: 5,
         key: 'heptatonicMajorIntervals'
       }],
-    chordsPositiveDown: [
+    blissfulDownward: [
       {
         index: 0,
         key: 'majorSeventhIntervals'
@@ -85,7 +85,7 @@ module.exports = {
         index: -5,
         key: 'heptatonicMajorIntervals'
       }],
-    chordsNoOffset: [
+    noChordOffset: [
       {
         index: 0,
         key: ''
@@ -103,8 +103,8 @@ module.exports = {
         key: ''
       }],
     //Inversions
-    inversionsDown: [0, 3, 2, 1],
-    inversionsUp: [0, 2, 3, 5],
-    inversionsUpDown: [3, 1, 2, 0],
+    inversionsDownward: [0, 3, 2, 1],
+    inversionsUpward: [0, 2, 3, 5],
+    inversionsMixed: [3, 1, 2, 0],
     inversionsNoOffset: [0, 0, 0, 0]
 };
