@@ -369,7 +369,7 @@ module.exports = function() {
             iconPath: '/img/pressure-icon.svg',
             music: 'Long note is ',
             musicValue: '',
-            musicAppendage: ' note from chord'
+            musicAppendage: ' note within chord'
           },
           {
             key: 'precipProbability',
