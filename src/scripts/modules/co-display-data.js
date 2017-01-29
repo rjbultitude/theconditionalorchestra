@@ -362,15 +362,6 @@ module.exports = function() {
             musicValue: ''
           },
           {
-            key: 'summary',
-            title: 'Overview',
-            value: '*',
-            unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
-            music: 'Pad sound is ',
-            musicValue: ''
-          },
-          {
             key: 'windBearing',
             title: 'Wind bearing',
             value: '',

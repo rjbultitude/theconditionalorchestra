@@ -98,6 +98,7 @@ module.exports = function() {
         pressure: null,
         precipIntensity: null,
         temperature: null,
+        visibility: null,
         humidity: null,
         windBearing: null,
         ozone: null,
@@ -111,16 +112,17 @@ module.exports = function() {
       for (var key in locationData) {
         if (locationData.hasOwnProperty(key)) {
           locationData[key] = new NumericCondition(
-            conditions[0][key]() === undefined ? getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max, key, true) : conditions[0][key](),
+            key !== 'visibility' && conditions[0][key]() === undefined ? getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max, key, true) : conditions[0][key](),
             maxMin.wParams[key].min,
             maxMin.wParams[key].max
           );
         }
       }
+      //As visibility often returns undefined
+      //infer it from other values
+      locationData.visibility.value = getVisibility(conditions, locationData);
       //Error check here
       locationData = fixlwDataRanges(locationData);
-      //If visibility is undefined infer it
-      Object.defineProperty(locationData, 'visibility', {value: getVisibility(conditions, locationData), writable: true, configurable: true, enumerable: true});
       //Add the location name
       Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
       //Add string or time values
