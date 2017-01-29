@@ -1097,7 +1097,15 @@ module.exports = function() {
           }
           return coDisplayObj;
         });
-        var _coDisplayDataWCheck = _coDisplayDataLw.map(function(coDisplayObj) {
+        var _coDisplayDataLwNeg = _coDisplayDataLw.map(function(coDisplayObj) {
+          for (var i = 0; i < _lwDataArr.length; i++) {
+            if (coDisplayObj.negativeKey === _lwDataArr[i]) {
+              coDisplayObj.negativeValue = lwData[_lwDataArr[i]].value;
+            }
+          }
+          return coDisplayObj;
+        });
+        var _coDisplayDataWCheck = _coDisplayDataLwNeg.map(function(coDisplayObj) {
           for (var i = 0; i < _wCheckArr.length; i++) {
             if (coDisplayObj.key === _wCheckArr[i]) {
               coDisplayObj.value = wCheck[_wCheckArr[i]];
@@ -1226,9 +1234,14 @@ module.exports = function() {
           }
         }
         _finalCoData.forEach(function(coProp) {
+          //Only show truthy values
           if (coProp.value) {
-            var html = appTemplate(coProp);
-            cdContainer.insertAdjacentHTML('beforeend', html);
+            //filter out negative values that are true
+            //or don't exist
+            if (coProp.negativeValue === undefined || coProp.negativeValue === false) {
+              var html = appTemplate(coProp);
+              cdContainer.insertAdjacentHTML('beforeend', html);
+            }
           } else {
             //console.log('Not displayed because not truthy ', coProp);
           }

@@ -14,12 +14,14 @@ module.exports = function() {
           },
           {
             key: 'isCloudy',
-            title: 'Cloud cover',
+            title: 'Cloudy but not windy',
             value: '',
             unit: '',
             iconPath: '/img/cloud-cover-icon.svg',
             music: 'Bass note playing',
             musicValue: ''
+            negativeKey: 'isWindy',
+            negativeValue: ''
           },
           {
             key: 'temperature',
@@ -68,12 +70,14 @@ module.exports = function() {
           },
           {
             key: 'isHumid',
-            title: 'Humidity',
+            title: 'Humid but no precipitation',
             value: '',
             unit: '',
             iconPath: '/img/pressure-icon.svg',
             music: 'Harp arpeggio playing ',
-            musicValue: ''
+            musicValue: '',
+            negativeKey: 'isPrecip',
+            negativeValue: ''
           },
           {
             key: 'isFine',
