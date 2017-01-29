@@ -283,7 +283,7 @@ module.exports = function() {
             value: '',
             unit: '',
             iconPath: '/img/pressure-icon.svg',
-            music: 'Wind chime sound pitch',
+            music: 'Wind chime sound pitch ',
             musicValue: ''
           },
           {

@@ -125,7 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Use cloud cover rather than visibility for filter
+Do not display booleans
 
 Consider grouping display items into instrument types
 
@@ -150,6 +150,8 @@ Test offline, bad connection states (after refactor of handleNoGeoData fn)
 Upgrade to google maps 3 : https://developers.google.com/maps/documentation/javascript/v2tov3
 
 ###Bugs
+
+One of the chords still sounds dischordant, why?
 
 No playback on 1st load Safari
 
