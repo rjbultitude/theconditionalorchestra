@@ -2,6 +2,214 @@
 
 module.exports = function() {
     return {
+        chordTypeMap: [
+          {
+            key: 'isFine',
+            title: 'Fine weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isCold',
+            title: 'Cold weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isClement',
+            title: 'Clement conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isStormy',
+            title: 'Stormy weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Is not freezing, fine, cold nor clement ',
+            value: 'true',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord types are ',
+            musicValue: ''
+          }
+        ],
+        chordSeqTypeMap: [
+          {
+            key: 'isFine',
+            title: 'Fine weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord sequence type is ',
+            musicValue: ''
+          },
+          {
+            key: 'isFreezing',
+            title: 'Freezing conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord sequence type is ',
+            musicValue: ''
+          },
+          {
+            key: 'isClement',
+            title: 'Clement conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord sequence type is ',
+            musicValue: ''
+          },
+          {
+            key: 'isWindy',
+            title: 'Windy conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord sequence type is ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Is not freezing, fine, cold nor clement ',
+            value: 'true',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Chord sequence type is ',
+            musicValue: ''
+          }
+        ],
+        padTypeMap: [
+          {
+            key: 'isFine',
+            title: 'Fine weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isCold',
+            title: 'Cold weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isClement',
+            title: 'Clement conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isStormy',
+            title: 'Stormy weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Is not freezing, fine, cold nor clement ',
+            value: 'true',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          }
+        ],
+        inversionMap: [
+          {
+            key: 'isFine',
+            title: 'Fine weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Inversion types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isWindy',
+            title: 'Cold weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Inversion types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isFreezing',
+            title: 'Clement conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Inversion types are ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Is not fine, windy or freezing',
+            value: 'true',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Inversion types are ',
+            musicValue: ''
+          }
+        ],
+        numNotesMap: [
+          {
+            key: 'isFreezing',
+            title: 'Freezing conditions',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Number of notes per chord is ',
+            musicValue: ''
+          },
+          {
+            key: 'isFine',
+            title: 'Fine weather',
+            value: '',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Number of notes per chord is ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Not freezing or fine',
+            value: 'true',
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Number of notes per chord is ',
+            musicValue: ''
+          }
+        ],
         primaryMap: [
           {
             key: 'pressure',
@@ -33,11 +241,11 @@ module.exports = function() {
             musicValue: ''
           },
           {
-            key: 'visibility',
-            title: 'Visibility',
+            key: 'cloudCover',
+            title: 'Cloud cover',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/cloud-cover-icon.svg',
             music: 'Master filter frequency ',
             musicValue: ''
           },
@@ -55,7 +263,7 @@ module.exports = function() {
             title: 'Dew point',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/temperature-icon.svg',
             music: 'Number of main sequence chords: ',
             musicValue: ''
           },
@@ -98,15 +306,6 @@ module.exports = function() {
             musicValue: ''
           },
           {
-            key: 'overview',
-            title: 'Weather',
-            value: '*',
-            unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
-            music: 'Chord sequence type is ',
-            musicValue: ''
-          },
-          {
             key: 'apparentTemperature',
             title: 'Apparent temperature',
             value: '',
@@ -121,7 +320,15 @@ module.exports = function() {
             title: 'Type of precipitation',
             value: '',
             unit: '',
-            iconPath: '/img/sun-icon.svg',
+            iconPath: '/img/cloud-cover-icon.svg',
+            music: 'Bell sound playing ',
+          },
+          {
+            key: 'precipIntensity',
+            title: 'Precipitation intensity',
+            value: '',
+            unit: '',
+            iconPath: '/img/cloud-cover-icon.svg',
             music: 'Bell arpeggio playing at ',
             musicValue: '',
             musicAppendage: ' bpm'
@@ -197,129 +404,6 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/pressure-icon.svg',
             music: 'Number of notes in chord is ',
-            musicValue: ''
-          }
-        ],
-        chordTypeMap: [
-          {
-            key: 'isFreezing',
-            title: 'Freezing conditions',
-            value: '',
-            unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
-            music: 'Filtered lower choral sound',
-            musicValue: ''
-          },
-          {
-            key: 'isFine',
-            title: 'Fine weather',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Chord types are ',
-            musicValue: ''
-          },
-          {
-            key: 'isCold',
-            title: 'Cold weather',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Chord types are ',
-            musicValue: ''
-          },
-          {
-            key: 'isClement',
-            title: 'Clement conditions',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Chord types are ',
-            musicValue: ''
-          },
-          {
-            key: 'isStormy',
-            title: 'Stormy weather',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Chord types are ',
-            musicValue: ''
-          },
-          {
-            key: 'isOther',
-            title: 'Is not freezing, fine, cold nor clement ',
-            value: 'true',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Chord types are ',
-            musicValue: ''
-          }
-        ],
-        inversionMap: [
-          {
-            key: 'isFine',
-            title: 'Fine weather',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Inversion types are ',
-            musicValue: ''
-          },
-          {
-            key: 'isWindy',
-            title: 'Cold weather',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Inversion types are ',
-            musicValue: ''
-          },
-          {
-            key: 'isFreezing',
-            title: 'Clement conditions',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Inversion types are ',
-            musicValue: ''
-          },
-          {
-            key: 'isOther',
-            title: 'Is not fine, windy or freezing',
-            value: 'true',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Inversion types are ',
-            musicValue: ''
-          }
-        ],
-        numNotesMap: [
-          {
-            key: 'isFreezing',
-            title: 'Freezing conditions',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Number of notes per chord is ',
-            musicValue: ''
-          },
-          {
-            key: 'isFine',
-            title: 'Fine weather',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Number of notes per chord is ',
-            musicValue: ''
-          },
-          {
-            key: 'isOther',
-            title: 'Not freezing or fine',
-            value: 'true',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Number of notes per chord is ',
             musicValue: ''
           }
         ]

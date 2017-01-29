@@ -273,6 +273,8 @@ module.exports = function() {
 
     //This setting uses non western scale
     if (wCheck.isWindy && wCheck.isFreezing) {
+      //TODO
+      //Use another instrument here
       padType = 'organ';
     } else if (wCheck.isStormy) {
       //TODO watch out for clash between
@@ -430,23 +432,15 @@ module.exports = function() {
     }
   }
 
-  function getPrecipArpBpm(precipCategory) {
+  function getPrecipArpBpm(lwData) {
     // playlogic
-    var _arpBpm = 110;
-    switch (precipCategory) {
-      case 'hard':
-        _arpBpm = 150;
-        break;
-      case 'soft':
-        _arpBpm = 120;
-        break;
-      case 'light':
-        _arpBpm = 90;
-        break;
-      default:
-        console.log('problem with arrpeggio type', precipCategory);
-    }
-    return _arpBpm;
+    return Math.round(mapRange(
+      lwData.precipIntensity.value,
+      lwData.precipIntensity.min,
+      lwData.precipIntensity.max,
+      60,
+      150
+    ));
   }
 
   function getHumidArpBpm(lwData) {
@@ -483,9 +477,9 @@ module.exports = function() {
     // Set filter. Visibility is filter freq
     // playlogic
     return mapRange(
-      Math.round(lwData.visibility.value),
-      lwData.visibility.min,
-      lwData.visibility.max,
+      Math.round(lwData.cloudCover.value),
+      lwData.cloudCover.min,
+      lwData.cloudCover.max,
       avSettings.masterFilter.min,
       avSettings.masterFilter.max
     );
@@ -574,7 +568,7 @@ module.exports = function() {
     var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     var precipCategory = getPrecipCategory(lwData);
-    var precipArpBpm = getPrecipArpBpm(precipCategory);
+    var precipArpBpm = getPrecipArpBpm(lwData);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
@@ -693,6 +687,7 @@ module.exports = function() {
         //Only use dropSound for rain
         if (precipCategory === 'hard') {
           rainArpPart.addPhrase(rainArpDropPhrase);
+          //TODO add phrase for light as well as soft
         } else {
           rainArpPart.addPhrase(rainArpDropLightPhrase);
         }
@@ -986,6 +981,8 @@ module.exports = function() {
         return _chordInversionOffSetArr;
       }
 
+      //If the key's not from a sequence
+      //then get the generic chortd type
       function getValidChordType(key) {
         var _chordType;
         if (key) {
@@ -1086,6 +1083,14 @@ module.exports = function() {
         }
       }
 
+      function outputPrecipArpType() {
+        if (precipCategory === 'hard') {
+          return 'forwards';
+        } else {
+          return 'backwards';
+        }
+      }
+
       function mapConditionsToDisplayData(rawCoDisplayData) {
         var _lwDataArr = Object.keys(lwData);
         var _wCheckArr = Object.keys(wCheck);
@@ -1144,17 +1149,11 @@ module.exports = function() {
               case 'pressure':
                 coProp.musicValue = getRootNoteLetter(numSemisPerOctave, rootNote);
                 break;
-              case 'visibility':
+              case 'cloudCover':
                 coProp.musicValue = Math.round(masterFilterFreq);
                 break;
               case 'apparentTemperature':
                 coProp.musicValue = Math.round(seqRepeatNum / numChords);
-                break;
-              case 'summary':
-                coProp.musicValue = addSpacesToString(padType);
-                break;
-              case 'overview':
-                coProp.musicValue = outputChordSeqType();
                 break;
               case 'windSpeed':
                 coProp.musicValue = windChimeRate.toFixed(2);
@@ -1165,9 +1164,12 @@ module.exports = function() {
               case 'temperature':
                 coProp.musicValue = numSemisPerOctave;
                 break;
+              case 'precipIntensity':
+                coProp.musicValue = precipArpBpm;
+                break;
               case 'precipType':
                 coProp.value = coProp.value === undefined ? '' : precipCategory + ' ' + coProp.value;
-                coProp.musicValue = precipArpBpm;
+                coProp.musicValue = outputPrecipArpType();
                 break;
               case 'precipProbability':
                 coProp.musicValue = longNoteType;
@@ -1206,6 +1208,7 @@ module.exports = function() {
           }
           if (typeof musicValue === 'string') {
             displayProp.musicValue = addSpacesToString(musicValue);
+            //TODO should remove word inversion
           } else {
             displayProp.musicValue = musicValue;
           }
@@ -1220,14 +1223,25 @@ module.exports = function() {
           if (coDisplayData.hasOwnProperty(coDataSet)) {
             var _mappedDisplayData = mapConditionsToDisplayData(coDisplayData[coDataSet]);
             var _unitisedDisplayData = unitiseData(_mappedDisplayData);
-            if (coDataSet === 'primaryMap') {
-              _currArr = addPrimaryMusicValues(_unitisedDisplayData);
-            } else if (coDataSet === 'chordTypeMap') {
-              _currArr = addOtherMusicValues(_unitisedDisplayData, chordType);
-            } else if (coDataSet === 'inversionMap') {
-              _currArr = addOtherMusicValues(_unitisedDisplayData, inversionOffsetType);
-            } else if (coDataSet === 'numNotesMap') {
-              _currArr = addOtherMusicValues(_unitisedDisplayData, numPadNotes);
+            switch (coDataSet) {
+              case 'chordTypeMap':
+                _currArr = addOtherMusicValues(_unitisedDisplayData, chordType);
+                break;
+              case 'chordSeqTypeMap':
+                _currArr = addOtherMusicValues(_unitisedDisplayData, outputChordSeqType());
+                break;
+              case 'padTypeMap':
+                _currArr = addOtherMusicValues(_unitisedDisplayData, padType);
+                break;
+              case 'inversionMap':
+                _currArr = addOtherMusicValues(_unitisedDisplayData, inversionOffsetType);
+                break;
+              case 'numNotesMap':
+                _currArr = addOtherMusicValues(_unitisedDisplayData, numPadNotes);
+                break;
+              case 'primaryMap':
+                _currArr = addPrimaryMusicValues(_unitisedDisplayData);
+                break;
             }
             _finalCoData.splice.apply(_finalCoData, _currArr);
           }

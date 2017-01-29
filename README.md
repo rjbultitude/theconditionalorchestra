@@ -125,7 +125,9 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Change the order of the display items. Consider grouping them into instrument types
+Use cloud cover rather than visibility for filter
+
+Consider grouping display items into instrument types
 
 Consider using a state manager to update the humid arpeggio and display (chords)
 
