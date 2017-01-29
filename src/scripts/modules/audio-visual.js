@@ -17,6 +17,7 @@ var coDisplayDataFn = require('./co-display-data');
 var updateStatus = require('./update-status');
 var SingleShape = require('./single-shape-cnstrctr');
 var weatherCheck = require('./weather-checker-fns');
+var microU = require('../utilities/micro-utilities');
 var intervals = require('../utilities/intervals');
 var getFreqScales = require('../utilities/create-freq-scales');
 var duplicateArray = require('../utilities/duplicate-array-vals');
@@ -84,29 +85,6 @@ module.exports = function() {
   var coDisplayData = coDisplayDataFn();
   //DOM
   var cdContainer = document.querySelector('.conditions-display__list');
-
-  /*
-    Utility functions
-  */
-
-	// Is this size or smaller
-	function matchMediaMaxWidth(maxWidthVal) {
-    return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
-  }
-
-  function mapRange(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-  }
-
-  function getOrdinal(number) {
-    var oSuffix = ['th','st','nd','rd'];
-    var remainder = number % 100;
-    return number + (oSuffix[(remainder - 20) % 10] || oSuffix[remainder] || oSuffix[0]);
-  }
-
-  function addSpacesToString(string) {
-    return string.replace(/([A-Z][a-z]+)/g, ' ' + '$&');
-  }
 
   function fadeOutPadSounds(soundItem) {
     function stopPadSounds(padSound) {
@@ -230,14 +208,14 @@ module.exports = function() {
     var _numChords;
     var _numExtraChords;
     //playlogic
-    _numChords = Math.round(mapRange(
+    _numChords = Math.round(microU.mapRange(
       lwData.dewPoint.value,
       lwData.dewPoint.min,
       lwData.dewPoint.max,
       2,
       6
     ));
-    _numExtraChords = Math.round(mapRange(
+    _numExtraChords = Math.round(microU.mapRange(
       lwData.ozone.value,
       lwData.ozone.min,
       lwData.ozone.max,
@@ -355,7 +333,7 @@ module.exports = function() {
     // TODO consider rounding to the nearest
     // multiple of numChords
     //playlogic
-    return Math.round(mapRange(
+    return Math.round(microU.mapRange(
       lwData.apparentTemperature.value,
       lwData.apparentTemperature.min,
       lwData.apparentTemperature.max,
@@ -371,7 +349,7 @@ module.exports = function() {
     var _rangePlus = Math.round(numSemisPerOctave + numSemisPerOctave / 2);
     var _rangeMinus = -Math.abs(_rangePlus);
     //playlogic
-    var _rootNote = Math.round(mapRange(
+    var _rootNote = Math.round(microU.mapRange(
       lwData.pressure.value,
       lwData.pressure.min,
       lwData.pressure.max,
@@ -389,7 +367,7 @@ module.exports = function() {
     var _rootNoteLetter = '';
     var _rootNoteNumber = rootNote + 1;
     if (numSemisPerOctave !== 12) {
-      _rootNoteLetter = getOrdinal(_rootNoteNumber) + ' note in a non western scale';
+      _rootNoteLetter = microU.getOrdinal(_rootNoteNumber) + ' note in a non western scale';
     } else {
       if (rootNote < 0) {
         _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + rootNote];
@@ -434,7 +412,7 @@ module.exports = function() {
 
   function getPrecipArpBpm(lwData) {
     // playlogic
-    return Math.round(mapRange(
+    return Math.round(microU.mapRange(
       lwData.precipIntensity.value,
       lwData.precipIntensity.min,
       lwData.precipIntensity.max,
@@ -444,7 +422,7 @@ module.exports = function() {
   }
 
   function getHumidArpBpm(lwData) {
-    return Math.round(mapRange(
+    return Math.round(microU.mapRange(
       lwData.windSpeed.value,
       lwData.windSpeed.min,
       lwData.windSpeed.max,
@@ -476,7 +454,7 @@ module.exports = function() {
     //Use math.abs for all pitch and volume values?
     // Set filter. Visibility is filter freq
     // playlogic
-    return mapRange(
+    return microU.mapRange(
       Math.round(lwData.cloudCover.value),
       lwData.cloudCover.min,
       lwData.cloudCover.max,
@@ -494,7 +472,7 @@ module.exports = function() {
   }
 
   function getCymbalsRate(lwData) {
-    return mapRange(
+    return microU.mapRange(
       Math.round(lwData.nearestStormBearing.value),
       lwData.nearestStormBearing.min,
       lwData.nearestStormBearing.max,
@@ -504,7 +482,7 @@ module.exports = function() {
   }
 
   function getCymbalsVolume(lwData) {
-    return mapRange(
+    return microU.mapRange(
       Math.round(lwData.nearestStormDistance.value),
       lwData.nearestStormDistance.min,
       lwData.nearestStormDistance.max,
@@ -1079,7 +1057,7 @@ module.exports = function() {
         if (chordSeqKey === 'noChordOffset') {
           return 'Using inversions';
         } else {
-          return addSpacesToString(chordSeqKey);
+          return microU.addSpacesToString(chordSeqKey);
         }
       }
 
@@ -1159,7 +1137,7 @@ module.exports = function() {
                 coProp.musicValue = windChimeRate.toFixed(2);
                 break;
               case 'windBearing':
-                coProp.musicValue = getOrdinal(longNoteIndex);
+                coProp.musicValue = microU.getOrdinal(longNoteIndex);
                 break;
               case 'temperature':
                 coProp.musicValue = numSemisPerOctave;
@@ -1207,7 +1185,7 @@ module.exports = function() {
             displayProp.value = false;
           }
           if (typeof musicValue === 'string') {
-            displayProp.musicValue = addSpacesToString(musicValue);
+            displayProp.musicValue = microU.addSpacesToString(musicValue);
             //TODO should remove word inversion
           } else {
             displayProp.musicValue = musicValue;
@@ -1326,7 +1304,7 @@ module.exports = function() {
 
 			sketch.setup = function setup() {
 				//If this size or smaller
-				if (matchMediaMaxWidth(540).matches) {
+				if (microU.matchMediaMaxWidth(540).matches) {
 						avSettings.cWidth = 400;
 						avSettings.cHeight = 800;
 						avSettings.cPadding = '200%';

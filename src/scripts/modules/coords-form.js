@@ -7,6 +7,7 @@ var channel = postal.channel();
 var Nll = require('./nll-cnstrctr');
 var maxMin = require('../settings/max-min-values');
 var updateStatus = require('./update-status');
+var microU = require('../utilities/micro-utilities');
 var makeRequest = require('../utilities/make-request');
 var classListChain = require('../utilities/class-list-chain');
 var getMeanVal = require('../utilities/get-mean-val');
@@ -55,6 +56,25 @@ module.exports = function() {
     return lwData;
   }
 
+  function getVisibility(conditions, locationData) {
+    var _altVisVals = [];
+    if (conditions[0].visibility() !== undefined) {
+      console.log('valid visibility data');
+      return conditions[0].visibility();
+    } else {
+      _altVisVals.push(locationData.cloudCover.value);
+      _altVisVals.push(locationData.humidity.value);
+      _altVisVals.push(microU.mapRange(
+        locationData.precipIntensity.value,
+        locationData.precipIntensity.min,
+        locationData.precipIntensity.max,
+        0,
+        100
+      ) / 100);
+      return 10 - (microU.addArrayItems(_altVisVals) / _altVisVals.length) * 10;
+    }
+  }
+
   function updateApp(lat, long, name) {
 		var newLocation = new Nll(lat, long, name);
 		updateStatus('weather');
@@ -69,13 +89,12 @@ module.exports = function() {
       if (conditions === false) {
         conditions = makeRequest('GET', 'data/static-data.json');
       }
-      console.log('conditions', conditions);
+      //console.log('conditions', conditions);
       //must make new object at this point;
       var locationData = {
         //in use
         cloudCover: null,
         windSpeed: null,
-        visibility: null,
         pressure: null,
         precipIntensity: null,
         temperature: null,
@@ -100,6 +119,8 @@ module.exports = function() {
       }
       //Error check here
       locationData = fixlwDataRanges(locationData);
+      //If visibility is undefined infer it
+      Object.defineProperty(locationData, 'visibility', {value: getVisibility(conditions, locationData), writable: true, configurable: true, enumerable: true});
       //Add the location name
       Object.defineProperty(locationData, 'name', {value: newLocation.name, writable: true, configurable: true, enumerable: true});
       //Add string or time values

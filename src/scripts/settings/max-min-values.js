@@ -25,7 +25,7 @@ module.exports = {
       min: 920,
       max: 1080
     },
-    //visibility in metres
+    //visibility in miles
     visibility: {
       min: 0.1,
       max: 10
