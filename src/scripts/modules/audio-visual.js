@@ -550,6 +550,7 @@ module.exports = function() {
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
     };
     console.log('wCheck', wCheck);
+    //Get and set core values
     var numPadNotes = getNumPadNotes(wCheck, avSettings);
     var numChords = getNumChords(lwData).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
@@ -626,15 +627,6 @@ module.exports = function() {
         return panIndex;
       }
 
-      function setScaleSetIndex(scaleSet, numExtraChords) {
-        if (scaleSetIndex >= scaleSet.length - 1 - numExtraChords) {
-          scaleSetIndex = 0;
-        } else {
-          scaleSetIndex++;
-        }
-        return scaleSetIndex;
-      }
-
       function getAllegrettoRhythmType(humidArpScaleArray) {
         var _newNotesArray = [];
         //playlogic
@@ -685,15 +677,6 @@ module.exports = function() {
         rainArpPart.loop();
       }
 
-      function playBass(scaleSet) {
-        bass.play();
-        //Play 1st note of each chord
-        bass.rate(scaleSet[scaleSetIndex][0]);
-        //TODO could set the volume
-        //based on the amount of cloudCover
-        bass.setVolume(0.5);
-      }
-
       function playBrassBaritone(scale) {
         brassBaritone.play();
         brassBaritone.rate(scale[brassOneScaleArrayIndex]);
@@ -734,7 +717,25 @@ module.exports = function() {
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
       }
 
-      function playPad(scaleSet, key) {
+      function playBass(scale) {
+        bass.play();
+        //Play 1st note of each chord
+        bass.rate(scale[0]);
+        //TODO could set the volume
+        //based on the amount of cloudCover
+        bass.setVolume(0.5);
+      }
+
+      function setScaleSetIndex(scaleSet, numExtraChords) {
+        if (scaleSetIndex >= scaleSet.length - 1 - numExtraChords) {
+          scaleSetIndex = 0;
+        } else {
+          scaleSetIndex++;
+        }
+        return scaleSetIndex;
+      }
+
+      function playPad(scaleSet, padTypeKey) {
         var _panIndex = 0;
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
@@ -755,31 +756,34 @@ module.exports = function() {
           mainSeqCount++;
         }
         for (var i = 0; i < padSounds.length; i++) {
-          padSounds[i][key].disconnect();
-          padSounds[i][key].connect(soundFilter);
-          padSounds[i][key].play();
-          padSounds[i][key].rate(scaleSet[scaleSetIndex][i]);
-          padSounds[i][key].pan(panArr[_panIndex]);
-          padSounds[i][key].setVolume(avSettings[key].volume);
-          padSounds[i][key].onended(function() { padCallback(scaleSet, key); });
+          padSounds[i][padTypeKey].disconnect();
+          padSounds[i][padTypeKey].connect(soundFilter);
+          padSounds[i][padTypeKey].rate(scaleSet[scaleSetIndex][i]);
+          padSounds[i][padTypeKey].pan(panArr[_panIndex]);
+          padSounds[i][padTypeKey].setVolume(avSettings[padTypeKey].volume);
+          padSounds[i][padTypeKey].playMode('restart');
+          padSounds[i][padTypeKey].play();
+          padSounds[i][padTypeKey].onended(function() {
+            padCallback(scaleSet, padTypeKey);
+          });
           _panIndex = getPanIndex(_panIndex);
         }
         //playlogic
         //Avoid sound clash with Brass
         if (wCheck.isCloudy && !wCheck.isWindy) {
-          playBass(scaleSet);
+          playBass(scaleSet[scaleSetIndex]);
         }
         playLongNote(scaleSet[scaleSetIndex], extraSeqPlaying);
         //increment indices
         setScaleSetIndex(scaleSet, numExtraChords);
       }
 
-      function padCallback(scaleSet, key) {
+      function padCallback(scaleSet, padTypeKey) {
         if (isPlaying) {
           padIndexCount++;
           // When all the sounds have played once, loop
           if (padIndexCount === padSounds.length) {
-            playPad(scaleSet, key);
+            playPad(scaleSet, padTypeKey);
             padIndexCount = 0;
           }
         }
@@ -1271,8 +1275,6 @@ module.exports = function() {
 			//Sound constructor
 			function PadSound(organ, guitar, sax, trumpet) {
 				this.organ = organ;
-        //TODO consider using different sound
-        //distorted guiter perhaps
 				this.guitar = guitar;
 				this.saxophone = sax;
 				this.trumpet = trumpet;
@@ -1289,12 +1291,12 @@ module.exports = function() {
         if (audioSupported) {
           //Pad sounds for various weather types
           for (var i = 0; i < numPadNotes; i++) {
-            padSounds[i] = new PadSound(
+            padSounds.push(new PadSound(
               sketch.loadSound('/audio/organ-C2.mp3'),
               sketch.loadSound('/audio/guitar-C2.mp3'),
               sketch.loadSound('/audio/sax-C2.mp3'),
               sketch.loadSound('/audio/trumpet-C2.mp3')
-            );
+            ));
           }
           //choral sounds for fine weather
           for (var j = 0; j < 2; j++) {
