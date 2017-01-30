@@ -353,15 +353,6 @@ module.exports = function() {
             musicValue: ''
           },
           {
-            key: 'isWindyArp',
-            title: 'High winds',
-            value: '',
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Harp sequence type is ',
-            musicValue: ''
-          },
-          {
             key: 'windBearing',
             title: 'Wind bearing',
             value: '',
@@ -397,14 +388,16 @@ module.exports = function() {
             iconPath: '/img/cloud-cover-icon.svg',
             music: 'Cymbals volume is ',
             musicValue: ''
-          },
+          }
+        ],
+        todo: [
           {
-            key: 'extremeWeather',
-            title: 'Extreme weather',
+            key: 'isWindyArp',
+            title: 'High winds',
             value: '',
             unit: '',
             iconPath: '/img/pressure-icon.svg',
-            music: 'Number of notes in chord is ',
+            music: 'Harp sequence type is ',
             musicValue: ''
           }
         ]

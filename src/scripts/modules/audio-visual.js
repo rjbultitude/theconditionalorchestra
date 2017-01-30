@@ -1244,8 +1244,8 @@ module.exports = function() {
         }
         console.log('_finalCoData', _finalCoData);
         _finalCoData.forEach(function(coProp) {
-          //Only show truthy values
-          if (coProp.value) {
+          //Only show true values
+          if (coProp.value !== undefined && coProp.value !== false) {
             //filter out negative values that are true
             //or don't exist
             if (coProp.negativeValue === undefined || coProp.negativeValue === false) {
@@ -1253,7 +1253,7 @@ module.exports = function() {
               cdContainer.insertAdjacentHTML('beforeend', html);
             }
           } else {
-            //console.log('Not displayed because not truthy ', coProp);
+            console.log('Not displayed because not truthy ', coProp);
           }
         });
       }
@@ -1395,6 +1395,7 @@ module.exports = function() {
       }
 
       function updateHumidArp() {
+        //TODO is this the right part?
         var _humidArpPhrase = humidArpPart.getPhrase('flttrBrass');
         if (sketch.frameCount % 1200 === 0 && sketch.frameCount !== 0) {
           if (humidArpPart.playingMelody) {
