@@ -1086,7 +1086,7 @@ module.exports = function() {
         var _coDisplayDataLw = rawCoDisplayData.map(function(coDisplayObj) {
           for (var i = 0; i < _lwDataArr.length; i++) {
             if (coDisplayObj.key === _lwDataArr[i]) {
-              coDisplayObj.value = lwData[_lwDataArr[i]].value === undefined ? lwData[_lwDataArr[i]] : lwData[_lwDataArr[i]];
+              coDisplayObj.value = lwData[_lwDataArr[i]].value === undefined ? lwData[_lwDataArr[i]] : lwData[_lwDataArr[i]].value;
             }
           }
           return coDisplayObj;
@@ -1108,6 +1108,15 @@ module.exports = function() {
           return coDisplayObj;
         });
         return _coDisplayDataWCheck;
+      }
+
+      function constrainDecimals(rawCoDisplayData) {
+        return rawCoDisplayData.map(function(coProp) {
+          if (typeof coProp.value === 'number' && coProp.constrain) {
+            coProp.value = coProp.value.toFixed(2);
+          }
+          return coProp;
+        });
       }
 
       function unitiseData(rawCoDisplayData) {
@@ -1215,24 +1224,25 @@ module.exports = function() {
           if (coDisplayData.hasOwnProperty(coDataSet)) {
             var _mappedDisplayData = mapConditionsToDisplayData(coDisplayData[coDataSet]);
             var _unitisedDisplayData = unitiseData(_mappedDisplayData);
+            var _constrainedDisplayData = constrainDecimals(_unitisedDisplayData);
             switch (coDataSet) {
               case 'chordTypeMap':
-                _currArr = addOtherMusicValues(_unitisedDisplayData, chordType);
+                _currArr = addOtherMusicValues(_constrainedDisplayData, chordType);
                 break;
               case 'chordSeqTypeMap':
-                _currArr = addOtherMusicValues(_unitisedDisplayData, outputChordSeqType());
+                _currArr = addOtherMusicValues(_constrainedDisplayData, outputChordSeqType());
                 break;
               case 'padTypeMap':
-                _currArr = addOtherMusicValues(_unitisedDisplayData, padType);
+                _currArr = addOtherMusicValues(_constrainedDisplayData, padType);
                 break;
               case 'inversionMap':
-                _currArr = addOtherMusicValues(_unitisedDisplayData, inversionOffsetType);
+                _currArr = addOtherMusicValues(_constrainedDisplayData, inversionOffsetType);
                 break;
               case 'numNotesMap':
-                _currArr = addOtherMusicValues(_unitisedDisplayData, numPadNotes);
+                _currArr = addOtherMusicValues(_constrainedDisplayData, numPadNotes);
                 break;
               case 'primaryMap':
-                _currArr = addPrimaryMusicValues(_unitisedDisplayData);
+                _currArr = addPrimaryMusicValues(_constrainedDisplayData);
                 break;
             }
             _finalCoData.splice.apply(_finalCoData, _currArr);
