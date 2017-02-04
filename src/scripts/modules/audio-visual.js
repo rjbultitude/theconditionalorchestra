@@ -568,9 +568,9 @@ module.exports = function() {
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var longNoteOffset = getLongNoteOffset(lwData);
+    var longNoteType = getLongNoteType(lwData);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
-    var longNoteType = getLongNoteType(lwData);
     var cymbalsRate = getCymbalsRate(lwData);
     var cymbalsVolume = getCymbalsVolume(lwData);
 
@@ -708,6 +708,8 @@ module.exports = function() {
         longNote.disconnect();
         longNote.connect(soundFilter);
         longNote.play();
+        //TODO could drop this now that
+        //the octave is determined by lwData
         if (extraSeqPlaying) {
           longNote.rate(scale[longNoteIndex] / 2);
         } else {
