@@ -176,13 +176,6 @@ module.exports = function() {
     return _longNoteType;
   }
 
-  function hasSixthSeventhNinth(intervalString) {
-    var _hasSixth = /Sixth/;
-    var _hasSeventh = /Seventh/;
-    var _hasNinth = /Ninth/;
-    return _hasSixth.test(intervalString) || _hasSeventh.test(intervalString) || _hasNinth.test(intervalString);
-  }
-
   function hasMajor(intervalString) {
     var _hasMajor = /Major/;
     return _hasMajor.test(intervalString);
@@ -977,14 +970,15 @@ module.exports = function() {
       }
 
       //If the key's not from a sequence
-      //then get the generic chortd type
+      //then get the generic chord type
       function getValidChordType(key) {
         var _chordType;
         if (key) {
-          _chordType = chordType;
-        } else {
           _chordType = key;
+        } else {
+          _chordType = chordType;
         }
+        console.log('_chordType', _chordType);
         return _chordType;
       }
 
@@ -1092,7 +1086,7 @@ module.exports = function() {
         var _coDisplayDataLw = rawCoDisplayData.map(function(coDisplayObj) {
           for (var i = 0; i < _lwDataArr.length; i++) {
             if (coDisplayObj.key === _lwDataArr[i]) {
-              coDisplayObj.value = lwData[_lwDataArr[i]].value === undefined ? lwData[_lwDataArr[i]] : lwData[_lwDataArr[i]].value;
+              coDisplayObj.value = lwData[_lwDataArr[i]].value === undefined ? lwData[_lwDataArr[i]] : lwData[_lwDataArr[i]];
             }
           }
           return coDisplayObj;

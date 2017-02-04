@@ -8,7 +8,7 @@ module.exports = function() {
             title: 'Fine weather',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/sun-icon.svg',
             music: 'Chord types are ',
             musicValue: ''
           },
@@ -17,7 +17,7 @@ module.exports = function() {
             title: 'Cold weather',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/freezing-icon.svg',
             music: 'Chord types are ',
             musicValue: ''
           },
@@ -26,7 +26,7 @@ module.exports = function() {
             title: 'Clement conditions',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Chord types are ',
             musicValue: ''
           },
@@ -44,7 +44,7 @@ module.exports = function() {
             title: 'Is not freezing, fine, cold nor clement ',
             value: 'true',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Chord types are ',
             musicValue: ''
           }
@@ -55,7 +55,7 @@ module.exports = function() {
             title: 'Fine weather',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/sun-icon.svg',
             music: 'Chord sequence type is ',
             musicValue: ''
           },
@@ -64,7 +64,7 @@ module.exports = function() {
             title: 'Freezing conditions',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/freezing-icon.svg',
             music: 'Chord sequence type is ',
             musicValue: ''
           },
@@ -73,7 +73,7 @@ module.exports = function() {
             title: 'Clement conditions',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Chord sequence type is ',
             musicValue: ''
           },
@@ -91,7 +91,7 @@ module.exports = function() {
             title: 'Is not freezing, fine, cold nor clement ',
             value: 'true',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Chord sequence type is ',
             musicValue: ''
           }
@@ -102,7 +102,7 @@ module.exports = function() {
             title: 'Fine weather',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/sun-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },
@@ -111,7 +111,7 @@ module.exports = function() {
             title: 'Cold weather',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/freezing-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },
@@ -120,7 +120,7 @@ module.exports = function() {
             title: 'Clement conditions',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },
@@ -138,7 +138,7 @@ module.exports = function() {
             title: 'Is not freezing, fine, cold nor clement ',
             value: 'true',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           }
@@ -149,7 +149,7 @@ module.exports = function() {
             title: 'Fine weather',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/sun-icon.svg',
             music: 'Inversion types are ',
             musicValue: ''
           },
@@ -167,7 +167,7 @@ module.exports = function() {
             title: 'Clement conditions',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/freezing-icon.svg',
             music: 'Inversion types are ',
             musicValue: ''
           },
@@ -176,7 +176,7 @@ module.exports = function() {
             title: 'Is not fine, windy or freezing',
             value: 'true',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Inversion types are ',
             musicValue: ''
           }
@@ -187,7 +187,7 @@ module.exports = function() {
             title: 'Freezing conditions',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/freezing-icon.svg',
             music: 'Number of notes per chord is ',
             musicValue: ''
           },
@@ -196,7 +196,7 @@ module.exports = function() {
             title: 'Fine weather',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/sun-icon.svg',
             music: 'Number of notes per chord is ',
             musicValue: ''
           },
@@ -205,7 +205,7 @@ module.exports = function() {
             title: 'Not freezing or fine',
             value: 'true',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Number of notes per chord is ',
             musicValue: ''
           }
@@ -311,7 +311,7 @@ module.exports = function() {
             title: 'Freezing conditions',
             value: '',
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/freezing-icon.svg',
             music: 'Filtered lower choral sound',
             musicValue: ''
           },
@@ -320,7 +320,7 @@ module.exports = function() {
             title: 'Apparent temperature',
             value: '',
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/temperature-icon.svg',
             music: 'Main sequence repeats ',
             musicValue: '',
             musicAppendage: ' times'

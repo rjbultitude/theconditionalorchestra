@@ -127,6 +127,20 @@ The pan and volume are randomly selected from two arrays.
 
 Do not display booleans
 
+Icons needed:
+ * cold/freezing
+ * Stormy
+ * windy/windSpeed
+ * visibility
+ * ozone
+ * humid
+ * rain/precipIntensity/precipProbability
+ * sleet
+ * snow
+ * windBearing/nearestStormBearing
+ * nearestStormDistance
+
+
 Consider grouping display items into instrument types
 
 Consider using a state manager to update the humid arpeggio and display (chords)

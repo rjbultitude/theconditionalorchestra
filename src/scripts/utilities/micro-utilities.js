@@ -23,5 +23,11 @@ module.exports = {
     return array.reduce(function(item, lastItem) {
       return lastItem + item;
     }, 0);
+  },
+  hasSixthSeventhNinth: function hasSixthSeventhNinth(intervalString) {
+    var _hasSixth = /Sixth/;
+    var _hasSeventh = /Seventh/;
+    var _hasNinth = /Ninth/;
+    return _hasSixth.test(intervalString) || _hasSeventh.test(intervalString) || _hasNinth.test(intervalString);
   }
 };
