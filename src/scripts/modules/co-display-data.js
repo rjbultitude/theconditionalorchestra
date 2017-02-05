@@ -39,7 +39,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/storm-icon.svg',
             music: 'Chord types are ',
             musicValue: ''
           },
@@ -91,7 +91,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/windy-icon.svg',
             music: 'Chord sequence type is ',
             musicValue: ''
           },
@@ -143,7 +143,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/storm-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },
@@ -175,7 +175,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/windy-icon.svg',
             music: 'Inversion types are ',
             musicValue: ''
           },
@@ -271,7 +271,7 @@ module.exports = function() {
             value: '',
             constrain: true,
             unit: '',
-            iconPath: '/img/temperature-icon.svg',
+            iconPath: '/img/visibility-icon.svg',
             music: 'Long note is offset by -',
             musicValue: '',
             musicAppendage: ' octaves'
@@ -292,7 +292,7 @@ module.exports = function() {
             value: '',
             constrain: true,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/ozone-icon.svg',
             music: 'Number of lower chords: ',
             musicValue: ''
           },
@@ -312,7 +312,7 @@ module.exports = function() {
             value: '',
             constrain: true,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/windy-icon.svg',
             music: 'Wind chime sound pitch ',
             musicValue: ''
           },
@@ -322,7 +322,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/humid-icon.svg',
             music: 'Harp arpeggio playing ',
             musicValue: '',
             negativeKey: 'isPrecip',
@@ -365,7 +365,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/rain-icon.svg',
             music: 'Bell sound playing ',
           },
           {
@@ -374,7 +374,7 @@ module.exports = function() {
             value: '',
             constrain: true,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/rain-icon.svg',
             music: 'Bell arpeggio playing at ',
             musicValue: '',
             musicAppendage: ' bpm'
@@ -385,7 +385,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/windy-icon.svg',
             music: 'Brass baritones playing',
             musicValue: ''
           },
@@ -395,7 +395,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/bearing-icon.svg',
             music: 'Long note is ',
             musicValue: '',
             musicAppendage: ' note within chord'
@@ -406,7 +406,7 @@ module.exports = function() {
             value: '',
             constrain: true,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/rain-icon.svg',
             music: 'Long note is a ',
             musicValue: ''
           },
@@ -416,7 +416,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/bearing-icon.svg',
             music: 'Cymbals rate is ',
             musicValue: ''
           },
@@ -426,7 +426,7 @@ module.exports = function() {
             value: '',
             constrain: true,
             unit: 'miles',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/storm-distance-icon.svg',
             music: 'Cymbals volume is ',
             musicValue: ''
           }

@@ -1135,6 +1135,15 @@ module.exports = function() {
         });
       }
 
+      function setIconPath(rawCoDisplayData) {
+        return rawCoDisplayData.map(function(coProp) {
+          if(coProp.key === 'precipType') {
+            coProp.iconPath = '/img/' + precipType + '-icon.svg';
+          }
+          return coProp;
+        });
+      }
+
       function addPrimaryMusicValues(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
             switch (coProp.key) {

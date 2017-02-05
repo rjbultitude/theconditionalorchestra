@@ -127,20 +127,6 @@ The pan and volume are randomly selected from two arrays.
 
 Do not display booleans
 
-Icons needed:
- * cold/freezing
- * Stormy
- * windy/windSpeed
- * visibility
- * ozone
- * humid
- * rain/precipIntensity/precipProbability
- * sleet
- * snow
- * windBearing/nearestStormBearing
- * nearestStormDistance
-
-
 Consider grouping display items into instrument types
 
 Consider using a state manager to update the humid arpeggio and display (chords)
@@ -165,7 +151,9 @@ Upgrade to google maps 3 : https://developers.google.com/maps/documentation/java
 
 ###Bugs
 
-One of the chords still sounds dischordant, why?
+Still getting some 'undefined or NaN note' :[]
+
+One of the chords still sounds dischordant, why? Longnote, bass and pad going out of synch
 
 No playback on 1st load Safari
 
