@@ -1137,8 +1137,8 @@ module.exports = function() {
 
       function setIconPath(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
-          if(coProp.key === 'precipType') {
-            coProp.iconPath = '/img/' + precipType + '-icon.svg';
+          if(coProp.key === 'precipType' && coProp.value) {
+            coProp.iconPath = '/img/' + coProp.value + '-icon.svg';
           }
           return coProp;
         });
@@ -1234,24 +1234,25 @@ module.exports = function() {
             var _mappedDisplayData = mapConditionsToDisplayData(coDisplayData[coDataSet]);
             var _unitisedDisplayData = unitiseData(_mappedDisplayData);
             var _constrainedDisplayData = constrainDecimals(_unitisedDisplayData);
+            var _iconisedData = setIconPath(_constrainedDisplayData);
             switch (coDataSet) {
               case 'chordTypeMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, chordType);
+                _currArr = addOtherMusicValues(_iconisedData, chordType);
                 break;
               case 'chordSeqTypeMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, outputChordSeqType());
+                _currArr = addOtherMusicValues(_iconisedData, outputChordSeqType());
                 break;
               case 'padTypeMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, padType);
+                _currArr = addOtherMusicValues(_iconisedData, padType);
                 break;
               case 'inversionMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, inversionOffsetType);
+                _currArr = addOtherMusicValues(_iconisedData, inversionOffsetType);
                 break;
               case 'numNotesMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, numPadNotes);
+                _currArr = addOtherMusicValues(_iconisedData, numPadNotes);
                 break;
               case 'primaryMap':
-                _currArr = addPrimaryMusicValues(_constrainedDisplayData);
+                _currArr = addPrimaryMusicValues(_iconisedData);
                 break;
             }
             _finalCoData.splice.apply(_finalCoData, _currArr);
