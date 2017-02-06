@@ -181,7 +181,7 @@ module.exports = function() {
           },
           {
             key: 'isFreezing',
-            title: 'Clement conditions',
+            title: 'Freezing conditions',
             value: '',
             constrain: false,
             unit: '',
@@ -428,18 +428,6 @@ module.exports = function() {
             unit: 'miles',
             iconPath: '/img/storm-distance-icon.svg',
             music: 'Cymbals volume is ',
-            musicValue: ''
-          }
-        ],
-        todo: [
-          {
-            key: 'isWindyArp',
-            title: 'High winds',
-            value: '',
-            constrain: true,
-            unit: '',
-            iconPath: '/img/pressure-icon.svg',
-            music: 'Harp sequence type is ',
             musicValue: ''
           }
         ]

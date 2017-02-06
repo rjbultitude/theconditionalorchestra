@@ -401,15 +401,14 @@ module.exports = function() {
   }
 
   function getPrecipCategory(lwData) {
-    if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
+    if (lwData.precipType === undefined) {
+      return undefined;
+    } else if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
       return 'hard';
     } else if (lwData.precipType === 'sleet' || lwData.precipIntensity.value <= 0.2) {
       return 'soft';
     } else if (lwData.precipType === 'snow' || lwData.precipIntensity.value <= 0.1) {
       return 'light';
-    } else {
-      console.log('no rain? type is: ', lwData.precipType);
-      return null;
     }
   }
 
@@ -803,7 +802,7 @@ module.exports = function() {
               choralSound.rate(scaleArray[i]);
               choralSound.setVolume(0.1);
             }
-            console.log('weather is fine or freezing. playing choralSounds rate ', choralSound);
+            //console.log('weather is fine or freezing. playing choralSounds rate ', choralSound);
           });
         } else {
           console.log('weather is not fine or freezing. No choralSounds');
@@ -1107,6 +1106,7 @@ module.exports = function() {
           }
           return coDisplayObj;
         });
+        console.log('_coDisplayDataWCheck', _coDisplayDataWCheck);
         return _coDisplayDataWCheck;
       }
 
@@ -1135,10 +1135,22 @@ module.exports = function() {
         });
       }
 
+      function exceptionCheckData(rawCoDisplayData) {
+        return rawCoDisplayData.map(function(coProp) {
+          if (coProp.key === 'precipIntensity' && coProp.value === 0) {
+            coProp.value = false;
+          }
+          return coProp;
+        });
+      }
+
       function setIconPath(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
-          if(coProp.key === 'precipType' && coProp.value) {
-            coProp.iconPath = '/img/' + coProp.value + '-icon.svg';
+          if (coProp.value) {
+            //TODO add probability
+            if(coProp.key === 'precipType' || coProp.key === 'precipIntensity') {
+              coProp.iconPath = '/img/' + lwData.precipType + '-icon.svg';
+            }
           }
           return coProp;
         });
@@ -1178,7 +1190,7 @@ module.exports = function() {
                 coProp.musicValue = precipArpBpm;
                 break;
               case 'precipType':
-                coProp.value = coProp.value === undefined ? '' : precipCategory + ' ' + coProp.value;
+                coProp.value = !coProp.value ? false : precipCategory + ' ' + coProp.value;
                 coProp.musicValue = outputPrecipArpType();
                 break;
               case 'precipProbability':
@@ -1201,8 +1213,8 @@ module.exports = function() {
         });
       }
 
-      function isvalidConditionTrue(currentKey) {
-        if (currentKey !== 'isOther' && currentKey) {
+      function isvalidConditionTrue(currentProp) {
+        if (currentProp.key !== 'isOther' && currentProp.value) {
           return true;
         } else {
           return false;
@@ -1213,9 +1225,12 @@ module.exports = function() {
         var _validConditionTrue = false;
         return displayData.map(function(displayProp) {
           _validConditionTrue = isvalidConditionTrue(displayProp);
+          //Set other to false
+          //if any other value is true
           if (displayProp === 'isOther' && _validConditionTrue) {
             displayProp.value = false;
           }
+          //Add spaces where necessary
           if (typeof musicValue === 'string') {
             displayProp.musicValue = microU.addSpacesToString(musicValue);
             //TODO should remove word inversion
@@ -1229,38 +1244,41 @@ module.exports = function() {
       function configureDisplay() {
         var _finalCoData = [];
         var _currArr;
-        for (var coDataSet in coDisplayData) {
-          if (coDisplayData.hasOwnProperty(coDataSet)) {
-            var _mappedDisplayData = mapConditionsToDisplayData(coDisplayData[coDataSet]);
+        for (var coDataGroup in coDisplayData) {
+          if (coDisplayData.hasOwnProperty(coDataGroup)) {
+            var _mappedDisplayData = mapConditionsToDisplayData(coDisplayData[coDataGroup]);
             var _unitisedDisplayData = unitiseData(_mappedDisplayData);
-            var _constrainedDisplayData = constrainDecimals(_unitisedDisplayData);
-            var _iconisedData = setIconPath(_constrainedDisplayData);
-            switch (coDataSet) {
+            var _exceptionCheckedData = exceptionCheckData(_unitisedDisplayData);
+            var _iconisedData = setIconPath(_exceptionCheckedData);
+            var _constrainedDisplayData = constrainDecimals(_iconisedData);
+            switch (coDataGroup) {
               case 'chordTypeMap':
-                _currArr = addOtherMusicValues(_iconisedData, chordType);
+                _currArr = addOtherMusicValues(_constrainedDisplayData, chordType);
                 break;
               case 'chordSeqTypeMap':
-                _currArr = addOtherMusicValues(_iconisedData, outputChordSeqType());
+                _currArr = addOtherMusicValues(_constrainedDisplayData, outputChordSeqType());
                 break;
               case 'padTypeMap':
-                _currArr = addOtherMusicValues(_iconisedData, padType);
+                _currArr = addOtherMusicValues(_constrainedDisplayData, padType);
                 break;
               case 'inversionMap':
-                _currArr = addOtherMusicValues(_iconisedData, inversionOffsetType);
+                _currArr = addOtherMusicValues(_constrainedDisplayData, inversionOffsetType);
                 break;
               case 'numNotesMap':
-                _currArr = addOtherMusicValues(_iconisedData, numPadNotes);
+                _currArr = addOtherMusicValues(_constrainedDisplayData, numPadNotes);
                 break;
               case 'primaryMap':
-                _currArr = addPrimaryMusicValues(_iconisedData);
+                _currArr = addPrimaryMusicValues(_constrainedDisplayData);
                 break;
             }
+            console.log('_currArr', _currArr);
+            //console.log('_finalCoData', _finalCoData);
             _finalCoData.splice.apply(_finalCoData, _currArr);
           }
         }
-        console.log('_finalCoData', _finalCoData);
         _finalCoData.forEach(function(coProp) {
-          //Only show true values
+          //Only show true or valid values
+          //Zero is valid for most conditions
           if (coProp.value !== undefined && coProp.value !== false) {
             //filter out negative values that are true
             //or don't exist
@@ -1269,7 +1287,7 @@ module.exports = function() {
               cdContainer.insertAdjacentHTML('beforeend', html);
             }
           } else {
-            console.log('Not displayed because not truthy ', coProp);
+            //console.log('Not displayed because not defined or false ', coProp);
           }
         });
       }
