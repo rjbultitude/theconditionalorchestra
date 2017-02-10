@@ -46,7 +46,8 @@ module.exports = (function generateFrequencyScales() {
       var _noteIndex = null;
       if(numOctaves % 2 === 1) {
         //odd
-        _noteIndex = numSemitones * ((numOctaves - 1) / 2);
+        //_noteIndex = numSemitones * ((numOctaves - 1) / 2);
+        _noteIndex = (_totalNotes / 2) + 1;
         return _noteIndex;
       } else {
         //even
@@ -62,13 +63,21 @@ module.exports = (function generateFrequencyScales() {
      * @param  {[Number]} numSemitones [the number of semitones per octave]
      * @return {[Array]}              [an array of frequencies or pitches]
      */
-    function createEqTempMusicalScale(startFreq, numOctaves, numSemitones) {
+    function createEqTempMusicalScale(startFreq, numOctaves, numSemitones, downFirst) {
       var _scale = [];
       var _posCount = startFreq;
       var _negCount = startFreq;
+      var _modRemainder = 1;
+      //TODO doesn't put them in correct order
+      if (downFirst) {
+        _modRemainder = 0;
+      } else {
+        _modRemainder = 1;
+      }
       for (var i = 0; i < numOctaves; i++) {
         //Create downwards _scale
-        if (i % 2 === 1) {
+        if (i % 2 === _modRemainder) {
+          //always insert the smallest freqs at the start
           _scale = arrayInsertAt(_scale, 0, createScale(_negCount, numSemitones, false, false));
           _negCount = _negCount / 2;
         } else {
@@ -80,6 +89,7 @@ module.exports = (function generateFrequencyScales() {
       }
       //Add centre frequency
       _scale.splice(findCentreFreqIndex(numOctaves, numSemitones), 0, startFreq);
+      console.log('_scale', _scale);
       return _scale;
     }
 

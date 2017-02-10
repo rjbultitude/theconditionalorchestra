@@ -868,9 +868,13 @@ module.exports = function() {
         var _numUpperOctaves = Math.ceil(_highestFraction);
         var _numLowerOctaves = Math.ceil(_lowestFraction);
         var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
-        //console.log('creating array with ' + _totalOctaves + ' octaves ');
+        var _downFirst = false;
+        if (_lowestNoteIndex > _highestNoteIndex) {
+          _downFirst = true;
+        }
+        console.log('creating array with ' + _totalOctaves + ' octaves ');
         return {
-          allNotesScale: getFreqScales.createEqTempMusicalScale(1, _totalOctaves, semisInOct),
+          allNotesScale: getFreqScales.createEqTempMusicalScale(1, _totalOctaves, semisInOct, _downFirst),
           numOctaves: _totalOctaves
         };
       }
@@ -901,6 +905,7 @@ module.exports = function() {
         } else {
           _newIntervals = chosenIntervals;
         }
+        console.log('_newIntervals', _newIntervals);
         return _newIntervals;
       }
 
@@ -1016,6 +1021,7 @@ module.exports = function() {
         //TODO might double it for freezing
         //and offset it by an octave for fine
         if (wCheck.isFreezing) {
+          //Bug?
           _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
         return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple);
@@ -1032,7 +1038,7 @@ module.exports = function() {
           _intervalType = 'safeNthMinorIntervals';
         }
         _repeatMultiple = 2;
-        console.log('rain arp _intervalType', _intervalType);
+        //console.log('rain arp _intervalType', _intervalType);
         return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple);
       }
 
@@ -1106,7 +1112,6 @@ module.exports = function() {
           }
           return coDisplayObj;
         });
-        console.log('_coDisplayDataWCheck', _coDisplayDataWCheck);
         return _coDisplayDataWCheck;
       }
 
@@ -1271,11 +1276,10 @@ module.exports = function() {
                 _currArr = addPrimaryMusicValues(_constrainedDisplayData);
                 break;
             }
-            console.log('_currArr', _currArr);
-            //console.log('_finalCoData', _finalCoData);
             _finalCoData.splice.apply(_finalCoData, _currArr);
           }
         }
+        console.log('_finalCoData', _finalCoData);
         _finalCoData.forEach(function(coProp) {
           //Only show true or valid values
           //Zero is valid for most conditions
