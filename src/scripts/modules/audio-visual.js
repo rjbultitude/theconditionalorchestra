@@ -1262,6 +1262,9 @@ module.exports = function() {
             var _iconisedData = setIconPath(_exceptionCheckedData);
             var _constrainedDisplayData = constrainDecimals(_iconisedData);
             switch (coDataGroup) {
+              case 'primaryMap':
+                _currArr = addPrimaryMusicValues(_constrainedDisplayData);
+                break;
               case 'chordTypeMap':
                 _currArr = addOtherMusicValues(_constrainedDisplayData, chordType);
                 break;
@@ -1277,11 +1280,8 @@ module.exports = function() {
               case 'numNotesMap':
                 _currArr = addOtherMusicValues(_constrainedDisplayData, numPadNotes);
                 break;
-              case 'primaryMap':
-                _currArr = addPrimaryMusicValues(_constrainedDisplayData);
-                break;
             }
-            _finalCoData.splice.apply(_finalCoData, _currArr);
+            _finalCoData.push.apply(_finalCoData, _currArr);
           }
         }
         //console.log('_finalCoData', _finalCoData);
