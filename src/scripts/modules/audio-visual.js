@@ -457,7 +457,7 @@ module.exports = function() {
     // Set filter. Visibility is filter freq
     // playlogic
     return microU.mapRange(
-      Math.round(lwData.cloudCover.value),
+      lwData.cloudCover.value,
       lwData.cloudCover.min,
       lwData.cloudCover.max,
       avSettings.masterFilter.min,
