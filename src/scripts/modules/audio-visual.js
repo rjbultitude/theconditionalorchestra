@@ -873,8 +873,10 @@ module.exports = function() {
           _downFirst = true;
         }
         console.log('creating array with ' + _totalOctaves + ' octaves ');
+        var _allNotesScaleCentreNoteObj = getFreqScales.createEqTempMusicalScale(1, _totalOctaves, semisInOct, _downFirst);
         return {
-          allNotesScale: getFreqScales.createEqTempMusicalScale(1, _totalOctaves, semisInOct, _downFirst),
+          allNotesScale: _allNotesScaleCentreNoteObj.scale,
+          centreNoteIndex: _allNotesScaleCentreNoteObj.centreFreqIndex,
           numOctaves: _totalOctaves
         };
       }
@@ -933,6 +935,7 @@ module.exports = function() {
       function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeatMultiple) {
         var _numOcts;
         var _allNotesScale = [];
+        var _centreFreqIndex;
         var _scaleArray = [];
         var _rootAndOffset = rootNote + centreNoteOffset;
         var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, numSemisPerOctave, repeatMultiple);
@@ -940,12 +943,13 @@ module.exports = function() {
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
         //get all the notes/frequencies
-        var _allNotesScaleAndNumOcts = getAllNotesScale(_largestPosNumber, _largestNegNumber, _rootAndOffset, numSemisPerOctave);
-        _allNotesScale = _allNotesScaleAndNumOcts.allNotesScale;
-        _numOcts = _allNotesScaleAndNumOcts.numOctaves;
+        var _allNotesNumOctsCentreFreq = getAllNotesScale(_largestPosNumber, _largestNegNumber, _rootAndOffset, numSemisPerOctave);
+        _allNotesScale = _allNotesNumOctsCentreFreq.allNotesScale;
+        _centreFreqIndex = _allNotesNumOctsCentreFreq.centreNoteIndex;
+        _numOcts = _allNotesNumOctsCentreFreq.numOctaves;
         //Get centre note
         //After all notes scale has been created
-        var _centreFreqIndex = getFreqScales.findCentreFreqIndex(_numOcts, numSemisPerOctave);
+        //var _centreFreqIndex = getFreqScales.findCentreFreqIndex(_numOcts, numSemisPerOctave);
         var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
         _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset);
         return _scaleArray;

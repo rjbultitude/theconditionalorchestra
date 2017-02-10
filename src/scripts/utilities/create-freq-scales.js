@@ -37,20 +37,28 @@ module.exports = (function generateFrequencyScales() {
 
     /**
      * [findCentreFreqIndex finds the index in an array of notes or tones based on the number of octaves and semitones]
+     * essentially it finds the median
      * @param  {[Number]} numOctaves   [the number of octaves in the scale]
      * @param  {[Number]} numSemitones [the number of semitones per octave]
      * @return {[Number]}              [the index representing the start frequency]
      */
-    function findCentreFreqIndex(numOctaves, numSemitones) {
+    function findCentreFreqIndex(numOctaves, numSemitones, downFirst) {
       var _totalNotes = numOctaves * numSemitones;
       var _noteIndex = null;
+      //odd
       if(numOctaves % 2 === 1) {
-        //odd
-        //_noteIndex = numSemitones * ((numOctaves - 1) / 2);
-        _noteIndex = (_totalNotes / 2) + 1;
+        //If we went down first
+        if (downFirst) {
+          _noteIndex = numSemitones * ((numOctaves + 1) / 2);
+        }
+        //If we went up first
+        else {
+          _noteIndex = numSemitones * ((numOctaves - 1) / 2);
+        }
         return _noteIndex;
-      } else {
-        //even
+      }
+      //even
+      else {
         _noteIndex = _totalNotes / 2;
         return _noteIndex;
       }
@@ -65,16 +73,18 @@ module.exports = (function generateFrequencyScales() {
      */
     function createEqTempMusicalScale(startFreq, numOctaves, numSemitones, downFirst) {
       var _scale = [];
+      var _centreFreqIndex = findCentreFreqIndex(numOctaves, numSemitones, downFirst);
+      console.log('_centreFreqIndex', _centreFreqIndex);
       var _posCount = startFreq;
       var _negCount = startFreq;
       var _modRemainder = 1;
-      //TODO doesn't put them in correct order
       if (downFirst) {
         _modRemainder = 0;
       } else {
         _modRemainder = 1;
       }
       for (var i = 0; i < numOctaves; i++) {
+        console.log('loop i', i);
         //Create downwards _scale
         if (i % 2 === _modRemainder) {
           //always insert the smallest freqs at the start
@@ -88,9 +98,12 @@ module.exports = (function generateFrequencyScales() {
         }
       }
       //Add centre frequency
-      _scale.splice(findCentreFreqIndex(numOctaves, numSemitones), 0, startFreq);
+      _scale.splice(_centreFreqIndex, 0, startFreq);
       console.log('_scale', _scale);
-      return _scale;
+      return {
+        scale : _scale,
+        centreFreqIndex : _centreFreqIndex
+      };
     }
 
     return {
