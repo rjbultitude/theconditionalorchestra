@@ -151,8 +151,6 @@ Upgrade to google maps 3 : https://developers.google.com/maps/documentation/java
 
 ###Bugs
 
-Still getting some 'undefined or NaN note' :[]
-
 One of the chords still sounds dischordant, why? Longnote, bass and pad going out of synch
 
 No playback on 1st load Safari
