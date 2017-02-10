@@ -458,8 +458,8 @@ module.exports = function() {
     // playlogic
     return microU.mapRange(
       lwData.cloudCover.value,
-      lwData.cloudCover.min,
       lwData.cloudCover.max,
+      lwData.cloudCover.min,
       avSettings.masterFilter.min,
       avSettings.masterFilter.max
     );
@@ -705,7 +705,9 @@ module.exports = function() {
         if (extraSeqPlaying) {
           longNote.rate(scale[longNoteIndex] / 2);
         } else {
-          longNote.rate(scale[longNoteIndex] / longNoteOffset);
+          if (longNoteOffset) {
+            longNote.rate(scale[longNoteIndex] / longNoteOffset);
+          }
         }
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));

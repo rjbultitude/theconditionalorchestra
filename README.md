@@ -151,6 +151,8 @@ Upgrade to google maps 3 : https://developers.google.com/maps/documentation/java
 
 ###Bugs
 
+After stop fade out is louder
+
 One of the chords still sounds dischordant, why? Longnote, bass and pad going out of synch
 
 No playback on 1st load Safari
