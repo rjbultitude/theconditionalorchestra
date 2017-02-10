@@ -1222,14 +1222,10 @@ module.exports = function() {
       }
 
       function isvalidConditionTrue(displayDataGroup) {
-          var _anyValidPropTrue;
-          for (var currentProp in displayDataGroup) {
-            if (displayDataGroup.hasOwnProperty(currentProp)) {
-              if (displayDataGroup[currentProp].key !== 'isOther' && displayDataGroup[currentProp].value) {
-                _anyValidPropTrue = true;
-              } else {
-                _anyValidPropTrue = false;
-              }
+          var _anyValidPropTrue = false;
+          for (var i = 0; i < displayDataGroup.length; i++) {
+            if (displayDataGroup[i].key !== 'isOther' && displayDataGroup[i].value) {
+              return true;
             }
           }
           return _anyValidPropTrue;
@@ -1243,7 +1239,6 @@ module.exports = function() {
           //if any other value is true
           if (displayProp.key === 'isOther' && _validConditionTrue) {
             displayProp.value = false;
-            console.log('displayProp.value', displayProp.value);
           }
           //Add spaces where necessary
           if (typeof musicValue === 'string') {
@@ -1252,7 +1247,6 @@ module.exports = function() {
           } else {
             displayProp.musicValue = musicValue;
           }
-          console.log('add other displayProp', displayProp);
           return displayProp;
         });
       }
