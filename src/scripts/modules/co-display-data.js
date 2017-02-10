@@ -45,7 +45,7 @@ module.exports = function() {
           },
           {
             key: 'isOther',
-            title: 'Is not freezing, fine, cold nor clement ',
+            title: 'Is not fine, cold, clement nor stormy',
             value: 'true',
             constrain: false,
             unit: '',
@@ -97,7 +97,7 @@ module.exports = function() {
           },
           {
             key: 'isOther',
-            title: 'Is not freezing, fine, cold nor clement ',
+            title: 'Is not fine, freezing, clement nor windy',
             value: 'true',
             constrain: false,
             unit: '',
@@ -149,7 +149,7 @@ module.exports = function() {
           },
           {
             key: 'isOther',
-            title: 'Is not freezing, fine, cold nor clement ',
+            title: 'Is not fine, cold, clement nor stormy ',
             value: 'true',
             constrain: false,
             unit: '',

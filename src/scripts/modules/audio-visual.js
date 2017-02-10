@@ -907,7 +907,6 @@ module.exports = function() {
         } else {
           _newIntervals = chosenIntervals;
         }
-        console.log('_newIntervals', _newIntervals);
         return _newIntervals;
       }
 
@@ -1222,22 +1221,29 @@ module.exports = function() {
         });
       }
 
-      function isvalidConditionTrue(currentProp) {
-        if (currentProp.key !== 'isOther' && currentProp.value) {
-          return true;
-        } else {
-          return false;
-        }
+      function isvalidConditionTrue(displayDataGroup) {
+          var _anyValidPropTrue;
+          for (var currentProp in displayDataGroup) {
+            if (displayDataGroup.hasOwnProperty(currentProp)) {
+              if (displayDataGroup[currentProp].key !== 'isOther' && displayDataGroup[currentProp].value) {
+                _anyValidPropTrue = true;
+              } else {
+                _anyValidPropTrue = false;
+              }
+            }
+          }
+          return _anyValidPropTrue;
       }
 
-      function addOtherMusicValues(displayData, musicValue) {
-        var _validConditionTrue = false;
-        return displayData.map(function(displayProp) {
-          _validConditionTrue = isvalidConditionTrue(displayProp);
+      function addOtherMusicValues(displayDataGroup, musicValue) {
+        var _validConditionTrue = isvalidConditionTrue(displayDataGroup);
+        return displayDataGroup.map(function(displayProp) {
+          //this gets Overwriten every time doh!
           //Set other to false
           //if any other value is true
-          if (displayProp === 'isOther' && _validConditionTrue) {
+          if (displayProp.key === 'isOther' && _validConditionTrue) {
             displayProp.value = false;
+            console.log('displayProp.value', displayProp.value);
           }
           //Add spaces where necessary
           if (typeof musicValue === 'string') {
@@ -1246,6 +1252,7 @@ module.exports = function() {
           } else {
             displayProp.musicValue = musicValue;
           }
+          console.log('add other displayProp', displayProp);
           return displayProp;
         });
       }
@@ -1283,7 +1290,7 @@ module.exports = function() {
             _finalCoData.splice.apply(_finalCoData, _currArr);
           }
         }
-        console.log('_finalCoData', _finalCoData);
+        //console.log('_finalCoData', _finalCoData);
         _finalCoData.forEach(function(coProp) {
           //Only show true or valid values
           //Zero is valid for most conditions

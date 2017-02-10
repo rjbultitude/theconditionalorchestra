@@ -74,7 +74,6 @@ module.exports = (function generateFrequencyScales() {
     function createEqTempMusicalScale(startFreq, numOctaves, numSemitones, downFirst) {
       var _scale = [];
       var _centreFreqIndex = findCentreFreqIndex(numOctaves, numSemitones, downFirst);
-      console.log('_centreFreqIndex', _centreFreqIndex);
       var _posCount = startFreq;
       var _negCount = startFreq;
       var _modRemainder = 1;
@@ -84,7 +83,6 @@ module.exports = (function generateFrequencyScales() {
         _modRemainder = 1;
       }
       for (var i = 0; i < numOctaves; i++) {
-        console.log('loop i', i);
         //Create downwards _scale
         if (i % 2 === _modRemainder) {
           //always insert the smallest freqs at the start
@@ -99,7 +97,6 @@ module.exports = (function generateFrequencyScales() {
       }
       //Add centre frequency
       _scale.splice(_centreFreqIndex, 0, startFreq);
-      console.log('_scale', _scale);
       return {
         scale : _scale,
         centreFreqIndex : _centreFreqIndex
