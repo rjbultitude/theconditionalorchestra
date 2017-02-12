@@ -1,7 +1,9 @@
 'use strict';
 
 /**
- * [exports description]
+ * Duplicates items 'difference' number of times 
+ * and can add a given amount to each duplicated item if desired
+ * and can repeat as many times as specified
  * @param  {Array} array        [array to duplicate]
  * @param  {Number} difference  [number of items to duplicate]
  * @param  {Number} amountToAdd  [numeric value to add to each duplicated item]

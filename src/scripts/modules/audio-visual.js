@@ -366,7 +366,6 @@ module.exports = function() {
         _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote];
       }
     }
-    console.log('_rootNoteLetter', _rootNoteLetter);
     return _rootNoteLetter;
   }
 
@@ -809,7 +808,7 @@ module.exports = function() {
             //console.log('weather is fine or freezing. playing choralSounds rate ', choralSound);
           });
         } else {
-          console.log('weather is not fine or freezing. No choralSounds');
+          //console.log('weather is not fine or freezing. No choralSounds');
         }
       }
 
@@ -895,18 +894,18 @@ module.exports = function() {
       function errorCheckIntervalsArr(chosenIntervals, numNotes, semisInOct, repeatMultiple) {
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
-        var _numUpperOcts;
+        var _semitonesInOct;
         var _repeatMultiple = repeatMultiple || 0;
         //When using non western scale
         //ensure numbers don't balloon
         if (semisInOct > avSettings.numSemitones) {
-          _numUpperOcts = 0;
+          _semitonesInOct = 0;
         } else {
-          _numUpperOcts = semisInOct;
+          _semitonesInOct = semisInOct;
         }
         //Error check
         if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _numUpperOcts, _repeatMultiple);
+          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _semitonesInOct, _repeatMultiple);
           console.log('added missing items to', _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
@@ -914,13 +913,27 @@ module.exports = function() {
         return _newIntervals;
       }
 
-      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset) {
+      function errorCheckScaleIntervals(scaleIntervals, intervalIndexOffset, numNotes) {
+        var _highestIndex = _intervalIndexOffset + numNotes;
+        if (_highestIndex > scaleIntervals.length) {
+          var _diff = _highestIndex - scaleIntervals.length;
+          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, null, null);
+        } else {
+          _scaleIntervals = scaleIntervals;
+        }
+        return _scaleIntervals;
+      }
+
+      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset, type) {
+        //console.log('type of instrument', type);
         var _scaleArray = [];
+        var _intervalIndexOffset = intervalIndexOffset || 0;
+        //add missing scale intervals
+        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes);
         var _newNote;
         var _prevNote;
-        var _intervalIndexOffset = intervalIndexOffset || 0;
         for (var i = 0; i < numNotes; i++) {
-          _newNote = allNotesScale[scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
+          _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
             _scaleArray.push(_newNote);
@@ -935,7 +948,7 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeatMultiple) {
+      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeatMultiple, type) {
         var _numOcts;
         var _allNotesScale = [];
         var _centreFreqIndex;
@@ -952,9 +965,8 @@ module.exports = function() {
         _numOcts = _allNotesNumOctsCentreFreq.numOctaves;
         //Get centre note
         //After all notes scale has been created
-        //var _centreFreqIndex = getFreqScales.findCentreFreqIndex(_numOcts, numSemisPerOctave);
         var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
-        _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset);
+        _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset, type);
         return _scaleArray;
       }
 
@@ -1005,11 +1017,11 @@ module.exports = function() {
           _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
         for (var i = 0; i < numChords; i++) {
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i].index, getValidChordType(_chordSeqOffsetArr[i].key), _inversionOffsetArr[i], 0));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i].index, getValidChordType(_chordSeqOffsetArr[i].key), _inversionOffsetArr[i], 0, 'pad'));
         }
         //Adding extra chord(s) - pitched down
         for (var j = 0; j < numExtraChords; j++) {
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j].index - numSemisPerOctave, getValidChordType(_chordSeqOffsetArr[j].key), _inversionOffsetArr[j], 0));
+          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j].index - numSemisPerOctave, getValidChordType(_chordSeqOffsetArr[j].key), _inversionOffsetArr[j], 0, 'padLower'));
         }
         return _chordSeq;
       }
@@ -1030,7 +1042,7 @@ module.exports = function() {
           //Bug?
           _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
-        return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple);
+        return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
       }
 
       function createRainArpScale(numSemisPerOctave) {
@@ -1045,7 +1057,7 @@ module.exports = function() {
         }
         _repeatMultiple = 2;
         //console.log('rain arp _intervalType', _intervalType);
-        return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple);
+        return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple, 'rain arp');
       }
 
       /*
