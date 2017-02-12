@@ -914,7 +914,8 @@ module.exports = function() {
       }
 
       function errorCheckScaleIntervals(scaleIntervals, intervalIndexOffset, numNotes) {
-        var _highestIndex = _intervalIndexOffset + numNotes;
+        var _scaleIntervals = [];
+        var _highestIndex = intervalIndexOffset + numNotes;
         if (_highestIndex > scaleIntervals.length) {
           var _diff = _highestIndex - scaleIntervals.length;
           _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, null, null);
@@ -1266,6 +1267,18 @@ module.exports = function() {
         });
       }
 
+      function fadeInItem(thisDisplayItem) {
+        var _opacity = 0;
+        var _aniLoop = setInterval(function() {
+          if (_opacity < 1) {
+            thisDisplayItem.style.opacity = _opacity + '';
+            _opacity += 0.05;
+          } else {
+            clearInterval(_aniLoop);
+          }
+        }, 50);
+      }
+
       function configureDisplay() {
         var _finalCoData = [];
         var _currArr;
@@ -1310,8 +1323,10 @@ module.exports = function() {
             //filter out negative values that are true
             //or don't exist
             if (coProp.negativeValue === undefined || coProp.negativeValue === false) {
-              var html = appTemplate(coProp);
-              cdContainer.insertAdjacentHTML('beforeend', html);
+              var _itemTmpl = appTemplate(coProp);
+              cdContainer.insertAdjacentHTML('beforeend', _itemTmpl);
+              var _lastItem = cdContainer.lastElementChild;
+              fadeInItem(_lastItem);
             }
           } else {
             //console.log('Not displayed because not defined or false ', coProp);

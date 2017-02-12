@@ -125,15 +125,13 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Do not display booleans
+Consider dropping visualiser and using a pattern bg
 
-Consider grouping display items into instrument types
+Do not display booleans
 
 Consider using a state manager to update the humid arpeggio and display (chords)
 
 Consider using a data input for the order the chords play in perhaps - could be `cloudCover`
-
-Consider only playing humid arpeggio when the inversions are being used
 
 Consider only playing rain arpeggio when the inversions are being used
 
