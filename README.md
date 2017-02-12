@@ -151,7 +151,9 @@ Upgrade to google maps 3 : https://developers.google.com/maps/documentation/java
 
 ###Bugs
 
-After stop fade out is louder
+Sequencer doesn't honor tempo when app state changes
+
+After stop fade out is louder than normal playback, firefox only
 
 One of the chords still sounds dischordant, why? Longnote, bass and pad going out of synch
 

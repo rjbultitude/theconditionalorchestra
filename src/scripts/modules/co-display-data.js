@@ -430,6 +430,28 @@ module.exports = function() {
             music: 'Number of notes per chord is ',
             musicValue: ''
           }
+        ],
+        humidArpMap: [
+          {
+            key: 'windSpeed',
+            title: 'Wind speed',
+            value: '',
+            constrain: true,
+            unit: '',
+            iconPath: '/img/windy-icon.svg',
+            music: 'Harp arpeggio tempo is ',
+            musicValue: ''
+          },
+          {
+            key: 'isHumid',
+            title: 'Humid conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/humidity-icon.svg',
+            music: 'Harp arpeggio is playing',
+            musicValue: ''
+          }
         ]
     };
 };

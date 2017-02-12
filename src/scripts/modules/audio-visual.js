@@ -276,7 +276,6 @@ module.exports = function() {
     } else {
       _chordType = 'majorSeventhIntervals';
     }
-    console.log('_chordType', _chordType);
     return _chordType;
   }
 
@@ -352,7 +351,6 @@ module.exports = function() {
     if (_rootNote === -0) {
       _rootNote = 0;
     }
-    console.log('_rootNote', _rootNote);
     return _rootNote;
   }
 
@@ -650,6 +648,7 @@ module.exports = function() {
         humidArpPart.setBPM(humidArpBpm);
         humidArpPart.playingMelody = true;
         humidArpPart.loop();
+        console.log('humidArpPart', humidArpPart);
       }
 
       function playRainArp(rainArpScaleArray) {
@@ -874,7 +873,7 @@ module.exports = function() {
         if (_lowestNoteIndex > _highestNoteIndex) {
           _downFirst = true;
         }
-        console.log('creating array with ' + _totalOctaves + ' octaves ');
+        //console.log('creating array with ' + _totalOctaves + ' octaves ');
         var _allNotesScaleCentreNoteObj = getFreqScales.createEqTempMusicalScale(1, _totalOctaves, semisInOct, _downFirst);
         return {
           allNotesScale: _allNotesScaleCentreNoteObj.scale,
@@ -987,7 +986,6 @@ module.exports = function() {
         } else {
           _chordType = chordType;
         }
-        console.log('_chordType', _chordType);
         return _chordType;
       }
 
@@ -1281,6 +1279,9 @@ module.exports = function() {
                 break;
               case 'numNotesMap':
                 _currArr = addOtherMusicValues(_constrainedDisplayData, numPadNotes);
+                break;
+              case 'humidArpMap':
+                _currArr = addOtherMusicValues(_constrainedDisplayData, humidArpBpm);
                 break;
             }
             _finalCoData.push.apply(_finalCoData, _currArr);
