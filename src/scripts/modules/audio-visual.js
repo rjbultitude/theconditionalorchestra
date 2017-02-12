@@ -86,6 +86,35 @@ module.exports = function() {
   //DOM
   var cdContainer = document.querySelector('.conditions-display__list');
 
+  function fadeInDisplayItem(thisDisplayItem) {
+    var _opacity = 0;
+    var _aniLoop = setInterval(function() {
+      if (_opacity < 1) {
+        thisDisplayItem.style.opacity = _opacity + '';
+        _opacity += 0.05;
+      } else {
+        clearInterval(_aniLoop);
+      }
+    }, 50);
+  }
+
+  function fadeOutDisplayItem(thisDisplayItem, index, totalItems) {
+    var _opacity = 1;
+    var _aniLoop = setInterval(function() {
+      if (_opacity > 0) {
+        thisDisplayItem.style.opacity = _opacity + '';
+        _opacity -= 0.05;
+      } else {
+        clearInterval(_aniLoop);
+        //empty the cdContainer
+        //when all are done
+        if (index + 1 === totalItems) {
+          cdContainer.innerHTML = '';
+        }
+      }
+    }, 50);
+  }
+
   function fadeOutPadSounds(soundItem) {
     function stopPadSounds(padSound) {
       setTimeout(function() {
@@ -1267,18 +1296,6 @@ module.exports = function() {
         });
       }
 
-      function fadeInItem(thisDisplayItem) {
-        var _opacity = 0;
-        var _aniLoop = setInterval(function() {
-          if (_opacity < 1) {
-            thisDisplayItem.style.opacity = _opacity + '';
-            _opacity += 0.05;
-          } else {
-            clearInterval(_aniLoop);
-          }
-        }, 50);
-      }
-
       function configureDisplay() {
         var _finalCoData = [];
         var _currArr;
@@ -1326,7 +1343,7 @@ module.exports = function() {
               var _itemTmpl = appTemplate(coProp);
               cdContainer.insertAdjacentHTML('beforeend', _itemTmpl);
               var _lastItem = cdContainer.lastElementChild;
-              fadeInItem(_lastItem);
+              fadeInDisplayItem(_lastItem);
             }
           } else {
             //console.log('Not displayed because not defined or false ', coProp);
@@ -1563,8 +1580,11 @@ module.exports = function() {
   });
 
   channel.subscribe('stop', function(autoStart) {
+    var _allDisplayItems = document.querySelectorAll('.conditions-display__item');
+    for (var i = 0; i < _allDisplayItems.length; i++) {
+      fadeOutDisplayItem(_allDisplayItems[i], i, _allDisplayItems.length);
+    }
     killCurrentSounds(autoStart);
-    cdContainer.innerHTML = '';
   });
 
 	return true;
