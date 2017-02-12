@@ -127,7 +127,11 @@ The pan and volume are randomly selected from two arrays.
 
 Consider dropping visualiser and using a pattern bg
 
-Do not display booleans
+Make 'choose another location a button'
+
+Fix issue with harp display humidity music value being output
+
+Do not display booleans?
 
 Consider using a state manager to update the humid arpeggio and display (chords)
 
