@@ -670,9 +670,9 @@ module.exports = function() {
       }
 
       function playBrassBaritone(scale) {
-        brassBaritone.play();
         brassBaritone.rate(scale[brassOneScaleArrayIndex]);
         brassBaritone.setVolume(0.9);
+        brassBaritone.play();
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
         } else {
@@ -684,9 +684,9 @@ module.exports = function() {
         var _newScaleArr = scale.slice().reverse();
         var _rateMultArr = [1, 2];
         var _randomRateMultVal = sketch.random(_rateMultArr);
-        brassBaritone2.play();
         brassBaritone2.rate(_newScaleArr[brassTwoScaleArrayIndex] * _randomRateMultVal);
         brassBaritone2.setVolume(0.4);
+        brassBaritone2.play();
         if (brassTwoScaleArrayIndex >= scale.length -1) {
           brassTwoScaleArrayIndex = 0;
         } else {
