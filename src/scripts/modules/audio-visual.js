@@ -635,6 +635,7 @@ module.exports = function() {
         reverb.process(harpSoundTwo, 4, 10);
         reverb.amp(1);
         harpSoundTwo.play();
+        //TODO rate is wrong
         harpSoundTwo.rate(_randomNote * 3);
         harpSoundTwo.setVolume(1);
       }
@@ -698,7 +699,6 @@ module.exports = function() {
         var longNote = longNotes[longNoteType];
         longNote.disconnect();
         longNote.connect(soundFilter);
-        longNote.play();
         //TODO could drop this now that
         //the octave is determined by lwData
         if (extraSeqPlaying) {
@@ -710,15 +710,18 @@ module.exports = function() {
         }
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
+        longNote.playMode('restart');
+        longNote.play();
       }
 
       function playBass(scale) {
-        bass.play();
-        //Play 1st note of each chord
         bass.rate(scale[0]);
         //TODO could set the volume
         //based on the amount of cloudCover
         bass.setVolume(0.5);
+        bass.playMode('restart');
+        bass.play();
+        //Play 1st note of each chord
       }
 
       function setScaleSetIndex(scaleSet, numExtraChords) {
