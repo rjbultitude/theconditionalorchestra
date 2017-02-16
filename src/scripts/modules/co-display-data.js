@@ -87,18 +87,6 @@ module.exports = function() {
             musicValue: ''
           },
           {
-            key: 'isHumid',
-            title: 'Humid but no precipitation',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/humid-icon.svg',
-            music: 'Harp arpeggio playing ',
-            musicValue: '',
-            negativeKey: 'isPrecip',
-            negativeValue: ''
-          },
-          {
             key: 'isFine',
             title: 'Very fine conditions',
             value: '',
@@ -199,6 +187,18 @@ module.exports = function() {
             iconPath: '/img/storm-distance-icon.svg',
             music: 'Cymbals volume is ',
             musicValue: ''
+          },
+          {
+            key: 'isHumid',
+            title: 'Humid conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/humidity-icon.svg',
+            music: 'Harp arpeggio is playing',
+            musicValue: '',
+            negativeKey: 'isPrecip',
+            negativeValue: ''
           }
         ],
         chordTypeMap: [
@@ -440,17 +440,9 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/windy-icon.svg',
             music: 'Harp arpeggio tempo is ',
-            musicValue: ''
-          },
-          {
-            key: 'isHumid',
-            title: 'Humid conditions',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/humidity-icon.svg',
-            music: 'Harp arpeggio is playing',
-            musicValue: ''
+            musicValue: '',
+            negativeKey: 'isPrecip',
+            negativeValue: ''
           }
         ]
     };
