@@ -10,3 +10,16 @@
       background-color: $color-purple-dark;
     }
 }
+
+.cta--secondary {
+  @extend %cta-base;
+  background-color: $color-purple-dark;
+  padding: 18px;
+
+  &:hover,
+  &:focus,
+  &:active {
+    cursor: pointer;
+    background-color: $color-cyan;
+  }
+}

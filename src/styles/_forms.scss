@@ -35,24 +35,10 @@ textarea {
   position: relative;
 }
 
-.form-user-location {
-  white-space: pre-line;
-  position: relative;
-
-  a {
-    display: inline-block;
-    padding: $padding/4 0 0;
-
-    &:hover,
-    &:focus,
-    &:active {
-      text-decoration: none;
-    }
-  }
-
-  .cta {
-    min-width: 220px;
-  }
+.conjuction {
+  margin: 18px 0;
+  display: block;
+  line-height: 1rem;
 }
 
 .form-coords {
@@ -62,6 +48,7 @@ textarea {
   position: relative;
   width: 100%;
   max-width: $max-width;
+  min-height: 10em;
 
   @media all and (max-width: $bp-mobile) {
     padding: $padding/1.5;
@@ -97,6 +84,17 @@ textarea {
       margin-right: 0;
       margin-bottom: $padding/4;
     }
+
+  }
+
+  .input-review {
+    display: none;
+    position: absolute;
+    top: 72%;
+  }
+
+  input[type="text"]:invalid + .input-review {
+    display: block;
   }
 
   .button-close {

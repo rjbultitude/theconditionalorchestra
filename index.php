@@ -33,12 +33,14 @@
                   <section class="form-section section">
                     <div class="form-user-location" data-ref="form-user-location">
                       <button id="use-location-btn" class="cta" aria-controls="message-block" disabled="true">Play my weather</button>
-                      <a href="#form-coords" id="link-location-select">Or choose another location</a>
+                      <span class="conjuction">Or</span>
+                      <a href="#form-coords" class="cta--secondary" id="link-location-select">Choose a location</a>
                     </div>
                     <form class="form-coords inactive" id="form-coords" data-ref="form-coords">
                       <h2 class="form-coords__legend">Enter a place</h2>
                       <label for="place">place</label>
-                      <input type="text" id="place" data-ref="place-field" autocomplete="on">
+                      <input type="text" id="place" data-ref="place-field" autocomplete="on" placeholder="e.g. Nordvik" pattern="[A-Za-z ]*">
+                      <div class="input-review">Please only enter words</div>
                       <button class="cta" id="form-coords-btn" data-ref="submit" aria-controls="message-block">Play</button>
                       <button class="button-close" data-ref="close">
                         <span class="text">
