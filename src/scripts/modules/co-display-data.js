@@ -448,7 +448,7 @@ module.exports = function() {
             key: 'isWindy',
             title: 'Windy conditions',
             value: '',
-            constrain: true,
+            constrain: false,
             unit: '',
             iconPath: '/img/windy-icon.svg',
             music: 'Harp arpeggio intervals are ',

@@ -23,3 +23,12 @@
     background-color: $color-cyan;
   }
 }
+
+.cta,
+.cta--secondary {
+  transition: background-color 0.4s;
+
+  &:hover {
+    transition: background-color 0s;
+  }
+}

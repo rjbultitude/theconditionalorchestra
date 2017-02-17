@@ -1275,16 +1275,15 @@ module.exports = function() {
       function addOtherMusicValues(displayDataGroup, musicValue) {
         var _validConditionTrue = isvalidConditionTrue(displayDataGroup);
         return displayDataGroup.map(function(displayProp) {
-          //this gets Overwriten every time doh!
-          //Set other to false
+          var _musicValue;
           //if any other value is true
           if (displayProp.key === 'isOther' && _validConditionTrue) {
             displayProp.value = false;
           }
           //Add spaces where necessary
           if (typeof musicValue === 'string') {
-            displayProp.musicValue = microU.addSpacesToString(musicValue);
-            //TODO should remove word inversion
+            _musicValue = microU.removeStr('inversions', musicValue);
+            displayProp.musicValue = microU.addSpacesToString(_musicValue);
           } else {
             displayProp.musicValue = musicValue;
           }
