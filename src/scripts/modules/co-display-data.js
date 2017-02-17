@@ -433,12 +433,12 @@ module.exports = function() {
         ],
         humidArpMap: [
           {
-            key: 'windSpeed',
+            key: 'humidity',
             title: 'Wind speed',
             value: '',
             constrain: true,
             unit: '',
-            iconPath: '/img/windy-icon.svg',
+            iconPath: '/img/humidity-icon.svg',
             music: 'Harp arpeggio tempo is ',
             musicValue: '',
             negativeKey: 'isPrecip',

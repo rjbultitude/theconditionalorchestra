@@ -447,9 +447,9 @@ module.exports = function() {
 
   function getHumidArpBpm(lwData) {
     return Math.round(microU.mapRange(
-      lwData.windSpeed.value,
-      lwData.windSpeed.min,
-      lwData.windSpeed.max,
+      lwData.humidity.value,
+      lwData.humidity.min,
+      lwData.humidity.max,
       40,
       70
     ));
@@ -1140,6 +1140,7 @@ module.exports = function() {
           }
           return coDisplayObj;
         });
+        //TODO not sure this does anthing
         var _coDisplayDataLwNeg = _coDisplayDataLw.map(function(coDisplayObj) {
           for (var i = 0; i < _lwDataArr.length; i++) {
             if (coDisplayObj.negativeKey === _lwDataArr[i]) {
@@ -1156,7 +1157,15 @@ module.exports = function() {
           }
           return coDisplayObj;
         });
-        return _coDisplayDataWCheck;
+        var _coDisplayDataWCheckNeg = _coDisplayDataWCheck.map(function(coDisplayObj) {
+          for (var i = 0; i < _wCheckArr.length; i++) {
+            if (coDisplayObj.negativeKey === _wCheckArr[i]) {
+              coDisplayObj.negativeValue = wCheck[_wCheckArr[i]];
+            }
+          }
+          return coDisplayObj;
+        });
+        return _coDisplayDataWCheckNeg;
       }
 
       function constrainDecimals(rawCoDisplayData) {
@@ -1322,6 +1331,7 @@ module.exports = function() {
                 break;
               case 'humidArpMap':
                 _currArr = addOtherMusicValues(_constrainedDisplayData, humidArpBpm);
+                console.log('humidArpMap _currArr', _currArr);
                 break;
             }
             _finalCoData.push.apply(_finalCoData, _currArr);
