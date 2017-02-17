@@ -1300,6 +1300,15 @@ module.exports = function() {
         });
       }
 
+      function manageHumidityArpDisplay(displayDataGroup) {
+        return displayDataGroup.map(function(displayProp) {
+          if (wCheck.isHumid) {
+            displayProp.value = false;
+          }
+          return displayProp;
+        });
+      }
+
       function configureDisplay() {
         var _finalCoData = [];
         var _currArr;
@@ -1330,7 +1339,7 @@ module.exports = function() {
                 _currArr = addOtherMusicValues(_constrainedDisplayData, numPadNotes);
                 break;
               case 'humidArpMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, humidArpBpm);
+                _currArr = manageHumidityArpDisplay(_constrainedDisplayData, humidArpBpm);
                 console.log('humidArpMap _currArr', _currArr);
                 break;
             }

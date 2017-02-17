@@ -434,7 +434,7 @@ module.exports = function() {
         humidArpMap: [
           {
             key: 'humidity',
-            title: 'Wind speed',
+            title: 'Humidity',
             value: '',
             constrain: true,
             unit: '',
