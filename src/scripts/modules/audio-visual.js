@@ -15,7 +15,6 @@ var he = require('he');
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 var coDisplayDataFn = require('./co-display-data');
 var updateStatus = require('./update-status');
-var SingleShape = require('./single-shape-cnstrctr');
 var weatherCheck = require('./weather-checker-fns');
 var microU = require('../utilities/micro-utilities');
 var intervals = require('../utilities/intervals');
@@ -69,12 +68,9 @@ module.exports = function() {
   //Sound objects
   var padSounds = [];
   var choralSounds = [];
-	// Array for all visual shapes
-	var shapeSet = [];
   // dialog / modal
   var dialogIsOpen = false;
   // Visuals
-  var sqSize = 25;
   var temperatureColour = 0;
   // For audioContext support
   var pee5 = new P5();
@@ -1351,20 +1347,6 @@ module.exports = function() {
         });
       }
 
-			//Accepts number of horizontal and vertical squares to draw
-			function createShapeSet(hSquares, vSquares) {
-        var shapeSet = [];
-				var index = 0;
-				for (var i = 0; i < hSquares; i++) {
-					for (var j = 0; j < vSquares; j++) {
-						index++;
-						var shape = new SingleShape(i * sqSize, j * sqSize, sqSize - 1, sketch.random(70,130), index);
-						shapeSet.push(shape);
-					}
-				}
-        return shapeSet;
-			}
-
 			//Sound constructor
 			function PadSound(organ, guitar, sax, trumpet) {
 				this.organ = organ;
@@ -1412,27 +1394,7 @@ module.exports = function() {
 			};
 
 			sketch.setup = function setup() {
-				//If this size or smaller
-				if (microU.matchMediaMaxWidth(540).matches) {
-						avSettings.cWidth = 400;
-						avSettings.cHeight = 800;
-						avSettings.cPadding = '200%';
-				}
-        //--------------------
-				//Canvas setup
-				//--------------------
-				var myCanvas = sketch.createCanvas(avSettings.cWidth, avSettings.cHeight);
-				myCanvas.parent(avSettings.cContainerName);
-				var cContainer = document.getElementById(avSettings.cContainerName);
-				cContainer.style.paddingBottom = avSettings.cPadding;
 				sketch.frameRate(25);
-				sketch.background(0, 0, 0);
-        //---------------------
-        //create shapes in grid
-        //---------------------
-				var hSquares = Math.round(sketch.width/sqSize);
-				var vSquares = Math.round(sketch.height/sqSize);
-        shapeSet = createShapeSet(hSquares, vSquares);
         //---------------------
         //set runtime constants
         //--------------------
@@ -1521,13 +1483,6 @@ module.exports = function() {
 
 			sketch.draw = function draw() {
         sketch.frameRate(30);
-				sketch.background(0, 0, 0, 0);
-        if (dialogIsOpen) {
-          for (var i = 0; i < shapeSet.length; i++) {
-            shapeSet[i].update(sketch, avSettings.noiseInc, avSettings.animAmount);
-            shapeSet[i].paint(sketch, temperatureColour, avSettings.colourDim);
-          }
-        }
         //playlogic
         if (wCheck.isCloudy || wCheck.isWindy) {
           updateCymbals();
@@ -1552,7 +1507,7 @@ module.exports = function() {
         }
 			};
 
-		}, 'canvas-container');
+		});
 		return myP5;
 	}
 

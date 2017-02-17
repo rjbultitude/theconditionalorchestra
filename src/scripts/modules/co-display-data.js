@@ -443,6 +443,18 @@ module.exports = function() {
             musicValue: '',
             negativeKey: 'isPrecip',
             negativeValue: ''
+          },
+          {
+            key: 'isWindy',
+            title: 'Windy conditions',
+            value: '',
+            constrain: true,
+            unit: '',
+            iconPath: '/img/windy-icon.svg',
+            music: 'Harp arpeggio intervals are ',
+            musicValue: '',
+            negativeKey: 'isPrecip',
+            negativeValue: ''
           }
         ]
     };

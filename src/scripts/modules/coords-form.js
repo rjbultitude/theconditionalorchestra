@@ -20,7 +20,6 @@ module.exports = function() {
   var coordsFormInputEl = coordsFormEl.querySelector('[data-ref="place-field"]');
   var coordsFormSubmitBtnEl = coordsFormEl.querySelector('[data-ref="submit"]');
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
-	var visualLaunchEl = document.querySelector('[data-ref="visuals-launcher"]');
   var isPlaying = false;
   var lastKnownSuffix = 'LastKnown';
   var staticSuffix = 'Static';
@@ -137,7 +136,6 @@ module.exports = function() {
       // Post the data to rest of app
       channel.publish('userUpdate', locationData);
       updateStatus('playing', locationData.name);
-      visualLaunchEl.style.display = 'block';
   		if (conditions.length > 1) {
         console.log('There seems to be more than one location: ', conditions.length);
   		}
@@ -412,7 +410,6 @@ module.exports = function() {
         var locationData = JSON.parse(weatherData);
         channel.publish('userUpdate', locationData);
         updateStatus('playing', locationData.name);
-        visualLaunchEl.style.display = 'block';
       });
     }
   }
@@ -444,7 +441,6 @@ module.exports = function() {
     updateStatus('start');
     userLocBtnEl.innerHTML = 'Play my weather';
     coordsFormSubmitBtnEl.innerHTML = 'Play';
-    visualLaunchEl.style.display = 'none';
     if (autoStart) {
       useCustomLocation();
     }

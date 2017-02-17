@@ -31,8 +31,9 @@
                 <div class="wrapper">
                   <!-- begin forms -->
                   <section class="form-section section">
+                    <h2 class="section-heading">Generate music from the weather</h2>
                     <div class="form-user-location" data-ref="form-user-location">
-                      <button id="use-location-btn" class="cta" aria-controls="message-block" disabled="true">Play my weather</button>
+                      <button id="use-location-btn" class="cta" aria-controls="message-block" disabled>Play my weather</button>
                       <span class="conjuction">Or</span>
                       <a href="#form-coords" class="cta--secondary" id="link-location-select">Choose a location</a>
                     </div>
@@ -56,33 +57,23 @@
 
                   <!-- Begin message & icon block -->
                   <section id="main-section" class="main-section section">
-                    <div id="core-content">
                       <div class="status-bar">
+                        <h2 class="section-heading">Status</h2>
                         <div class="icons-block">
                           <?php echo file_get_contents("img/sun-icon.svg"); ?>
                         </div>
                         <p id="message-block" aria-live="polite">Loading...</p>
                       </div>
-                    </div>
                   </section>
                   <!-- End message & icon block -->
 
                   <!-- Begin conditions display -->
                   <section class="conditions-display section">
+                    <h2 class="section-heading">Conditions and musical equivalents</h2>
                     <ul class="conditions-display__list">
                     </ul>
                   </section>
                   <!-- End conditions display -->
-
-                  <!-- Begin controls -->
-                  <section class="controls-section section" data-ref="visuals-launcher">
-                    <button class="cta" type="button" data-a11y-dialog-show="visuals-dialog">
-                      <span class="text">
-                        Show visualiser
-                      </span>
-                    </button>
-                  </section>
-                  <!-- End controls -->
                 </div>
               </div>
               <!-- end body -->
@@ -148,23 +139,6 @@
           </div>
         </footer>
         <!-- end footer -->
-
-        <!-- Begin modal/dialog box -->
-        <section id="visuals-dialog" aria-hidden="true" class="dialog">
-          <div tabindex="-1" data-a11y-dialog-hide class="dialog-overlay"></div>
-          <div role="dialog" class="dialog-content">
-            <div id="canvas-container" class="canvas-container" role="document"></div>
-            <button class="button-close" id="close-full-screen" type="button" data-a11y-dialog-hide aria-label="Close this dialog window">
-              <span class="text">
-                Close
-              </span>
-              <span class="icon">
-                <?php echo file_get_contents("img/close-icon.svg"); ?>
-              </span>
-            </button>
-          </div>
-        </section>
-        <!-- end modal/dialog box -->
         <script src="dist/scripts/app.js"></script>
     </body>
 </html>

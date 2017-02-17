@@ -52,6 +52,7 @@ textarea {
 
   @media all and (max-width: $bp-mobile) {
     padding: $padding/1.5;
+    text-align: center;
   }
 
   .cta {
@@ -91,6 +92,11 @@ textarea {
     display: none;
     position: absolute;
     top: 72%;
+
+    @media all and (max-width: $bp-mobile) {
+      position: static;
+      margin-bottom: 6px;
+    }
   }
 
   input[type="text"]:invalid + .input-review {
