@@ -417,8 +417,8 @@ module.exports = function() {
       lwData.visibility.value,
       lwData.visibility.min,
       lwData.visibility.max,
-      3,
-      0
+      -1,
+      1
     ));
   }
 
@@ -720,22 +720,28 @@ module.exports = function() {
 
       function playLongNote(scale, extraSeqPlaying) {
         //playlogic
-        var longNote = longNotes[longNoteType];
-        longNote.disconnect();
-        longNote.connect(soundFilter);
+        var _longNote = longNotes[longNoteType];
+        var _longNoteRate;
+        _longNote.disconnect();
+        _longNote.connect(soundFilter);
         //TODO could drop this now that
         //the octave is determined by lwData
         if (extraSeqPlaying) {
-          longNote.rate(scale[longNoteIndex] / 2);
+          _longNoteRate = scale[longNoteIndex] / 2;
         } else {
-          if (longNoteOffset) {
-            longNote.rate(scale[longNoteIndex] / longNoteOffset);
+          if (longNoteOffset > 0) {
+            _longNoteRate = scale[longNoteIndex] * 2;
+          } else if (longNoteOffset < 0) {
+            _longNoteRate = scale[longNoteIndex] / 2;
+          } else {
+            _longNoteRate = scale[longNoteIndex];
           }
         }
-        longNote.pan(sketch.random(panArr));
-        longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
-        longNote.playMode('restart');
-        longNote.play();
+        _longNote.rate(_longNoteRate);
+        _longNote.pan(sketch.random(panArr));
+        _longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
+        _longNote.playMode('restart');
+        _longNote.play();
       }
 
       function playBass(scale) {
