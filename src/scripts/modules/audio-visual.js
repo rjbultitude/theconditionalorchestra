@@ -654,14 +654,18 @@ module.exports = function() {
 
       function humidArpEnd(notesArray) {
         var _randomNote = sketch.random(notesArray);
-        //Setup reverb
-        harpSoundTwo.disconnect();
-        reverb.process(harpSoundTwo, 4, 10);
-        reverb.amp(1);
-        harpSoundTwo.play();
-        //TODO rate is wrong
-        harpSoundTwo.rate(_randomNote * 3);
-        harpSoundTwo.setVolume(1);
+
+        function playHarpTwo() {
+          harpSoundTwo.disconnect();
+          reverb.process(harpSoundTwo, 4, 10);
+          reverb.amp(1);
+          harpSoundTwo.play();
+          harpSoundTwo.rate(_randomNote);
+          harpSoundTwo.setVolume(1);
+        }
+
+        playHarpTwo();
+        setTimeout(playHarpTwo, 1000);
       }
 
       function playHumidArp(humidArpScaleArray) {
@@ -724,8 +728,6 @@ module.exports = function() {
         var _longNoteRate;
         _longNote.disconnect();
         _longNote.connect(soundFilter);
-        //TODO could drop this now that
-        //the octave is determined by lwData
         if (extraSeqPlaying) {
           _longNoteRate = scale[longNoteIndex] / 2;
         } else {
@@ -1068,12 +1070,9 @@ module.exports = function() {
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
         //playlogic
-        //TODO might double it for freezing
-        //and offset it by an octave for fine
-        if (wCheck.isFreezing) {
-          //Bug?
-          _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
-        }
+        // if (wCheck.isFreezing) {
+        //   _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
+        // }
         return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
       }
 
@@ -1220,7 +1219,7 @@ module.exports = function() {
         });
       }
 
-      function addPrimaryMusicValues(rawCoDisplayData) {
+      function addPrimaryMusicVals(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
             switch (coProp.key) {
               case 'dewPoint':
@@ -1287,29 +1286,38 @@ module.exports = function() {
           return _anyValidPropTrue;
       }
 
-      function addOtherMusicValues(displayDataGroup, musicValue) {
+      function addOtherMapVals(displayDataGroup, musicVal) {
         var _validConditionTrue = isvalidConditionTrue(displayDataGroup);
         return displayDataGroup.map(function(displayProp) {
-          var _musicValue;
           //if any other value is true
           if (displayProp.key === 'isOther' && _validConditionTrue) {
             displayProp.value = false;
           }
-          //Add spaces where necessary
-          if (typeof musicValue === 'string') {
-            _musicValue = microU.removeStr('inversions', musicValue);
-            displayProp.musicValue = microU.addSpacesToString(_musicValue);
-          } else {
-            displayProp.musicValue = musicValue;
+          if (displayProp.hasOwnProperty('musicValue')) {
+            displayProp.musicValue = musicVal;
           }
           return displayProp;
         });
       }
 
-      function manageHumidityArpDisplay(displayDataGroup) {
+      function setHumidMapVals(displayDataGroup) {
         return displayDataGroup.map(function(displayProp) {
           if (wCheck.isHumid) {
             displayProp.value = false;
+          }
+          return displayProp;
+        });
+      }
+
+      function formatCoStrings(displayData) {
+        return displayData.map(function(displayProp) {
+          var _musicValue;
+          //Add spaces where necessary
+          if (typeof displayProp.musicValue === 'string') {
+            _musicValue = microU.removeStr('inversions', displayProp.musicValue);
+            displayProp.musicValue = microU.addSpacesToString(_musicValue);
+          } else {
+            displayProp.musicValue = displayProp.musicValue;
           }
           return displayProp;
         });
@@ -1320,40 +1328,43 @@ module.exports = function() {
         var _currArr;
         for (var coDataGroup in coDisplayData) {
           if (coDisplayData.hasOwnProperty(coDataGroup)) {
+            //Assign condition values, images and units
             var _mappedDisplayData = mapConditionsToDisplayData(coDisplayData[coDataGroup]);
             var _unitisedDisplayData = unitiseData(_mappedDisplayData);
             var _exceptionCheckedData = exceptionCheckData(_unitisedDisplayData);
             var _iconisedData = setIconPath(_exceptionCheckedData);
             var _constrainedDisplayData = constrainDecimals(_iconisedData);
+            //Assgin music values
             switch (coDataGroup) {
               case 'primaryMap':
-                _currArr = addPrimaryMusicValues(_constrainedDisplayData);
+                _currArr = addPrimaryMusicVals(_constrainedDisplayData);
                 break;
               case 'chordTypeMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, chordType);
+                _currArr = addOtherMapVals(_constrainedDisplayData, chordType);
                 break;
               case 'chordSeqTypeMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, outputChordSeqType());
+                _currArr = addOtherMapVals(_constrainedDisplayData, outputChordSeqType());
                 break;
               case 'padTypeMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, padType);
+                _currArr = addOtherMapVals(_constrainedDisplayData, padType);
                 break;
               case 'inversionMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, inversionOffsetType);
+                _currArr = addOtherMapVals(_constrainedDisplayData, inversionOffsetType);
                 break;
               case 'numNotesMap':
-                _currArr = addOtherMusicValues(_constrainedDisplayData, numPadNotes);
+                _currArr = addOtherMapVals(_constrainedDisplayData, numPadNotes);
                 break;
               case 'humidArpMap':
-                _currArr = manageHumidityArpDisplay(_constrainedDisplayData, humidArpBpm);
-                console.log('humidArpMap _currArr', _currArr);
+                _currArr = setHumidMapVals(_constrainedDisplayData, humidArpBpm);
                 break;
             }
+            //Convert sets to one single array
             _finalCoData.push.apply(_finalCoData, _currArr);
           }
         }
-        //console.log('_finalCoData', _finalCoData);
-        _finalCoData.forEach(function(coProp) {
+        //Format strings and numbers
+        var _formatCoStrings = formatCoStrings(_finalCoData);
+        _formatCoStrings.forEach(function(coProp) {
           //Only show true or valid values
           //Zero is valid for most conditions
           if (coProp.value !== undefined && coProp.value !== false) {

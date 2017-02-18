@@ -42,7 +42,7 @@ module.exports = function() {
             constrain: true,
             unit: '',
             iconPath: '/img/visibility-icon.svg',
-            music: 'Long note is offset by -',
+            music: 'Long note is offset by ',
             musicValue: '',
             musicAppendage: ' octaves'
           },
