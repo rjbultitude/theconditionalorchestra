@@ -84,7 +84,7 @@
             <div class="tab__panel" id="help" data-ref="tab-panel">
               <h2 class="tab__heading">Help</h2>
               <p>If it can't find your location ensure you've clicked "allow" when the browser asks to use your location.</p>
-              <p>Alternatively click "choose another location" where you can enter any location you like.</p>
+              <p>Alternatively click "choose another location" where you can enter any place you like.</p>
               <button class="button-close" data-ref="tab-close">
                 <span class="text">
                   Close

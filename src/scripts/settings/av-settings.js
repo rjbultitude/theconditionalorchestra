@@ -28,7 +28,7 @@ module.exports = {
   //Frequency
   //Lowest (10Hz) to highest (22050Hz)
   masterFilter: {
-    min: 320,
+    min: 700,
     max: 5000
   },
 	//DOM
