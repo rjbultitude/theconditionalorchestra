@@ -431,6 +431,10 @@ module.exports = function() {
             musicValue: ''
           }
         ],
+        //TODO
+        //Should this be called secondary map?
+        //It doesn't have an isOther property
+        //and could be used to manage any duplicate
         humidArpMap: [
           {
             key: 'humidity',
@@ -445,12 +449,12 @@ module.exports = function() {
             negativeValue: ''
           },
           {
-            key: 'isWindy',
-            title: 'Windy conditions',
+            key: 'pressure',
+            title: 'Air pressure',
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/windy-icon.svg',
+            iconPath: '/img/pressure-icon.svg',
             music: 'Harp arpeggio intervals are ',
             musicValue: '',
             negativeKey: 'isPrecip',

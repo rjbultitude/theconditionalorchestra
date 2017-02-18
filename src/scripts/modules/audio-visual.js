@@ -342,7 +342,6 @@ module.exports = function() {
     } else {
       _key = 'inversionsNoOffset';
     }
-    console.log('inversion chords ', _key);
     return _key;
   }
 
@@ -455,10 +454,10 @@ module.exports = function() {
     ));
   }
 
-  function getHumidArpIntervals(wCheck, chordType) {
+  function getHumidArpIntervals(lwData, chordType) {
     var _hIntervals;
     //playlogic
-    if (wCheck.isWindy) {
+    if (lwData.pressure.value > 1000) {
       if (hasMajor(chordType)) {
         _hIntervals = 'closeMajorIntervals';
       } else {
@@ -576,7 +575,7 @@ module.exports = function() {
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
     var humidArpBpm = getHumidArpBpm(lwData);
-    var humidArpIntervals = getHumidArpIntervals(wCheck, chordType);
+    var humidArpIntervals = getHumidArpIntervals(lwData, chordType);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
     var rootNote = getRootNote(lwData, numSemisPerOctave);
     var rootNoteHigh = isRootNoteHigh(rootNote);
@@ -654,18 +653,12 @@ module.exports = function() {
 
       function humidArpEnd(notesArray) {
         var _randomNote = sketch.random(notesArray);
-
-        function playHarpTwo() {
-          harpSoundTwo.disconnect();
-          reverb.process(harpSoundTwo, 4, 10);
-          reverb.amp(1);
-          harpSoundTwo.play();
-          harpSoundTwo.rate(_randomNote);
-          harpSoundTwo.setVolume(1);
-        }
-
-        playHarpTwo();
-        setTimeout(playHarpTwo, 1000);
+        harpSoundTwo.disconnect();
+        reverb.process(harpSoundTwo, 4, 10);
+        reverb.amp(0.7);
+        harpSoundTwo.rate(_randomNote * 2);
+        harpSoundTwo.setVolume(1);
+        harpSoundTwo.play();
       }
 
       function playHumidArp(humidArpScaleArray) {
@@ -677,7 +670,6 @@ module.exports = function() {
         humidArpPart.setBPM(humidArpBpm);
         humidArpPart.playingMelody = true;
         humidArpPart.loop();
-        console.log('humidArpPart', humidArpPart);
       }
 
       function playRainArp(rainArpScaleArray) {
@@ -1302,8 +1294,15 @@ module.exports = function() {
 
       function setHumidMapVals(displayDataGroup) {
         return displayDataGroup.map(function(displayProp) {
-          if (wCheck.isHumid) {
+          //Set to false if not humid
+          //thus not rendering them
+          if (!wCheck.isHumid) {
             displayProp.value = false;
+          }
+          if (displayProp.key === 'humidity') {
+            displayProp.musicValue = humidArpBpm;
+          } else if (displayProp.key === 'pressure') {
+            displayProp.musicValue = humidArpIntervals;
           }
           return displayProp;
         });
@@ -1355,7 +1354,7 @@ module.exports = function() {
                 _currArr = addOtherMapVals(_constrainedDisplayData, numPadNotes);
                 break;
               case 'humidArpMap':
-                _currArr = setHumidMapVals(_constrainedDisplayData, humidArpBpm);
+                _currArr = setHumidMapVals(_constrainedDisplayData);
                 break;
             }
             //Convert sets to one single array
@@ -1485,7 +1484,6 @@ module.exports = function() {
       }
 
       function updateHumidArp() {
-        //TODO is this the right part?
         var _humidArpPhrase = humidArpPart.getPhrase('flttrBrass');
         if (sketch.frameCount % 1200 === 0 && sketch.frameCount !== 0) {
           if (humidArpPart.playingMelody) {
