@@ -353,17 +353,16 @@ module.exports = function() {
       lwData.apparentTemperature.value,
       lwData.apparentTemperature.min,
       lwData.apparentTemperature.max,
-      numChords * 6,
+      numChords * 5,
       numChords * 1
     ));
   }
 
   function getRootNote(lwData, numSemisPerOctave) {
-    //Add global values to the main data object
-    //Pressure determines root note. Range 2.5 octaves
-    //In western scale it will be between + or - 18
-    var _rangePlus = Math.round(numSemisPerOctave + numSemisPerOctave / 2);
-    var _rangeMinus = -Math.abs(_rangePlus);
+    //Pressure determines root note.
+    //In western scale it will be between + 6 or - 12
+    var _rangePlus = Math.round(numSemisPerOctave / 2);
+    var _rangeMinus = -Math.abs(numSemisPerOctave);
     //playlogic
     var _rootNote = Math.round(microU.mapRange(
       lwData.pressure.value,
@@ -380,14 +379,16 @@ module.exports = function() {
 
   function getRootNoteLetter(numSemisPerOctave, rootNote) {
     var _rootNoteLetter = '';
+    //TODO why is 1 being added?
     var _rootNoteNumber = rootNote + 1;
     if (numSemisPerOctave !== 12) {
       _rootNoteLetter = microU.getOrdinal(_rootNoteNumber) + ' note in a non western scale';
     } else {
       if (rootNote < 0) {
-        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length - 1 + rootNote];
+        //TODO not sure -1 is needed
+        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length + rootNote] + '2';
       } else {
-        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote];
+        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote] + '3';
       }
     }
     return _rootNoteLetter;
@@ -1064,9 +1065,9 @@ module.exports = function() {
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
         //playlogic
-        // if (wCheck.isFreezing) {
-        //   _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
-        // }
+        if (wCheck.isFine) {
+          _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
+        }
         return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
       }
 
