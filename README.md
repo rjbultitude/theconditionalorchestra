@@ -125,9 +125,13 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Some sounds (like the aero) haven't been tested yet
+
 Cymbals aren't dramatic enough - add another sound that is panned away from the other
 
 Some arpeggio melodies still clash a little with the chords
+
+Long notes need more reverb, the flute in particular
 
 Test the master filter against the pad and longNote sounds, particularly with lower frequencies
 
