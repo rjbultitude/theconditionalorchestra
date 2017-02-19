@@ -193,8 +193,10 @@ module.exports = function() {
   function getLongNoteType(lwData) {
     var _longNoteType;
     //playlogic
-    if (lwData.precipProbability.value > 0.5) {
+    if (lwData.precipProbability.value >= 0.5) {
       _longNoteType = 'harmonica';
+    } else if (lwData.precipProbability.value >= 0.25) {
+      _longNoteType = 'string';
     } else {
       _longNoteType = 'flute';
     }
@@ -278,7 +280,7 @@ module.exports = function() {
       //stormy plays less notes
       padType = 'guitar';
     } else if (wCheck.isFreezing) {
-      padType = 'trumpet';
+      padType = 'clarinet';
     } else if (wCheck.isCold) {
       padType = 'saxophone';
     } else {
@@ -1382,16 +1384,17 @@ module.exports = function() {
       }
 
 			//Sound constructor
-			function PadSound(organ, guitar, sax, trumpet) {
+			function PadSound(organ, guitar, sax, clarinet) {
 				this.organ = organ;
 				this.guitar = guitar;
 				this.saxophone = sax;
-				this.trumpet = trumpet;
+				this.clarinet = clarinet;
 			}
 
-      function LongNotes(harmonica, flute) {
+      function LongNotes(harmonica, flute, string) {
         this.harmonica = harmonica;
         this.flute = flute;
+        this.string = string;
       }
 
 			sketch.preload = function() {
@@ -1404,7 +1407,7 @@ module.exports = function() {
               sketch.loadSound('/audio/organ-C2.mp3'),
               sketch.loadSound('/audio/guitar-C2.mp3'),
               sketch.loadSound('/audio/sax-C2.mp3'),
-              sketch.loadSound('/audio/trumpet-C2.mp3')
+              sketch.loadSound('/audio/clarinet-C2.mp3')
             ));
           }
           //choral sounds for fine weather
@@ -1420,7 +1423,8 @@ module.exports = function() {
           harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
           longNotes = new LongNotes(
             sketch.loadSound('/audio/harmonica-C3.mp3'),
-            sketch.loadSound('/audio/flute-C3.mp3')
+            sketch.loadSound('/audio/flute-C3.mp3'),
+            sketch.loadSound('/audio/string-C3.mp3')
           );
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
           cymbals = sketch.loadSound('/audio/cymbals.mp3');

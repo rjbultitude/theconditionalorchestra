@@ -83,10 +83,10 @@ Important values:
 * Visibility - Filter freq  
 * Pressure - pitch root
 
-The comment `playlogic` is used to denote the points at which the sounds are configured one way or another
+The comment `playlogic` is used to denote the points at which the sounds are configured using weather data.
 
 If the weather _isHumid_ the chords played use only the intervals within the chosen interval type. This leads to a more harmonious sequence. No chord offset is applied.
-If the weather _isFine_ a minor seventh scale is used, if _isClement_ a major one else a minor one is used. If the root note is higher than `0` (range is `-12` to `+12`) the chords move down the scale; if equal to or lower than `0` they move higher.
+If the root note is higher than `0` (range is `-12` to `+12`) the chords move down the scale; if equal to or lower than `0` they move higher.
 
 Notes in the brass sound and arpeggio are defined as follows:
 If weather is _clement_ a scale using major intervals is produced
@@ -125,25 +125,22 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Consider dropping visualiser and using a pattern bg
+Are the pad and longNote sounds too similar - test against each other
+ * Organ and trumpet are too similar
+ * Organ fades too much
+ * Guitar is truncated
+ * Flute isn't pure enough - create string as separate sound
 
-Make 'choose another location a button'
-
-Fix issue with harp display humidity music value being output
-
-Do not display booleans?
+Test the master filter against the pad and longNote sounds, particularly with lower frequencies
 
 Consider using a state manager to update the humid arpeggio and display (chords)
 
-Consider using a data input for the order the chords play in perhaps - could be `cloudCover`
-
-Consider only playing rain arpeggio when the inversions are being used
+Consider only playing arpeggios when the inversions are being used
 
 Update logic App Logic and spreadsheet
 
-Consider reflow of program flow so that the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
-
-Consider program reflow where only one master set of frequencies is used for all instruments
+Consider program reflow where only one master set of frequencies is used for all instruments.
+In this scenario the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
 
 Modulate padSounds volume/rate/pan for windy conditions
 
