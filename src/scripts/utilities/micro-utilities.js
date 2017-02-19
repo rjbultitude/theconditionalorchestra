@@ -20,8 +20,8 @@ module.exports = {
   addSpacesToString: function addSpacesToString(string) {
     return string.replace(/([A-Z][a-z]+)/g, ' ' + '$&');
   },
-  removeStr: function removeStr(stringToRemove, originalString) {
-    var _pattern = new RegExp(stringToRemove, 'g');
+  removeStrFromStart: function removeStrFromStart(stringToRemove, originalString) {
+    var _pattern = new RegExp('^' + stringToRemove);
     return originalString.replace(_pattern, '');
   },
   addArrayItems: function addArrayItems(array) {

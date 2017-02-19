@@ -1281,6 +1281,8 @@ module.exports = function() {
       }
 
       function addOtherMapVals(displayDataGroup, musicVal) {
+        //TODO really we should only use the first truthy value
+        //rather than multiple ones
         var _validConditionTrue = isvalidConditionTrue(displayDataGroup);
         return displayDataGroup.map(function(displayProp) {
           //if any other value is true
@@ -1315,7 +1317,7 @@ module.exports = function() {
           var _musicValue;
           //Add spaces where necessary
           if (typeof displayProp.musicValue === 'string') {
-            _musicValue = microU.removeStr('inversions', displayProp.musicValue);
+            _musicValue = microU.removeStrFromStart('inversions', displayProp.musicValue);
             displayProp.musicValue = microU.addSpacesToString(_musicValue);
           } else {
             displayProp.musicValue = displayProp.musicValue;

@@ -307,32 +307,32 @@ module.exports = function() {
         ],
         padTypeMap: [
           {
-            key: 'isFine',
-            title: 'Fine weather',
+            key: 'isWindy',
+            title: 'Windy weather',
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/sun-icon.svg',
+            iconPath: '/img/windy-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },
           {
-            key: 'isCold',
-            title: 'Cold weather',
+            key: 'isStormy',
+            title: 'Stormy weather',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/storm-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isFreezing',
+            title: 'Freezing conditions',
             value: '',
             constrain: false,
             unit: '',
             iconPath: '/img/freezing-icon.svg',
-            music: 'Pad instrument is ',
-            musicValue: ''
-          },
-          {
-            key: 'isClement',
-            title: 'Clement conditions',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/weather-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },
@@ -348,7 +348,7 @@ module.exports = function() {
           },
           {
             key: 'isOther',
-            title: 'Is not fine, cold, clement nor stormy ',
+            title: 'Is not windy, cold, freezing nor stormy ',
             value: 'true',
             constrain: false,
             unit: '',
