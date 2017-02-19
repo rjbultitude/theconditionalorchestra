@@ -127,6 +127,8 @@ The pan and volume are randomly selected from two arrays.
 
 Cymbals aren't dramatic enough - add another sound that is panned away from the other
 
+Some arpeggio melodies still clash a little with the chords
+
 Test the master filter against the pad and longNote sounds, particularly with lower frequencies
 
 Consider using a state manager to update the humid arpeggio and display (chords)
