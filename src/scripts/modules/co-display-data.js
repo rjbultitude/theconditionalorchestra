@@ -348,7 +348,7 @@ module.exports = function() {
             music: 'Pad instrument is ',
             musicValue: ''
           },
-
+          {
             key: 'isFine',
             title: 'Cold conditions',
             value: '',

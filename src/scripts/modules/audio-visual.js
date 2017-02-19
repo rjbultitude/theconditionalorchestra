@@ -1410,7 +1410,7 @@ module.exports = function() {
               sketch.loadSound('/audio/organ-C2.mp3'),
               sketch.loadSound('/audio/guitar-C2.mp3'),
               sketch.loadSound('/audio/sax-C2.mp3'),
-              sketch.loadSound('/audio/aeroflute-C2.mp3')
+              sketch.loadSound('/audio/aeroflute-C2.mp3'),
               sketch.loadSound('/audio/horn-C2.mp3')
             ));
           }
