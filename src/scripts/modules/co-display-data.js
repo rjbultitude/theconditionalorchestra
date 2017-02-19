@@ -25,6 +25,8 @@ module.exports = function() {
             negativeKey: 'isWindy',
             negativeValue: ''
           },
+          //TODO this is actually isBitter
+          //not temperature
           {
             key: 'temperature',
             title: 'Temperature',
@@ -307,28 +309,8 @@ module.exports = function() {
         ],
         padTypeMap: [
           {
-            key: 'isWindy',
-            title: 'Windy weather',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/windy-icon.svg',
-            music: 'Pad instrument is ',
-            musicValue: ''
-          },
-          {
-            key: 'isStormy',
-            title: 'Stormy weather',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/storm-icon.svg',
-            music: 'Pad instrument is ',
-            musicValue: ''
-          },
-          {
-            key: 'isFreezing',
-            title: 'Freezing conditions',
+            key: 'isBitter',
+            title: 'Bitter conditions',
             value: '',
             constrain: false,
             unit: '',
@@ -347,8 +329,38 @@ module.exports = function() {
             musicValue: ''
           },
           {
+            key: 'isViolentStorm',
+            title: 'Violent storm',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/storm-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isCold',
+            title: 'Cold conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/freezing-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+
+            key: 'isFine',
+            title: 'Cold conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/sun-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
             key: 'isOther',
-            title: 'Is not windy, cold, freezing nor stormy ',
+            title: 'Is not stormy, cold, bitter nor fine ',
             value: 'true',
             constrain: false,
             unit: '',
@@ -401,8 +413,8 @@ module.exports = function() {
         ],
         numNotesMap: [
           {
-            key: 'isFreezing',
-            title: 'Freezing conditions',
+            key: 'isBitter',
+            title: 'Bitter conditions',
             value: '',
             constrain: false,
             unit: '',

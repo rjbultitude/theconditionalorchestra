@@ -214,7 +214,7 @@ module.exports = function() {
     // We use a non western scale
     // and the guitar sound for windy and freezing
     // so only use 3 notes in a chord
-    if (wCheck.isWindy && wCheck.isFreezing) {
+    if (wCheck.isBitter) {
       _numPadNotes = 3;
     } else if (wCheck.isFine) {
       _numPadNotes = 4;
@@ -254,7 +254,7 @@ module.exports = function() {
     var _numSemitones;
     //playlogic
     // non western eq temp scale
-    if (wCheck.isWindy && wCheck.isFreezing) {
+    if (wCheck.isBitter) {
       _numSemitones = avSettings.numSemitones * 2; //24
       console.log('non western: ', _numSemitones);
     } else {
@@ -269,22 +269,20 @@ module.exports = function() {
     //Start with harshest conditions
     //and work our way up
 
-    //This setting uses non western scale
-    if (wCheck.isWindy && wCheck.isFreezing) {
-      //TODO
-      //Use another instrument here
+    //isBitter generates a non western scale
+    //organ is used so as not to use a sound
+    //that might clash with the brass barritone
+    //when conditions are windy
+    if (wCheck.isBitter || wCheck.isStormy) {
       padType = 'organ';
-    } else if (wCheck.isStormy) {
-      //TODO watch out for clash between
-      //guitar and brass
-      //stormy plays less notes
+    } else if (wCheck.isViolentStorm) {
       padType = 'guitar';
-    } else if (wCheck.isFreezing) {
-      padType = 'aeroflute';
     } else if (wCheck.isCold) {
       padType = 'saxophone';
+    } else if (wCheck.isFine) {
+      padType = 'aeroflute';
     } else {
-      padType = 'organ';
+      padType = 'horn';
     }
     return padType;
   }
@@ -562,7 +560,9 @@ module.exports = function() {
       //broad conditions
       isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
       isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value, lwData.humidity.value),
-      isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
+      isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
+      isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
+      isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
     };
     console.log('wCheck', wCheck);
     //Get and set core values
@@ -1386,11 +1386,12 @@ module.exports = function() {
       }
 
 			//Sound constructor
-			function PadSound(organ, guitar, sax, aeroflute) {
+			function PadSound(organ, guitar, sax, aeroflute, horn) {
 				this.organ = organ;
 				this.guitar = guitar;
 				this.saxophone = sax;
 				this.aeroflute = aeroflute;
+				this.horn = horn;
 			}
 
       function LongNotes(harmonica, flute, string) {
@@ -1410,6 +1411,7 @@ module.exports = function() {
               sketch.loadSound('/audio/guitar-C2.mp3'),
               sketch.loadSound('/audio/sax-C2.mp3'),
               sketch.loadSound('/audio/aeroflute-C2.mp3')
+              sketch.loadSound('/audio/horn-C2.mp3')
             ));
           }
           //choral sounds for fine weather
@@ -1419,8 +1421,8 @@ module.exports = function() {
           dropSound = sketch.loadSound('/audio/drop.mp3');
           dropLightSound = sketch.loadSound('/audio/drop-light.mp3');
           bass = sketch.loadSound('/audio/bass.mp3');
-          brassBaritone = sketch.loadSound('/audio/brassbass.mp3');
-          brassBaritone2 = sketch.loadSound('/audio/brassbass.mp3');
+          brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
+          brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
           harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
           longNotes = new LongNotes(

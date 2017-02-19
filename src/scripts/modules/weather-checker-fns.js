@@ -25,7 +25,7 @@ module.exports = {
 
   // @param windSpeed floating point
   isWindy: function(windSpeed) {
-    return windSpeed > 14;
+    return windSpeed > 24;
   },
   // @param cloudCover floating point
   isCloudy: function(cloudCover) {
@@ -57,13 +57,26 @@ module.exports = {
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function(cloudCover, windSpeed, precipIntensity, humidity) {
-    return cloudCover < 0.5 && windSpeed < 14 && precipIntensity === 0 && humidity < 0.5;
+    return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0 && humidity < 0.5;
+  },
+
+  // @param temperatureInFrnht floating point
+  // @param windSpeed floating point
+  isBitter: function(temperatureInFrnht, windSpeed) {
+    return frnhtToCelcius(temperatureInFrnht) < 3 && windSpeed > 24;
   },
 
   // @param cloudCover floating point
   // @param windSpeed floating point
   // @param precipIntensity floating point
   isStormy: function(cloudCover, windSpeed, precipIntensity) {
-    return cloudCover > 0.5 && windSpeed > 18 && precipIntensity > 0.3;
+    return cloudCover > 0.5 && windSpeed > 32 && precipIntensity > 0.3;
+  },
+
+  // @param cloudCover floating point
+  // @param windSpeed floating point
+  // @param precipIntensity floating point
+  isViolentStorm: function(cloudCover, windSpeed, precipIntensity) {
+    return cloudCover > 0.8 && windSpeed > 60 && precipIntensity > 0.4;
   }
 };
