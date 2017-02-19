@@ -379,13 +379,12 @@ module.exports = function() {
 
   function getRootNoteLetter(numSemisPerOctave, rootNote) {
     var _rootNoteLetter = '';
-    //TODO why is 1 being added?
+    //Add one as the 1st note is 0 based
     var _rootNoteNumber = rootNote + 1;
     if (numSemisPerOctave !== 12) {
       _rootNoteLetter = microU.getOrdinal(_rootNoteNumber) + ' note in a non western scale';
     } else {
       if (rootNote < 0) {
-        //TODO not sure -1 is needed
         _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length + rootNote] + '2';
       } else {
         _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote] + '3';
@@ -723,16 +722,17 @@ module.exports = function() {
         var _longNoteRate;
         _longNote.disconnect();
         _longNote.connect(soundFilter);
-        if (extraSeqPlaying) {
+        if (longNoteOffset > 0) {
+          _longNoteRate = scale[longNoteIndex] * 2;
+        } else if (longNoteOffset < 0) {
           _longNoteRate = scale[longNoteIndex] / 2;
         } else {
-          if (longNoteOffset > 0) {
-            _longNoteRate = scale[longNoteIndex] * 2;
-          } else if (longNoteOffset < 0) {
-            _longNoteRate = scale[longNoteIndex] / 2;
-          } else {
-            _longNoteRate = scale[longNoteIndex];
-          }
+          _longNoteRate = scale[longNoteIndex];
+        }
+        //Lower by one octave
+        //if the lower chords are playing
+        if (extraSeqPlaying) {
+          _longNoteRate = _longNoteRate / 2;
         }
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));

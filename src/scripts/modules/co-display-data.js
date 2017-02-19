@@ -46,7 +46,7 @@ module.exports = function() {
             iconPath: '/img/visibility-icon.svg',
             music: 'Long note is offset by ',
             musicValue: '',
-            musicAppendage: ' octaves'
+            musicAppendage: ' octave'
           },
           {
             key: 'cloudCover',
