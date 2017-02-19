@@ -1350,6 +1350,7 @@ module.exports = function() {
                 break;
               case 'padTypeMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, padType);
+                console.log('padTypeMap _currArr', _currArr);
                 break;
               case 'inversionMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, inversionOffsetType);
@@ -1386,6 +1387,8 @@ module.exports = function() {
       }
 
 			//Sound constructor
+			//changes to this may need to be reflected
+			//within the volume objects in avSettings
 			function PadSound(organ, guitar, sax, aeroflute, horn) {
 				this.organ = organ;
 				this.guitar = guitar;

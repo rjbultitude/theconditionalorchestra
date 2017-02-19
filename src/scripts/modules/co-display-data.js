@@ -83,7 +83,7 @@ module.exports = function() {
             title: 'Wind speed',
             value: '',
             constrain: true,
-            unit: '',
+            unit: 'mph',
             iconPath: '/img/windy-icon.svg',
             music: 'Wind chime sound pitch ',
             musicValue: ''
@@ -247,7 +247,7 @@ module.exports = function() {
           {
             key: 'isOther',
             title: 'Is not fine, cold, clement nor stormy',
-            value: 'true',
+            value: true,
             constrain: false,
             unit: '',
             iconPath: '/img/weather-icon.svg',
@@ -299,7 +299,7 @@ module.exports = function() {
           {
             key: 'isOther',
             title: 'Is not fine, freezing, clement nor windy',
-            value: 'true',
+            value: true,
             constrain: false,
             unit: '',
             iconPath: '/img/weather-icon.svg',
@@ -361,7 +361,7 @@ module.exports = function() {
           {
             key: 'isOther',
             title: 'Is not stormy, cold, bitter nor fine ',
-            value: 'true',
+            value: true,
             constrain: false,
             unit: '',
             iconPath: '/img/weather-icon.svg',
@@ -403,7 +403,7 @@ module.exports = function() {
           {
             key: 'isOther',
             title: 'Is not fine, windy or freezing',
-            value: 'true',
+            value: true,
             constrain: false,
             unit: '',
             iconPath: '/img/weather-icon.svg',
@@ -435,7 +435,7 @@ module.exports = function() {
           {
             key: 'isOther',
             title: 'Not freezing or fine',
-            value: 'true',
+            value: true,
             constrain: false,
             unit: '',
             iconPath: '/img/weather-icon.svg',
