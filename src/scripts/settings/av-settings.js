@@ -9,7 +9,7 @@ module.exports = {
   volume: 0.75,
   organ: {volume : 0.75},
   guitar: {volume : 0.425},
-  clarinet: {volume : 0.75},
+  aeroflute: {volume : 0.75},
   saxophone: {volume : 0.75},
   numPadNotes: 5,
   numChords: 3,

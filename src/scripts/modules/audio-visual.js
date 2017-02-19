@@ -280,7 +280,7 @@ module.exports = function() {
       //stormy plays less notes
       padType = 'guitar';
     } else if (wCheck.isFreezing) {
-      padType = 'clarinet';
+      padType = 'aeroflute';
     } else if (wCheck.isCold) {
       padType = 'saxophone';
     } else {
@@ -1386,11 +1386,11 @@ module.exports = function() {
       }
 
 			//Sound constructor
-			function PadSound(organ, guitar, sax, clarinet) {
+			function PadSound(organ, guitar, sax, aeroflute) {
 				this.organ = organ;
 				this.guitar = guitar;
 				this.saxophone = sax;
-				this.clarinet = clarinet;
+				this.aeroflute = aeroflute;
 			}
 
       function LongNotes(harmonica, flute, string) {
@@ -1409,7 +1409,7 @@ module.exports = function() {
               sketch.loadSound('/audio/organ-C2.mp3'),
               sketch.loadSound('/audio/guitar-C2.mp3'),
               sketch.loadSound('/audio/sax-C2.mp3'),
-              sketch.loadSound('/audio/clarinet-C2.mp3')
+              sketch.loadSound('/audio/aeroflute-C2.mp3')
             ));
           }
           //choral sounds for fine weather
