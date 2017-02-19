@@ -125,11 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Are the pad and longNote sounds too similar - test against each other
- * Organ and trumpet are too similar
- * Organ fades too much
- * Guitar is truncated
- * Flute isn't pure enough - create string as separate sound
+Cymbals aren't dramatic enough - add another sound that is panned away from the other
 
 Test the master filter against the pad and longNote sounds, particularly with lower frequencies
 
