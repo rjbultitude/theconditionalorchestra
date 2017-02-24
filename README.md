@@ -125,13 +125,13 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Long notes need more reverb, the flute in particular
+
 Some sounds (like the aero) haven't been tested yet
 
 Cymbals aren't dramatic enough - add another sound that is panned away from the other
 
 Some arpeggio melodies still clash a little with the chords
-
-Long notes need more reverb, the flute in particular
 
 Test the master filter against the pad and longNote sounds, particularly with lower frequencies
 
@@ -139,16 +139,16 @@ Consider using a state manager to update the humid arpeggio and display (chords)
 
 Consider only playing arpeggios when the inversions are being used
 
+Modulate padSounds volume/rate/pan for windy conditions - requires sounds to be assigned to master channel
+
 Update logic App Logic and spreadsheet
 
 Consider program reflow where only one master set of frequencies is used for all instruments.
 In this scenario the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
 
-Modulate padSounds volume/rate/pan for windy conditions
-
 Test offline, bad connection states (after refactor of handleNoGeoData fn)
 
-Upgrade to google maps 3 : https://developers.google.com/maps/documentation/javascript/v2tov3
+May need to Upgrade to google maps 3 : https://developers.google.com/maps/documentation/javascript/v2tov3
 
 ###Bugs
 
@@ -156,17 +156,15 @@ Sequencer doesn't honor tempo when app state changes
 
 After stop fade out is louder than normal playback, firefox only
 
-One of the chords still sounds dischordant, why? Longnote, bass and pad going out of synch
+One of the chords still sounds dischordant, why? Longnote, bass and pad going out of synch. Is this all browsers?
 
-No playback on 1st load Safari
-
-Playback rate bug - seems to exist only in Chrome
+No playback on 1st load Safari - might be ok now
 
 Sequencer volume bug seems to be Chrome only
 
 Sequencer playback browser tab issue is in Chrome, Firefox and Safari
 
-Sequencer onStep only counts the steps in one single pass rather than the loop
+Minor - Sequencer onStep only counts the steps in one single pass rather than the loop
 
 Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
 
