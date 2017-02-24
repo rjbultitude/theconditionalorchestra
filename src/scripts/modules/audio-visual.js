@@ -48,8 +48,10 @@ module.exports = function() {
   var longNotes;
   //Rain / drops
   var dropSound;
+  var dropSoftSound;
   var dropLightSound;
   var rainArpDropPhrase;
+  var rainArpDropSoftPhrase;
   var rainArpDropLightPhrase;
   var rainArpPart;
   //windChime
@@ -144,9 +146,12 @@ module.exports = function() {
   function killCurrentSounds(autoStart) {
       // Stop arrpeggios
       rainArpPart.stop(0);
+      //Bug fix here?
       rainArpPart.removePhrase('rainDrops');
+      rainArpPart.removePhrase('rainDropsSoft');
       rainArpPart.removePhrase('rainDropsLight');
       humidArpPart.stop(0);
+      //bug fix here?
       humidArpPart.removePhrase('flttrBrass');
       padSounds.forEach(fadeOutPadSounds);
       choralSounds.forEach(fadeChoralSounds);
@@ -179,6 +184,12 @@ module.exports = function() {
   }
 
   function makeDropSound(time, playbackRate, volume) {
+    dropSound.rate(playbackRate);
+    dropSound.setVolume(0.2);
+    dropSound.play(time, playbackRate, volume);
+  }
+
+  function makeDropSoftSound(time, playbackRate, volume) {
     dropSound.rate(playbackRate);
     dropSound.setVolume(0.2);
     dropSound.play(time, playbackRate, volume);
@@ -227,13 +238,16 @@ module.exports = function() {
   function getNumChords(lwData) {
     var _numChords;
     var _numExtraChords;
+    //TODO needs to be tested for realism
+    //Is it possible to have a max dew point
+    //and a max ozone level?
     //playlogic
     _numChords = Math.round(microU.mapRange(
       lwData.dewPoint.value,
       lwData.dewPoint.min,
       lwData.dewPoint.max,
-      2,
-      6
+      avSettings.numChordsMin,
+      avSettings.numChordsMax
     ));
     _numExtraChords = Math.round(microU.mapRange(
       lwData.ozone.value,
@@ -345,15 +359,26 @@ module.exports = function() {
     return _key;
   }
 
+  function getSeqRepeatMaxMult(numChords) {
+    //If the number of chords is high
+    //lower the multiplier
+    var _mean = Math.round((avSettings.numChordsMin + avSettings.numChordsMax) / 2);
+    var _diff = avSettings.numChordsMax - _mean;
+    if (numChords > _mean) {
+      return avSettings.mainSeqRepeatMax - _diff;
+    } else {
+      return avSettings.mainSeqRepeatMax;
+    }
+  }
+
   function getMainSeqRepeatNum(lwData, numChords) {
-    // TODO consider rounding to the nearest
-    // multiple of numChords
+    var _upperMult = getSeqRepeatMaxMult(numChords);
     //playlogic
     return Math.round(microU.mapRange(
       lwData.apparentTemperature.value,
       lwData.apparentTemperature.min,
       lwData.apparentTemperature.max,
-      numChords * 5,
+      numChords * _upperMult,
       numChords * 1
     ));
   }
@@ -523,6 +548,7 @@ module.exports = function() {
     reverb = new P5.Reverb();
     // Create phrase: name, callback, sequence
     rainArpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
+    rainArpDropSoftPhrase = new P5.Phrase('rainDropsSoft', makeDropSoftSound, rainDropsPattern);
     rainArpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
     humidArpPhrase = new P5.Phrase('flttrBrass', makeHarpSound, flttrBrassPattern);
     humidArpPart = new P5.Part();
@@ -677,13 +703,17 @@ module.exports = function() {
       function playRainArp(rainArpScaleArray) {
         //Overwrite sequence with new notes
         var _newNotesArray = addRandomStops(rainArpScaleArray).reverse();
-        rainArpDropPhrase.sequence = _newNotesArray;
-        rainArpDropLightPhrase.sequence = _newNotesArray;
+        //CHANGE
+        //sequences were set outside of if
         //Only use dropSound for rain
         if (precipCategory === 'hard') {
+          rainArpDropPhrase.sequence = _newNotesArray;
           rainArpPart.addPhrase(rainArpDropPhrase);
-          //TODO add phrase for light as well as soft
+        } else if(precipCategory === 'soft') {
+          rainArpDropSoftPhrase.sequence = _newNotesArray;
+          rainArpPart.addPhrase(rainArpDropSoftPhrase);
         } else {
+          rainArpDropLightPhrase.sequence = _newNotesArray;
           rainArpPart.addPhrase(rainArpDropLightPhrase);
         }
         rainArpPart.setBPM(precipArpBpm);
@@ -742,13 +772,11 @@ module.exports = function() {
       }
 
       function playBass(scale) {
+        //Play 1st note of each chord
         bass.rate(scale[0]);
-        //TODO could set the volume
-        //based on the amount of cloudCover
         bass.setVolume(0.5);
         bass.playMode('restart');
         bass.play();
-        //Play 1st note of each chord
       }
 
       function setScaleSetIndex(scaleSet, numExtraChords) {
@@ -960,17 +988,13 @@ module.exports = function() {
         //add missing scale intervals
         var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes);
         var _newNote;
-        var _prevNote;
         for (var i = 0; i < numNotes; i++) {
           _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
             _scaleArray.push(_newNote);
-            _prevNote = _newNote;
           } else {
             console.error('undefined or NaN note');
-            // TODO is this necessary?
-            //_scaleArray.push(-Math.abs(_prevNote));
           }
           _intervalIndexOffset++;
         }
@@ -1033,15 +1057,12 @@ module.exports = function() {
         return _chordType;
       }
 
-      function makeChordSequence(numChords, numExtraChords, numSemisPerOctave) {
+      function makeChordSequence() {
         var _chordSeq = [];
         //Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(chordNumGreatest);
         //Chord inversion shift
         var _inversionOffsetArr = getInversionOffsetArr(chordNumGreatest);
-        //TODO for chord sequences with offset
-        //we should use more harmonious chords
-        //by getting different chord types
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
           _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
@@ -1060,7 +1081,7 @@ module.exports = function() {
         soundFilter.res(20);
       }
 
-      function createHumidArpScale(numSemisPerOctave) {
+      function createHumidArpScale() {
         var _repeatMultiple = 0;
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
@@ -1071,7 +1092,7 @@ module.exports = function() {
         return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
       }
 
-      function createRainArpScale(numSemisPerOctave) {
+      function createRainArpScale() {
         var _rArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
         var _repeatMultiple = 1;
         var _intervalIndexOffset = 0;
@@ -1101,14 +1122,13 @@ module.exports = function() {
         // Set filter for pad sounds
         setFilter();
         //Make arrays of frequencies for playback
-        //TODO do we need to pass init scoped members?
-        _organScaleSets = makeChordSequence(numChords, numExtraChords, numSemisPerOctave);
+        _organScaleSets = makeChordSequence();
         //playlogic
         if (wCheck.isPrecip) {
-          _rainArpScaleArray = createRainArpScale(numSemisPerOctave);
+          _rainArpScaleArray = createRainArpScale();
         }
         if (wCheck.isHumid && !wCheck.isPrecip) {
-          _humidArpScaleArray = createHumidArpScale(numSemisPerOctave);
+          _humidArpScaleArray = createHumidArpScale();
         }
         playSounds(_organScaleSets, _rainArpScaleArray, _humidArpScaleArray);
 			}
@@ -1129,42 +1149,60 @@ module.exports = function() {
         }
       }
 
+      function setLwDataVals(rawCoDisplayData, lwDataArr) {
+        return rawCoDisplayData.map(function(coDisplayObj) {
+          for (var i = 0; i < lwDataArr.length; i++) {
+            if (coDisplayObj.key === lwDataArr[i]) {
+              coDisplayObj.value = lwData[lwDataArr[i]].value === undefined ? lwData[lwDataArr[i]] : lwData[lwDataArr[i]].value;
+            }
+          }
+          return coDisplayObj;
+        });
+      }
+
+      function setLwDataNegVals(coDisplayDataLw, lwDataArr) {
+        return coDisplayDataLw.map(function(coDisplayObj) {
+          for (var i = 0; i < lwDataArr.length; i++) {
+            if (coDisplayObj.negativeKey === lwDataArr[i]) {
+              console.log('there was an lwData negativeKey');
+              coDisplayObj.negativeValue = lwData[lwDataArr[i]].value;
+            }
+          }
+          return coDisplayObj;
+        });
+      }
+
+      function setWcheckDataVals(coDisplayDataLwNeg, wCheckArr) {
+        return coDisplayDataLwNeg.map(function(coDisplayObj) {
+          for (var i = 0; i < wCheckArr.length; i++) {
+            if (coDisplayObj.key === wCheckArr[i]) {
+              coDisplayObj.value = wCheck[wCheckArr[i]];
+            }
+          }
+          return coDisplayObj;
+        });
+      }
+
+      function setWcheckDataNegVals(coDisplayDataWCheck, wCheckArr) {
+        return coDisplayDataWCheck.map(function(coDisplayObj) {
+          for (var i = 0; i < wCheckArr.length; i++) {
+            if (coDisplayObj.negativeKey === wCheckArr[i]) {
+              coDisplayObj.negativeValue = wCheck[wCheckArr[i]];
+            }
+          }
+          return coDisplayObj;
+        });
+      }
+
       function mapConditionsToDisplayData(rawCoDisplayData) {
         var _lwDataArr = Object.keys(lwData);
         var _wCheckArr = Object.keys(wCheck);
-        var _coDisplayDataLw = rawCoDisplayData.map(function(coDisplayObj) {
-          for (var i = 0; i < _lwDataArr.length; i++) {
-            if (coDisplayObj.key === _lwDataArr[i]) {
-              coDisplayObj.value = lwData[_lwDataArr[i]].value === undefined ? lwData[_lwDataArr[i]] : lwData[_lwDataArr[i]].value;
-            }
-          }
-          return coDisplayObj;
-        });
+        var _coDisplayDataLw = setLwDataVals(rawCoDisplayData, _lwDataArr);
         //TODO not sure this does anthing
-        var _coDisplayDataLwNeg = _coDisplayDataLw.map(function(coDisplayObj) {
-          for (var i = 0; i < _lwDataArr.length; i++) {
-            if (coDisplayObj.negativeKey === _lwDataArr[i]) {
-              coDisplayObj.negativeValue = lwData[_lwDataArr[i]].value;
-            }
-          }
-          return coDisplayObj;
-        });
-        var _coDisplayDataWCheck = _coDisplayDataLwNeg.map(function(coDisplayObj) {
-          for (var i = 0; i < _wCheckArr.length; i++) {
-            if (coDisplayObj.key === _wCheckArr[i]) {
-              coDisplayObj.value = wCheck[_wCheckArr[i]];
-            }
-          }
-          return coDisplayObj;
-        });
-        var _coDisplayDataWCheckNeg = _coDisplayDataWCheck.map(function(coDisplayObj) {
-          for (var i = 0; i < _wCheckArr.length; i++) {
-            if (coDisplayObj.negativeKey === _wCheckArr[i]) {
-              coDisplayObj.negativeValue = wCheck[_wCheckArr[i]];
-            }
-          }
-          return coDisplayObj;
-        });
+        //because negativeValues can only apply to booleans
+        var _coDisplayDataLwNeg = setLwDataNegVals(_coDisplayDataLw, _lwDataArr);
+        var _coDisplayDataWCheck = setWcheckDataVals(_coDisplayDataLwNeg, _wCheckArr);
+        var _coDisplayDataWCheckNeg = setWcheckDataNegVals(_coDisplayDataWCheck, _wCheckArr);
         return _coDisplayDataWCheckNeg;
       }
 
@@ -1205,8 +1243,7 @@ module.exports = function() {
       function setIconPath(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
           if (coProp.value) {
-            //TODO add probability
-            if(coProp.key === 'precipType' || coProp.key === 'precipIntensity') {
+            if(coProp.key === 'precipType' || coProp.key === 'precipIntensity' || coProp.key === 'precipProbability') {
               coProp.iconPath = '/img/' + lwData.precipType + '-icon.svg';
             }
           }
@@ -1423,6 +1460,9 @@ module.exports = function() {
             choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
           }
           dropSound = sketch.loadSound('/audio/drop.mp3');
+          //TODO make this sound
+          //At present its a copy of Light
+          dropSoftSound = sketch.loadSound('/audio/drop-soft.mp3');
           dropLightSound = sketch.loadSound('/audio/drop-light.mp3');
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');

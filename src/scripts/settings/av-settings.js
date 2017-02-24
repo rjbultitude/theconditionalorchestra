@@ -14,7 +14,11 @@ module.exports = {
   horn: {volume : 0.8},
   numPadNotes: 5,
   numChords: 3,
+  numChordsMin: 2,
+  numChordsMax: 6,
   mainSeqRepeat: 2,
+  mainSeqRepeatMin: 1,
+  mainSeqRepeatMax: 6,
   numRArpNotes: 12,
   numCArpNotes: 4, //should match closeIntervals
   numOctaves: 2,
