@@ -1460,8 +1460,6 @@ module.exports = function() {
             choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
           }
           dropSound = sketch.loadSound('/audio/drop.mp3');
-          //TODO make this sound
-          //At present its a copy of Light
           dropSoftSound = sketch.loadSound('/audio/drop-soft.mp3');
           dropLightSound = sketch.loadSound('/audio/drop-light.mp3');
           bass = sketch.loadSound('/audio/bass.mp3');
