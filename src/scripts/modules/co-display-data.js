@@ -434,7 +434,7 @@ module.exports = function() {
           },
           {
             key: 'isOther',
-            title: 'Not freezing or fine',
+            title: 'Not bitter or fine',
             value: true,
             constrain: false,
             unit: '',
