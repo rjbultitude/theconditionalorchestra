@@ -125,6 +125,10 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Horn is too loud and ends abruptly
+
+Flute needs more release and seems to be too high
+
 Long notes need more reverb, the flute in particular
 
 Some sounds (like the aero) haven't been tested yet

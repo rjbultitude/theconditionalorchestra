@@ -46,14 +46,14 @@ module.exports = function() {
   var humidArpPart;
   //long notes
   var longNotes;
-  //Rain / drops
+  //precipitation / drops
   var dropSound;
   var dropSoftSound;
   var dropLightSound;
-  var rainArpDropPhrase;
-  var rainArpDropSoftPhrase;
-  var rainArpDropLightPhrase;
-  var rainArpPart;
+  var precipArpDropPhrase;
+  var precipArpDropSoftPhrase;
+  var precipArpDropLightPhrase;
+  var precipArpPart;
   //windChime
   var windChime;
   //Globals
@@ -65,7 +65,7 @@ module.exports = function() {
   var sinVal = 0;
   var cosVal = 0;
   var panArr = [-0.8, 0, 0.8];
-  var rainDropsPattern = [];
+  var precipDropsPattern = [];
   var flttrBrassPattern = [];
   //Sound objects
   var padSounds = [];
@@ -74,8 +74,6 @@ module.exports = function() {
   var dialogIsOpen = false;
   // Visuals
   var temperatureColour = 0;
-  // For audioContext support
-  var pee5 = new P5();
   //Subscriptions
   var publishBrassOne;
   var publishBrassTwo;
@@ -96,7 +94,7 @@ module.exports = function() {
     }, 50);
   }
 
-  function fadeOutDisplayItem(thisDisplayItem, index, totalItems) {
+  function fadeOutDisplayItems(thisDisplayItem, index, totalItems, doneFn, doneArg) {
     var _opacity = 1;
     var _aniLoop = setInterval(function() {
       if (_opacity > 0) {
@@ -104,10 +102,11 @@ module.exports = function() {
         _opacity -= 0.05;
       } else {
         clearInterval(_aniLoop);
-        //empty the cdContainer
         //when all are done
         if (index + 1 === totalItems) {
-          cdContainer.innerHTML = '';
+          //Run the callback
+          console.log('done callback called');
+          doneFn(doneArg);
         }
       }
     }, 50);
@@ -145,11 +144,11 @@ module.exports = function() {
 
   function killCurrentSounds(autoStart) {
       // Stop arrpeggios
-      rainArpPart.stop(0);
+      precipArpPart.stop(0);
       //Bug fix here?
-      rainArpPart.removePhrase('rainDrops');
-      rainArpPart.removePhrase('rainDropsSoft');
-      rainArpPart.removePhrase('rainDropsLight');
+      precipArpPart.removePhrase('precipDrops');
+      precipArpPart.removePhrase('precipDropsSoft');
+      precipArpPart.removePhrase('precipDropsLight');
       humidArpPart.stop(0);
       //bug fix here?
       humidArpPart.removePhrase('flttrBrass');
@@ -173,7 +172,6 @@ module.exports = function() {
       publishBrassOne.unsubscribe();
       publishBrassTwo.unsubscribe();
       isPlaying = false;
-      console.log('autoStart', autoStart);
       channel.publish('allStopped', autoStart);
   }
 
@@ -338,7 +336,6 @@ module.exports = function() {
         _key = 'melancholyUpward';
       }
     }
-    console.log('chord seq type', _key);
     return _key;
   }
 
@@ -547,12 +544,12 @@ module.exports = function() {
     freezingFilter = new P5.HighPass();
     reverb = new P5.Reverb();
     // Create phrase: name, callback, sequence
-    rainArpDropPhrase = new P5.Phrase('rainDrops', makeDropSound, rainDropsPattern);
-    rainArpDropSoftPhrase = new P5.Phrase('rainDropsSoft', makeDropSoftSound, rainDropsPattern);
-    rainArpDropLightPhrase = new P5.Phrase('rainDropsLight', makeDropLightSound, rainDropsPattern);
+    precipArpDropPhrase = new P5.Phrase('precipDrops', makeDropSound, precipDropsPattern);
+    precipArpDropSoftPhrase = new P5.Phrase('precipDropsSoft', makeDropSoftSound, precipDropsPattern);
+    precipArpDropLightPhrase = new P5.Phrase('precipDropsLight', makeDropLightSound, precipDropsPattern);
     humidArpPhrase = new P5.Phrase('flttrBrass', makeHarpSound, flttrBrassPattern);
     humidArpPart = new P5.Part();
-    rainArpPart = new P5.Part();
+    precipArpPart = new P5.Part();
   }
 
 	// main app init
@@ -697,28 +694,32 @@ module.exports = function() {
         humidArpPart.addPhrase(humidArpPhrase);
         humidArpPart.setBPM(humidArpBpm);
         humidArpPart.playingMelody = true;
-        humidArpPart.loop();
+        humidArpPart.start();
+        //humidArpPart.loop();
+        console.log('humidArpPart', humidArpPart);
       }
 
-      function playRainArp(rainArpScaleArray) {
+      function playPrecipArp(precipArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray = addRandomStops(rainArpScaleArray).reverse();
+        var _newNotesArray = addRandomStops(precipArpScaleArray).reverse();
         //CHANGE
         //sequences were set outside of if
         //Only use dropSound for rain
         if (precipCategory === 'hard') {
-          rainArpDropPhrase.sequence = _newNotesArray;
-          rainArpPart.addPhrase(rainArpDropPhrase);
+          precipArpDropPhrase.sequence = _newNotesArray;
+          precipArpPart.addPhrase(precipArpDropPhrase);
         } else if(precipCategory === 'soft') {
-          rainArpDropSoftPhrase.sequence = _newNotesArray;
-          rainArpPart.addPhrase(rainArpDropSoftPhrase);
+          precipArpDropSoftPhrase.sequence = _newNotesArray;
+          precipArpPart.addPhrase(precipArpDropSoftPhrase);
         } else {
-          rainArpDropLightPhrase.sequence = _newNotesArray;
-          rainArpPart.addPhrase(rainArpDropLightPhrase);
+          precipArpDropLightPhrase.sequence = _newNotesArray;
+          precipArpPart.addPhrase(precipArpDropLightPhrase);
         }
-        rainArpPart.setBPM(precipArpBpm);
-        rainArpPart.playingMelody = true;
-        rainArpPart.loop();
+        precipArpPart.setBPM(precipArpBpm);
+        precipArpPart.playingMelody = true;
+        //precipArpPart.loop();
+        precipArpPart.start();
+        console.log('precipArpPart', precipArpPart);
       }
 
       function playBrassBaritone(scale) {
@@ -872,11 +873,11 @@ module.exports = function() {
        * playSounds Handles playback logic
        * Though some of this is delegated
        * @param  {Array} padScales    sets of notes to play
-       * @param  {Array} rainArpScaleArray a set of notes fot the sequencer to play
+       * @param  {Array} precipArpScaleArray a set of notes fot the sequencer to play
        * @param  {Array} humidArpScaleArray a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
-			function playSounds(padScales, rainArpScaleArray, humidArpScaleArray) {
+			function playSounds(padScales, precipArpScaleArray, humidArpScaleArray) {
         // Fine conditions
         handleChoralSound(padScales[0]);
         // Play brass
@@ -898,9 +899,9 @@ module.exports = function() {
         if (humidArpScaleArray.length > 0) {
           playHumidArp(humidArpScaleArray);
         }
-        //Rain arpeggio
-        if (rainArpScaleArray.length > 0) {
-          playRainArp(rainArpScaleArray);
+        //Precipitation arpeggio
+        if (precipArpScaleArray.length > 0) {
+          playPrecipArp(precipArpScaleArray);
         }
         windChime.loop();
         windChime.rate(windChimeRate);
@@ -1092,8 +1093,8 @@ module.exports = function() {
         return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
       }
 
-      function createRainArpScale() {
-        var _rArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
+      function createPrecipArpScale() {
+        var _pArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
         var _repeatMultiple = 1;
         var _intervalIndexOffset = 0;
         var _intervalType;
@@ -1103,8 +1104,7 @@ module.exports = function() {
           _intervalType = 'safeNthMinorIntervals';
         }
         _repeatMultiple = 2;
-        //console.log('rain arp _intervalType', _intervalType);
-        return createMusicalScale(avSettings.numRArpNotes, _rArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple, 'rain arp');
+        return createMusicalScale(avSettings.numRArpNotes, _pArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple, 'precip arp');
       }
 
       /*
@@ -1117,7 +1117,7 @@ module.exports = function() {
        */
 			function configureSounds() {
         var _organScaleSets = [];
-        var _rainArpScaleArray = [];
+        var _precipArpScaleArray = [];
         var _humidArpScaleArray = [];
         // Set filter for pad sounds
         setFilter();
@@ -1125,12 +1125,12 @@ module.exports = function() {
         _organScaleSets = makeChordSequence();
         //playlogic
         if (wCheck.isPrecip) {
-          _rainArpScaleArray = createRainArpScale();
+          _precipArpScaleArray = createPrecipArpScale();
         }
         if (wCheck.isHumid && !wCheck.isPrecip) {
           _humidArpScaleArray = createHumidArpScale();
         }
-        playSounds(_organScaleSets, _rainArpScaleArray, _humidArpScaleArray);
+        playSounds(_organScaleSets, _precipArpScaleArray, _humidArpScaleArray);
 			}
 
       function outputChordSeqType() {
@@ -1388,7 +1388,6 @@ module.exports = function() {
                 break;
               case 'padTypeMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, padType);
-                console.log('padTypeMap _currArr', _currArr);
                 break;
               case 'inversionMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, inversionOffsetType);
@@ -1540,26 +1539,27 @@ module.exports = function() {
             humidArpPart.stop();
             humidArpPart.playingMelody = false;
             humidArpEnd(_humidArpPhrase.sequence);
-            console.log('humidArpPart should have stopped');
+            console.log('humidArpPart stopped');
           } else {
             humidArpPart.setBPM(humidArpBpm);
             humidArpPart.loop();
             humidArpPart.playingMelody = true;
-            console.log('humidArpPart should be playing');
+            console.log('humidArpPart playing');
           }
         }
       }
 
-      function updateRainArp() {
+      function updatePrecipArp() {
         if (sketch.frameCount % 1800 === 0 && sketch.frameCount !== 0) {
-          if (rainArpPart.playingMelody) {
-            rainArpPart.stop();
-            rainArpPart.playingMelody = false;
-            console.log('rainArpPart should have stopped');
+          if (precipArpPart.playingMelody) {
+            precipArpPart.stop();
+            precipArpPart.playingMelody = false;
+            console.log('precipArpPart stopped');
           } else {
-            rainArpPart.loop();
-            rainArpPart.playingMelody = true;
-            console.log('rainArpPart should be playing');
+            precipArpPart.setBPM(precipArpBpm);
+            precipArpPart.loop();
+            precipArpPart.playingMelody = true;
+            console.log('precipArpPart playing');
           }
         }
       }
@@ -1574,7 +1574,7 @@ module.exports = function() {
           updateBrass();
         }
         if (wCheck.isPrecip) {
-          updateRainArp();
+          updatePrecipArp();
         }
         if (wCheck.isHumid && !wCheck.isPrecip) {
           updateHumidArp();
@@ -1595,8 +1595,8 @@ module.exports = function() {
 	}
 
   // Check for audioContext support
-  function isAudioSuppored(pee5) {
-    if(pee5.noWebAudioCtx) {
+  function isAudioSuppored() {
+    if (!window.AudioContext && !window.webkitAudioContext) {
       return false;
     } else {
       createP5SoundObjs();
@@ -1605,7 +1605,7 @@ module.exports = function() {
   }
 
 	channel.subscribe('userUpdate', function(data) {
-    audioSupported = isAudioSuppored(pee5);
+    audioSupported = isAudioSuppored();
     init(data);
 	});
 
@@ -1617,12 +1617,16 @@ module.exports = function() {
     dialogIsOpen = false;
   });
 
+  function clearAndStopWhenDone(autoStart) {
+    cdContainer.innerHTML = '';
+    killCurrentSounds(autoStart);
+  }
+
   channel.subscribe('stop', function(autoStart) {
     var _allDisplayItems = document.querySelectorAll('.conditions-display__item');
     for (var i = 0; i < _allDisplayItems.length; i++) {
-      fadeOutDisplayItem(_allDisplayItems[i], i, _allDisplayItems.length);
+      fadeOutDisplayItems(_allDisplayItems[i], i, _allDisplayItems.length, clearAndStopWhenDone, autoStart);
     }
-    killCurrentSounds(autoStart);
   });
 
 	return true;
