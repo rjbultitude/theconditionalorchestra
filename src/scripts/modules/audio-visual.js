@@ -105,7 +105,6 @@ module.exports = function() {
         //when all are done
         if (index + 1 === totalItems) {
           //Run the callback
-          console.log('done callback called');
           doneFn(doneArg);
         }
       }
