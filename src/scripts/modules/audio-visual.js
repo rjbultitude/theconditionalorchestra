@@ -40,6 +40,7 @@ module.exports = function() {
   var harpSoundTwo;
   //Percussion
   var cymbals;
+  var cymbalsRide;
   //clement / brass
   var harpSound;
   var humidArpPhrase;
@@ -94,7 +95,7 @@ module.exports = function() {
     }, 50);
   }
 
-  function fadeOutDisplayItems(thisDisplayItem, index, totalItems, doneFn, doneArg) {
+  function fadeOutDisplayItems(thisDisplayItem, index, totalItems, doneFn, autoStart) {
     var _opacity = 1;
     var _aniLoop = setInterval(function() {
       if (_opacity > 0) {
@@ -105,7 +106,7 @@ module.exports = function() {
         //when all are done
         if (index + 1 === totalItems) {
           //Run the callback
-          doneFn(doneArg);
+          doneFn(autoStart);
         }
       }
     }, 50);
@@ -166,6 +167,7 @@ module.exports = function() {
         windChime.stop();
         bass.stop();
         cymbals.stop();
+        cymbalsRide.stop();
       }, avSettings.fadeTime * 1000);
       //Unsubs
       publishBrassOne.unsubscribe();
@@ -198,12 +200,15 @@ module.exports = function() {
     dropLightSound.play(time, playbackRate, volume);
   }
 
-  function getLongNoteType(lwData) {
+  function getLongNoteType(wCheck) {
     var _longNoteType;
     //playlogic
-    if (lwData.precipProbability.value >= 0.5) {
+    //This errs towards the flute
+    if (wCheck.isMuggy) {
       _longNoteType = 'harmonica';
-    } else if (lwData.precipProbability.value >= 0.25) {
+    } else if (wCheck.isArid) {
+      _longNoteType = 'shiney';
+    } else if (wCheck.isHarsh) {
       _longNoteType = 'string';
     } else {
       _longNoteType = 'flute';
@@ -290,6 +295,8 @@ module.exports = function() {
       padType = 'guitar';
     } else if (wCheck.isCold) {
       padType = 'saxophone';
+    } else if (wCheck.isFreezing) {
+      padType = 'zummarta';
     } else if (wCheck.isFine) {
       padType = 'aeroflute';
     } else {
@@ -535,6 +542,16 @@ module.exports = function() {
     );
   }
 
+  function getCymbalsRideVolume(lwData) {
+    return microU.mapRange(
+      Math.round(lwData.precipProbability.value),
+      lwData.precipProbability.min,
+      lwData.precipProbability.max,
+      0,
+      0.8
+    );
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -573,9 +590,13 @@ module.exports = function() {
     var wCheck = {
       //single concept items
       isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value),
-      isHumid: weatherCheck.isHumid(lwData.humidity.value),
       isWindy: weatherCheck.isWindy(lwData.windSpeed.value),
       isCloudy: weatherCheck.isCloudy(lwData.cloudCover.value),
+      //Humidity
+      isHumid: weatherCheck.isHumid(lwData.humidity.value),
+      isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
+      isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature.value),
+      isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value),
       //temperature
       isCold: weatherCheck.isCold(lwData.temperature.value),
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
@@ -605,11 +626,12 @@ module.exports = function() {
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var longNoteOffset = getLongNoteOffset(lwData);
-    var longNoteType = getLongNoteType(lwData);
+    var longNoteType = getLongNoteType(wCheck);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
     var cymbalsRate = getCymbalsRate(lwData);
     var cymbalsVolume = getCymbalsVolume(lwData);
+    var cymbalsRideVolume = getCymbalsRideVolume(lwData);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -1288,7 +1310,7 @@ module.exports = function() {
                 coProp.musicValue = outputPrecipArpType();
                 break;
               case 'precipProbability':
-                coProp.musicValue = longNoteType;
+                coProp.musicValue = cymbalsRideVolume.toFixed(2);
                 break;
               case 'nearestStormBearing':
                 coProp.musicValue = cymbalsRate.toFixed(2);
@@ -1388,6 +1410,9 @@ module.exports = function() {
               case 'padTypeMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, padType);
                 break;
+              case 'longNoteTypeMap':
+                _currArr = addOtherMapVals(_constrainedDisplayData, longNoteType);
+                break;
               case 'inversionMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, inversionOffsetType);
                 break;
@@ -1425,17 +1450,19 @@ module.exports = function() {
 			//Sound constructor
 			//changes to this may need to be reflected
 			//within the volume objects in avSettings
-			function PadSound(organ, guitar, sax, aeroflute, horn) {
+			function PadSound(organ, guitar, sax, aeroflute, zummarta, horn) {
 				this.organ = organ;
 				this.guitar = guitar;
 				this.saxophone = sax;
 				this.aeroflute = aeroflute;
+				this.zummarta = zummarta;
 				this.horn = horn;
 			}
 
-      function LongNotes(harmonica, flute, string) {
+      function LongNotes(harmonica, flute, harmonium, string) {
         this.harmonica = harmonica;
         this.flute = flute;
+        this.harmonium = harmonium;
         this.string = string;
       }
 
@@ -1450,6 +1477,9 @@ module.exports = function() {
               sketch.loadSound('/audio/guitar-C2.mp3'),
               sketch.loadSound('/audio/sax-C2.mp3'),
               sketch.loadSound('/audio/aeroflute-C2.mp3'),
+              //TODO try this
+              //sketch.loadSound('/audio/zummarta-C2.mp3'),
+              sketch.loadSound('/audio/harmonium-C2.mp3'),
               sketch.loadSound('/audio/horn-C2.mp3')
             ));
           }
@@ -1468,10 +1498,12 @@ module.exports = function() {
           longNotes = new LongNotes(
             sketch.loadSound('/audio/harmonica-C3.mp3'),
             sketch.loadSound('/audio/flute-C3.mp3'),
+            sketch.loadSound('/audio/shiney-C3.mp3'),
             sketch.loadSound('/audio/string-C3.mp3')
           );
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
           cymbals = sketch.loadSound('/audio/cymbals.mp3');
+          cymbalsRide = sketch.loadSound('/audio/cymbals2.mp3');
         }
 			};
 
@@ -1502,6 +1534,14 @@ module.exports = function() {
           cymbals.play();
           cymbals.setVolume(cymbalsVolume);
           cymbals.rate(cymbalsRate);
+        }
+      }
+
+      function updateCymbalsRide() {
+        if (sketch.frameCount % 1450 === 0 && sketch.frameCount !== 0) {
+          cymbalsRide.play();
+          cymbalsRide.setVolume(cymbalsRideVolume);
+          cymbalsRide.rate(cymbalsRate);
         }
       }
 
@@ -1568,6 +1608,7 @@ module.exports = function() {
         //playlogic
         if (wCheck.isCloudy || wCheck.isWindy) {
           updateCymbals();
+          updateCymbalsRide();
         }
         if (wCheck.isWindy) {
           updateBrass();

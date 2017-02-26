@@ -125,15 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Horn is too loud and ends abruptly
-
-Flute needs more release and seems to be too high
-
-Long notes need more reverb, the flute in particular
-
 Some sounds (like the aero) haven't been tested yet
-
-Cymbals aren't dramatic enough - add another sound that is panned away from the other
 
 Some arpeggio melodies still clash a little with the chords
 
@@ -155,6 +147,10 @@ Test offline, bad connection states (after refactor of handleNoGeoData fn)
 May need to Upgrade to google maps 3 : https://developers.google.com/maps/documentation/javascript/v2tov3
 
 ###Bugs
+
+Choral sound seems to be only one semitone apart
+
+Not totally sure about the longNote octave offset
 
 Sequencer doesn't honor tempo when app state changes
 

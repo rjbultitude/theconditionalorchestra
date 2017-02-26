@@ -140,6 +140,16 @@ module.exports = function() {
             musicAppendage: ' bpm'
           },
           {
+            key: 'precipProbability',
+            title: 'Precipitation probability',
+            value: '',
+            constrain: true,
+            unit: '',
+            iconPath: '/img/rain-icon.svg',
+            music: 'Ride cymbals volume is ',
+            musicValue: ''
+          },
+          {
             key: 'isWindy',
             title: 'High winds',
             value: '',
@@ -159,16 +169,6 @@ module.exports = function() {
             music: 'Long note is ',
             musicValue: '',
             musicAppendage: ' note within chord'
-          },
-          {
-            key: 'precipProbability',
-            title: 'Pecipitation probability',
-            value: '',
-            constrain: true,
-            unit: '',
-            iconPath: '/img/rain-icon.svg',
-            music: 'Long note is a ',
-            musicValue: ''
           },
           {
             key: 'nearestStormBearing',
@@ -366,6 +366,48 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/weather-icon.svg',
             music: 'Pad instrument is ',
+            musicValue: ''
+          }
+        ],
+        longNoteTypeMap: [
+          {
+            key: 'isMuggy',
+            title: 'Muggy weather',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/humidity-icon.svg',
+            music: 'Long note is a ',
+            musicValue: ''
+          },
+          {
+            key: 'isArid',
+            title: 'Warm arid conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/humidity-icon.svg',
+            music: 'Long note is a ',
+            musicValue: ''
+          },
+          {
+            key: 'isCrisp',
+            title: 'Cold, dry conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/humidity-icon.svg',
+            music: 'Long note is a ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Neither muggy, arid nor crisp',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/humidity-icon.svg',
+            music: 'Long note is a ',
             musicValue: ''
           }
         ],

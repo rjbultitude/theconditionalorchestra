@@ -22,6 +22,17 @@ module.exports = {
     return humidity > 0.4;
   },
 
+  isMuggy: function(humidity, temperatureInFrnht) {
+    return humidity > 0.4 && frnhtToCelcius(temperatureInFrnht) > 15;
+  },
+
+  isArid: function(humidity, temperatureInFrnht) {
+    return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) > 15;
+  },
+
+  isCrisp: function(humidity, temperatureInFrnht) {
+    return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) < 0;
+  },
 
   // @param windSpeed floating point
   isWindy: function(windSpeed) {
@@ -48,10 +59,9 @@ module.exports = {
   /**
    * Broad concept conditions
    */
-
   // @param temperatureInFrnht floating point
   isFine: function(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 8 && cloudCover < 0.25;
+   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover < 0.25;
   },
 
   // @param cloudCover floating point
