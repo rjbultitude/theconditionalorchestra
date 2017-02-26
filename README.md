@@ -152,6 +152,8 @@ Choral sound seems to be only one semitone apart
 
 Not totally sure about the longNote octave offset
 
+LongNote playMode could be a target for weather data
+
 Sequencer doesn't honor tempo when app state changes
 
 After stop fade out is louder than normal playback, firefox only

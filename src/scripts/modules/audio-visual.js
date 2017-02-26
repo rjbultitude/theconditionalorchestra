@@ -66,8 +66,8 @@ module.exports = function() {
   var sinVal = 0;
   var cosVal = 0;
   var panArr = [-0.8, 0, 0.8];
-  var precipDropsPattern = [];
-  var flttrBrassPattern = [];
+  var precipDropsPattern = [1.0000, 1.12246, 1.33483, 1.49831, 1.68179];
+  var flttrBrassPattern = [1.0000, 1.12246, 1.33483, 1.49831, 1.68179];
   //Sound objects
   var padSounds = [];
   var choralSounds = [];
@@ -178,7 +178,7 @@ module.exports = function() {
 
   function makeHarpSound(time, playbackRate, volume) {
     harpSound.rate(playbackRate);
-    harpSound.setVolume(0.15);
+    harpSound.setVolume(0.2);
     harpSound.play(time, playbackRate, volume);
   }
 
@@ -325,8 +325,6 @@ module.exports = function() {
   function getChordSeqKey(wCheck, rootNoteHigh) {
     var _key;
     //playlogic
-    // important!
-    // may need to include isPrecip
     if (wCheck.isFine || wCheck.isFreezing || wCheck.isWindy) {
       _key = 'noChordOffset';
     } else if (wCheck.isClement) {
@@ -710,13 +708,14 @@ module.exports = function() {
       function playHumidArp(humidArpScaleArray) {
         //Overwrite sequence with new notes
         var _newNotesArray = getAllegrettoRhythmType(humidArpScaleArray);
-        humidArpPhrase.sequence = _newNotesArray;
+        //humidArpPhrase.sequence = _newNotesArray;
+        //humidArpPart.replaceSequence('flttrBrass', _newNotesArray);
         //Play Sequence
         humidArpPart.addPhrase(humidArpPhrase);
         humidArpPart.setBPM(humidArpBpm);
         humidArpPart.playingMelody = true;
-        humidArpPart.start();
-        //humidArpPart.loop();
+        //humidArpPart.start();
+        humidArpPart.loop();
         console.log('humidArpPart', humidArpPart);
       }
 
@@ -729,7 +728,7 @@ module.exports = function() {
         if (precipCategory === 'hard') {
           precipArpDropPhrase.sequence = _newNotesArray;
           precipArpPart.addPhrase(precipArpDropPhrase);
-        } else if(precipCategory === 'soft') {
+        } else if (precipCategory === 'soft') {
           precipArpDropSoftPhrase.sequence = _newNotesArray;
           precipArpPart.addPhrase(precipArpDropSoftPhrase);
         } else {
@@ -738,8 +737,8 @@ module.exports = function() {
         }
         precipArpPart.setBPM(precipArpBpm);
         precipArpPart.playingMelody = true;
-        //precipArpPart.loop();
-        precipArpPart.start();
+        precipArpPart.loop();
+        //precipArpPart.start();
         console.log('precipArpPart', precipArpPart);
       }
 
@@ -789,7 +788,7 @@ module.exports = function() {
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));
         _longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
-        _longNote.playMode('restart');
+        //_longNote.playMode('restart');
         _longNote.play();
       }
 
@@ -864,30 +863,25 @@ module.exports = function() {
         }
       }
 
-      function handleChoralSound(scaleArray) {
+      function playChoralSound(scaleArray) {
         // playlogic
-        if (wCheck.isFine || wCheck.isFreezing) {
-          choralSounds.forEach(function(choralSound, i) {
-            // must loop before rate is set
-            // issue in Chrome only
-            if (wCheck.isFreezing) {
-              choralSound.disconnect();
-              choralSound.connect(freezingFilter);
-            }
-            choralSound.loop();
-            //playlogic
-            if (wCheck.isFreezing) {
-              choralSound.rate(scaleArray[i] / 2);
-              choralSound.setVolume(0.23);
-            } else {
-              choralSound.rate(scaleArray[i]);
-              choralSound.setVolume(0.1);
-            }
-            //console.log('weather is fine or freezing. playing choralSounds rate ', choralSound);
-          });
-        } else {
-          //console.log('weather is not fine or freezing. No choralSounds');
-        }
+        choralSounds.forEach(function(choralSound, i) {
+          // must loop before rate is set
+          // issue in Chrome only
+          if (wCheck.isFreezing) {
+            choralSound.disconnect();
+            choralSound.connect(freezingFilter);
+          }
+          choralSound.loop();
+          //playlogic
+          if (wCheck.isFreezing) {
+            choralSound.rate(scaleArray[i] / 2);
+            choralSound.setVolume(0.23);
+          } else {
+            choralSound.rate(scaleArray[i]);
+            choralSound.setVolume(0.1);
+          }
+        });
       }
 
       /**
@@ -899,8 +893,11 @@ module.exports = function() {
        * @return {boolean}               default value
        */
 			function playSounds(padScales, precipArpScaleArray, humidArpScaleArray) {
-        // Fine conditions
-        handleChoralSound(padScales[0]);
+        // playlogic
+        // Only the first chord is passed in
+        if (wCheck.isFine || wCheck.isFreezing) {
+          playChoralSound(padScales[0]);
+        }
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
           //playlogic
@@ -1639,13 +1636,13 @@ module.exports = function() {
     if (!window.AudioContext && !window.webkitAudioContext) {
       return false;
     } else {
-      createP5SoundObjs();
       return true;
     }
   }
 
 	channel.subscribe('userUpdate', function(data) {
     audioSupported = isAudioSuppored();
+    createP5SoundObjs();
     init(data);
 	});
 
