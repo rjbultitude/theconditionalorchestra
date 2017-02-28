@@ -187,23 +187,20 @@ module.exports = function() {
 
   function makeDropSound(time, playbackRate) {
     dropSound.rate(playbackRate);
-    dropSound.setVolume(0.2);
+    //dropSound.setVolume(0.2);
     dropSound.play(time, playbackRate);
-    //console.log('dropSound', dropSound);
   }
 
   function makeDropSoftSound(time, playbackRate) {
     dropSoftSound.rate(playbackRate);
-    dropSoftSound.setVolume(0.2);
+    //dropSoftSound.setVolume(0.2);
     dropSoftSound.play(time, playbackRate);
-    //console.log('dropSoftSound', dropSoftSound);
   }
 
   function makeDropLightSound(time, playbackRate, volume) {
     dropLightSound.rate(playbackRate);
-    dropLightSound.setVolume(0.2);
+    //dropLightSound.setVolume(0.2);
     dropLightSound.play(time, playbackRate, volume);
-    //console.log('dropLightSound', dropLightSound);
   }
 
   function getLongNoteType(wCheck) {
