@@ -137,6 +137,8 @@ Consider only playing arpeggios when the inversions are being used
 
 Modulate padSounds volume/rate/pan for windy conditions - requires sounds to be assigned to master channel
 
+Create 'Add to home screen' button
+
 Update logic App Logic and spreadsheet
 
 Consider program reflow where only one master set of frequencies is used for all instruments.
