@@ -125,6 +125,8 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Going to have to write my own simple sequencer as the bug with p5.part is unfixable
+
 Some sounds (like the aero) haven't been tested yet
 
 Some arpeggio melodies still clash a little with the chords
