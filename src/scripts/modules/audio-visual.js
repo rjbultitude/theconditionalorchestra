@@ -46,9 +46,7 @@ module.exports = function() {
   //long notes
   var longNotes;
   //precipitation / drops
-  var dropSound;
-  var dropSoftSound;
-  var dropLightSound;
+  var dropSounds;
   //windChime
   var windChime;
   //Globals
@@ -104,6 +102,19 @@ module.exports = function() {
     }, 50);
   }
 
+  //TODO could use same function
+  //as fadeLongNotes
+  function fadeDropSounds() {
+    for (var _dropSound in dropSounds) {
+      if (longNotes.hasOwnProperty(_dropSound)) {
+        dropSounds[_dropSound].fade(0, avSettings.fadeTime);
+        setTimeout(function(){
+          dropSounds[_dropSound].stop();
+        }, avSettings.fadeTime * 1000);
+      }
+    }
+  }
+
   function fadeOutPadSounds(soundItem) {
     function stopPadSounds(padSound) {
       setTimeout(function() {
@@ -139,20 +150,23 @@ module.exports = function() {
       choralSounds.forEach(fadeChoralSounds);
       fadeLongNotes();
       // Stop arrpeggios
-      dropSound.stop();
-      dropSoftSound.stop();
-      dropLightSound.stop();
+      fadeDropSounds();
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
       harpSoundTwo.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
+      harpSound.fade(0, avSettings.fadeTime);
+      cymbals.fade(0, avSettings.fadeTime);
+      cymbalsRide.fade(0, avSettings.fadeTime);
+      //Stop after fades
       setTimeout(function(){
         brassBaritone.stop();
         brassBaritone2.stop();
         harpSoundTwo.stop();
         windChime.stop();
         bass.stop();
+        harpSound.stop();
         cymbals.stop();
         cymbalsRide.stop();
       }, avSettings.fadeTime * 1000);
@@ -422,6 +436,19 @@ module.exports = function() {
     }
   }
 
+  //TODO could use regex
+  function getDropSoundKey(precipCategory) {
+    if (precipCategory === 'hard') {
+      return 'dropSound';
+    } else if (precipCategory === 'soft') {
+      return 'dropSoftSound';
+    } else if (precipCategory === 'light') {
+      return 'dropLightSound';
+    } else {
+      return undefined;
+    }
+  }
+
   function getPrecipArpBpm(lwData) {
     // playlogic
     return Math.round(microU.mapRange(
@@ -533,6 +560,12 @@ module.exports = function() {
     var brassTwoScaleArrayIndex = 0;
     var scaleSetIndex = 0;
     var padIndexCount = 0;
+    var precipArpScale = [];
+    var humidArpScale = [];
+    var humidArpReady = false;
+    var precipArpReady = false;
+    var precipArpScaleIndex;
+    var humidArpScaleIndex;
     var freezingFilterFreq = 2000;
     var windChimeRate = 1;
     var windChimeVol = 0.4;
@@ -570,6 +603,7 @@ module.exports = function() {
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     var precipCategory = getPrecipCategory(lwData);
     var precipArpBpm = getPrecipArpBpm(lwData);
+    var dropSoundKey = getDropSoundKey(precipCategory);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
@@ -663,26 +697,14 @@ module.exports = function() {
 
       function playHumidArp(humidArpScaleArray) {
         //Overwrite sequence with new notes
-        var _newNotesArray = getAllegrettoRhythmType(humidArpScaleArray);
+        humidArpScale = getAllegrettoRhythmType(humidArpScaleArray);
         humidArpReady = true;
       }
 
       function playPrecipArp(precipArpScaleArray) {
         //Overwrite sequence with new notes
-        setTimeout(function() {
-          var _newNotesArray = addRandomStops(precipArpScaleArray).reverse();
-          if (precipCategory === 'hard') {
-            precipArpPart.addPhrase('precipDrops', makeDropSound, _newNotesArray);
-          } else if (precipCategory === 'soft') {
-            precipArpPart.addPhrase('precipDropsSoft', makeDropSoftSound, _newNotesArray);
-          } else {
-            precipArpPart.addPhrase('precipDropsLight', makeDropLightSound, _newNotesArray);
-          }
-          precipArpPart.setBPM(precipArpBpm);
-          precipArpPart.start();
-          precipArpPart.playingMelody = true;
-          console.log('precipArpPart', precipArpPart);
-        }, 2000);
+        precipArpScale = addRandomStops(precipArpScaleArray).reverse();
+        precipArpReady = true;
       }
 
       function playBrassBaritone(scale) {
@@ -1080,10 +1102,10 @@ module.exports = function() {
         var _organScaleSets = [];
         var _precipArpScaleArray = [];
         var _humidArpScaleArray = [];
-        // Set filter for pad sounds
-        setFilter();
         //Make arrays of frequencies for playback
         _organScaleSets = makeChordSequence();
+        // Set filter for pad sounds
+        setFilter();
         //playlogic
         if (wCheck.isPrecip) {
           _precipArpScaleArray = createPrecipArpScale();
@@ -1519,51 +1541,24 @@ module.exports = function() {
         freezingFilterFreq++;
       }
 
-      function makeHarpSound(time, playbackRate) {
-        harpSound.rate(playbackRate);
-        harpSound.setVolume(0.2);
-        harpSound.play(time, playbackRate);
-      }
-
-      function makeDropSound(time, playbackRate) {
-        dropSound.rate(playbackRate);
-        //dropSound.setVolume(0.2);
-        dropSound.play(time, playbackRate);
-      }
-
-      function makeDropSoftSound(time, playbackRate) {
-        dropSoftSound.rate(playbackRate);
-        //dropSoftSound.setVolume(0.2);
-        dropSoftSound.play(time, playbackRate);
-      }
-
-      function makeDropLightSound(time, playbackRate, volume) {
-        dropLightSound.rate(playbackRate);
-        //dropLightSound.setVolume(0.2);
-        dropLightSound.play(time, playbackRate, volume);
-      }
-
       function updateHumidArp() {
-        var _humidArpPhrase = humidArpPart.getPhrase('flttrBrass');
-        if (sketch.frameCount % 1200 === 0 && sketch.frameCount !== 0) {
-          if (humidArpPart.playingMelody) {
-            humidArpPart.stop();
-            humidArpPart.playingMelody = false;
-            humidArpEnd(_humidArpPhrase.sequence);
-            console.log('humidArpPart stopped');
-          } else {
-            humidArpPart.setBPM(humidArpBpm);
-            humidArpPart.loop();
-            humidArpPart.playingMelody = true;
-            console.log('humidArpPart playing');
-          }
+        //TODO replace 200 with tempo
+        if (sketch.frameCount % 200 === 0) {
+          harpSound.rate(humidArpScale[humidArpScaleIndex]);
+          harpSound.setVolume(0.2);
+          harpSound.play();
+          humidArpScaleIndex++;
+        }
+        if (humidArpScaleIndex === 40) {
+          humidArpEnd(humidArpScale);
         }
       }
 
       function updatePrecipArp() {
         //TODO replace 200 with tempo
         if (sketch.frameCount % 200 === 0) {
-          dropSounds[dropSoundKey].rate(_precipArpScaleArray[precipArpScaleIndex]);
+          dropSounds[dropSoundKey].rate(precipArpScale[precipArpScaleIndex]);
+          dropSounds[dropSoundKey].setVolume(0.2);
           dropSounds[dropSoundKey].play();
           precipArpScaleIndex++;
         }
