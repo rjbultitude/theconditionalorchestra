@@ -43,18 +43,12 @@ module.exports = function() {
   var cymbalsRide;
   //clement / brass
   var harpSound;
-  var humidArpPhrase;
-  var humidArpPart;
   //long notes
   var longNotes;
   //precipitation / drops
   var dropSound;
   var dropSoftSound;
   var dropLightSound;
-  var precipArpDropPhrase;
-  var precipArpDropSoftPhrase;
-  var precipArpDropLightPhrase;
-  var precipArpPart;
   //windChime
   var windChime;
   //Globals
@@ -141,23 +135,13 @@ module.exports = function() {
   }
 
   function killCurrentSounds(autoStart) {
-      // Stop arrpeggios
-      precipArpPart.noLoop();
-      precipArpPart.stop();
-      humidArpPart.noLoop();
-      humidArpPart.stop();
-      //Remove all these objects
-      //from memory
-      humidArpPhrase = null;
-      humidArpPart = null;
-      precipArpPart = null;
-      precipArpDropPhrase = null;
-      precipArpDropSoftPhrase = null;
-      precipArpDropLightPhrase = null;
-
       padSounds.forEach(fadeOutPadSounds);
       choralSounds.forEach(fadeChoralSounds);
       fadeLongNotes();
+      // Stop arrpeggios
+      dropSound.stop();
+      dropSoftSound.stop();
+      dropLightSound.stop();
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
       harpSoundTwo.fade(0, avSettings.fadeTime);
@@ -177,30 +161,6 @@ module.exports = function() {
       publishBrassTwo.unsubscribe();
       isPlaying = false;
       channel.publish('allStopped', autoStart);
-  }
-
-  function makeHarpSound(time, playbackRate) {
-    harpSound.rate(playbackRate);
-    harpSound.setVolume(0.2);
-    harpSound.play(time, playbackRate);
-  }
-
-  function makeDropSound(time, playbackRate) {
-    dropSound.rate(playbackRate);
-    //dropSound.setVolume(0.2);
-    dropSound.play(time, playbackRate);
-  }
-
-  function makeDropSoftSound(time, playbackRate) {
-    dropSoftSound.rate(playbackRate);
-    //dropSoftSound.setVolume(0.2);
-    dropSoftSound.play(time, playbackRate);
-  }
-
-  function makeDropLightSound(time, playbackRate, volume) {
-    dropLightSound.rate(playbackRate);
-    //dropLightSound.setVolume(0.2);
-    dropLightSound.play(time, playbackRate, volume);
   }
 
   function getLongNoteType(wCheck) {
@@ -560,8 +520,6 @@ module.exports = function() {
     soundFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
     reverb = new P5.Reverb();
-    humidArpPart = new P5.Part();
-    precipArpPart = new P5.Part();
   }
 
 	// main app init
@@ -706,12 +664,7 @@ module.exports = function() {
       function playHumidArp(humidArpScaleArray) {
         //Overwrite sequence with new notes
         var _newNotesArray = getAllegrettoRhythmType(humidArpScaleArray);
-        humidArpPart.addPhrase('flttrBrass', makeHarpSound, _newNotesArray);
-        humidArpPart.setBPM(humidArpBpm);
-        humidArpPart.playingMelody = true;
-        //humidArpPart.start();
-        humidArpPart.loop();
-        console.log('humidArpPart', humidArpPart);
+        humidArpReady = true;
       }
 
       function playPrecipArp(precipArpScaleArray) {
@@ -1453,6 +1406,12 @@ module.exports = function() {
         this.string = string;
       }
 
+      function DropSounds(dropSound, dropSoftSound, dropLightSound) {
+        this.dropSound = dropSound;
+        this.dropSoftSound = dropSoftSound;
+        this.dropLightSound = dropLightSound;
+      }
+
 			sketch.preload = function() {
 				//loadSound called during preload
 				//will be ready to play in time for setup
@@ -1474,9 +1433,11 @@ module.exports = function() {
           for (var j = 0; j < 2; j++) {
             choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
           }
-          dropSound = sketch.loadSound('/audio/drop.mp3');
-          dropSoftSound = sketch.loadSound('/audio/drop-soft.mp3');
-          dropLightSound = sketch.loadSound('/audio/drop-light.mp3');
+          dropSounds = new DropSounds(
+            sketch.loadSound('/audio/drop.mp3'),
+            sketch.loadSound('/audio/drop-soft.mp3'),
+            sketch.loadSound('/audio/drop-light.mp3')
+          );
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
@@ -1558,6 +1519,30 @@ module.exports = function() {
         freezingFilterFreq++;
       }
 
+      function makeHarpSound(time, playbackRate) {
+        harpSound.rate(playbackRate);
+        harpSound.setVolume(0.2);
+        harpSound.play(time, playbackRate);
+      }
+
+      function makeDropSound(time, playbackRate) {
+        dropSound.rate(playbackRate);
+        //dropSound.setVolume(0.2);
+        dropSound.play(time, playbackRate);
+      }
+
+      function makeDropSoftSound(time, playbackRate) {
+        dropSoftSound.rate(playbackRate);
+        //dropSoftSound.setVolume(0.2);
+        dropSoftSound.play(time, playbackRate);
+      }
+
+      function makeDropLightSound(time, playbackRate, volume) {
+        dropLightSound.rate(playbackRate);
+        //dropLightSound.setVolume(0.2);
+        dropLightSound.play(time, playbackRate, volume);
+      }
+
       function updateHumidArp() {
         var _humidArpPhrase = humidArpPart.getPhrase('flttrBrass');
         if (sketch.frameCount % 1200 === 0 && sketch.frameCount !== 0) {
@@ -1576,22 +1561,15 @@ module.exports = function() {
       }
 
       function updatePrecipArp() {
-        if (sketch.frameCount % 1800 === 0 && sketch.frameCount !== 0) {
-          if (precipArpPart.playingMelody) {
-            precipArpPart.stop();
-            precipArpPart.playingMelody = false;
-            console.log('precipArpPart stopped');
-          } else {
-            precipArpPart.setBPM(precipArpBpm);
-            precipArpPart.loop();
-            precipArpPart.playingMelody = true;
-            console.log('precipArpPart playing');
-          }
+        //TODO replace 200 with tempo
+        if (sketch.frameCount % 200 === 0) {
+          dropSounds[dropSoundKey].rate(_precipArpScaleArray[precipArpScaleIndex]);
+          dropSounds[dropSoundKey].play();
+          precipArpScaleIndex++;
         }
       }
 
 			sketch.draw = function draw() {
-        sketch.frameRate(30);
         //playlogic
         if (wCheck.isCloudy || wCheck.isWindy) {
           updateCymbals();
@@ -1601,10 +1579,14 @@ module.exports = function() {
           updateBrass();
         }
         if (wCheck.isPrecip) {
-          updatePrecipArp();
+          if (precipArpReady) {
+            updatePrecipArp();
+          }
         }
         if (wCheck.isHumid && !wCheck.isPrecip) {
-          updateHumidArp();
+          if (humidArpReady) {
+            updateHumidArp();
+          }
         }
         if (wCheck.isFreezing) {
           updateFilter();
