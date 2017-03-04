@@ -32,6 +32,9 @@ module.exports = function() {
   */
   var audioSupported = true;
   var isPlaying = false;
+  //rate
+  var appFrameRate = 25;
+  var framesPerMinute = appFrameRate * 60;
   //bass
   var bass;
   //Windy/ Brass
@@ -146,10 +149,10 @@ module.exports = function() {
   }
 
   function killCurrentSounds(autoStart) {
+      //Fades
       padSounds.forEach(fadeOutPadSounds);
       choralSounds.forEach(fadeChoralSounds);
       fadeLongNotes();
-      // Stop arrpeggios
       fadeDropSounds();
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
@@ -455,8 +458,8 @@ module.exports = function() {
       lwData.precipIntensity.value,
       lwData.precipIntensity.min,
       lwData.precipIntensity.max,
-      60,
-      150
+      framesPerMinute / 60,
+      framesPerMinute / 150
     ));
   }
 
@@ -465,8 +468,8 @@ module.exports = function() {
       lwData.humidity.value,
       lwData.humidity.min,
       lwData.humidity.max,
-      40,
-      70
+      framesPerMinute / 40,
+      framesPerMinute / 70
     ));
   }
 
@@ -564,8 +567,8 @@ module.exports = function() {
     var humidArpScale = [];
     var humidArpReady = false;
     var precipArpReady = false;
-    var precipArpScaleIndex;
-    var humidArpScaleIndex;
+    var precipArpScaleIndex = 0;
+    var humidArpScaleIndex = 0;
     var freezingFilterFreq = 2000;
     var windChimeRate = 1;
     var windChimeVol = 0.4;
@@ -1478,7 +1481,7 @@ module.exports = function() {
 			};
 
 			sketch.setup = function setup() {
-				sketch.frameRate(25);
+				sketch.frameRate(appFrameRate);
         //---------------------
         //set runtime constants
         //--------------------
@@ -1542,10 +1545,12 @@ module.exports = function() {
       }
 
       function updateHumidArp() {
-        //TODO replace 200 with tempo
-        if (sketch.frameCount % 200 === 0) {
+        if (sketch.frameCount % humidArpBpm === 0) {
+          if (humidArpScaleIndex >= humidArpScale.length) {
+            humidArpScaleIndex = 0;
+          }
           harpSound.rate(humidArpScale[humidArpScaleIndex]);
-          harpSound.setVolume(0.2);
+          harpSound.setVolume(0.5);
           harpSound.play();
           humidArpScaleIndex++;
         }
@@ -1555,10 +1560,12 @@ module.exports = function() {
       }
 
       function updatePrecipArp() {
-        //TODO replace 200 with tempo
-        if (sketch.frameCount % 200 === 0) {
+        if (sketch.frameCount % precipArpBpm === 0) {
+          if (precipArpScaleIndex >= precipArpScale.length) {
+            precipArpScaleIndex = 0;
+          }
           dropSounds[dropSoundKey].rate(precipArpScale[precipArpScaleIndex]);
-          dropSounds[dropSoundKey].setVolume(0.2);
+          dropSounds[dropSoundKey].setVolume(0.35);
           dropSounds[dropSoundKey].play();
           precipArpScaleIndex++;
         }
