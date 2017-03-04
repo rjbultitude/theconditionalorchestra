@@ -125,7 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Going to have to write my own simple sequencer as the bug with p5.part is unfixable
+Browser still shows audio playing icon when it's stopped
 
 Some sounds (like the aero) haven't been tested yet
 
