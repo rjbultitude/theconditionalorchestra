@@ -35,6 +35,7 @@ module.exports = function() {
   //rate
   var appFrameRate = 25;
   var framesPerMinute = appFrameRate * 60;
+  var sequenceStart = true;
   //bass
   var bass;
   //Windy/ Brass
@@ -452,6 +453,8 @@ module.exports = function() {
     }
   }
 
+  //TODO this is wrong figure
+  //comes out at 25 for 60
   function getPrecipArpBpm(lwData) {
     // playlogic
     return Math.round(microU.mapRange(
@@ -463,6 +466,8 @@ module.exports = function() {
     ));
   }
 
+  //TODO this is wrong figure
+  //comes out at 25 for 60
   function getHumidArpBpm(lwData) {
     return Math.round(microU.mapRange(
       lwData.humidity.value,
@@ -569,6 +574,8 @@ module.exports = function() {
     var precipArpReady = false;
     var precipArpScaleIndex = 0;
     var humidArpScaleIndex = 0;
+    var precipArpSteps = 0;
+    var humidArpSteps = 0;
     var freezingFilterFreq = 2000;
     var windChimeRate = 1;
     var windChimeVol = 0.4;
@@ -1554,9 +1561,10 @@ module.exports = function() {
           harpSound.play();
           humidArpScaleIndex++;
         }
-        if (humidArpScaleIndex === 40) {
+        else {
           humidArpEnd(humidArpScale);
         }
+        //humidArpSteps++;
       }
 
       function updatePrecipArp() {
@@ -1569,6 +1577,7 @@ module.exports = function() {
           dropSounds[dropSoundKey].play();
           precipArpScaleIndex++;
         }
+        //precipArpSteps++;
       }
 
 			sketch.draw = function draw() {
@@ -1581,17 +1590,25 @@ module.exports = function() {
           updateBrass();
         }
         if (wCheck.isPrecip) {
-          if (precipArpReady) {
+          if (precipArpReady && sequenceStart) {
             updatePrecipArp();
           }
         }
         if (wCheck.isHumid && !wCheck.isPrecip) {
-          if (humidArpReady) {
+          if (humidArpReady && sequenceStart) {
             updateHumidArp();
           }
         }
         if (wCheck.isFreezing) {
           updateFilter();
+        }
+        //sequencer counter
+        if (sketch.frameCount % 2000 === 0 && sequenceStart === false) {
+          sequenceStart = true;
+          console.log('sequenceStart', sequenceStart);
+        } else if (sketch.frameCount % 2000 === 0 && sequenceStart === true) {
+          sequenceStart = false;
+          console.log('sequenceStart', sequenceStart);
         }
         //Master volume
         //Fade in on play
