@@ -109,7 +109,7 @@ module.exports = function() {
   //as fadeLongNotes
   function fadeDropSounds() {
     for (var _dropSound in dropSounds) {
-      if (longNotes.hasOwnProperty(_dropSound)) {
+      if (dropSounds.hasOwnProperty(_dropSound)) {
         dropSounds[_dropSound].fade(0, avSettings.fadeTime);
         setTimeout(function(){
           dropSounds[_dropSound].stop();
@@ -183,7 +183,7 @@ module.exports = function() {
   function getLongNoteType(wCheck) {
     var _longNoteType;
     //playlogic
-    //This errs towards the flute
+    // TODO This errs towards the flute
     if (wCheck.isMuggy) {
       _longNoteType = 'harmonica';
     } else if (wCheck.isArid) {
@@ -417,24 +417,24 @@ module.exports = function() {
     return _longNoteIndex;
   }
 
-  function getLongNoteOffset(lwData) {
+  function getReverbLength(lwData) {
     return Math.round(microU.mapRange(
       lwData.visibility.value,
       lwData.visibility.min,
       lwData.visibility.max,
-      -1,
-      1
+      6,
+      0
     ));
   }
 
   function getPrecipCategory(lwData) {
     if (lwData.precipType === undefined) {
       return undefined;
-    } else if (lwData.precipType === 'rain' && lwData.precipIntensity.value > 0.2) {
+    } else if (lwData.precipType === 'rain') {
       return 'hard';
-    } else if (lwData.precipType === 'sleet' || lwData.precipIntensity.value <= 0.2) {
+    } else if (lwData.precipType === 'sleet') {
       return 'soft';
-    } else if (lwData.precipType === 'snow' || lwData.precipIntensity.value <= 0.1) {
+    } else if (lwData.precipType === 'snow') {
       return 'light';
     }
   }
@@ -497,8 +497,7 @@ module.exports = function() {
   }
 
   function getMasterFilterFreq(lwData) {
-    //Use math.abs for all pitch and volume values?
-    // Set filter. Visibility is filter freq
+    // TODO Use math.abs for all pitch and volume values?
     // playlogic
     return microU.mapRange(
       lwData.cloudCover.value,
@@ -613,6 +612,7 @@ module.exports = function() {
     var precipArpBps = precipArpBpm / 60;
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var dropSoundKey = getDropSoundKey(precipCategory);
+    console.log('dropSoundKey', dropSoundKey);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
@@ -624,7 +624,7 @@ module.exports = function() {
     var rootNote = getRootNote(lwData, numSemisPerOctave);
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
-    var longNoteOffset = getLongNoteOffset(lwData);
+    var reverbLength = getReverbLength(lwData);
     var longNoteType = getLongNoteType(wCheck);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
@@ -696,16 +696,6 @@ module.exports = function() {
         return _newNotesArray;
       }
 
-      function humidArpEnd(notesArray) {
-        var _randomNote = sketch.random(notesArray);
-        harpSoundTwo.disconnect();
-        reverb.process(harpSoundTwo, 4, 10);
-        reverb.amp(0.7);
-        harpSoundTwo.rate(_randomNote * 2);
-        harpSoundTwo.setVolume(1);
-        harpSoundTwo.play();
-      }
-
       function playHumidArp(humidArpScaleArray) {
         //Overwrite sequence with new notes
         humidArpScale = getAllegrettoRhythmType(humidArpScaleArray);
@@ -746,25 +736,16 @@ module.exports = function() {
       function playLongNote(scale, extraSeqPlaying) {
         //playlogic
         var _longNote = longNotes[longNoteType];
-        var _longNoteRate;
-        _longNote.disconnect();
-        _longNote.connect(soundFilter);
-        if (longNoteOffset > 0) {
-          _longNoteRate = scale[longNoteIndex] * 2;
-        } else if (longNoteOffset < 0) {
-          _longNoteRate = scale[longNoteIndex] / 2;
-        } else {
-          _longNoteRate = scale[longNoteIndex];
-        }
+        var _longNoteRate = scale[longNoteIndex];
         //Lower by one octave
         //if the lower chords are playing
         if (extraSeqPlaying) {
           _longNoteRate = _longNoteRate / 2;
         }
+        //_longNote.playMode('restart');
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));
         _longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
-        //_longNote.playMode('restart');
         _longNote.play();
       }
 
@@ -808,6 +789,7 @@ module.exports = function() {
         for (var i = 0; i < padSounds.length; i++) {
           padSounds[i][padTypeKey].disconnect();
           padSounds[i][padTypeKey].connect(soundFilter);
+          padSounds[i][padTypeKey].connect(reverb);
           padSounds[i][padTypeKey].rate(scaleSet[scaleSetIndex][i]);
           padSounds[i][padTypeKey].pan(panArr[_panIndex]);
           padSounds[i][padTypeKey].setVolume(avSettings[padTypeKey].volume);
@@ -857,6 +839,7 @@ module.exports = function() {
             choralSound.rate(scaleArray[i]);
             choralSound.setVolume(0.1);
           }
+          console.log('choral sounds rate', scaleArray[i]);
         });
       }
 
@@ -1076,6 +1059,10 @@ module.exports = function() {
         soundFilter.res(20);
       }
 
+      function setReverb() {
+        reverb.set(reverbLength, 20);
+      }
+
       function createHumidArpScale() {
         var _repeatMultiple = 0;
         var _intervalIndexOffset = 0;
@@ -1102,12 +1089,7 @@ module.exports = function() {
       }
 
       /*
-      	Sound config algorithm
-      	---------------
-      	The distortion is set by cloud cover
-      	The note volume is set by wind speed
-      	The root key is set by the air pressure
-      	The filter frequency is set by visibility
+      	Create necessary scales
        */
 			function configureSounds() {
         var _organScaleSets = [];
@@ -1117,6 +1099,7 @@ module.exports = function() {
         _organScaleSets = makeChordSequence();
         // Set filter for pad sounds
         setFilter();
+        setReverb();
         //playlogic
         if (wCheck.isPrecip) {
           _precipArpScaleArray = createPrecipArpScale();
@@ -1138,6 +1121,8 @@ module.exports = function() {
       function outputPrecipArpType() {
         if (precipCategory === 'hard') {
           return 'forwards';
+        } else if (precipCategory === 'soft') {
+          return 'gently';
         } else {
           return 'backwards';
         }
@@ -1273,7 +1258,7 @@ module.exports = function() {
                 coProp.musicValue = numSemisPerOctave;
                 break;
               case 'visibility':
-                coProp.musicValue = longNoteOffset;
+                coProp.musicValue = reverbLength;
                 break;
               case 'precipIntensity':
                 coProp.musicValue = precipArpBpm;
@@ -1471,6 +1456,7 @@ module.exports = function() {
             sketch.loadSound('/audio/drop-soft.mp3'),
             sketch.loadSound('/audio/drop-light.mp3')
           );
+          console.log('dropSounds', dropSounds);
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
@@ -1561,9 +1547,6 @@ module.exports = function() {
           harpSound.setVolume(0.5);
           harpSound.play();
           humidArpScaleIndex++;
-        }
-        else {
-          humidArpEnd(humidArpScale);
         }
       }
 

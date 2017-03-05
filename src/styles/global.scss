@@ -16,3 +16,10 @@
 @import "status-bar.scss";
 @import "conditions-display.scss";
 @import "dialog.scss";
+
+/* P5 hack */
+
+.loadingclass {
+  position: absolute;
+  left: -999em;
+}

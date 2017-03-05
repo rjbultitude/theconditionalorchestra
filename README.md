@@ -125,6 +125,8 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+There's not enough chords in each sequence array for the Number of main sequence chords
+
 Browser still shows audio playing icon when it's stopped
 
 Some sounds (like the aero) haven't been tested yet

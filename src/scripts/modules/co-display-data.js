@@ -44,9 +44,9 @@ module.exports = function() {
             constrain: true,
             unit: '',
             iconPath: '/img/visibility-icon.svg',
-            music: 'Long note is offset by ',
+            music: 'Pad chords reverb length ',
             musicValue: '',
-            musicAppendage: ' octave'
+            musicAppendage: ' seconds'
           },
           {
             key: 'cloudCover',
