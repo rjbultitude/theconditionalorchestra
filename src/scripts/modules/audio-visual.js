@@ -427,6 +427,16 @@ module.exports = function() {
     ));
   }
 
+  function getReverbDecay(lwData) {
+    return Math.round(microU.mapRange(
+      lwData.visibility.value,
+      lwData.visibility.min,
+      lwData.visibility.max,
+      40,
+      0
+    ));
+  }
+
   function getPrecipCategory(lwData) {
     if (lwData.precipType === undefined) {
       return undefined;
@@ -625,6 +635,7 @@ module.exports = function() {
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var reverbLength = getReverbLength(lwData);
+    var reverbDecay = getReverbDecay(lwData);
     var longNoteType = getLongNoteType(wCheck);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
@@ -1060,7 +1071,7 @@ module.exports = function() {
       }
 
       function setReverb() {
-        reverb.set(reverbLength, 20);
+        reverb.set(reverbLength, reverbDecay);
       }
 
       function createHumidArpScale() {
