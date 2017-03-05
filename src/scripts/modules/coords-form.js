@@ -55,7 +55,7 @@ module.exports = function() {
     return lwData;
   }
 
-  function getVisibility(conditions, locationData) {
+  function inferVisibility(conditions, locationData) {
     var _altVisVals = [];
     if (conditions[0].visibility() !== undefined) {
       console.log('valid visibility data');
@@ -88,7 +88,6 @@ module.exports = function() {
       if (conditions === false) {
         conditions = makeRequest('GET', 'data/static-data.json');
       }
-      //console.log('conditions', conditions);
       //must make new object at this point;
       var locationData = {
         //in use
@@ -119,7 +118,7 @@ module.exports = function() {
       }
       //As visibility often returns undefined
       //infer it from other values
-      locationData.visibility.value = getVisibility(conditions, locationData);
+      locationData.visibility.value = inferVisibility(conditions, locationData);
       //Error check here
       locationData = fixlwDataRanges(locationData);
       //Add the location name
@@ -338,16 +337,16 @@ module.exports = function() {
 		navigator.geolocation.getCurrentPosition(success, failure);
 	}
 
-  function getTestLocation(index) {
-		var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
-		fetchStaticPlaces.then(function (staticPlaces) {
-			var staticPlacesJSON = JSON.parse(staticPlaces);
-			getPlaces(staticPlacesJSON[index].lat, staticPlacesJSON[index].long);
-			console.log('Using static test data');
-		}, function (status) {
-			console.log(status.statusText);
-		});
-  }
+  // function getTestLocation(index) {
+	// 	var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
+	// 	fetchStaticPlaces.then(function (staticPlaces) {
+	// 		var staticPlacesJSON = JSON.parse(staticPlaces);
+	// 		getPlaces(staticPlacesJSON[index].lat, staticPlacesJSON[index].long);
+	// 		console.log('Using static test data');
+	// 	}, function (status) {
+	// 		console.log(status.statusText);
+	// 	});
+  // }
 
   function startApp(inputType, placeInput) {
     // Temporarily disable buttons
@@ -400,19 +399,19 @@ module.exports = function() {
     }
   }
 
-  function userLocationSubmitTest(e) {
-    e.preventDefault();
-    if (isPlaying) {
-        setStartState();
-    } else {
-      var staticWeatherData = makeRequest('GET', 'data/static-weather.json');
-      staticWeatherData.then(function(weatherData) {
-        var locationData = JSON.parse(weatherData);
-        channel.publish('userUpdate', locationData);
-        updateStatus('playing', locationData.name);
-      });
-    }
-  }
+  // function userLocationSubmitTest(e) {
+  //   e.preventDefault();
+  //   if (isPlaying) {
+  //       setStartState();
+  //   } else {
+  //     var staticWeatherData = makeRequest('GET', 'data/static-weather.json');
+  //     staticWeatherData.then(function(weatherData) {
+  //       var locationData = JSON.parse(weatherData);
+  //       channel.publish('userUpdate', locationData);
+  //       updateStatus('playing', locationData.name);
+  //     });
+  //   }
+  // }
 
   coordsFormCloseBtnEl.addEventListener('click', function(e) {
 		e.preventDefault();

@@ -8,7 +8,7 @@ module.exports = {
   matchMediaMaxWidth: function matchMediaMaxWidth(maxWidthVal) {
     return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
   },
-  mapRange: function mapRange(value, low1, high1, low2, high2, condition) {
+  mapRange: function mapRange(value, low1, high1, low2, high2) {
     var _maxDiff = high2 - low2;
     return low2 + _maxDiff * (value - low1) / (high1 - low1);
   },

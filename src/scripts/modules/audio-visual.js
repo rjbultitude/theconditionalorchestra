@@ -33,8 +33,7 @@ module.exports = function() {
   var audioSupported = true;
   var isPlaying = false;
   //rate
-  var appFrameRate = 25;
-  var framesPerMinute = appFrameRate * 60;
+  var appFrameRate = 30;
   var sequenceStart = true;
   //bass
   var bass;
@@ -461,8 +460,8 @@ module.exports = function() {
       lwData.precipIntensity.value,
       lwData.precipIntensity.min,
       lwData.precipIntensity.max,
-      framesPerMinute / 60,
-      framesPerMinute / 150
+      60,
+      150
     ));
   }
 
@@ -473,8 +472,8 @@ module.exports = function() {
       lwData.humidity.value,
       lwData.humidity.min,
       lwData.humidity.max,
-      framesPerMinute / 40,
-      framesPerMinute / 70
+      40,
+      70
     ));
   }
 
@@ -574,8 +573,6 @@ module.exports = function() {
     var precipArpReady = false;
     var precipArpScaleIndex = 0;
     var humidArpScaleIndex = 0;
-    var precipArpSteps = 0;
-    var humidArpSteps = 0;
     var freezingFilterFreq = 2000;
     var windChimeRate = 1;
     var windChimeVol = 0.4;
@@ -613,11 +610,15 @@ module.exports = function() {
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     var precipCategory = getPrecipCategory(lwData);
     var precipArpBpm = getPrecipArpBpm(lwData);
+    var precipArpBps = precipArpBpm / 60;
+    var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var dropSoundKey = getDropSoundKey(precipCategory);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
     var humidArpBpm = getHumidArpBpm(lwData);
+    var humidArpBps = humidArpBpm / 60;
+    var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
     var humidArpIntervals = getHumidArpIntervals(lwData, chordType);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
     var rootNote = getRootNote(lwData, numSemisPerOctave);
@@ -1552,7 +1553,7 @@ module.exports = function() {
       }
 
       function updateHumidArp() {
-        if (sketch.frameCount % humidArpBpm === 0) {
+        if (sketch.frameCount % humidArpStepTime === 0) {
           if (humidArpScaleIndex >= humidArpScale.length) {
             humidArpScaleIndex = 0;
           }
@@ -1564,11 +1565,10 @@ module.exports = function() {
         else {
           humidArpEnd(humidArpScale);
         }
-        //humidArpSteps++;
       }
 
       function updatePrecipArp() {
-        if (sketch.frameCount % precipArpBpm === 0) {
+        if (sketch.frameCount % precipArpStepTime === 0) {
           if (precipArpScaleIndex >= precipArpScale.length) {
             precipArpScaleIndex = 0;
           }
@@ -1577,7 +1577,6 @@ module.exports = function() {
           dropSounds[dropSoundKey].play();
           precipArpScaleIndex++;
         }
-        //precipArpSteps++;
       }
 
 			sketch.draw = function draw() {
