@@ -25,18 +25,6 @@ module.exports = function() {
             negativeKey: 'isWindy',
             negativeValue: ''
           },
-          //TODO this is actually isBitter
-          //not temperature
-          {
-            key: 'temperature',
-            title: 'Temperature',
-            value: '',
-            constrain: true,
-            unit: '',
-            iconPath: '/img/temperature-icon.svg',
-            music: 'Number of semitones in octave: ',
-            musicValue: ''
-          },
           {
             key: 'visibility',
             title: 'Visibility',
@@ -484,6 +472,48 @@ module.exports = function() {
             music: 'Number of notes per chord is ',
             musicValue: ''
           }
+        ],
+        semiTonesMap: [
+          {
+            key: 'isBitter',
+            title: 'Bitter',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/temperature-icon.svg',
+            music: 'Number of semitones in octave: ',
+            musicValue: ''
+          },
+          {
+            key: 'isStormy',
+            title: 'Stormy conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/temperature-icon.svg',
+            music: 'Number of semitones in octave: ',
+            musicValue: ''
+          },
+          {
+            key: 'isViolentStorm',
+            title: 'Violent storm',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/temperature-icon.svg',
+            music: 'Number of semitones in octave: ',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Not extreme weather',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/temperature-icon.svg',
+            music: 'Number of semitones in octave: ',
+            musicValue: ''
+          },
         ],
         //TODO
         //Should this be called secondary map?

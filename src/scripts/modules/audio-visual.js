@@ -253,10 +253,16 @@ module.exports = function() {
     if (wCheck.isBitter) {
       _numSemitones = avSettings.numSemitones * 2; //24
       console.log('non western: ', _numSemitones);
+    } else if (wCheck.isViolentStorm) {
+      _numSemitones = avSettings.numSemitones * 2.5; //30
+      console.log('non western: ', _numSemitones);
+    } else if (wCheck.isStormy) {
+      _numSemitones = avSettings.numSemitones * 1.5; //18
+      console.log('non western: ', _numSemitones);
     } else {
       _numSemitones = avSettings.numSemitones; //12
     }
-    return _numSemitones;
+    return Math.round(_numSemitones);
   }
 
   function getPadType(wCheck) {
@@ -1265,9 +1271,6 @@ module.exports = function() {
               case 'windBearing':
                 coProp.musicValue = microU.getOrdinal(longNoteIndex);
                 break;
-              case 'temperature':
-                coProp.musicValue = numSemisPerOctave;
-                break;
               case 'visibility':
                 coProp.musicValue = reverbLength;
                 break;
@@ -1388,6 +1391,8 @@ module.exports = function() {
               case 'numNotesMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, numPadNotes);
                 break;
+              case 'semiTonesMap':
+                _currArr = addOtherMapVals(_constrainedDisplayData, numSemisPerOctave);
               case 'humidArpMap':
                 _currArr = setHumidMapVals(_constrainedDisplayData);
                 break;
