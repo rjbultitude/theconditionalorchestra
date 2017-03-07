@@ -748,6 +748,8 @@ module.exports = function() {
 
       function playLongNote(scale, extraSeqPlaying) {
         //playlogic
+        console.log('longNoteType', longNoteType);
+        console.log('longNotes[longNoteType]', longNotes[longNoteType]);
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = scale[longNoteIndex];
         //Lower by one octave
@@ -1430,10 +1432,11 @@ module.exports = function() {
 				this.horn = horn;
 			}
 
-      function LongNotes(harmonica, flute, harmonium, string) {
+      function LongNotes(harmonica, flute, shiney, string) {
         this.harmonica = harmonica;
         this.flute = flute;
-        this.harmonium = harmonium;
+        this.shiney = shiney;
+        //this.harmonium = harmonium;
         this.string = string;
       }
 
