@@ -468,8 +468,6 @@ module.exports = function() {
     }
   }
 
-  //TODO this is wrong figure
-  //comes out at 25 for 60
   function getPrecipArpBpm(lwData) {
     // playlogic
     return Math.round(microU.mapRange(
@@ -481,8 +479,6 @@ module.exports = function() {
     ));
   }
 
-  //TODO this is wrong figure
-  //comes out at 25 for 60
   function getHumidArpBpm(lwData) {
     return Math.round(microU.mapRange(
       lwData.humidity.value,
@@ -1393,6 +1389,7 @@ module.exports = function() {
                 break;
               case 'semiTonesMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, numSemisPerOctave);
+                break;
               case 'humidArpMap':
                 _currArr = setHumidMapVals(_constrainedDisplayData);
                 break;

@@ -480,7 +480,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/temperature-icon.svg',
+            iconPath: '/img/freezing-icon.svg',
             music: 'Number of semitones in octave: ',
             musicValue: ''
           },
@@ -490,7 +490,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/temperature-icon.svg',
+            iconPath: '/img/storm-icon.svg',
             music: 'Number of semitones in octave: ',
             musicValue: ''
           },
@@ -500,7 +500,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/temperature-icon.svg',
+            iconPath: '/img/storm-icon.svg',
             music: 'Number of semitones in octave: ',
             musicValue: ''
           },
@@ -510,7 +510,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/temperature-icon.svg',
+            iconPath: '/img/storm-icon.svg',
             music: 'Number of semitones in octave: ',
             musicValue: ''
           },
