@@ -125,9 +125,11 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-There's not enough chords in each sequence array for the Number of main sequence chords
+Volume of dropSound and harp seems to be very low - could be the order of method calls
 
-Browser still shows audio playing icon when it's stopped
+consider using airpad-C3 for longNote as supplement to flute
+
+There's not enough chords in each sequence array for the Number of main sequence chords
 
 Some sounds (like the aero) haven't been tested yet
 
@@ -156,11 +158,9 @@ May need to Upgrade to google maps 3 : https://developers.google.com/maps/docume
 
 Choral sound seems to be only one semitone apart
 
-Not totally sure about the longNote octave offset
-
 LongNote playMode could be a target for weather data
 
-Sequencer doesn't honor tempo when app state changes
+Browser still shows audio playing icon when it's stopped
 
 After stop fade out is louder than normal playback, firefox only
 
