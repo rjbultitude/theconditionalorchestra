@@ -1609,9 +1609,9 @@ module.exports = function() {
         if (!sequenceStart) {
           updateRideCymbal();
         }
-        //if (wCheck.isOminous) {
+        if (wCheck.isOminous) {
           updatePercussion();
-        //}
+        }
         //playlogic
         if (wCheck.isWindy) {
           updateBrass();

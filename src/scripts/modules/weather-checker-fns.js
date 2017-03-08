@@ -93,6 +93,6 @@ module.exports = {
   // @param windSpeed floating point
   // @param precipProbability floating point
   isOminous: function(cloudCover, windSpeed, precipProbability) {
-    return cloudCover > 0.7 && windSpeed > 18 && precipProbability > 0;
+    return cloudCover > 0.5 && windSpeed > 18 && precipProbability > 0;
   }
 };
