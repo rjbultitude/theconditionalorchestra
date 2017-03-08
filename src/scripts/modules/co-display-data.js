@@ -153,7 +153,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/windy-icon.svg',
+            iconPath: '/img/storm-icon.svg',
             music: 'Percussion playing',
             musicValue: ''
           },
@@ -185,7 +185,7 @@ module.exports = function() {
             constrain: true,
             unit: 'miles',
             iconPath: '/img/storm-distance-icon.svg',
-            music: 'Rise cymbals max volume is ',
+            music: 'Ride cymbals max volume is ',
             musicValue: ''
           },
           {
@@ -379,12 +379,32 @@ module.exports = function() {
             musicValue: ''
           },
           {
+            key: 'isOminous',
+            title: 'Bad weather pending',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/storm-icon.svg',
+            music: 'Long note is a ',
+            musicValue: ''
+          },
+          {
             key: 'isArid',
             title: 'Warm arid conditions',
             value: '',
             constrain: false,
             unit: '',
             iconPath: '/img/humidity-icon.svg',
+            music: 'Long note is a ',
+            musicValue: ''
+          },
+          {
+            key: 'isClement',
+            title: 'Clement conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/weather-icon.svg',
             music: 'Long note is a ',
             musicValue: ''
           },
@@ -400,7 +420,7 @@ module.exports = function() {
           },
           {
             key: 'isOther',
-            title: 'Neither muggy, arid nor crisp',
+            title: 'Neither muggy, arid, clement nor crisp',
             value: '',
             constrain: false,
             unit: '',

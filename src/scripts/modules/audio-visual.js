@@ -188,9 +188,9 @@ module.exports = function() {
     var _longNoteType;
     //playlogic
     // TODO This errs towards the flute/zummarta
-    if (wCheck.isMuggy) {
+    if (wCheck.isMuggy || wCheck.isOminous) {
       _longNoteType = 'harmonica';
-    } else if (wCheck.isArid) {
+    } else if (wCheck.isArid || wCheck.isClement) {
       _longNoteType = 'shiney';
     } else if (wCheck.isCrisp) {
       _longNoteType = 'string';
@@ -1309,13 +1309,13 @@ module.exports = function() {
                 coProp.musicValue = outputPrecipArpType();
                 break;
               case 'precipProbability':
-                coProp.musicValue = rideCymbalMaxVolume.toFixed(2);
+                coProp.musicValue = rideCymbalBpm;
                 break;
               case 'nearestStormBearing':
                 coProp.musicValue = rideCymbalRate.toFixed(2);
                 break;
               case 'nearestStormDistance':
-                coProp.musicValue = rideCymbalBpm.toFixed(2);
+                coProp.musicValue = rideCymbalMaxVolume.toFixed(2);
                 break;
               case 'windSpeedHigh':
                 coProp.musicValue = humidArpBpm;
@@ -1583,12 +1583,13 @@ module.exports = function() {
 
       function updateHumidArp() {
         if (sketch.frameCount % humidArpStepTime === 0) {
+          var _harpVol = sketch.random([0.4, 0.55, 0.7, 0.3]);
           if (humidArpScaleIndex >= humidArpScale.length) {
             humidArpScaleIndex = 0;
           }
           harpSound.play();
+          harpSound.setVolume(_harpVol);
           harpSound.rate(humidArpScale[humidArpScaleIndex]);
-          harpSound.setVolume(sketch.random([0.3, 0.5, 0.7, 0.22]));
           humidArpScaleIndex++;
         }
       }
@@ -1598,9 +1599,9 @@ module.exports = function() {
           if (precipArpScaleIndex >= precipArpScale.length) {
             precipArpScaleIndex = 0;
           }
-          dropSounds[dropSoundKey].rate(precipArpScale[precipArpScaleIndex]);
-          dropSounds[dropSoundKey].setVolume(0.35);
           dropSounds[dropSoundKey].play();
+          dropSounds[dropSoundKey].rate(precipArpScale[precipArpScaleIndex]);
+          dropSounds[dropSoundKey].setVolume(0.4);
           precipArpScaleIndex++;
         }
       }
@@ -1609,10 +1610,10 @@ module.exports = function() {
         if (!sequenceStart) {
           updateRideCymbal();
         }
+        //playlogic
         if (wCheck.isOminous) {
           updatePercussion();
         }
-        //playlogic
         if (wCheck.isWindy) {
           updateBrass();
         }
