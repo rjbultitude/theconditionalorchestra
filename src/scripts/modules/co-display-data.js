@@ -134,7 +134,7 @@ module.exports = function() {
             constrain: true,
             unit: '',
             iconPath: '/img/rain-icon.svg',
-            music: 'Ride cymbals volume is ',
+            music: 'Ride cymbals tempo is ',
             musicValue: ''
           },
           {
@@ -145,6 +145,16 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/windy-icon.svg',
             music: 'Brass baritones playing',
+            musicValue: ''
+          },
+          {
+            key: 'isOminous',
+            title: 'Bad weather pending',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/windy-icon.svg',
+            music: 'Percussion playing',
             musicValue: ''
           },
           {
@@ -175,7 +185,7 @@ module.exports = function() {
             constrain: true,
             unit: 'miles',
             iconPath: '/img/storm-distance-icon.svg',
-            music: 'Cymbals volume is ',
+            music: 'Rise cymbals max volume is ',
             musicValue: ''
           },
           {

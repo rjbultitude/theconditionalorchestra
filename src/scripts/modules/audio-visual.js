@@ -35,6 +35,7 @@ module.exports = function() {
   //rate
   var appFrameRate = 30;
   var sequenceStart = true;
+  var rootNoteRate;
   //bass
   var bass;
   var bass2;
@@ -43,8 +44,8 @@ module.exports = function() {
   var brassBaritone2;
   var harpSoundTwo;
   //Percussion
-  var cymbals;
-  var cymbalsRide;
+  var percussion;
+  var rideCymbal;
   //clement / brass
   var harpSound;
   //long notes
@@ -162,8 +163,8 @@ module.exports = function() {
       bass.fade(0, avSettings.fadeTime);
       bass2.fade(0, avSettings.fadeTime);
       harpSound.fade(0, avSettings.fadeTime);
-      cymbals.fade(0, avSettings.fadeTime);
-      cymbalsRide.fade(0, avSettings.fadeTime);
+      percussion.fade(0, avSettings.fadeTime);
+      rideCymbal.fade(0, avSettings.fadeTime);
       //Stop after fades
       setTimeout(function(){
         brassBaritone.stop();
@@ -173,8 +174,8 @@ module.exports = function() {
         bass.stop();
         bass2.stop();
         harpSound.stop();
-        cymbals.stop();
-        cymbalsRide.stop();
+        percussion.stop();
+        rideCymbal.stop();
       }, avSettings.fadeTime * 1000);
       //Unsubs
       publishBrassOne.unsubscribe();
@@ -529,7 +530,7 @@ module.exports = function() {
     }
   }
 
-  function getCymbalsRate(lwData) {
+  function getRideCymbalRate(lwData) {
     return microU.mapRange(
       Math.round(lwData.nearestStormBearing.value),
       lwData.nearestStormBearing.min,
@@ -539,7 +540,17 @@ module.exports = function() {
     );
   }
 
-  function getCymbalsVolume(lwData) {
+  function getRideCymbalsBpm(lwData) {
+    return microU.mapRange(
+      Math.round(lwData.precipProbability.value),
+      lwData.precipProbability.min,
+      lwData.precipProbability.max,
+      40,
+      78
+    );
+  }
+
+  function getRideCymbalMaxVolume(lwData) {
     return microU.mapRange(
       Math.round(lwData.nearestStormDistance.value),
       lwData.nearestStormDistance.min,
@@ -549,14 +560,13 @@ module.exports = function() {
     );
   }
 
-  function getCymbalsRideVolume(lwData) {
-    return microU.mapRange(
-      Math.round(lwData.precipProbability.value),
-      lwData.precipProbability.min,
-      lwData.precipProbability.max,
-      0,
-      0.8
-    );
+  function getRideCymbalVolumeArr(rideCymbalMaxVolume) {
+    var _rideCymbalVolumeArr = [];
+    var _min = 0.1;
+    for (var i = 0; i < 10; i++) {
+      _rideCymbalVolumeArr.push(Math.random() * (rideCymbalMaxVolume - _min) + _min);
+    }
+    return _rideCymbalVolumeArr;
   }
 
   /**
@@ -611,7 +621,8 @@ module.exports = function() {
       isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value, lwData.humidity.value),
       isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
-      isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value)
+      isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
+      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipProbability.value)
     };
     console.log('wCheck', wCheck);
     //Get and set core values
@@ -641,9 +652,14 @@ module.exports = function() {
     var longNoteType = getLongNoteType(wCheck);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
-    var cymbalsRate = getCymbalsRate(lwData);
-    var cymbalsVolume = getCymbalsVolume(lwData);
-    var cymbalsRideVolume = getCymbalsRideVolume(lwData);
+    var rideCymbalRate = getRideCymbalRate(lwData);
+    var rideCymbalBpm = getRideCymbalsBpm(lwData);
+    var rideCymbalBps = rideCymbalBpm / 60;
+    var rideCymbalStepTime = Math.round(appFrameRate / rideCymbalBps);
+    var rideCymbalMaxVolume = getRideCymbalMaxVolume(lwData);
+    console.log('rideCymbalMaxVolume', rideCymbalMaxVolume);
+    var rideCymbalVolumeArr = getRideCymbalVolumeArr(rideCymbalMaxVolume);
+    console.log('rideCymbalVolumeArr', rideCymbalVolumeArr);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -770,7 +786,6 @@ module.exports = function() {
       }
 
       function playBass(scale) {
-        console.log('bass', bass);
         //Play 1st note of each chord
         var _bassRate = scale[0];
         bass.stop();
@@ -795,6 +810,7 @@ module.exports = function() {
       }
 
       function playPad(scaleSet, padTypeKey) {
+        rootNoteRate = scaleSet[scaleSetIndex][0];
         var _panIndex = 0;
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
@@ -1293,13 +1309,13 @@ module.exports = function() {
                 coProp.musicValue = outputPrecipArpType();
                 break;
               case 'precipProbability':
-                coProp.musicValue = cymbalsRideVolume.toFixed(2);
+                coProp.musicValue = rideCymbalMaxVolume.toFixed(2);
                 break;
               case 'nearestStormBearing':
-                coProp.musicValue = cymbalsRate.toFixed(2);
+                coProp.musicValue = rideCymbalRate.toFixed(2);
                 break;
               case 'nearestStormDistance':
-                coProp.musicValue = cymbalsVolume.toFixed(2);
+                coProp.musicValue = rideCymbalBpm.toFixed(2);
                 break;
               case 'windSpeedHigh':
                 coProp.musicValue = humidArpBpm;
@@ -1495,8 +1511,8 @@ module.exports = function() {
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
           harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
-          cymbals = sketch.loadSound('/audio/cymbals.mp3');
-          cymbalsRide = sketch.loadSound('/audio/cymbals2.mp3');
+          percussion = sketch.loadSound('/audio/drum.mp3');
+          rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
         }
 			};
 
@@ -1522,19 +1538,20 @@ module.exports = function() {
         }
 			};
 
-      function updateCymbals() {
+      function updatePercussion() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
-          cymbals.play();
-          cymbals.setVolume(cymbalsVolume);
-          cymbals.rate(cymbalsRate);
+          percussion.play();
+          percussion.setVolume(0.5);
+          percussion.rate(rootNoteRate);
         }
       }
 
-      function updateCymbalsRide() {
-        if (sketch.frameCount % 1450 === 0 && sketch.frameCount !== 0) {
-          cymbalsRide.play();
-          cymbalsRide.setVolume(cymbalsRideVolume);
-          cymbalsRide.rate(cymbalsRate);
+      function updateRideCymbal() {
+        if (sketch.frameCount % rideCymbalStepTime === 0) {
+          var _rideVol = sketch.random(rideCymbalVolumeArr);
+          rideCymbal.play();
+          rideCymbal.setVolume(_rideVol);
+          rideCymbal.rate(rideCymbalRate);
         }
       }
 
@@ -1569,9 +1586,9 @@ module.exports = function() {
           if (humidArpScaleIndex >= humidArpScale.length) {
             humidArpScaleIndex = 0;
           }
-          harpSound.rate(humidArpScale[humidArpScaleIndex]);
-          harpSound.setVolume(0.5);
           harpSound.play();
+          harpSound.rate(humidArpScale[humidArpScaleIndex]);
+          harpSound.setVolume(sketch.random([0.3, 0.5, 0.7, 0.22]));
           humidArpScaleIndex++;
         }
       }
@@ -1589,13 +1606,13 @@ module.exports = function() {
       }
 
 			sketch.draw = function draw() {
+        if (!sequenceStart) {
+          updateRideCymbal();
+        }
+        //if (wCheck.isOminous) {
+          updatePercussion();
+        //}
         //playlogic
-        if (cymbalsVolume > 0) {
-          updateCymbals();
-        }
-        if (cymbalsRideVolume > 0) {
-          updateCymbalsRide();
-        }
         if (wCheck.isWindy) {
           updateBrass();
         }

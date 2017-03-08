@@ -88,5 +88,11 @@ module.exports = {
   // @param precipIntensity floating point
   isViolentStorm: function(cloudCover, windSpeed, precipIntensity) {
     return cloudCover > 0.8 && windSpeed > 60 && precipIntensity > 0.4;
+  },
+  // @param cloudCover floating point
+  // @param windSpeed floating point
+  // @param precipProbability floating point
+  isOminous: function(cloudCover, windSpeed, precipProbability) {
+    return cloudCover > 0.7 && windSpeed > 18 && precipProbability > 0;
   }
 };
