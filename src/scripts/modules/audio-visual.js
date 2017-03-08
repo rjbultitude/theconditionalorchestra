@@ -160,6 +160,7 @@ module.exports = function() {
       harpSoundTwo.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
+      bass2.fade(0, avSettings.fadeTime);
       harpSound.fade(0, avSettings.fadeTime);
       cymbals.fade(0, avSettings.fadeTime);
       cymbalsRide.fade(0, avSettings.fadeTime);
@@ -170,6 +171,7 @@ module.exports = function() {
         harpSoundTwo.stop();
         windChime.stop();
         bass.stop();
+        bass2.stop();
         harpSound.stop();
         cymbals.stop();
         cymbalsRide.stop();
