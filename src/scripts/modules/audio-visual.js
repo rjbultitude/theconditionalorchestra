@@ -37,6 +37,7 @@ module.exports = function() {
   var sequenceStart = true;
   //bass
   var bass;
+  var bass2;
   //Windy/ Brass
   var brassBaritone;
   var brassBaritone2;
@@ -745,8 +746,6 @@ module.exports = function() {
 
       function playLongNote(scale, extraSeqPlaying) {
         //playlogic
-        console.log('longNoteType', longNoteType);
-        console.log('longNotes[longNoteType]', longNotes[longNoteType]);
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = scale[longNoteIndex];
         //Lower by one octave
@@ -761,12 +760,27 @@ module.exports = function() {
         _longNote.play();
       }
 
+      function bassCallback(bassRate) {
+        bass2.playMode('restart');
+        bass2.rate(bassRate * 2);
+        bass2.setVolume(0.5);
+        bass2.play();
+      }
+
       function playBass(scale) {
+        console.log('bass', bass);
         //Play 1st note of each chord
-        bass.rate(scale[0]);
-        bass.setVolume(0.5);
+        var _bassRate = scale[0];
+        bass.stop();
         bass.playMode('restart');
+        bass.rate(_bassRate);
+        bass.setVolume(1);
         bass.play();
+        if (!wCheck.isHumid) {
+          bass.onended(function() {
+            bassCallback(_bassRate);
+          });
+        }
       }
 
       function setScaleSetIndex(scaleSet, numExtraChords) {
@@ -1473,6 +1487,7 @@ module.exports = function() {
             sketch.loadSound('/audio/drop-light.mp3')
           );
           bass = sketch.loadSound('/audio/bass.mp3');
+          bass2 = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
@@ -1573,8 +1588,10 @@ module.exports = function() {
 
 			sketch.draw = function draw() {
         //playlogic
-        if (wCheck.isCloudy || wCheck.isWindy) {
+        if (cymbalsVolume > 0) {
           updateCymbals();
+        }
+        if (cymbalsRideVolume > 0) {
           updateCymbalsRide();
         }
         if (wCheck.isWindy) {
