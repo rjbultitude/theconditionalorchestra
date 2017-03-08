@@ -183,12 +183,12 @@ module.exports = function() {
   function getLongNoteType(wCheck) {
     var _longNoteType;
     //playlogic
-    // TODO This errs towards the flute
+    // TODO This errs towards the flute/zummarta
     if (wCheck.isMuggy) {
       _longNoteType = 'harmonica';
     } else if (wCheck.isArid) {
       _longNoteType = 'shiney';
-    } else if (wCheck.isHarsh) {
+    } else if (wCheck.isCrisp) {
       _longNoteType = 'string';
     } else {
       _longNoteType = 'flute';
@@ -281,12 +281,10 @@ module.exports = function() {
       padType = 'guitar';
     } else if (wCheck.isCold) {
       padType = 'saxophone';
-    } else if (wCheck.isFreezing) {
-      padType = 'zummarta';
     } else if (wCheck.isFine) {
       padType = 'aeroflute';
     } else {
-      padType = 'horn';
+      padType = 'harmonium'; //was horn
     }
     return padType;
   }
@@ -464,7 +462,7 @@ module.exports = function() {
     } else if (precipCategory === 'light') {
       return 'dropLightSound';
     } else {
-      return undefined;
+      return 'none';
     }
   }
 
@@ -624,7 +622,6 @@ module.exports = function() {
     var precipArpBps = precipArpBpm / 60;
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var dropSoundKey = getDropSoundKey(precipCategory);
-    console.log('dropSoundKey', dropSoundKey);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
@@ -1423,20 +1420,19 @@ module.exports = function() {
 			//Sound constructor
 			//changes to this may need to be reflected
 			//within the volume objects in avSettings
-			function PadSound(organ, guitar, sax, aeroflute, zummarta, horn) {
+			function PadSound(organ, guitar, sax, aeroflute, harmonium) {
 				this.organ = organ;
 				this.guitar = guitar;
 				this.saxophone = sax;
 				this.aeroflute = aeroflute;
-				this.zummarta = zummarta;
-				this.horn = horn;
+        this.harmonium = harmonium;
+				//this.horn = horn;
 			}
 
       function LongNotes(harmonica, flute, shiney, string) {
         this.harmonica = harmonica;
         this.flute = flute;
         this.shiney = shiney;
-        //this.harmonium = harmonium;
         this.string = string;
       }
 
@@ -1457,12 +1453,16 @@ module.exports = function() {
               sketch.loadSound('/audio/guitar-C2.mp3'),
               sketch.loadSound('/audio/sax-C2.mp3'),
               sketch.loadSound('/audio/aeroflute-C2.mp3'),
-              //TODO try this
-              //sketch.loadSound('/audio/zummarta-C2.mp3'),
-              sketch.loadSound('/audio/harmonium-C2.mp3'),
-              sketch.loadSound('/audio/horn-C2.mp3')
+              sketch.loadSound('/audio/harmonium-C2.mp3')
+              //sketch.loadSound('/audio/horn-C2.mp3')
             ));
           }
+          longNotes = new LongNotes(
+            sketch.loadSound('/audio/harmonica-C3.mp3'),
+            sketch.loadSound('/audio/flute-C3.mp3'),
+            sketch.loadSound('/audio/shiney-C3.mp3'),
+            sketch.loadSound('/audio/string-C3.mp3')
+          );
           //choral sounds for fine weather
           for (var j = 0; j < 2; j++) {
             choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
@@ -1472,18 +1472,11 @@ module.exports = function() {
             sketch.loadSound('/audio/drop-soft.mp3'),
             sketch.loadSound('/audio/drop-light.mp3')
           );
-          console.log('dropSounds', dropSounds);
           bass = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
           harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
-          longNotes = new LongNotes(
-            sketch.loadSound('/audio/harmonica-C3.mp3'),
-            sketch.loadSound('/audio/flute-C3.mp3'),
-            sketch.loadSound('/audio/shiney-C3.mp3'),
-            sketch.loadSound('/audio/string-C3.mp3')
-          );
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
           cymbals = sketch.loadSound('/audio/cymbals.mp3');
           cymbalsRide = sketch.loadSound('/audio/cymbals2.mp3');

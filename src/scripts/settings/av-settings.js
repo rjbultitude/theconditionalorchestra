@@ -7,11 +7,13 @@ module.exports = {
   //Pitch / rate / volume
   dropVolume: 0.2,
   volume: 0.75,
+  //padSounds
   organ: {volume : 0.75},
   guitar: {volume : 0.425},
   aeroflute: {volume : 0.75},
   saxophone: {volume : 0.75},
   horn: {volume : 0.8},
+  harmonium: {volume : 0.9},
   numPadNotes: 5,
   numChords: 3,
   numChordsMin: 2,
