@@ -158,6 +158,26 @@ module.exports = function() {
             musicValue: ''
           },
           {
+            key: 'isArid',
+            title: 'Arid conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/sun-icon.svg',
+            music: 'Djembe playing',
+            musicValue: ''
+          },
+          {
+            key: 'isCrisp',
+            title: 'Crisp conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/freezing-icon.svg',
+            music: 'Djembe playing',
+            musicValue: ''
+          },
+          {
             key: 'windBearing',
             title: 'Wind bearing',
             value: '',

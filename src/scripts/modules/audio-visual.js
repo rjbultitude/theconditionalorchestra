@@ -45,6 +45,7 @@ module.exports = function() {
   var harpSoundTwo;
   //Percussion
   var percussion;
+  var percussion2;
   var rideCymbal;
   //clement / brass
   var harpSound;
@@ -164,6 +165,7 @@ module.exports = function() {
       bass2.fade(0, avSettings.fadeTime);
       harpSound.fade(0, avSettings.fadeTime);
       percussion.fade(0, avSettings.fadeTime);
+      percussion2.fade(0, avSettings.fadeTime);
       rideCymbal.fade(0, avSettings.fadeTime);
       //Stop after fades
       setTimeout(function(){
@@ -175,6 +177,7 @@ module.exports = function() {
         bass2.stop();
         harpSound.stop();
         percussion.stop();
+        percussion2.stop();
         rideCymbal.stop();
       }, avSettings.fadeTime * 1000);
       //Unsubs
@@ -1512,6 +1515,7 @@ module.exports = function() {
           harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
           percussion = sketch.loadSound('/audio/drum.mp3');
+          percussion2 = sketch.loadSound('/audio/drum2.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
         }
 			};
@@ -1539,6 +1543,14 @@ module.exports = function() {
 			};
 
       function updatePercussion() {
+        if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
+          percussion.play();
+          percussion.setVolume(0.5);
+          percussion.rate(rootNoteRate);
+        }
+      }
+
+      function updatePercussion2() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
           percussion.play();
           percussion.setVolume(0.5);
@@ -1600,8 +1612,9 @@ module.exports = function() {
             precipArpScaleIndex = 0;
           }
           dropSounds[dropSoundKey].play();
+          dropSounds[dropSoundKey].setVolume(0.8);
           dropSounds[dropSoundKey].rate(precipArpScale[precipArpScaleIndex]);
-          dropSounds[dropSoundKey].setVolume(0.4);
+          console.log('dropSounds[dropSoundKey]', dropSounds[dropSoundKey]);
           precipArpScaleIndex++;
         }
       }
@@ -1613,6 +1626,9 @@ module.exports = function() {
         //playlogic
         if (wCheck.isOminous) {
           updatePercussion();
+        }
+        if (wCheck.isArid || wCheck.isCrisp) {
+          updatePercussion2();
         }
         if (wCheck.isWindy) {
           updateBrass();
