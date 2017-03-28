@@ -1614,7 +1614,6 @@ module.exports = function() {
           dropSounds[dropSoundKey].play();
           dropSounds[dropSoundKey].setVolume(0.8);
           dropSounds[dropSoundKey].rate(precipArpScale[precipArpScaleIndex]);
-          console.log('dropSounds[dropSoundKey]', dropSounds[dropSoundKey]);
           precipArpScaleIndex++;
         }
       }

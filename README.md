@@ -125,8 +125,6 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Chord sequences don't seem to vary enough
-
 Sound used for fine is by far the most interesting - perhaps some other pad sounds should aspire to this
 
 Volume of dropSound and harp seems to be very low - could be the order of method calls
