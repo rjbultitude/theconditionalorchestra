@@ -36,7 +36,7 @@ module.exports = {
 
   // @param windSpeed floating point
   isWindy: function(windSpeed) {
-    return windSpeed > 23;
+    return windSpeed > 22;
   },
   // @param cloudCover floating point
   isCloudy: function(cloudCover) {
