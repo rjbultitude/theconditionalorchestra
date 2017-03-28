@@ -48,6 +48,10 @@ module.exports = {
       {
         index: 3,
         key: 'majorSeventhIntervals'
+      },
+      {
+        index: -2,
+        key: 'heptatonicMajorIntervals'
       }
     ],
     melancholyDownward: [
@@ -60,22 +64,34 @@ module.exports = {
         key: 'minorSeventhIntervals'
       },
       {
-        index: -3,
-        key: 'heptatonicMinorIntervals'
+        index: 0,
+        key: 'majorSeventhIntervals'
       },
       {
         index: -4,
-        key: 'heptatonicMajorIntervals'
+        key: 'majorSeventhIntervals'
+      },
+      {
+        index: -5,
+        key: 'heptatonicMinorIntervals'
       },
       {
         index: 9,
         key: 'heptatonicMajorIntervals'
       }
     ],
-    melancholyDownUp: [
+    purposefulUpAndDown: [
       {
         index: 0,
         key: 'heptatonicMinorIntervals'
+      },
+      {
+        index: 2,
+        key: 'heptatonicMinorIntervals'
+      },
+      {
+        index: 3,
+        key: 'heptatonicMajorIntervals'
       },
       {
         index: -4,
@@ -86,12 +102,8 @@ module.exports = {
         key: 'minorSeventhIntervals'
       },
       {
-        index: 2,
+        index: -5,
         key: 'heptatonicMinorIntervals'
-      },
-      {
-        index: 3,
-        key: 'majorSeventhIntervals'
       }
     ],
     blissfulUpward: [
@@ -100,7 +112,7 @@ module.exports = {
         key: 'majorSeventhIntervals'
       },
       {
-        index: 5,
+        index: 7,
         key: 'heptatonicMajorIntervals'
       },
       {
@@ -110,28 +122,40 @@ module.exports = {
       {
         index: 5,
         key: 'heptatonicMajorIntervals'
+      },
+      {
+        index: -4,
+        key: 'heptatonicMajorIntervals'
+      },
+      {
+        index: 3,
+        key: 'majorSeventhIntervals'
       }
     ],
     blissfulDownward: [
       {
         index: 0,
-        key: 'majorSeventhIntervals'
+        key: 'majorSixthIntervals'
       },
       {
-        index: -3,
-        key: 'majorSeventhIntervals'
+        index: -4,
+        key: 'heptatonicMajorIntervals'
       },
       {
-        index: 0,
-        key: 'majorSeventhIntervals'
+        index: -5,
+        key: 'heptatonicMinorIntervals'
       },
       {
         index: -5,
         key: 'heptatonicMajorIntervals'
       },
       {
-        index: -8,
+        index: -9,
         key: 'heptatonicMajorIntervals'
+      },
+      {
+        index: -5,
+        key: 'majorNinthIntervals'
       }
     ],
     noChordOffset: [

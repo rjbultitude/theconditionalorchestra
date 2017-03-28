@@ -324,12 +324,14 @@ module.exports = function() {
       } else {
         _key = 'blissfulUpward';
       }
-    } else {
+    } else if (wCheck.isPrecip || wCheck.isCloudy) {
       if (rootNoteHigh) {
         _key = 'melancholyDownward';
       } else {
         _key = 'melancholyUpward';
       }
+    } else {
+      _key = 'purposefulUpAndDown';
     }
     return _key;
   }
