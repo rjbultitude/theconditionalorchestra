@@ -3,9 +3,9 @@
 module.exports = {
     //TODO check the names used
     //Intervals
-    heptatonicMajorIntervals: [0, 2, 4, 5, 7, 9, 11], // Heptatonic major scale
-    heptatonicMinorIntervals: [0, 2, 3, 5, 7, 9, 10], // Heptatonic harmonic minor scale
-    octatonicMinorIntervals: [0, 2, 3, 5, 7, 8, 9, 10],  // Octatonic minor scale
+    heptatonicMajorIntervals: [0, 2, 4, 5, 7, 9, 11],
+    heptatonicMinorIntervals: [0, 2, 3, 5, 7, 9, 10],
+    octatonicMinorIntervals: [0, 2, 3, 5, 7, 8, 9, 10],
     //6th
     majorSixthIntervals: [0, 4, 7, 9, 0, 4, 7, 9],
     minorSixthIntervals: [0, 3, 7, 9, 0, 3, 7, 9],
@@ -25,6 +25,9 @@ module.exports = {
     farMajorIntervals: [0, -8, 0, -12], //for humid arrpeggio
     farMinorIntervals: [0, -9, 0, -12], //for humid arrpeggio
     //Chord sequences
+    //max number of chords is 6
+    //See avSettings
+    //TODO each one needs an extra chord
     melancholyUpward: [
       {
         index: 0,
@@ -36,9 +39,40 @@ module.exports = {
       },
       {
         index: 3,
-        key: 'heptatonicMajorIntervals'
-      }],
+        key: 'majorSeventhIntervals'
+      },
+      {
+        index: 2,
+        key: 'heptatonicMinorIntervals'
+      },
+      {
+        index: 3,
+        key: 'majorSeventhIntervals'
+      }
+    ],
     melancholyDownward: [
+      {
+        index: 0,
+        key: 'majorSeventhIntervals'
+      },
+      {
+        index: 0,
+        key: 'minorSeventhIntervals'
+      },
+      {
+        index: -3,
+        key: 'heptatonicMinorIntervals'
+      },
+      {
+        index: -4,
+        key: 'heptatonicMajorIntervals'
+      },
+      {
+        index: 9,
+        key: 'heptatonicMajorIntervals'
+      }
+    ],
+    melancholyDownUp: [
       {
         index: 0,
         key: 'heptatonicMinorIntervals'
@@ -50,7 +84,16 @@ module.exports = {
       {
         index: -2,
         key: 'minorSeventhIntervals'
-      }],
+      },
+      {
+        index: 2,
+        key: 'heptatonicMinorIntervals'
+      },
+      {
+        index: 3,
+        key: 'majorSeventhIntervals'
+      }
+    ],
     blissfulUpward: [
       {
         index: 0,
@@ -67,7 +110,8 @@ module.exports = {
       {
         index: 5,
         key: 'heptatonicMajorIntervals'
-      }],
+      }
+    ],
     blissfulDownward: [
       {
         index: 0,
@@ -84,7 +128,12 @@ module.exports = {
       {
         index: -5,
         key: 'heptatonicMajorIntervals'
-      }],
+      },
+      {
+        index: -8,
+        key: 'heptatonicMajorIntervals'
+      }
+    ],
     noChordOffset: [
       {
         index: 0,

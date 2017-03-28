@@ -214,7 +214,7 @@ module.exports = function() {
     // We use a non western scale
     // and the guitar sound for windy and freezing
     // so only use 3 notes in a chord
-    if (wCheck.isBitter) {
+    if (wCheck.isBitter || wCheck.isViolentStorm || wCheck.isStormy) {
       _numPadNotes = 3;
     } else if (wCheck.isFine) {
       _numPadNotes = 4;
@@ -489,8 +489,8 @@ module.exports = function() {
       lwData.humidity.value,
       lwData.humidity.min,
       lwData.humidity.max,
-      40,
-      70
+      50,
+      80
     ));
   }
 
@@ -1461,7 +1461,6 @@ module.exports = function() {
 				this.saxophone = sax;
 				this.aeroflute = aeroflute;
         this.harmonium = harmonium;
-				//this.horn = horn;
 			}
 
       function LongNotes(harmonica, flute, shiney, string) {
@@ -1489,7 +1488,6 @@ module.exports = function() {
               sketch.loadSound('/audio/sax-C2.mp3'),
               sketch.loadSound('/audio/aeroflute-C2.mp3'),
               sketch.loadSound('/audio/harmonium-C2.mp3')
-              //sketch.loadSound('/audio/horn-C2.mp3')
             ));
           }
           longNotes = new LongNotes(
@@ -1599,8 +1597,8 @@ module.exports = function() {
           if (humidArpScaleIndex >= humidArpScale.length) {
             humidArpScaleIndex = 0;
           }
-          harpSound.play();
           harpSound.setVolume(_harpVol);
+          harpSound.play();
           harpSound.rate(humidArpScale[humidArpScaleIndex]);
           humidArpScaleIndex++;
         }

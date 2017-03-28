@@ -503,6 +503,26 @@ module.exports = function() {
             musicValue: ''
           },
           {
+            key: 'isViolentStorm',
+            title: 'Violent storm',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/storm-icon.svg',
+            music: 'Number of notes per chord is ',
+            musicValue: ''
+          },
+          {
+            key: 'isStormy',
+            title: 'Stormy conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/storm-icon.svg',
+            music: 'Number of notes per chord is ',
+            musicValue: ''
+          },
+          {
             key: 'isFine',
             title: 'Fine weather',
             value: '',
