@@ -315,6 +315,26 @@ module.exports = function() {
             musicValue: ''
           },
           {
+            key: 'isPrecip',
+            title: 'Windy conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/rain-icon.svg',
+            music: 'Chord sequence type is ',
+            musicValue: ''
+          },
+          {
+            key: 'isCloudy',
+            title: 'Windy conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/cloud-cover-icon.svg',
+            music: 'Chord sequence type is ',
+            musicValue: ''
+          },
+          {
             key: 'isOther',
             title: 'Is not fine, freezing, clement nor windy',
             value: true,
