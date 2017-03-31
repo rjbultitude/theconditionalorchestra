@@ -25,6 +25,11 @@
     "min":0,
     "max":0.5
   },
+  "precipProbability":{
+    "value":0.2,
+    "min":0,
+    "max":1
+  },
   "precipType": "sleet",
   "temperature":{
     "value":66.2,

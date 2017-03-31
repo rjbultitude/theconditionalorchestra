@@ -40,6 +40,34 @@ module.exports = function() {
     this.max = max;
   }
 
+  function LocationData() {
+    this.cloudCover = null;
+    this.windSpeed = null;
+    this.pressure = null;
+    this.precipIntensity = null;
+    this.temperature = null;
+    this.visibility = null;
+    this.humidity = null;
+    this.windBearing = null;
+    this.ozone = null;
+    this.precipProbability = null;
+    this.dewPoint = null;
+    this.apparentTemperature = null;
+    this.nearestStormBearing = null;
+    this.nearestStormDistance = null;
+  }
+
+  function checkLocationDataKeys(altData) {
+    var _locationData = new LocationData();
+    for (var _condition in _locationData) {
+      if (_locationData.hasOwnProperty(_condition)) {
+        if (altData[_condition] === undefined) {
+            console.error('Property doesn\'t exist');
+        }
+      }
+    }
+  }
+
   function fixlwDataRanges(lwData) {
     for (var condition in lwData) {
       if (lwData.hasOwnProperty(condition)) {
@@ -86,26 +114,11 @@ module.exports = function() {
       //load the static weather
       //TODO test this
       if (conditions === false) {
+        console.log('There was a problem retrieving data from darksky');
         conditions = makeRequest('GET', 'data/static-data.json');
       }
-      //must make new object at this point;
-      var locationData = {
-        //in use
-        cloudCover: null,
-        windSpeed: null,
-        pressure: null,
-        precipIntensity: null,
-        temperature: null,
-        visibility: null,
-        humidity: null,
-        windBearing: null,
-        ozone: null,
-        precipProbability: null,
-        dewPoint: null,
-        apparentTemperature: null,
-        nearestStormBearing: null,
-        nearestStormDistance: null
-      };
+      //must make new object at this point
+      var locationData = new LocationData();
       // Set numerical integer and floating point values
       for (var key in locationData) {
         if (locationData.hasOwnProperty(key)) {
@@ -153,6 +166,10 @@ module.exports = function() {
   function useStaticData(statusString) {
     var fetchStaticData = makeRequest('GET', 'data/static-data.json');
     fetchStaticData.then(function success(staticData) {
+      //error check
+      //TODO should probably stop
+      //the program if this errors
+      checkLocationDataKeys(staticData);
       var staticDataJSON = JSON.parse(staticData);
       handleNoGeoData(statusString, staticDataJSON);
       enableControls();
