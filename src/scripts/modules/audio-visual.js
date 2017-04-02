@@ -67,8 +67,8 @@ module.exports = function() {
   //Sound objects
   var padSounds = [];
   var choralSounds = [];
-  var synchedSoundScaleSets = [];
-  var noteLengths = [50, 75, 100];
+  var synchedSoundsChords = [];
+  var noteLengths = [appFrameRate * 3, appFrameRate * 4, appFrameRate * 5];
   // dialog / modal
   var dialogIsOpen = false;
   // Visuals
@@ -587,13 +587,14 @@ module.exports = function() {
     var extraSeqPlaying = false;
     var brassOneScaleArrayIndex = 0;
     var brassTwoScaleArrayIndex = 0;
-    var scaleSetIndex = 0;
+    var chordIndex = 0;
     var padIndexCount = 0;
     var panIndex = 0;
     var precipArpScale = [];
     var humidArpScale = [];
     var humidArpReady = false;
     var padReady = false;
+    var currNoteLength = noteLengths[0];
     var precipArpReady = false;
     var precipArpScaleIndex = 0;
     var humidArpScaleIndex = 0;
@@ -761,10 +762,10 @@ module.exports = function() {
         }
       }
 
-      function playLongNote(scale, extraSeqPlaying) {
+      function playLongNote() {
         //playlogic
         var _longNote = longNotes[longNoteType];
-        var _longNoteRate = scale[longNoteIndex];
+        var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         //Lower by one octave
         //if the lower chords are playing
         if (extraSeqPlaying) {
@@ -784,9 +785,9 @@ module.exports = function() {
         bass2.play();
       }
 
-      function playBass(scale) {
+      function playBass() {
         //Play 1st note of each chord
-        var _bassRate = scale[0];
+        var _bassRate = synchedSoundsChords[chordIndex][0];
         bass.stop();
         bass.playMode('restart');
         bass.rate(_bassRate);
@@ -799,70 +800,59 @@ module.exports = function() {
         }
       }
 
-      function setScaleSetIndex(scaleSet, numExtraChords) {
-        if (scaleSetIndex >= scaleSet.length - 1 - numExtraChords) {
-          scaleSetIndex = 0;
+      function setChordIndex() {
+        if (chordIndex >= synchedSoundsChords.length - 1 - numExtraChords) {
+          chordIndex = 0;
         } else {
-          scaleSetIndex++;
+          chordIndex++;
         }
-        return scaleSetIndex;
+        return chordIndex;
       }
 
-      function playPadFull() {
-        for (var i = 0; i < padSounds.length; i++) {
-          padSounds[i][padType].disconnect();
-          padSounds[i][padType].connect(soundFilter);
-          padSounds[i][padType].connect(reverb);
-          padSounds[i][padType].rate(synchedSoundScaleSets[scaleSetIndex][i]);
-          padSounds[i][padType].pan(panArr[panIndex]);
-          padSounds[i][padType].setVolume(avSettings[padType].volume);
-          padSounds[i][padType].playMode('restart');
-          padSounds[i][padType].play();
-          padSounds[i][padType].onended(function() {
-            updatePadIndex(true);
-          });
-          updatePanIndex();
-        }
-      }
-
-      function updatePadIndex(isCallback) {
+      function padCallBack() {
         if (isPlaying) {
           padIndexCount++;
           // When all the sounds have played once, loop
           if (padIndexCount === padSounds.length) {
             padIndexCount = 0;
           }
-          if (isCallback) {
-            playPadFull();
-          }
+          playSynchedSounds(true);
         }
       }
 
-      function playPadShort() {
-        var _currNoteLength = sketch.random(noteLengths);
-        if (sketch.frameCount % _currNoteLength === 0) {
-          for (var i = 0; i < padSounds.length; i++) {
-            padSounds[i][padType].disconnect();
-            padSounds[i][padType].connect(soundFilter);
-            padSounds[i][padType].connect(reverb);
-            padSounds[i][padType].rate(synchedSoundScaleSets[scaleSetIndex][i]);
-            padSounds[i][padType].pan(panArr[panIndex]);
-            padSounds[i][padType].setVolume(avSettings[padType].volume);
-            padSounds[i][padType].playMode('restart');
-            padSounds[i][padType].play();
-            updatePanIndex();
+      function updateNoteLength() {
+        currNoteLength = sketch.random(noteLengths);
+      }
+
+      function playPad(full) {
+        for (var i = 0; i < padSounds.length; i++) {
+          padSounds[i][padType].setVolume(avSettings[padType].volume);
+          padSounds[i][padType].disconnect();
+          padSounds[i][padType].connect(soundFilter);
+          padSounds[i][padType].connect(reverb);
+          padSounds[i][padType].rate(synchedSoundsChords[chordIndex][i]);
+          padSounds[i][padType].pan(panArr[panIndex]);
+          padSounds[i][padType].playMode('restart');
+          padSounds[i][padType].play();
+          padSounds[i][padType].setVolume(avSettings[padType].volume);
+          //If we want to play the full note
+          //use the onended callback
+          if (full) {
+            padSounds[i][padType].onended(function() {
+              padCallBack(true);
+            });
           }
-          updatePadIndex();
+          updatePanIndex();
         }
       }
 
-      function playSynchedSounds() {
+      function playSynchedSounds(full) {
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence
           //seqRepeatNum number of times
           //play the first chord of extraChords
-          scaleSetIndex = synchedSoundScaleSets.length - numExtraChords + extraSeqCount;
+          chordIndex = synchedSoundsChords.length - numExtraChords + extraSeqCount;
           extraSeqCount++;
           extraSeqPlaying = true;
           //Once we've played all the extraChords
@@ -875,21 +865,18 @@ module.exports = function() {
           extraSeqPlaying = false;
           mainSeqCount++;
         }
-        if (wCheck.isClement) {
-          playPadFull();
-        } else {
-          //Play the pad sounds
-          //using the draw loop
-          padReady = true;
-        }
+        playPad(full);
         //playlogic
         //Avoid sound clash with Brass
         if (wCheck.isCloudy && !wCheck.isWindy) {
-          playBass(synchedSoundScaleSets[scaleSetIndex]);
+          playBass();
         }
-        playLongNote(synchedSoundScaleSets[scaleSetIndex], extraSeqPlaying);
+        playLongNote();
         //increment indices
-        setScaleSetIndex(synchedSoundScaleSets, numExtraChords);
+        setChordIndex();
+        console.log('chordIndex', chordIndex);
+        console.log('synchedSoundsChords.length', synchedSoundsChords.length);
+        console.log('synchedSoundsChords[chordIndex]', synchedSoundsChords[chordIndex]);
       }
 
       function playChoralSound(scaleArray) {
@@ -917,7 +904,7 @@ module.exports = function() {
       /**
        * playSounds Handles playback logic
        * Though some of this is delegated
-       * @param  {Array} synchedSoundScaleSets    sets of notes to play
+       * @param  {Array} synchedSoundsChords    sets of notes to play
        * @param  {Array} precipArpScaleArray a set of notes fot the sequencer to play
        * @param  {Array} humidArpScaleArray a set of notes fot the sequencer to play
        * @return {boolean}               default value
@@ -926,23 +913,30 @@ module.exports = function() {
         // playlogic
         // Only the first chord is passed in
         if (wCheck.isFine || wCheck.isFreezing) {
-          playChoralSound(synchedSoundScaleSets[0]);
+          playChoralSound(synchedSoundsChords[0]);
         }
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
           //playlogic
           if (wCheck.isWindy) {
-            playBrassBaritone(synchedSoundScaleSets[scaleSetIndex]);
+            playBrassBaritone(synchedSoundsChords[chordIndex]);
           }
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
           //playlogic
           if (wCheck.isWindy) {
-            playBrassBaritoneTwo(synchedSoundScaleSets[scaleSetIndex]);
+            playBrassBaritoneTwo(synchedSoundsChords[chordIndex]);
           }
         });
         //Pads, long note and bass
-        playSynchedSounds();
+        //playlogic
+        if (wCheck.isClement) {
+          playSynchedSounds(true);
+        } else {
+          //Play the pad sounds
+          //using the draw loop
+          padReady = true;
+        }
         //Clement arpeggio
         if (humidArpScaleArray.length > 0) {
           playHumidArp(humidArpScaleArray);
@@ -1166,13 +1160,13 @@ module.exports = function() {
         var _precipArpScaleArray = [];
         var _humidArpScaleArray = [];
         //Make arrays of frequencies for playback
-        synchedSoundScaleSets = makeChordSequence();
+        synchedSoundsChords = makeChordSequence();
         // Set filter for pad sounds
         setFilter();
         setReverb();
         //Set the root note rate
         //for use elsewhere in program
-        rootNoteRate = synchedSoundScaleSets[scaleSetIndex][0];
+        rootNoteRate = synchedSoundsChords[chordIndex][0];
         //playlogic
         if (wCheck.isPrecip) {
           _precipArpScaleArray = createPrecipArpScale();
@@ -1201,6 +1195,9 @@ module.exports = function() {
         }
       }
 
+      /**
+       * Display functions
+       */
       function setLwDataVals(rawCoDisplayData, lwDataArr) {
         return rawCoDisplayData.map(function(coDisplayObj) {
           for (var i = 0; i < lwDataArr.length; i++) {
@@ -1450,9 +1447,12 @@ module.exports = function() {
               case 'semiTonesMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, numSemisPerOctave);
                 break;
+              //Should this be called secondary map?
               case 'humidArpMap':
                 _currArr = setHumidMapVals(_constrainedDisplayData);
                 break;
+              case 'padLengthMap':
+                _currArr = setHumidMapVals(_constrainedDisplayData);
             }
             //Convert sets to one single array
             _finalCoData.push.apply(_finalCoData, _currArr);
@@ -1502,9 +1502,9 @@ module.exports = function() {
         this.dropLightSound = dropLightSound;
       }
 
-			sketch.preload = function() {
-				//loadSound called during preload
-				//will be ready to play in time for setup
+      sketch.preload = function() {
+        //loadSound called during preload
+        //will be ready to play in time for setup
         if (audioSupported) {
           //Pad sounds for various weather types
           for (var i = 0; i < numPadNotes; i++) {
@@ -1542,15 +1542,15 @@ module.exports = function() {
           percussion2 = sketch.loadSound('/audio/drum2.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
         }
-			};
+      };
 
-			sketch.setup = function setup() {
-				sketch.frameRate(appFrameRate);
+      sketch.setup = function setup() {
+        sketch.frameRate(appFrameRate);
         //---------------------
         //set runtime constants
         //--------------------
-				avSettings.animAmount = Math.round(lwData.windSpeed.value);
-				avSettings.noiseInc = sketch.map(avSettings.animAmount, lwData.windSpeed.min, lwData.windSpeed.max, 0.01, 0.05);
+        avSettings.animAmount = Math.round(lwData.windSpeed.value);
+        avSettings.noiseInc = sketch.map(avSettings.animAmount, lwData.windSpeed.min, lwData.windSpeed.max, 0.01, 0.05);
         temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
         // playlogic
         windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.5, 1.4);
@@ -1564,7 +1564,15 @@ module.exports = function() {
         } else {
           updateStatus('error', lwData.name, true);
         }
-			};
+      };
+
+      function updateSynchedSounds() {
+        if (sketch.frameCount % currNoteLength === 0 || sketch.frameCount === 0) {
+          playSynchedSounds(false);
+          updateNoteLength();
+          console.log('currNoteLength', currNoteLength);
+        }
+      }
 
       function updatePercussion() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
@@ -1647,7 +1655,7 @@ module.exports = function() {
           updateRideCymbal();
         }
         if (padReady) {
-          playPadShort();
+          updateSynchedSounds();
         }
         //playlogic
         if (wCheck.isOminous) {

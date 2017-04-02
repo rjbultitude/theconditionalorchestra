@@ -56,7 +56,7 @@
     "min":-20,
     "max":72
   },
-  "apparentTemp":{
+  "apparentTemperature":{
     "value":66.2,
     "min":-20,
     "max":120

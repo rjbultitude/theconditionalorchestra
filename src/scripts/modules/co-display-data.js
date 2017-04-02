@@ -219,7 +219,7 @@ module.exports = function() {
             musicValue: '',
             negativeKey: 'isPrecip',
             negativeValue: ''
-          }
+          },
         ],
         chordTypeMap: [
           {
@@ -633,6 +633,29 @@ module.exports = function() {
             musicValue: '',
             negativeKey: 'isPrecip',
             negativeValue: ''
+          }
+        ],
+        //TODO fix up the music description
+        padLengthMap: [
+          {
+            key: 'isClement',
+            title: 'Clement conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/weather-icon.svg',
+            music: 'Pad sounds play full length',
+            musicValue: ''
+          },
+          {
+            key: 'isOther',
+            title: 'Inclement conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/weather-icon.svg',
+            music: 'Pad sounds play short',
+            musicValue: ''
           }
         ]
     };

@@ -13,7 +13,7 @@ module.exports = {
   aeroflute: {volume : 0.75},
   saxophone: {volume : 0.75},
   horn: {volume : 0.8},
-  harmonium: {volume : 0.9},
+  harmonium: {volume : 0.5},
   numPadNotes: 5,
   numChords: 3,
   numChordsMin: 2,

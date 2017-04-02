@@ -61,8 +61,8 @@ module.exports = function() {
     var _locationData = new LocationData();
     for (var _condition in _locationData) {
       if (_locationData.hasOwnProperty(_condition)) {
-        if (altData[_condition] === undefined) {
-            console.error('Property doesn\'t exist');
+        if (altData.hasOwnProperty(_condition) === false) {
+          console.error(_condition + ' Property doesn\'t exist');
         }
       }
     }
@@ -169,8 +169,8 @@ module.exports = function() {
       //error check
       //TODO should probably stop
       //the program if this errors
-      checkLocationDataKeys(staticData);
       var staticDataJSON = JSON.parse(staticData);
+      checkLocationDataKeys(staticDataJSON);
       handleNoGeoData(statusString, staticDataJSON);
       enableControls();
       console.log('using static data');
