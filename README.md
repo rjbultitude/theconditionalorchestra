@@ -125,13 +125,9 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Build an alternative pad playback function which plays the sequence at a different rate 
+Refactor the display fns so that they're chained
 
 Add a new sound for fine weather as it's the least interesting
-
-Sound used for fine is by far the most interesting - perhaps some other pad sounds should aspire to this
-
-Volume of dropSound and harp seems to be very low - could be the order of method calls
 
 consider using airpad-C3 for longNote as supplement to flute
 

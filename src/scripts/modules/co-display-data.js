@@ -644,7 +644,7 @@ module.exports = function() {
             constrain: false,
             unit: '',
             iconPath: '/img/weather-icon.svg',
-            music: 'Pad sounds play full length',
+            music: 'Loop mode is full note',
             musicValue: ''
           },
           {
@@ -654,7 +654,7 @@ module.exports = function() {
             constrain: false,
             unit: '',
             iconPath: '/img/weather-icon.svg',
-            music: 'Pad sounds play short',
+            music: 'Loop mode is varying lengths',
             musicValue: ''
           }
         ]

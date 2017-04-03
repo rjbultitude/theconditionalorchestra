@@ -232,8 +232,8 @@ module.exports = function() {
       lwData.ozone.value,
       lwData.ozone.min,
       lwData.ozone.max,
-      0,
-      _numChords * 2
+      1,
+      Math.round(avSettings.numChordsMax * 1.5)
     ));
     return {
       numChords: _numChords,
@@ -877,8 +877,6 @@ module.exports = function() {
         playLongNote();
         //increment indices
         setChordIndex();
-        console.log('chordIndex', chordIndex);
-        console.log('synchedSoundsChords[chordIndex]', synchedSoundsChords[chordIndex]);
       }
 
       function playChoralSound(scaleArray) {
