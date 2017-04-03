@@ -139,8 +139,6 @@ Consider using a state manager to update the humid arpeggio and display (chords)
 
 Consider only playing arpeggios when the inversions are being used
 
-Modulate padSounds volume/rate/pan for windy conditions - requires sounds to be assigned to master channel
-
 Create 'Add to home screen' button
 
 Update logic App Logic and spreadsheet

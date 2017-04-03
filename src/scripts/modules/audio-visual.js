@@ -788,13 +788,12 @@ module.exports = function() {
         bass.rate(_bassRate);
         bass.setVolume(1);
         bass.play();
-        //TODO put back after
-        //testing new pad playback
-        // if (!wCheck.isHumid) {
-        //   bass.onended(function() {
-        //     bassCallback(_bassRate);
-        //   });
-        // }
+        //playlogic
+        if (wCheck.isClement) {
+          bass.onended(function() {
+            bassCallback(_bassRate);
+          });
+        }
       }
 
       function setChordIndex() {
@@ -811,9 +810,9 @@ module.exports = function() {
           padIndexCount++;
           // When all the sounds have played once, loop
           if (padIndexCount === padSounds.length) {
+            playSynchedSounds(true);
             padIndexCount = 0;
           }
-          playSynchedSounds(true);
         }
       }
 
@@ -847,7 +846,6 @@ module.exports = function() {
       }
 
       function playSynchedSounds(playFullNotes) {
-        console.log('frameRate', sketch.frameRate());
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence
@@ -932,6 +930,7 @@ module.exports = function() {
         //playlogic
         if (wCheck.isClement) {
           playSynchedSounds(true);
+          padReady = false;
         } else {
           //Play the pad sounds
           //using the draw loop
@@ -1174,6 +1173,8 @@ module.exports = function() {
         if (wCheck.isHumid && !wCheck.isPrecip) {
           _humidArpScaleArray = createHumidArpScale();
         }
+        //Explicitly passing these arrays as args
+        //For clarity
         playSounds(_precipArpScaleArray, _humidArpScaleArray);
 			}
 
@@ -1574,7 +1575,6 @@ module.exports = function() {
           //while we set a new note length
           padReady = false;
           updateNoteLength();
-          console.log('currNoteLength', currNoteLength);
         }
       }
 
