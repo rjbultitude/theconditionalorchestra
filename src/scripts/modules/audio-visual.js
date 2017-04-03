@@ -24,6 +24,7 @@ var getLargestPosNumInArr = require('../utilities/largest-pos-num-in-array');
 var getLargestNegNumInArr = require('../utilities/largest-neg-num-in-array');
 var addMissingArrayItems = require('../utilities/add-missing-array-items');
 var avSettings = require('../settings/av-settings');
+var makeFibSequence = require('../utilities/fib-sequence');
 
 module.exports = function() {
   /*
@@ -36,6 +37,8 @@ module.exports = function() {
   var appFrameRate = 30;
   var sequenceStart = true;
   var rootNoteRate;
+  //lead
+  var airpad;
   //bass
   var bass;
   var bass2;
@@ -147,6 +150,7 @@ module.exports = function() {
       choralSounds.forEach(fadeChoralSounds);
       fadeSoundsinObject(longNotes);
       fadeSoundsinObject(dropSounds);
+      airpad.fade(0, avSettings.fadeTime);
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
       harpSoundTwo.fade(0, avSettings.fadeTime);
@@ -159,6 +163,7 @@ module.exports = function() {
       rideCymbal.fade(0, avSettings.fadeTime);
       //Stop after fades
       setTimeout(function(){
+        airpad.stop();
         brassBaritone.stop();
         brassBaritone2.stop();
         harpSoundTwo.stop();
@@ -590,12 +595,15 @@ module.exports = function() {
     var brassTwoScaleArrayIndex = 0;
     var chordIndex = 0;
     var padIndexCount = 0;
+    var fibIndex = 0;
     var panIndex = 0;
     var precipArpScale = [];
     var humidArpScale = [];
     var humidArpReady = false;
     var padReady = false;
+    var airpadReady = false;
     var currNoteLength = noteLengths[2];
+    var currFibLength;
     var precipArpReady = false;
     var precipArpScaleIndex = 0;
     var humidArpScaleIndex = 0;
@@ -663,6 +671,7 @@ module.exports = function() {
     var rideCymbalStepTime = Math.round(appFrameRate / rideCymbalBps);
     var rideCymbalMaxVolume = getRideCymbalMaxVolume(lwData);
     var rideCymbalVolumeArr = getRideCymbalVolumeArr(rideCymbalMaxVolume);
+    var fibNoteLengths = makeFibSequence(appFrameRate/4, numPadNotes);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -830,6 +839,18 @@ module.exports = function() {
         padReady = true;
       }
 
+      function updateAirpadLength() {
+        //TODO we only want to play each note
+        //in the chord once per chord
+        currFibLength = fibNoteLengths[fibIndex];
+        if (fibIndex === fibNoteLengths.length - 1) {
+          fibIndex = 0;
+        } else {
+          fibIndex++;
+        }
+        airpadReady = true;
+      }
+
       function playPad(playFullNotes) {
         for (var i = 0; i < padSounds.length; i++) {
           padSounds[i][padType].setVolume(avSettings[padType].volume);
@@ -919,6 +940,9 @@ module.exports = function() {
         // Only the first chord is passed in
         if (wCheck.isFine || wCheck.isFreezing) {
           playChoralSound(synchedSoundsChords[0]);
+        }
+        if (wCheck.isFine) {
+          airpadReady = true;
         }
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
@@ -1543,16 +1567,17 @@ module.exports = function() {
             sketch.loadSound('/audio/drop-soft.mp3'),
             sketch.loadSound('/audio/drop-light.mp3')
           );
+          airpad = sketch.loadSound('/audio/airpad-C3.mp3');
           bass = sketch.loadSound('/audio/bass.mp3');
           bass2 = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
           harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
-          windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
           percussion = sketch.loadSound('/audio/drum.mp3');
           percussion2 = sketch.loadSound('/audio/drum2.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
+          windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
       };
 
@@ -1585,6 +1610,17 @@ module.exports = function() {
           //while we set a new note length
           padReady = false;
           updateNoteLength();
+        }
+      }
+
+      function updateAirpad() {
+        if (sketch.frameCount === 1 || sketch.frameCount % currFibLength === 0) {
+          airpadReady = false;
+          var _airpadRate = synchedSoundsChords[chordIndex][fibIndex];
+          console.log('_airpadRate', _airpadRate);
+          airpad.rate(_airpadRate);
+          airpad.play();
+          updateAirpadLength();
         }
       }
 
@@ -1670,6 +1706,9 @@ module.exports = function() {
         }
         if (padReady) {
           updateSynchedSounds();
+        }
+        if (airpadReady) {
+          updateAirpad();
         }
         //playlogic
         if (wCheck.isOminous) {

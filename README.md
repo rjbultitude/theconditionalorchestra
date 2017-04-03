@@ -125,7 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-When longnote is high we should play at lower octave
+When longnote is high we should play at lower octave - needs testing
 
 Refactor the display fns so that they're chained
 
