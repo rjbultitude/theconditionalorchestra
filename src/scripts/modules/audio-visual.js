@@ -422,6 +422,10 @@ module.exports = function() {
     return _longNoteIndex;
   }
 
+  function isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes) {
+    return rootNoteHigh && longNoteIndex >= Math.round(numPadNotes / 2);
+  }
+
   function getReverbLength(lwData) {
     return Math.round(microU.mapRange(
       lwData.visibility.value,
@@ -647,6 +651,7 @@ module.exports = function() {
     var rootNote = getRootNote(lwData, numSemisPerOctave);
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
+    var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
     var longNoteType = getLongNoteType(wCheck);
@@ -765,7 +770,7 @@ module.exports = function() {
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         //Lower by one octave
         //if the lower chords are playing
-        if (extraSeqPlaying) {
+        if (extraSeqPlaying || longNoteHigh) {
           _longNoteRate = _longNoteRate / 2;
         }
         _longNote.playMode('restart');
@@ -1361,7 +1366,9 @@ module.exports = function() {
           var _anyValidPropTrue = false;
           for (var i = 0; i < displayDataGroup.length; i++) {
             if (displayDataGroup[i].key !== 'isOther' && displayDataGroup[i].value) {
-              return true;
+              _anyValidPropTrue = true;
+              //Return early or return false
+              return _anyValidPropTrue;
             }
           }
           return _anyValidPropTrue;

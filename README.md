@@ -125,11 +125,11 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+When longnote is high we should play at lower octave
+
 Refactor the display fns so that they're chained
 
-Add a new sound for fine weather as it's the least interesting
-
-consider using airpad-C3 for longNote as supplement to flute
+Add a new sound for fine weather as it's the least interesting consider using airpad-C3
 
 Some arpeggio melodies still clash a little with the chords
 

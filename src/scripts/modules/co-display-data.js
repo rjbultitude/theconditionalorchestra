@@ -635,7 +635,6 @@ module.exports = function() {
             negativeValue: ''
           }
         ],
-        //TODO fix up the music description
         padLengthMap: [
           {
             key: 'isClement',
