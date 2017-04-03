@@ -818,7 +818,8 @@ module.exports = function() {
       }
 
       function updateNoteLength() {
-        currNoteLength = sketch.random(noteLengths);
+        //If the lower chords are playing halve the time
+        currNoteLength = extraSeqPlaying ? sketch.random(noteLengths) * 2 : sketch.random(noteLengths);
         //Start the call of the updateNoteLength fn again
         padReady = true;
       }
