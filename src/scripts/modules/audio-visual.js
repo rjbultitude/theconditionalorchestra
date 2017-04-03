@@ -68,6 +68,7 @@ module.exports = function() {
   var padSounds = [];
   var choralSounds = [];
   var synchedSoundsChords = [];
+  //Pad note length / next note length
   var noteLengths = [appFrameRate * 3, appFrameRate * 4, appFrameRate * 5];
   // dialog / modal
   var dialogIsOpen = false;
@@ -110,12 +111,9 @@ module.exports = function() {
     }, 50);
   }
 
-  //TODO could use same function
-  //as fadeLongNotes
-
   function fadeSoundsinObject(soundObject) {
     for (var _thisSound in soundObject) {
-      if (dropSounds.hasOwnProperty(_thisSound)) {
+      if (soundObject.hasOwnProperty(_thisSound)) {
         soundObject[_thisSound].fade(0, avSettings.fadeTime);
         setTimeout(function(){
           soundObject[_thisSound].stop();
@@ -578,9 +576,6 @@ module.exports = function() {
 	// main app init
 	function init(lwData) {
     console.log('lwData', lwData);
-    //TODO write data checker
-    //to ensure all the properties
-    //exist esp for static data
     //Init scoped values
     var mainSeqCount = 0;
     var extraSeqCount = 0;
@@ -793,11 +788,13 @@ module.exports = function() {
         bass.rate(_bassRate);
         bass.setVolume(1);
         bass.play();
-        if (!wCheck.isHumid) {
-          bass.onended(function() {
-            bassCallback(_bassRate);
-          });
-        }
+        //TODO put back after
+        //testing new pad playback
+        // if (!wCheck.isHumid) {
+        //   bass.onended(function() {
+        //     bassCallback(_bassRate);
+        //   });
+        // }
       }
 
       function setChordIndex() {
@@ -824,7 +821,7 @@ module.exports = function() {
         currNoteLength = sketch.random(noteLengths);
       }
 
-      function playPad(full) {
+      function playPad(playFullNotes) {
         for (var i = 0; i < padSounds.length; i++) {
           padSounds[i][padType].setVolume(avSettings[padType].volume);
           padSounds[i][padType].disconnect();
@@ -835,9 +832,9 @@ module.exports = function() {
           padSounds[i][padType].playMode('restart');
           padSounds[i][padType].play();
           padSounds[i][padType].setVolume(avSettings[padType].volume);
-          //If we want to play the full note
+          //If we want to play the play full note length
           //use the onended callback
-          if (full) {
+          if (playFullNotes) {
             padSounds[i][padType].onended(function() {
               padCallBack(true);
             });
@@ -846,7 +843,8 @@ module.exports = function() {
         }
       }
 
-      function playSynchedSounds(full) {
+      function playSynchedSounds(playFullNotes) {
+        console.log('frameRate', sketch.frameRate());
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence
@@ -865,7 +863,9 @@ module.exports = function() {
           extraSeqPlaying = false;
           mainSeqCount++;
         }
-        playPad(full);
+        //Play the pad chord
+        //and pass in the playback mode
+        playPad(playFullNotes);
         //playlogic
         //Avoid sound clash with Brass
         if (wCheck.isCloudy && !wCheck.isWindy) {
@@ -875,7 +875,6 @@ module.exports = function() {
         //increment indices
         setChordIndex();
         console.log('chordIndex', chordIndex);
-        console.log('synchedSoundsChords.length', synchedSoundsChords.length);
         console.log('synchedSoundsChords[chordIndex]', synchedSoundsChords[chordIndex]);
       }
 
@@ -1156,7 +1155,7 @@ module.exports = function() {
       /*
       	Create necessary scales
        */
-			function configureSounds() {
+      function configureSounds() {
         var _precipArpScaleArray = [];
         var _humidArpScaleArray = [];
         //Make arrays of frequencies for playback
@@ -1416,6 +1415,7 @@ module.exports = function() {
         for (var coDataGroup in coDisplayData) {
           if (coDisplayData.hasOwnProperty(coDataGroup)) {
             //Assign condition values, images and units
+            //TODO refactor so these fns can be chained
             var _mappedDisplayData = mapConditionsToDisplayData(coDisplayData[coDataGroup]);
             var _unitisedDisplayData = unitiseData(_mappedDisplayData);
             var _exceptionCheckedData = exceptionCheckData(_unitisedDisplayData);
