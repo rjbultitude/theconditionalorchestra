@@ -137,7 +137,7 @@ Test the master filter against the pad and longNote sounds, particularly with lo
 
 Consider using a state manager to update the humid arpeggio and display (chords)
 
-Consider only playing arpeggios when the inversions are being used
+Consider only playing arpeggios when the inversions are being used - currently it's isFine, isFreezing or isWindy
 
 Create 'Add to home screen' button
 

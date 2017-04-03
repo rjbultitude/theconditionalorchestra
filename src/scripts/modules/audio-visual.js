@@ -307,6 +307,7 @@ module.exports = function() {
     var _key;
     //playlogic
     if (wCheck.isFine || wCheck.isFreezing || wCheck.isWindy) {
+      //Inversions
       _key = 'noChordOffset';
     } else if (wCheck.isClement) {
       if (rootNoteHigh) {
@@ -338,6 +339,7 @@ module.exports = function() {
     } else if (wCheck.isFreezing) {
       _key = 'inversionsUpward';
     } else {
+      //No inversions
       _key = 'inversionsNoOffset';
     }
     return _key;
@@ -1449,12 +1451,13 @@ module.exports = function() {
               case 'semiTonesMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData, numSemisPerOctave);
                 break;
+              case 'padLengthMap':
+                _currArr = addOtherMapVals(_constrainedDisplayData);
+                break;
               //Should this be called secondary map?
               case 'humidArpMap':
                 _currArr = setHumidMapVals(_constrainedDisplayData);
                 break;
-              case 'padLengthMap':
-                _currArr = setHumidMapVals(_constrainedDisplayData);
             }
             //Convert sets to one single array
             _finalCoData.push.apply(_finalCoData, _currArr);

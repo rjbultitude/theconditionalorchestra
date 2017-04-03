@@ -29,7 +29,7 @@ module.exports = {
   pitchOffsetInc: 0.5,
   fadeTime: 1,
   //Frequency
-  //Lowest (10Hz) to highest (22050Hz)
+  //Lowest (10 Hz) to highest (22,050 Hz)
   masterFilter: {
     min: 700,
     max: 5000

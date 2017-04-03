@@ -19,7 +19,7 @@ module.exports = {
   },
 
   isHumid: function(humidity) {
-    return humidity > 0.4;
+    return humidity > 0.57;
   },
 
   isMuggy: function(humidity, temperatureInFrnht) {
@@ -67,7 +67,7 @@ module.exports = {
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function(cloudCover, windSpeed, precipIntensity, humidity) {
-    return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0 && humidity < 0.58;
+    return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0 && humidity < 0.57;
   },
 
   // @param temperatureInFrnht floating point
