@@ -589,7 +589,7 @@ module.exports = function() {
     var humidArpScale = [];
     var humidArpReady = false;
     var padReady = false;
-    var currNoteLength = noteLengths[0];
+    var currNoteLength = noteLengths[2];
     var precipArpReady = false;
     var precipArpScaleIndex = 0;
     var humidArpScaleIndex = 0;
@@ -766,7 +766,7 @@ module.exports = function() {
         if (extraSeqPlaying) {
           _longNoteRate = _longNoteRate / 2;
         }
-        //_longNote.playMode('restart');
+        _longNote.playMode('restart');
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));
         _longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
@@ -819,6 +819,8 @@ module.exports = function() {
 
       function updateNoteLength() {
         currNoteLength = sketch.random(noteLengths);
+        //Start the call of the updateNoteLength fn again
+        padReady = true;
       }
 
       function playPad(playFullNotes) {
@@ -1567,8 +1569,11 @@ module.exports = function() {
       };
 
       function updateSynchedSounds() {
-        if (sketch.frameCount % currNoteLength === 0 || sketch.frameCount === 0) {
+        if (sketch.frameCount === 1 || sketch.frameCount % currNoteLength === 0) {
           playSynchedSounds(false);
+          //Temporarily stop the call of this fn
+          //while we set a new note length
+          padReady = false;
           updateNoteLength();
           console.log('currNoteLength', currNoteLength);
         }
