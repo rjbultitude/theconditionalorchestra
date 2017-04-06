@@ -129,7 +129,7 @@ When longnote is high we should play at lower octave - needs testing
 
 Refactor the display fns so that they're chained
 
-Not sure about shiney
+Ensure lead doesn't play when weather is humid
 
 Add a new sound for fine weather as it's the least interesting consider using airpad-C3
 

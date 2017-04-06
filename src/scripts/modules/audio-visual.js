@@ -636,11 +636,13 @@ module.exports = function() {
       isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
       isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature.value),
       isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value),
+      isSirocco: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value, lwData.windSpeed.value),
       //temperature
       isCold: weatherCheck.isCold(lwData.temperature.value),
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
       //broad conditions
       isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
+      isSublime: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
       isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value, lwData.humidity.value),
       isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
