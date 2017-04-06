@@ -453,6 +453,16 @@ module.exports = function() {
     ));
   }
 
+  function getLeadSoundVolume(wCheck) {
+    var _leadVolume;
+    if (wCheck.isSublime) {
+      _leadVolume = 0.6;
+    } else {
+      _leadVolume = 0.3;
+    }
+    return _leadVolume;
+  }
+
   function getPrecipCategory(lwData) {
     if (lwData.precipType === undefined) {
       return undefined;
@@ -649,6 +659,7 @@ module.exports = function() {
     var precipArpBps = precipArpBpm / 60;
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var dropSoundKey = getDropSoundKey(precipCategory);
+    var leadVolume = getLeadSoundVolume(wCheck);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
@@ -1645,7 +1656,7 @@ module.exports = function() {
             _leadSoundRate *= 2;
           }
           rhodes.play();
-          rhodes.setVolume(0.5);
+          rhodes.setVolume(leadVolume);
           rhodes.rate(_leadSoundRate);
           updateLeadSoundLength();
           updateLeadSoundIndex();

@@ -220,6 +220,16 @@ module.exports = function() {
             negativeKey: 'isPrecip',
             negativeValue: ''
           },
+          {
+            key: 'isSublime',
+            title: 'Sublime conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/sun-icon.svg',
+            music: 'Long note playing quietly; the rhodes a little louder',
+            musicValue: ''
+          }
         ],
         chordTypeMap: [
           {
