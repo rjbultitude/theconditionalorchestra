@@ -429,22 +429,12 @@ module.exports = function() {
             musicValue: ''
           },
           {
-            key: 'isArid',
-            title: 'Warm arid conditions',
+            key: 'isSirocco',
+            title: 'Warm, arid and windy conditions',
             value: '',
             constrain: false,
             unit: '',
             iconPath: '/img/humidity-icon.svg',
-            music: 'Long note is a ',
-            musicValue: ''
-          },
-          {
-            key: 'isClement',
-            title: 'Clement conditions',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/weather-icon.svg',
             music: 'Long note is a ',
             musicValue: ''
           },

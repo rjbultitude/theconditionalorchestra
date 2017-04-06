@@ -34,6 +34,10 @@ module.exports = {
     return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) < 0;
   },
 
+  isSirocco: function(humidity, temperatureInFrnht, windSpeed) {
+    return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) > 21 && windSpeed > 20;
+  },
+
   // @param windSpeed floating point
   isWindy: function(windSpeed) {
     return windSpeed > 22;
@@ -64,6 +68,10 @@ module.exports = {
    return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.32;
   },
 
+  isSublime: function(cloudCover, windSpeed, temperatureInFrnht) {
+   return frnhtToCelcius(temperatureInFrnht) > 25 && windSpeed < 8 && cloudCover <= 0.15;
+  },
+
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function(cloudCover, windSpeed, precipIntensity, humidity) {
@@ -88,10 +96,6 @@ module.exports = {
   // @param precipIntensity floating point
   isViolentStorm: function(cloudCover, windSpeed, precipIntensity) {
     return cloudCover > 0.8 && windSpeed > 60 && precipIntensity > 0.4;
-  },
-
-  isPending: function(cloudCover, windSpeed, precipProbability) {
-    return cloudCover > 0.5 && windSpeed > 18 && precipProbability > 0;
   },
 
   // @param cloudCover floating point

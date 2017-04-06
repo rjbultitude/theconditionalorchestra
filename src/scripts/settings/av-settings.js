@@ -10,7 +10,7 @@ module.exports = {
   //padSounds
   organ: {volume : 0.75},
   guitar: {volume : 0.425},
-  aeroflute: {volume : 0.75},
+  aeroflute: {volume : 0.5},
   saxophone: {volume : 0.75},
   horn: {volume : 0.8},
   harmonium: {volume : 0.5},

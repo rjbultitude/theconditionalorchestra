@@ -129,6 +129,8 @@ When longnote is high we should play at lower octave - needs testing
 
 Refactor the display fns so that they're chained
 
+Not sure about shiney
+
 Add a new sound for fine weather as it's the least interesting consider using airpad-C3
 
 Some arpeggio melodies still clash a little with the chords

@@ -76,6 +76,7 @@ module.exports = function() {
   var noteLengths = [appFrameRate * 3, appFrameRate * 4, appFrameRate * 5];
   var leadBarComplete = false;
   var leadNoteCount = 0;
+  var leadSoundIndex = 0;
   // Visuals
   var temperatureColour = 0;
   //Subscriptions
@@ -189,7 +190,7 @@ module.exports = function() {
     // TODO This errs towards the flute/zummarta
     if (wCheck.isMuggy || wCheck.isOminous) {
       _longNoteType = 'harmonica';
-    } else if (wCheck.isArid || wCheck.isClement) {
+    } else if (wCheck.isSirocco) {
       _longNoteType = 'shiney';
     } else if (wCheck.isCrisp) {
       _longNoteType = 'string';
@@ -777,6 +778,17 @@ module.exports = function() {
         //playlogic
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
+        var _longNoteVolArr = [0.1, 0.20, 0.5];
+        var _longNoteVol;
+        //playlogic
+        //If weather is hot, dry and clear
+        //play the longNote very quietly
+        //TODO doesn't yet have a display object
+        if (wCheck.isSublime) {
+          _longNoteVol = _longNoteVolArr[0];
+        } else {
+          _longNoteVol = sketch.random(_longNoteVolArr)
+        }
         //Lower by one octave
         //if the lower chords are playing
         if (extraSeqPlaying || longNoteHigh) {
@@ -785,7 +797,7 @@ module.exports = function() {
         _longNote.playMode('restart');
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));
-        _longNote.setVolume(sketch.random([0.1, 0.20, 0.5]));
+        _longNote.setVolume(_longNoteVol);
         _longNote.play();
       }
 
@@ -845,9 +857,18 @@ module.exports = function() {
         currFibLength = fibNoteLengths[fibIndex];
         if (fibIndex === fibNoteLengths.length - 1) {
           fibIndex = 0;
-          leadBarComplete = true;
         } else {
           fibIndex++;
+        }
+        leadSoundReady = true;
+      }
+
+      function updateLeadSoundIndex() {
+        if (leadSoundIndex === numPadNotes - 1) {
+          leadSoundIndex = 0;
+          leadBarComplete = true;
+        } else {
+          leadSoundIndex++;
           leadBarComplete = false;
         }
         leadSoundReady = true;
@@ -943,6 +964,7 @@ module.exports = function() {
         if (wCheck.isFine || wCheck.isFreezing) {
           playChoralSound(synchedSoundsChords[0]);
         }
+        //Play the lead if the weather is fine
         if (wCheck.isFine) {
           leadSoundReady = true;
         }
@@ -1617,7 +1639,7 @@ module.exports = function() {
 
       function updateLeadSound() {
         if (sketch.frameCount === 1 || sketch.frameCount % currFibLength === 0) {
-          var _leadSoundRate = synchedSoundsChords[chordIndex][fibIndex];
+          var _leadSoundRate = synchedSoundsChords[chordIndex][leadSoundIndex];
           leadSoundReady = false;
           if (leadBarComplete) {
             _leadSoundRate *= 2;
@@ -1626,6 +1648,7 @@ module.exports = function() {
           rhodes.setVolume(0.5);
           rhodes.rate(_leadSoundRate);
           updateLeadSoundLength();
+          updateLeadSoundIndex();
           if (leadNoteCount === synchedSoundsChords[chordIndex].length - 1) {
             leadNoteCount = 0;
           }
