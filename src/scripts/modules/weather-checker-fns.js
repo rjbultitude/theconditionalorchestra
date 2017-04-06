@@ -76,9 +76,8 @@ module.exports = {
   },
 
   isSublime: function(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 24 && windSpeed < 8 && cloudCover <= 0.15;
+   return frnhtToCelcius(temperatureInFrnht) > 22 && windSpeed < 8 && cloudCover <= 0.15;
   },
-
 
   // @param temperatureInFrnht floating point
   // @param windSpeed floating point

@@ -72,8 +72,7 @@ module.exports = function() {
   var padSounds = [];
   var choralSounds = [];
   var synchedSoundsChords = [];
-  //Pad note length / next note length
-  var noteLengths = [appFrameRate * 3, appFrameRate * 4, appFrameRate * 5];
+  //Lead
   var leadBarComplete = false;
   var leadNoteCount = 0;
   var leadSoundIndex = 0;
@@ -586,14 +585,48 @@ module.exports = function() {
     return _rideCymbalVolumeArr;
   }
 
+  function getNoteLengthMult(lwData, avSettings) {
+    return Math.round(microU.mapRange(
+      lwData.temperature.value,
+      lwData.temperature.min,
+      lwData.temperature.max,
+      avSettings.noteLengthMultMin,
+      avSettings.noteLengthMultMax
+    ));
+  }
+
+  //The higher the temperature
+  //the bigger the gaps
+  function getNoteLengths(appFrameRate, minMultiplier) {
+    var _noteLengths = [];
+    for (var i = 0; i < 3; i++) {
+      var _multiplierAmt = minMultiplier + i;
+      _noteLengths.push(_multiplierAmt * appFrameRate);
+    }
+    return _noteLengths;
+  }
+
+  //The higher the temperature
+  //the bigger the gaps
   function getLeadNoteLengthStart(appFrameRate, lwData) {
     return Math.round(microU.mapRange(
       lwData.temperature.value,
       lwData.temperature.min,
       lwData.temperature.max,
       appFrameRate,
-      appFrameRate / 3
+      appFrameRate / 6
     ));
+  }
+
+  function getMainMelodyTempoType(noteLengthMult, avSettings) {
+    var _meanVal = Math.round((avSettings.noteLengthMultMin + avSettings.noteLengthMultMax) / 2);
+    if (noteLengthMult < _meanVal) {
+      return 'swiftly';
+    } else if (noteLength === _meanVal) {
+      return 'moderately';
+    } else {
+      return 'slowly';
+    }
   }
 
   /**
@@ -623,8 +656,6 @@ module.exports = function() {
     var humidArpReady = false;
     var padReady = false;
     var leadSoundReady = false;
-    var currNoteLength = noteLengths[2];
-    var currFibLength;
     var precipArpReady = false;
     var precipArpScaleIndex = 0;
     var humidArpScaleIndex = 0;
@@ -695,9 +726,16 @@ module.exports = function() {
     var rideCymbalStepTime = Math.round(appFrameRate / rideCymbalBps);
     var rideCymbalMaxVolume = getRideCymbalMaxVolume(lwData);
     var rideCymbalVolumeArr = getRideCymbalVolumeArr(rideCymbalMaxVolume);
+    var noteLengthMult = getNoteLengthMult(lwData, avSettings);
+    var noteLengths = getNoteLengths(appFrameRate, noteLengthMult);
+    console.log('noteLengths', noteLengths);
     var leadNoteLengthStart = getLeadNoteLengthStart(appFrameRate, lwData);
     console.log('leadNoteLengthStart', leadNoteLengthStart);
-    var fibNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
+    var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
+    console.log('leadNoteLengths', leadNoteLengths);
+    //Set initial note lengths for use in draw
+    var currNoteLength = noteLengths[0];
+    var currLeadLength = leadNoteLengths[0];
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -879,8 +917,8 @@ module.exports = function() {
       function updateLeadSoundLength() {
         //TODO we only want to play each note
         //in the chord once per chord
-        currFibLength = fibNoteLengths[fibIndex];
-        if (fibIndex === fibNoteLengths.length - 1) {
+        currLeadLength = leadNoteLengths[fibIndex];
+        if (fibIndex === leadNoteLengths.length - 1) {
           fibIndex = 0;
         } else {
           fibIndex++;
@@ -1393,6 +1431,9 @@ module.exports = function() {
               case 'pressure':
                 coProp.musicValue = getRootNoteLetter(numSemisPerOctave, rootNote);
                 break;
+              case 'temperature':
+                coProp.musicValue = getMainMelodyTempoType(noteLengthMult, avSettings);
+                break;
               case 'cloudCover':
                 coProp.musicValue = Math.round(masterFilterFreq);
                 break;
@@ -1534,7 +1575,6 @@ module.exports = function() {
               case 'padLengthMap':
                 _currArr = addOtherMapVals(_constrainedDisplayData);
                 break;
-              //Should this be called secondary map?
               case 'humidArpMap':
                 _currArr = setHumidMapVals(_constrainedDisplayData);
                 break;
@@ -1663,7 +1703,7 @@ module.exports = function() {
       }
 
       function updateLeadSound() {
-        if (sketch.frameCount === 1 || sketch.frameCount % currFibLength === 0) {
+        if (sketch.frameCount === 1 || sketch.frameCount % currLeadLength === 0) {
           var _leadSoundRate = synchedSoundsChords[chordIndex][leadSoundIndex];
           leadSoundReady = false;
           if (leadBarComplete) {

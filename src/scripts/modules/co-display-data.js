@@ -237,7 +237,7 @@ module.exports = function() {
             constrain: false,
             unit: '',
             iconPath: '/img/temperature-icon.svg',
-            music: 'Rhodes arpeggios playing',
+            music: 'Melody playing ',
             musicValue: ''
           }
         ],
@@ -615,10 +615,6 @@ module.exports = function() {
             musicValue: ''
           },
         ],
-        //TODO
-        //Should this be called secondary map?
-        //It doesn't have an isOther property
-        //and could be used to manage any duplicate
         humidArpMap: [
           {
             key: 'humidity',
@@ -643,6 +639,18 @@ module.exports = function() {
             musicValue: '',
             negativeKey: 'isPrecip',
             negativeValue: ''
+          }
+        ],
+        leadMap: [
+          {
+            key: 'isFine',
+            title: 'Fine weather',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/pressure-icon.svg',
+            music: 'Rhodes arpeggio playing ',
+            musicValue: ''
           }
         ],
         padLengthMap: [

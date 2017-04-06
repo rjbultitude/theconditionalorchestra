@@ -21,6 +21,8 @@ module.exports = {
   mainSeqRepeat: 2,
   mainSeqRepeatMin: 1,
   mainSeqRepeatMax: 6,
+  noteLengthMultMin: 1,
+  noteLengthMultMax: 5,
   numRArpNotes: 12,
   numCArpNotes: 4, //should match closeIntervals
   numOctaves: 2,
