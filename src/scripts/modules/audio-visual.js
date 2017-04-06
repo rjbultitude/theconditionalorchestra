@@ -45,7 +45,6 @@ module.exports = function() {
   //Windy/ Brass
   var brassBaritone;
   var brassBaritone2;
-  var harpSoundTwo;
   //Percussion
   var percussion;
   var percussion2;
@@ -56,6 +55,8 @@ module.exports = function() {
   var longNotes;
   //precipitation / drops
   var dropSounds;
+  //Lead sounds
+  var rhodes;
   //windChime
   var windChime;
   //Globals
@@ -73,8 +74,8 @@ module.exports = function() {
   var synchedSoundsChords = [];
   //Pad note length / next note length
   var noteLengths = [appFrameRate * 3, appFrameRate * 4, appFrameRate * 5];
-  // dialog / modal
-  var dialogIsOpen = false;
+  var leadBarComplete = false;
+  var leadNoteCount = 0;
   // Visuals
   var temperatureColour = 0;
   //Subscriptions
@@ -153,26 +154,26 @@ module.exports = function() {
       airpad.fade(0, avSettings.fadeTime);
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
-      harpSoundTwo.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       bass2.fade(0, avSettings.fadeTime);
       harpSound.fade(0, avSettings.fadeTime);
       percussion.fade(0, avSettings.fadeTime);
       percussion2.fade(0, avSettings.fadeTime);
+      rhodes.fade(0, avSettings.fadeTime);
       rideCymbal.fade(0, avSettings.fadeTime);
       //Stop after fades
       setTimeout(function(){
         airpad.stop();
         brassBaritone.stop();
         brassBaritone2.stop();
-        harpSoundTwo.stop();
         windChime.stop();
         bass.stop();
         bass2.stop();
         harpSound.stop();
         percussion.stop();
         percussion2.stop();
+        rhodes.stop();
         rideCymbal.stop();
       }, avSettings.fadeTime * 1000);
       //Unsubs
@@ -463,7 +464,6 @@ module.exports = function() {
     }
   }
 
-  //TODO could use regex
   function getDropSoundKey(precipCategory) {
     if (precipCategory === 'hard') {
       return 'dropSound';
@@ -601,7 +601,7 @@ module.exports = function() {
     var humidArpScale = [];
     var humidArpReady = false;
     var padReady = false;
-    var airpadReady = false;
+    var leadSoundReady = false;
     var currNoteLength = noteLengths[2];
     var currFibLength;
     var precipArpReady = false;
@@ -671,7 +671,7 @@ module.exports = function() {
     var rideCymbalStepTime = Math.round(appFrameRate / rideCymbalBps);
     var rideCymbalMaxVolume = getRideCymbalMaxVolume(lwData);
     var rideCymbalVolumeArr = getRideCymbalVolumeArr(rideCymbalMaxVolume);
-    var fibNoteLengths = makeFibSequence(appFrameRate/4, numPadNotes);
+    var fibNoteLengths = makeFibSequence(appFrameRate/6, numPadNotes * 2);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -839,16 +839,18 @@ module.exports = function() {
         padReady = true;
       }
 
-      function updateAirpadLength() {
+      function updateLeadSoundLength() {
         //TODO we only want to play each note
         //in the chord once per chord
         currFibLength = fibNoteLengths[fibIndex];
         if (fibIndex === fibNoteLengths.length - 1) {
           fibIndex = 0;
+          leadBarComplete = true;
         } else {
           fibIndex++;
+          leadBarComplete = false;
         }
-        airpadReady = true;
+        leadSoundReady = true;
       }
 
       function playPad(playFullNotes) {
@@ -866,7 +868,7 @@ module.exports = function() {
           //use the onended callback
           if (playFullNotes) {
             padSounds[i][padType].onended(function() {
-              padCallBack(true);
+              padCallBack();
             });
           }
           updatePanIndex();
@@ -942,7 +944,7 @@ module.exports = function() {
           playChoralSound(synchedSoundsChords[0]);
         }
         if (wCheck.isFine) {
-          airpadReady = true;
+          leadSoundReady = true;
         }
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
@@ -1573,9 +1575,9 @@ module.exports = function() {
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
-          harpSoundTwo = sketch.loadSound('/audio/harp-C3.mp3');
           percussion = sketch.loadSound('/audio/drum.mp3');
           percussion2 = sketch.loadSound('/audio/drum2.mp3');
+          rhodes = sketch.loadSound('/audio/rhodes.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
@@ -1613,14 +1615,21 @@ module.exports = function() {
         }
       }
 
-      function updateAirpad() {
+      function updateLeadSound() {
         if (sketch.frameCount === 1 || sketch.frameCount % currFibLength === 0) {
-          airpadReady = false;
-          var _airpadRate = synchedSoundsChords[chordIndex][fibIndex];
-          console.log('_airpadRate', _airpadRate);
-          airpad.rate(_airpadRate);
-          airpad.play();
-          updateAirpadLength();
+          var _leadSoundRate = synchedSoundsChords[chordIndex][fibIndex];
+          leadSoundReady = false;
+          if (leadBarComplete) {
+            _leadSoundRate *= 2;
+          }
+          rhodes.play();
+          rhodes.setVolume(0.5);
+          rhodes.rate(_leadSoundRate);
+          updateLeadSoundLength();
+          if (leadNoteCount === synchedSoundsChords[chordIndex].length - 1) {
+            leadNoteCount = 0;
+          }
+          leadNoteCount++;
         }
       }
 
@@ -1707,8 +1716,8 @@ module.exports = function() {
         if (padReady) {
           updateSynchedSounds();
         }
-        if (airpadReady) {
-          updateAirpad();
+        if (leadSoundReady) {
+          updateLeadSound();
         }
         //playlogic
         if (wCheck.isOminous) {
@@ -1767,14 +1776,6 @@ module.exports = function() {
     createP5SoundObjs();
     init(data);
 	});
-
-  channel.subscribe('dialogOpen', function() {
-    dialogIsOpen = true;
-  });
-
-  channel.subscribe('dialogClosed', function() {
-    dialogIsOpen = false;
-  });
 
   function clearAndStopWhenDone(autoStart) {
     cdContainer.innerHTML = '';
