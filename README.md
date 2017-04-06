@@ -127,7 +127,7 @@ The pan and volume are randomly selected from two arrays.
 
 Lead note length(s) need testing
 
-isSublime and temperature is coData aren't right - needs its own object 
+LongNote playMode could be a target for weather data
 
 When longnote is high we should play at lower octave - needs testing
 
@@ -135,9 +135,7 @@ Refactor the display fns so that they're chained
 
 nearestStormDistance should produce more ominous music - drums and ride perhaps
 
-Create wCheck condition for very hot that slows everything down
-
-Add a new sound for fine weather as it's the least interesting consider using airpad-C3
+Create wCheck condition for very hot that uses different pad and longNote sounds
 
 Some arpeggio melodies still clash a little with the chords
 
@@ -162,19 +160,9 @@ May need to Upgrade to google maps 3 : https://developers.google.com/maps/docume
 
 Choral sound seems to be only one semitone apart
 
-LongNote playMode could be a target for weather data
-
-Browser still shows audio playing icon when it's stopped
-
 After stop fade out is louder than normal playback, firefox only
 
-One of the chords still sounds dischordant, why? Longnote, bass and pad going out of synch. Is this all browsers?
-
 No playback on 1st load Safari - might be ok now
-
-Sequencer volume bug seems to be Chrome only
-
-Sequencer playback browser tab issue is in Chrome, Firefox and Safari
 
 Minor - Sequencer onStep only counts the steps in one single pass rather than the loop
 
