@@ -125,11 +125,17 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Lead note length(s) need testing
+
+isSublime and temperature is coData aren't right - needs its own object 
+
 When longnote is high we should play at lower octave - needs testing
 
 Refactor the display fns so that they're chained
 
-Ensure lead doesn't play when weather is humid
+nearestStormDistance should produce more ominous music - drums and ride perhaps
+
+Create wCheck condition for very hot that slows everything down
 
 Add a new sound for fine weather as it's the least interesting consider using airpad-C3
 

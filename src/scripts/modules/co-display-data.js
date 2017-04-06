@@ -217,7 +217,7 @@ module.exports = function() {
             iconPath: '/img/humidity-icon.svg',
             music: 'Harp arpeggio is playing',
             musicValue: '',
-            negativeKey: 'isPrecip',
+            negativeKey: ['isPrecip', 'isFine'],
             negativeValue: ''
           },
           {
@@ -228,6 +228,16 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/sun-icon.svg',
             music: 'Long note playing quietly; the rhodes a little louder',
+            musicValue: ''
+          },
+          {
+            key: 'temperature',
+            title: 'Temperature',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/temperature-icon.svg',
+            music: 'Rhodes arpeggios playing',
             musicValue: ''
           }
         ],

@@ -63,20 +63,22 @@ module.exports = {
   /**
    * Broad concept conditions
    */
-  // @param temperatureInFrnht floating point
-  isFine: function(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.32;
-  },
-
-  isSublime: function(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 25 && windSpeed < 8 && cloudCover <= 0.15;
-  },
 
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function(cloudCover, windSpeed, precipIntensity, humidity) {
-    return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0 && humidity < 0.57;
+   return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0 && humidity < 0.57;
   },
+
+  // @param temperatureInFrnht floating point
+  isFine: function(cloudCover, windSpeed, temperatureInFrnht) {
+   return frnhtToCelcius(temperatureInFrnht) > 16 && windSpeed < 10 && cloudCover <= 0.32;
+  },
+
+  isSublime: function(cloudCover, windSpeed, temperatureInFrnht) {
+   return frnhtToCelcius(temperatureInFrnht) > 24 && windSpeed < 8 && cloudCover <= 0.15;
+  },
+
 
   // @param temperatureInFrnht floating point
   // @param windSpeed floating point

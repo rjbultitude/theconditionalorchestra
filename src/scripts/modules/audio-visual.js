@@ -586,6 +586,16 @@ module.exports = function() {
     return _rideCymbalVolumeArr;
   }
 
+  function getLeadNoteLengthStart(appFrameRate, lwData) {
+    return Math.round(microU.mapRange(
+      lwData.temperature.value,
+      lwData.temperature.min,
+      lwData.temperature.max,
+      appFrameRate,
+      appFrameRate / 3
+    ));
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -685,7 +695,9 @@ module.exports = function() {
     var rideCymbalStepTime = Math.round(appFrameRate / rideCymbalBps);
     var rideCymbalMaxVolume = getRideCymbalMaxVolume(lwData);
     var rideCymbalVolumeArr = getRideCymbalVolumeArr(rideCymbalMaxVolume);
-    var fibNoteLengths = makeFibSequence(appFrameRate/6, numPadNotes * 2);
+    var leadNoteLengthStart = getLeadNoteLengthStart(appFrameRate, lwData);
+    console.log('leadNoteLengthStart', leadNoteLengthStart);
+    var fibNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
 
 		//Create p5 sketch
 		var myP5 = new P5(function(sketch) {
@@ -800,7 +812,7 @@ module.exports = function() {
         if (wCheck.isSublime) {
           _longNoteVol = _longNoteVolArr[0];
         } else {
-          _longNoteVol = sketch.random(_longNoteVolArr)
+          _longNoteVol = sketch.random(_longNoteVolArr);
         }
         //Lower by one octave
         //if the lower chords are playing
@@ -1004,7 +1016,7 @@ module.exports = function() {
           //using the draw loop
           padReady = true;
         }
-        //Clement arpeggio
+        //Humid arpeggio
         if (humidArpScaleArray.length > 0) {
           playHumidArp(humidArpScaleArray);
         }
@@ -1200,7 +1212,9 @@ module.exports = function() {
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
         //playlogic
-        if (wCheck.isFine) {
+        //TODO this should complement
+        //the other sounds
+        if (wCheck.isClement) {
           _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
         return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
@@ -1238,7 +1252,7 @@ module.exports = function() {
         if (wCheck.isPrecip) {
           _precipArpScaleArray = createPrecipArpScale();
         }
-        if (wCheck.isHumid && !wCheck.isPrecip) {
+        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine) {
           _humidArpScaleArray = createHumidArpScale();
         }
         //Explicitly passing these arrays as args
@@ -1278,12 +1292,21 @@ module.exports = function() {
         });
       }
 
-      function setLwDataNegVals(coDisplayDataLw, lwDataArr) {
-        return coDisplayDataLw.map(function(coDisplayObj) {
-          for (var i = 0; i < lwDataArr.length; i++) {
-            if (coDisplayObj.negativeKey === lwDataArr[i]) {
-              console.log('there was an lwData negativeKey');
-              coDisplayObj.negativeValue = lwData[lwDataArr[i]].value;
+      //TODO too complex
+      function setCoDisplayDataNegVals(coDisplayData, weatherData) {
+        return coDisplayData.map(function(coDisplayObj) {
+          if (Array.isArray(coDisplayObj.negativeKey)) {
+            for (var i = 0; i < coDisplayObj.negativeKey.length; i++) {
+              if (weatherData.hasOwnProperty(coDisplayObj.negativeKey[i])) {
+                if (weatherData[coDisplayObj.negativeKey[i]]) {
+                  coDisplayObj.negativeValue = weatherData[coDisplayObj.negativeKey[i]];
+                  break;
+                }
+              }
+            }
+          } else if (typeof coDisplayObj.negativeKey === 'string') {
+            if (weatherData.hasOwnProperty(coDisplayObj.negativeKey)) {
+              coDisplayObj.negativeValue = weatherData[coDisplayObj.negativeKey];
             }
           }
           return coDisplayObj;
@@ -1301,26 +1324,15 @@ module.exports = function() {
         });
       }
 
-      function setWcheckDataNegVals(coDisplayDataWCheck, wCheckArr) {
-        return coDisplayDataWCheck.map(function(coDisplayObj) {
-          for (var i = 0; i < wCheckArr.length; i++) {
-            if (coDisplayObj.negativeKey === wCheckArr[i]) {
-              coDisplayObj.negativeValue = wCheck[wCheckArr[i]];
-            }
-          }
-          return coDisplayObj;
-        });
-      }
-
       function mapConditionsToDisplayData(rawCoDisplayData) {
         var _lwDataArr = Object.keys(lwData);
         var _wCheckArr = Object.keys(wCheck);
         var _coDisplayDataLw = setLwDataVals(rawCoDisplayData, _lwDataArr);
         //TODO not sure this does anthing
         //because negativeValues can only apply to booleans
-        var _coDisplayDataLwNeg = setLwDataNegVals(_coDisplayDataLw, _lwDataArr);
+        var _coDisplayDataLwNeg = setCoDisplayDataNegVals(_coDisplayDataLw, lwData);
         var _coDisplayDataWCheck = setWcheckDataVals(_coDisplayDataLwNeg, _wCheckArr);
-        var _coDisplayDataWCheckNeg = setWcheckDataNegVals(_coDisplayDataWCheck, _wCheckArr);
+        var _coDisplayDataWCheckNeg = setCoDisplayDataNegVals(_coDisplayDataWCheck, wCheck);
         return _coDisplayDataWCheckNeg;
       }
 
@@ -1532,15 +1544,15 @@ module.exports = function() {
           }
         }
         //Format strings and numbers
-        var _formatCoStrings = formatCoStrings(_finalCoData);
-        _formatCoStrings.forEach(function(coProp) {
+        var _formattedCoData = formatCoStrings(_finalCoData);
+        _formattedCoData.forEach(function(coDisplayObj) {
           //Only show true or valid values
           //Zero is valid for most conditions
-          if (coProp.value !== undefined && coProp.value !== false) {
+          if (coDisplayObj.value !== undefined && coDisplayObj.value !== false) {
             //filter out negative values that are true
             //or don't exist
-            if (coProp.negativeValue === undefined || coProp.negativeValue === false) {
-              var _itemTmpl = appTemplate(coProp);
+            if (coDisplayObj.negativeValue === undefined || coDisplayObj.negativeValue === false) {
+              var _itemTmpl = appTemplate(coDisplayObj);
               cdContainer.insertAdjacentHTML('beforeend', _itemTmpl);
               var _lastItem = cdContainer.lastElementChild;
               fadeInDisplayItem(_lastItem);
