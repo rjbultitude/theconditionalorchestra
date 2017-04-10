@@ -429,7 +429,7 @@ module.exports = function() {
   }
 
   function isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes) {
-    return rootNoteHigh && longNoteIndex >= Math.round(numPadNotes / 2);
+    return rootNoteHigh && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
   }
 
   function getReverbLength(lwData) {
@@ -715,6 +715,7 @@ module.exports = function() {
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
+    console.log('longNoteHigh', longNoteHigh);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
     var longNoteType = getLongNoteType(wCheck);
@@ -846,7 +847,6 @@ module.exports = function() {
         //playlogic
         //If weather is hot, dry and clear
         //play the longNote very quietly
-        //TODO doesn't yet have a display object
         if (wCheck.isSublime) {
           _longNoteVol = _longNoteVolArr[0];
         } else {

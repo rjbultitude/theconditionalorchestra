@@ -125,9 +125,11 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Lead note length(s) need testing
+There seems to be a duff chord when using inversions
 
 LongNote playMode could be a target for weather data
+
+LongNote start pos could be target for weather data
 
 When longnote is high we should play at lower octave - needs testing
 
