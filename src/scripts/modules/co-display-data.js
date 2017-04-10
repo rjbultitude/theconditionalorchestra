@@ -471,7 +471,7 @@ module.exports = function() {
           {
             key: 'isOther',
             title: 'Neither muggy, arid, clement nor crisp',
-            value: '',
+            value: true,
             constrain: false,
             unit: '',
             iconPath: '/img/humidity-icon.svg',
@@ -607,7 +607,7 @@ module.exports = function() {
           {
             key: 'isOther',
             title: 'Not extreme weather',
-            value: '',
+            value: true,
             constrain: false,
             unit: '',
             iconPath: '/img/storm-icon.svg',
@@ -667,7 +667,7 @@ module.exports = function() {
           {
             key: 'isOther',
             title: 'Inclement conditions',
-            value: '',
+            value: true,
             constrain: false,
             unit: '',
             iconPath: '/img/weather-icon.svg',

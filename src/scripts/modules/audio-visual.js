@@ -1486,25 +1486,27 @@ module.exports = function() {
         });
       }
 
-      function isvalidConditionTrue(displayDataGroup) {
+      function whichConditionTrue(displayDataGroup) {
           var _anyValidPropTrue = false;
           for (var i = 0; i < displayDataGroup.length; i++) {
             if (displayDataGroup[i].key !== 'isOther' && displayDataGroup[i].value) {
               _anyValidPropTrue = true;
-              //Return early or return false
-              return _anyValidPropTrue;
+              //Return early
+              return displayDataGroup[i].key;
             }
           }
-          return _anyValidPropTrue;
+          //or return isOther
+          return 'isOther';
       }
 
-      function addOtherMapVals(displayDataGroup, musicVal) {
-        //TODO really we should only use the first truthy value
-        //rather than multiple ones
-        var _validConditionTrue = isvalidConditionTrue(displayDataGroup);
+      function setStandardDisplayVals(displayDataGroup, musicVal) {
+        //Store only one true condition key
+        //to avoid repetitive display items
+        var _trueCondition = whichConditionTrue(displayDataGroup);
         return displayDataGroup.map(function(displayProp) {
-          //if any other value is true
-          if (displayProp.key === 'isOther' && _validConditionTrue) {
+          //Set all values to false
+          //except the first object we found that's true
+          if (displayProp.key !== _trueCondition) {
             displayProp.value = false;
           }
           if (displayProp.hasOwnProperty('musicValue')) {
@@ -1562,39 +1564,42 @@ module.exports = function() {
                 _currArr = addPrimaryMusicVals(_constrainedDisplayData);
                 break;
               case 'chordTypeMap':
-                _currArr = addOtherMapVals(_constrainedDisplayData, chordType);
+                _currArr = setStandardDisplayVals(_constrainedDisplayData, chordType);
                 break;
               case 'chordSeqTypeMap':
-                _currArr = addOtherMapVals(_constrainedDisplayData, outputChordSeqType());
+                _currArr = setStandardDisplayVals(_constrainedDisplayData, outputChordSeqType());
                 break;
               case 'padTypeMap':
-                _currArr = addOtherMapVals(_constrainedDisplayData, padType);
+                _currArr = setStandardDisplayVals(_constrainedDisplayData, padType);
                 break;
               case 'longNoteTypeMap':
-                _currArr = addOtherMapVals(_constrainedDisplayData, longNoteType);
+                _currArr = setStandardDisplayVals(_constrainedDisplayData, longNoteType);
                 break;
               case 'inversionMap':
-                _currArr = addOtherMapVals(_constrainedDisplayData, inversionOffsetType);
+                _currArr = setStandardDisplayVals(_constrainedDisplayData, inversionOffsetType);
                 break;
               case 'numNotesMap':
-                _currArr = addOtherMapVals(_constrainedDisplayData, numPadNotes);
+                _currArr = setStandardDisplayVals(_constrainedDisplayData, numPadNotes);
                 break;
               case 'semiTonesMap':
-                _currArr = addOtherMapVals(_constrainedDisplayData, numSemisPerOctave);
+                _currArr = setStandardDisplayVals(_constrainedDisplayData, numSemisPerOctave);
                 break;
               case 'padLengthMap':
-                _currArr = addOtherMapVals(_constrainedDisplayData);
+                _currArr = setStandardDisplayVals(_constrainedDisplayData);
                 break;
               case 'humidArpMap':
                 _currArr = setHumidMapVals(_constrainedDisplayData);
+                console.log('_currArr', _currArr);
                 break;
             }
             //Convert sets to one single array
             _finalCoData.push.apply(_finalCoData, _currArr);
           }
         }
+        console.log('_finalCoData', _finalCoData);
         //Format strings and numbers
         var _formattedCoData = formatCoStrings(_finalCoData);
+        console.log('_formattedCoData', _formattedCoData);
         _formattedCoData.forEach(function(coDisplayObj) {
           //Only show true or valid values
           //Zero is valid for most conditions
