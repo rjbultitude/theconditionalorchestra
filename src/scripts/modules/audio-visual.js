@@ -74,8 +74,8 @@ module.exports = function() {
   var synchedSoundsChords = [];
   //Lead
   var leadBarComplete = false;
-  var leadNoteCount = 0;
   var leadSoundIndex = 0;
+  var leadOctave = 0;
   // Visuals
   var temperatureColour = 0;
   //Subscriptions
@@ -613,8 +613,8 @@ module.exports = function() {
       lwData.temperature.value,
       lwData.temperature.min,
       lwData.temperature.max,
-      appFrameRate,
-      appFrameRate / 6
+      appFrameRate / 3,
+      appFrameRate / 9
     ));
   }
 
@@ -914,9 +914,9 @@ module.exports = function() {
         padReady = true;
       }
 
+      //Set amount of time each lead note
+      //plays using fibonacci sequence
       function updateLeadSoundLength() {
-        //TODO we only want to play each note
-        //in the chord once per chord
         currLeadLength = leadNoteLengths[fibIndex];
         if (fibIndex === leadNoteLengths.length - 1) {
           fibIndex = 0;
@@ -930,11 +930,11 @@ module.exports = function() {
         if (leadSoundIndex === numPadNotes - 1) {
           leadSoundIndex = 0;
           leadBarComplete = true;
+          leadOctave++;
         } else {
           leadSoundIndex++;
           leadBarComplete = false;
         }
-        leadSoundReady = true;
       }
 
       function playPad(playFullNotes) {
@@ -989,6 +989,9 @@ module.exports = function() {
         playLongNote();
         //increment indices
         setChordIndex();
+        //Start the lead over
+        leadBarComplete = false;
+        leadOctave = 0;
       }
 
       function playChoralSound(scaleArray) {
@@ -1290,6 +1293,8 @@ module.exports = function() {
         if (wCheck.isPrecip) {
           _precipArpScaleArray = createPrecipArpScale();
         }
+        //Humid arpeggio will not play if
+        //other lead sounds are playing
         if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine) {
           _humidArpScaleArray = createHumidArpScale();
         }
@@ -1709,20 +1714,21 @@ module.exports = function() {
 
       function updateLeadSound() {
         if (sketch.frameCount === 1 || sketch.frameCount % currLeadLength === 0) {
+          //get the note
           var _leadSoundRate = synchedSoundsChords[chordIndex][leadSoundIndex];
           leadSoundReady = false;
-          if (leadBarComplete) {
-            _leadSoundRate *= 2;
-          }
-          rhodes.play();
-          rhodes.setVolume(leadVolume);
-          rhodes.rate(_leadSoundRate);
+          //Play the next octave up
+          //if all notes in chord have played
+          _leadSoundRate *= leadOctave;
+          //If we want to stop the lead
+          //after each play of the notes in chord
+          //if (!leadBarComplete) {
+            rhodes.play();
+            rhodes.setVolume(leadVolume);
+            rhodes.rate(_leadSoundRate);
+            updateLeadSoundIndex();
+          //}
           updateLeadSoundLength();
-          updateLeadSoundIndex();
-          if (leadNoteCount === synchedSoundsChords[chordIndex].length - 1) {
-            leadNoteCount = 0;
-          }
-          leadNoteCount++;
         }
       }
 
