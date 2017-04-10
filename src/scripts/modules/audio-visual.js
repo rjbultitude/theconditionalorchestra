@@ -238,8 +238,8 @@ module.exports = function() {
       lwData.ozone.value,
       lwData.ozone.min,
       lwData.ozone.max,
-      1,
-      Math.round(avSettings.numChordsMax * 1.5)
+      2,
+      Math.round(avSettings.numChordsMax * 2)
     ));
     return {
       numChords: _numChords,
@@ -622,7 +622,7 @@ module.exports = function() {
     var _meanVal = Math.round((avSettings.noteLengthMultMin + avSettings.noteLengthMultMax) / 2);
     if (noteLengthMult < _meanVal) {
       return 'swiftly';
-    } else if (noteLength === _meanVal) {
+    } else if (noteLengthMult === _meanVal) {
       return 'moderately';
     } else {
       return 'slowly';
@@ -1377,7 +1377,11 @@ module.exports = function() {
       function constrainDecimals(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
           if (typeof coProp.value === 'number' && coProp.constrain) {
-            coProp.value = coProp.value.toFixed(2);
+            if (coProp.key === 'precipIntensity') {
+              coProp.value = coProp.value.toFixed(4);
+            } else {
+              coProp.value = coProp.value.toFixed(2);
+            }
           }
           return coProp;
         });
@@ -1399,6 +1403,7 @@ module.exports = function() {
         });
       }
 
+      //TODO why are we doing this?
       function exceptionCheckData(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
           if (coProp.key === 'precipIntensity' && coProp.value === 0) {
@@ -1453,7 +1458,7 @@ module.exports = function() {
                 coProp.musicValue = precipArpBpm;
                 break;
               case 'precipType':
-                coProp.value = !coProp.value ? false : precipCategory + ' ' + coProp.value;
+                coProp.value = !coProp.value ? false : coProp.value;
                 coProp.musicValue = outputPrecipArpType();
                 break;
               case 'precipProbability':
