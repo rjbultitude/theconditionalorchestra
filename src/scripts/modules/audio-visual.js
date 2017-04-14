@@ -729,11 +729,8 @@ module.exports = function() {
     var rideCymbalVolumeArr = getRideCymbalVolumeArr(rideCymbalMaxVolume);
     var noteLengthMult = getNoteLengthMult(lwData, avSettings);
     var noteLengths = getNoteLengths(appFrameRate, noteLengthMult);
-    console.log('noteLengths', noteLengths);
     var leadNoteLengthStart = getLeadNoteLengthStart(appFrameRate, lwData);
-    console.log('leadNoteLengthStart', leadNoteLengthStart);
     var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
-    console.log('leadNoteLengths', leadNoteLengths);
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
@@ -838,11 +835,12 @@ module.exports = function() {
         }
       }
 
-      function playLongNote() {
+      function playLongNote(playFullNotes) {
         //playlogic
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         var _longNoteVolArr = [0.1, 0.20, 0.5];
+        var _longNoteJumpArr = [0, 0.6, 1.2];
         var _longNoteVol;
         //playlogic
         //If weather is hot, dry and clear
@@ -861,6 +859,9 @@ module.exports = function() {
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));
         _longNote.setVolume(_longNoteVol);
+        if (!playFullNotes) {
+          _longNote.jump(sketch.random(_longNoteJumpArr));
+        }
         _longNote.play();
       }
 
@@ -986,7 +987,7 @@ module.exports = function() {
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass();
         }
-        playLongNote();
+        playLongNote(playFullNotes);
         //increment indices
         setChordIndex();
         //Start the lead over
@@ -1049,6 +1050,7 @@ module.exports = function() {
         });
         //Pads, long note and bass
         //playlogic
+        //Play full length of notes
         if (wCheck.isClement) {
           playSynchedSounds(true);
           padReady = false;

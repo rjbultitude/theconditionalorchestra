@@ -125,6 +125,8 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+LongNote jump needs testing
+
 There seems to be a duff chord when using inversions
 
 LongNote playMode could be a target for weather data

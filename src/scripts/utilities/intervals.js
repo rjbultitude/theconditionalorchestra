@@ -26,8 +26,6 @@ module.exports = {
     farMinorIntervals: [0, -9, 0, -12], //for humid arrpeggio
     //Chord sequences
     //max number of chords is 6
-    //See avSettings
-    //TODO each one needs an extra chord
     melancholyUpward: [
       {
         index: 0,
