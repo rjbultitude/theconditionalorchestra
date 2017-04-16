@@ -1141,9 +1141,6 @@ module.exports = function() {
        * @return {Array}                [current or new array]
        */
       function errorCheckIntervalsArr(chosenIntervals, numNotes, amountToAdd, repeatMultiple, type) {
-        if (type === 'humid arp') {
-          console.log('humid args', arguments);
-        }
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _amountToAdd;
@@ -1157,9 +1154,8 @@ module.exports = function() {
         }
         //Error check
         if (_difference > 0) {
-          console.log('_repeatMultiple', _repeatMultiple);
           _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _amountToAdd, _repeatMultiple);
-          console.log('added missing items to', _newIntervals);
+          console.log('added missing items to ' + type, _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
         }
