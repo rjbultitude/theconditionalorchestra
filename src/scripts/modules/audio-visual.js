@@ -1795,8 +1795,13 @@ module.exports = function() {
           //after each play of the notes in chord
           //if (!leadBarComplete) {
             vibraphone.play();
+            rhodes.play();
             vibraphone.setVolume(leadVolume);
+            rhodes.setVolume(leadVolume);
             vibraphone.rate(_leadSoundRate);
+            rhodes.rate(_leadSoundRate);
+            vibraphone.pan(-0.6);
+            rhodes.pan(0.6);
             updateLeadSoundIndex();
           //}
           updateLeadSoundLength();
