@@ -523,8 +523,8 @@ module.exports = function() {
       lwData.humidity.value,
       lwData.humidity.min,
       lwData.humidity.max,
-      50,
-      80
+      60,
+      100
     ));
   }
 
@@ -1314,13 +1314,14 @@ module.exports = function() {
         var _repeatMultiple = 0;
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
+        var _numHumidArpNotes = humidArpIntervals.length || avSettings.numHumidArpNotes;
         //playlogic
         //TODO this should complement
         //the other sounds
         if (wCheck.isClement) {
           _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
-        return createMusicalScale(avSettings.numCArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
+        return createMusicalScale(_numHumidArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
       }
 
       function createPrecipArpScale() {
@@ -1334,7 +1335,7 @@ module.exports = function() {
           _intervalType = 'safeNthMinorIntervals';
         }
         _repeatMultiple = 2;
-        return createMusicalScale(avSettings.numRArpNotes, _pArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple, 'precip arp');
+        return createMusicalScale(avSettings.numPrecipArpNotes, _pArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple, 'precip arp');
       }
 
       /*

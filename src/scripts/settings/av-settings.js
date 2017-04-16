@@ -27,8 +27,8 @@ module.exports = {
   mainSeqRepeatMax: 6,
   noteLengthMultMin: 1,
   noteLengthMultMax: 5,
-  numRArpNotes: 12,
-  numCArpNotes: 4, //should match closeIntervals
+  numPrecipArpNotes: 12,
+  numHumidArpNotes: 4, //should match closeIntervals
   numOctaves: 2,
   numSemitones: 12,
   scaleStartIndexBuffer: 10,

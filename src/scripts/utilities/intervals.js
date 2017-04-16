@@ -20,10 +20,10 @@ module.exports = {
     safeNthMajorIntervals: [0, 4, 7], //for rain arrpeggio
     safeNthMinorIntervals: [0, 3, 7], //for rain arrpeggio
     //Close
-    closeMajorIntervals: [0, -1, 0, 2], //for humid arrpeggio
-    closeMinorIntervals: [0, -2, 0, 2], //for humid arrpeggio
-    farMajorIntervals: [0, -8, 0, -12], //for humid arrpeggio
-    farMinorIntervals: [0, -9, 0, -12], //for humid arrpeggio
+    closeMajorIntervals: [0, -1, 0, 2, 12, 11, 12, 14], //for humid arrpeggio
+    closeMinorIntervals: [0, -2, 0, 2, 12, 10, 12, 14], //for humid arrpeggio
+    farMajorIntervals: [0, -8, 0, -12, 12, 4, 12, 0], //for humid arrpeggio
+    farMinorIntervals: [0, -9, 0, -12, 12, 3, 12, 0], //for humid arrpeggio
     //Chord sequences
     //max number of chords is 6
     melancholyUpward: [
