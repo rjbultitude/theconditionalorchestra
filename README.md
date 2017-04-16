@@ -132,15 +132,7 @@ There seems to be a duff chord when using inversions
 
 When longnote is high we should play at lower octave - needs testing
 
-nearestStormDistance should produce more ominous music - drums and ride perhaps
-
 ---
-
-LongNote playMode could be a target for weather data
-
-LongNote start pos could be target for weather data
-
-Refactor the display fns so that they're chained
 
 Create wCheck condition for very hot that uses different pad and longNote sounds
 
@@ -150,11 +142,13 @@ Test the master filter against the pad and longNote sounds, particularly with lo
 
 Consider using a state manager to update the humid arpeggio and display (chords)
 
-Consider only playing arpeggios when the inversions are being used - currently it's isFine, isFreezing or isWindy
-
 Create 'Add to home screen' button
 
 Update logic App Logic and spreadsheet
+
+Refactor the display fns so that they're chained
+
+Refactor createMusicalScale and calls so that object with explicit values is passed in as args
 
 Consider program reflow where only one master set of frequencies is used for all instruments.
 In this scenario the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
