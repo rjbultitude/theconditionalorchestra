@@ -319,9 +319,6 @@ module.exports = function() {
   function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
     var _totalRange = Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus;
     var _rootNoteMedian = Math.round(_totalRange / 2);
-    console.log('rootNote', rootNote);
-    console.log('rootNoteRange', rootNoteRange);
-    console.log('_rootNoteMedian', _rootNoteMedian);
     return rootNote + _rootNoteMedian >= _rootNoteMedian;
   }
 
@@ -728,7 +725,7 @@ module.exports = function() {
     var humidArpBpm = getHumidArpBpm(lwData);
     var humidArpBps = humidArpBpm / 60;
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
-    var humidArpIntervals = getHumidArpIntervals(lwData, chordType);
+    var humidArpIntervalsKey = getHumidArpIntervals(lwData, chordType);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
     var rootNoteRange = getRootNoteRange(numSemisPerOctave);
     var rootNote = getRootNote(lwData, rootNoteRange);
@@ -1143,21 +1140,25 @@ module.exports = function() {
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function errorCheckIntervalsArr(chosenIntervals, numNotes, semisInOct, repeatMultiple) {
+      function errorCheckIntervalsArr(chosenIntervals, numNotes, amountToAdd, repeatMultiple, type) {
+        if (type === 'humid arp') {
+          console.log('humid args', arguments);
+        }
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
-        var _semitonesInOct;
+        var _amountToAdd;
         var _repeatMultiple = repeatMultiple || 0;
         //When using non western scale
         //ensure numbers don't balloon
-        if (semisInOct > avSettings.numSemitones) {
-          _semitonesInOct = 0;
+        if (amountToAdd > avSettings.numSemitones) {
+          _amountToAdd = 0;
         } else {
-          _semitonesInOct = semisInOct;
+          _amountToAdd = amountToAdd;
         }
         //Error check
         if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _semitonesInOct, _repeatMultiple);
+          console.log('_repeatMultiple', _repeatMultiple);
+          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _amountToAdd, _repeatMultiple);
           console.log('added missing items to', _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
@@ -1197,13 +1198,13 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, repeatMultiple, type) {
+      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, amountToAdd, repeatMultiple, type) {
         var _numOcts;
         var _allNotesScale = [];
         var _centreFreqIndex;
         var _scaleArray = [];
         var _rootAndOffset = rootNote + centreNoteOffset;
-        var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, numSemisPerOctave, repeatMultiple);
+        var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, amountToAdd, repeatMultiple, type);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
@@ -1281,19 +1282,19 @@ module.exports = function() {
             _chordSeqOffsetArr[i].index,
             getValidChordType(_chordSeqOffsetArr[i].key),
             _inversionOffsetArr[i],
+            numSemisPerOctave,
             0,
             'pad'
           ));
         }
         //Adding extra chord(s)
-        //TODO write logic to use inversions
-        //for extraChords when not pitching down
         for (var j = 0; j < numExtraChords; j++) {
           _chordSeq.push(createMusicalScale(
             numPadNotes,
             _chordSeqOffsetArr[j].index - _extraOffset,
             getValidChordType(_chordSeqOffsetArr[j].key),
             _inversionOffsetArr[j],
+            numSemisPerOctave,
             0,
             'padLower'
           ));
@@ -1311,17 +1312,25 @@ module.exports = function() {
       }
 
       function createHumidArpScale() {
-        var _repeatMultiple = 0;
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
-        var _numHumidArpNotes = humidArpIntervals.length || avSettings.numHumidArpNotes;
+        var _numHumidArpNotes = 6;
+        //var _numHumidArpNotes =  avSettings.numHumidArpNotes;
         //playlogic
         //TODO this should complement
         //the other sounds
         if (wCheck.isClement) {
           _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
-        return createMusicalScale(_numHumidArpNotes, _hArpCNoteOffset, humidArpIntervals, _intervalIndexOffset, _repeatMultiple, 'humid arp');
+        return createMusicalScale(
+          _numHumidArpNotes,
+          _hArpCNoteOffset,
+          humidArpIntervalsKey,
+          _intervalIndexOffset,
+          0,
+          0,
+          'humid arp'
+        );
       }
 
       function createPrecipArpScale() {
@@ -1335,7 +1344,15 @@ module.exports = function() {
           _intervalType = 'safeNthMinorIntervals';
         }
         _repeatMultiple = 2;
-        return createMusicalScale(avSettings.numPrecipArpNotes, _pArpCNoteOffset, _intervalType, _intervalIndexOffset, _repeatMultiple, 'precip arp');
+        return createMusicalScale(
+          avSettings.numPrecipArpNotes,
+          _pArpCNoteOffset,
+          _intervalType,
+          _intervalIndexOffset,
+          numSemisPerOctave,
+          _repeatMultiple,
+          'precip arp'
+        );
       }
 
       /*
@@ -1551,7 +1568,7 @@ module.exports = function() {
                 coProp.musicValue = humidArpBpm;
                 break;
               case 'isWindyArp':
-                coProp.musicValue = humidArpIntervals;
+                coProp.musicValue = humidArpIntervalsKey;
                 break;
             }
           return coProp;
@@ -1599,7 +1616,7 @@ module.exports = function() {
           if (displayProp.key === 'humidity') {
             displayProp.musicValue = humidArpBpm;
           } else if (displayProp.key === 'pressure') {
-            displayProp.musicValue = humidArpIntervals;
+            displayProp.musicValue = humidArpIntervalsKey;
           }
           return displayProp;
         });

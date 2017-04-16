@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Duplicates items 'difference' number of times 
+ * Duplicates items 'difference' number of times
  * and can add a given amount to each duplicated item if desired
  * and can repeat as many times as specified
  * @param  {Array} array        [array to duplicate]
@@ -22,6 +22,8 @@ module.exports = function addMissingArrayItems(array, difference, amountToAdd, r
   var _finalArr = [];
   var _diffArr = [];
   var _newVal;
+  //TODO is this correct?
+  //shouldnt it be (array.length -1) * repeat;
   var _repeatPoint = (array.length * repeat) - 1;
   console.log('adding ' + difference + ' number of missing items');
   // loop the number of times
