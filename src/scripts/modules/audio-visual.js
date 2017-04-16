@@ -1235,6 +1235,7 @@ module.exports = function() {
       }
 
       //If the key's not from a sequence
+      //i.e. it's an inversion
       //then get the generic chord type
       function getValidChordType(key) {
         var _chordType;
@@ -1246,21 +1247,49 @@ module.exports = function() {
         return _chordType;
       }
 
+      function getExtraChordsOffset() {
+        if (rootNoteGrtrMedian) {
+          return numSemisPerOctave;
+        } else {
+          return 0;
+        }
+      }
+
       function makeChordSequence() {
         var _chordSeq = [];
         //Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(chordNumGreatest);
         //Chord inversion shift
         var _inversionOffsetArr = getInversionOffsetArr(chordNumGreatest);
+        //Handle extraChords
+        var _extraOffset = getExtraChordsOffset();
+        //Handle array lengths
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
           _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
+        //Create primary chords
         for (var i = 0; i < numChords; i++) {
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[i].index, getValidChordType(_chordSeqOffsetArr[i].key), _inversionOffsetArr[i], 0, 'pad'));
+          _chordSeq.push(createMusicalScale(
+            numPadNotes,
+            _chordSeqOffsetArr[i].index,
+            getValidChordType(_chordSeqOffsetArr[i].key),
+            _inversionOffsetArr[i],
+            0,
+            'pad'
+          ));
         }
-        //Adding extra chord(s) - pitched down
+        //Adding extra chord(s)
+        //TODO write logic to use inversions
+        //for extraChords when not pitching down
         for (var j = 0; j < numExtraChords; j++) {
-          _chordSeq.push(createMusicalScale(numPadNotes, _chordSeqOffsetArr[j].index - numSemisPerOctave, getValidChordType(_chordSeqOffsetArr[j].key), _inversionOffsetArr[j], 0, 'padLower'));
+          _chordSeq.push(createMusicalScale(
+            numPadNotes,
+            _chordSeqOffsetArr[j].index - _extraOffset,
+            getValidChordType(_chordSeqOffsetArr[j].key),
+            _inversionOffsetArr[j],
+            0,
+            'padLower'
+          ));
         }
         return _chordSeq;
       }
