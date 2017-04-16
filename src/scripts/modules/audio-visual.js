@@ -46,9 +46,11 @@ module.exports = function() {
   var brassBaritone;
   var brassBaritone2;
   //Percussion
-  var chinaCymbal;
-  var djembe;
+  var chineseCymbal;
+  var timpani;
   var rideCymbal;
+  var djembe;
+  var djembeVolArr = [0.45, 0.8, 0.2, 0.65];
   //clement / brass
   var harpSound;
   //long notes
@@ -57,6 +59,7 @@ module.exports = function() {
   var dropSounds;
   //Lead sounds
   var rhodes;
+  var vibraphone;
   //windChime
   var windChime;
   //Globals
@@ -158,9 +161,11 @@ module.exports = function() {
       bass.fade(0, avSettings.fadeTime);
       bass2.fade(0, avSettings.fadeTime);
       harpSound.fade(0, avSettings.fadeTime);
-      chinaCymbal.fade(0, avSettings.fadeTime);
+      chineseCymbal.fade(0, avSettings.fadeTime);
+      timpani.fade(0, avSettings.fadeTime);
       djembe.fade(0, avSettings.fadeTime);
       rhodes.fade(0, avSettings.fadeTime);
+      vibraphone.fade(0, avSettings.fadeTime);
       rideCymbal.fade(0, avSettings.fadeTime);
       //Stop after fades
       setTimeout(function(){
@@ -171,9 +176,11 @@ module.exports = function() {
         bass.stop();
         bass2.stop();
         harpSound.stop();
-        chinaCymbal.stop();
+        chineseCymbal.stop();
+        timpani.stop();
         djembe.stop();
         rhodes.stop();
+        vibraphone.stop();
         rideCymbal.stop();
       }, avSettings.fadeTime * 1000);
       //Unsubs
@@ -854,7 +861,7 @@ module.exports = function() {
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         var _longNoteVolArr = [0.1, 0.20, 0.5];
-        var _longNoteJumpArr = [0, 0.6, 1.2]; //Sample start in seconds
+        var _longNoteJumpArr = [0, 0.4, 0.8]; //Sample start in seconds
         var _longNoteVol;
         var _longNoteStart;
         var _playMode;
@@ -875,7 +882,6 @@ module.exports = function() {
           _longNoteStart = sketch.random(_longNoteJumpArr);
           _playMode = 'sustain';
         }
-        console.log('_longNoteStart', _longNoteStart);
         //Lower by one octave
         //if the lower chords are playing
         if (extraSeqPlaying || longNoteHigh) {
@@ -1735,9 +1741,11 @@ module.exports = function() {
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
-          chinaCymbal = sketch.loadSound('/audio/china-cymbal.mp3');
+          chineseCymbal = sketch.loadSound('/audio/chinese-cymbal.mp3');
+          timpani = sketch.loadSound('/audio/timpani.mp3');
           djembe = sketch.loadSound('/audio/djembe.mp3');
           rhodes = sketch.loadSound('/audio/rhodes.mp3');
+          vibraphone = sketch.loadSound('/audio/vibraphone.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
@@ -1786,9 +1794,9 @@ module.exports = function() {
           //If we want to stop the lead
           //after each play of the notes in chord
           //if (!leadBarComplete) {
-            rhodes.play();
-            rhodes.setVolume(leadVolume);
-            rhodes.rate(_leadSoundRate);
+            vibraphone.play();
+            vibraphone.setVolume(leadVolume);
+            vibraphone.rate(_leadSoundRate);
             updateLeadSoundIndex();
           //}
           updateLeadSoundLength();
@@ -1797,17 +1805,17 @@ module.exports = function() {
 
       function updateChinaCymbal() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
-          chinaCymbal.play();
-          chinaCymbal.setVolume(0.5);
-          chinaCymbal.rate(rootNoteRate);
+          chineseCymbal.play();
+          chineseCymbal.setVolume(0.5);
+          chineseCymbal.rate(rootNoteRate);
         }
       }
 
-      function updateDjembe() {
+      function updateTimpani() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
-          djembe.play();
-          djembe.setVolume(0.5);
-          djembe.rate(rootNoteRate);
+          timpani.play();
+          timpani.setVolume(0.5);
+          timpani.rate(rootNoteRate);
         }
       }
 
@@ -1817,6 +1825,15 @@ module.exports = function() {
           rideCymbal.play();
           rideCymbal.setVolume(_rideVol);
           rideCymbal.rate(rideCymbalRate);
+        }
+      }
+
+      function updateDjembe() {
+        if (sketch.frameCount % rideCymbalStepTime === 0) {
+          var _djembeVol = sketch.random(djembeVolArr);
+          djembe.play();
+          djembe.setVolume(_djembeVol);
+          djembe.rate(1);
         }
       }
 
@@ -1884,9 +1901,12 @@ module.exports = function() {
         //playlogic
         if (wCheck.isOminous) {
           updateChinaCymbal();
+          if (!sequenceStart) {
+            updateDjembe();
+          }
         }
         if (wCheck.isArid || wCheck.isCrisp) {
-          updateDjembe();
+          updateTimpani();
         }
         if (wCheck.isWindy) {
           updateBrass();

@@ -165,7 +165,7 @@ module.exports = function() {
             constrain: false,
             unit: '',
             iconPath: '/img/sun-icon.svg',
-            music: 'Djembe playing',
+            music: 'Timpani playing',
             musicValue: ''
           },
           {
@@ -175,7 +175,7 @@ module.exports = function() {
             constrain: false,
             unit: '',
             iconPath: '/img/freezing-icon.svg',
-            music: 'Djembe playing',
+            music: 'Timpani playing',
             musicValue: ''
           },
           {
