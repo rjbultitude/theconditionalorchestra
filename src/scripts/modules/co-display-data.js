@@ -327,7 +327,7 @@ module.exports = function() {
           },
           {
             key: 'isWindy',
-            title: 'Windy conditions',
+            title: 'High winds',
             value: '',
             constrain: false,
             unit: '',
@@ -337,7 +337,7 @@ module.exports = function() {
           },
           {
             key: 'isPrecip',
-            title: 'Windy conditions',
+            title: 'Precipitation',
             value: '',
             constrain: false,
             unit: '',
@@ -347,7 +347,7 @@ module.exports = function() {
           },
           {
             key: 'isCloudy',
-            title: 'Windy conditions',
+            title: 'Cloudy conditions',
             value: '',
             constrain: false,
             unit: '',
@@ -409,7 +409,7 @@ module.exports = function() {
           },
           {
             key: 'isFine',
-            title: 'Cold conditions',
+            title: 'Fine conditions',
             value: '',
             constrain: false,
             unit: '',
@@ -455,7 +455,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/humidity-icon.svg',
+            iconPath: '/img/sun-icon.svg',
             music: 'Long note is a ',
             musicValue: ''
           },
@@ -475,7 +475,7 @@ module.exports = function() {
             value: true,
             constrain: false,
             unit: '',
-            iconPath: '/img/humidity-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Long note is a ',
             musicValue: ''
           }
@@ -493,7 +493,7 @@ module.exports = function() {
           },
           {
             key: 'isWindy',
-            title: 'Cold weather',
+            title: 'High winds',
             value: '',
             constrain: false,
             unit: '',

@@ -317,11 +317,12 @@ module.exports = function() {
   }
 
   function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
-    var _rootNoteMedian = Math.round((Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus) / 2);
+    var _totalRange = Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus;
+    var _rootNoteMedian = Math.round(_totalRange / 2);
     console.log('rootNote', rootNote);
     console.log('rootNoteRange', rootNoteRange);
     console.log('_rootNoteMedian', _rootNoteMedian);
-    return _rootNoteMedian >= rootNote;
+    return rootNote + _rootNoteMedian >= _rootNoteMedian;
   }
 
   function getChordSeqKey(wCheck, rootNoteGrtrMedian) {
@@ -1257,7 +1258,7 @@ module.exports = function() {
         if (rootNoteGrtrMedian) {
           return numSemisPerOctave;
         } else {
-          return 0;
+          return 5;
         }
       }
 
