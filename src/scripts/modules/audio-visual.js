@@ -1456,15 +1456,24 @@ module.exports = function() {
 
       function unitiseData(rawCoDisplayData) {
         return rawCoDisplayData.map(function(coProp) {
-          if (coProp.key === 'temperature' || coProp.key === 'apparentTemperature') {
+          if (coProp.key === 'temperature' || coProp.key === 'apparentTemperature' || coProp.key === 'dewPoint') {
             coProp.value = frnhtToCelcius(coProp.value).toFixed(2);
             coProp.unit = 'C' + he.decode('&deg');
           }
           if (coProp.key === 'windBearing' || coProp.key === 'nearestStormBearing') {
             coProp.unit = he.decode('&deg');
           }
-          if (coProp.key === 'cloudCover' || coProp.key === 'humidity') {
+          if (coProp.key === 'cloudCover' || coProp.key === 'humidity' || coProp.key === 'precipProbability') {
             coProp.unit = he.decode('&#37');
+          }
+          return coProp;
+        });
+      }
+
+      function convertPercentages(rawCoDisplayData) {
+        return rawCoDisplayData.map(function(coProp) {
+          if (coProp.key === 'cloudCover' || coProp.key === 'humidity' || coProp.key === 'precipProbability') {
+            coProp.value = coProp.value *= 100;
           }
           return coProp;
         });
@@ -1618,7 +1627,8 @@ module.exports = function() {
             //TODO refactor so these fns can be chained
             var _mappedDisplayGroup = mapConditionsToDisplayData(coDisplayData[coDataGroup]);
             var _unitisedDisplayGroup = unitiseData(_mappedDisplayGroup);
-            var _exceptionCheckedGroup = exceptionCheckData(_unitisedDisplayGroup);
+            var _percentageCalcData = convertPercentages(_unitisedDisplayGroup);
+            var _exceptionCheckedGroup = exceptionCheckData(_percentageCalcData);
             var _iconisedGroup = setIconPath(_exceptionCheckedGroup);
             var _constrainedDisplayGroup = constrainDecimals(_iconisedGroup);
             //Assgin music values

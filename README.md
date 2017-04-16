@@ -125,11 +125,8 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-When root note is too low we should turn the lower chords off
-
-Remove drum from Chinese Cymbal and put in file of its own for use in ominous conditions
-
-LongNote jump needs testing
+Consider only playing the precip or humid arpeggios when mainseq is playing
+as extra seq can now be pitched down by 5 rather than 12
 
 There seems to be a duff chord when using inversions
 

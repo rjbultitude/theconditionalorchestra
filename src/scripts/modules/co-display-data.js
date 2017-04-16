@@ -8,7 +8,7 @@ module.exports = function() {
             title: 'Air pressure',
             value: '',
             constrain: true,
-            unit: '',
+            unit: 'Mbs',
             iconPath: '/img/pressure-icon.svg',
             music: 'Root note is ',
             musicValue: ''
@@ -30,7 +30,7 @@ module.exports = function() {
             title: 'Visibility',
             value: '',
             constrain: true,
-            unit: '',
+            unit: 'miles',
             iconPath: '/img/visibility-icon.svg',
             music: 'Pad chords reverb length ',
             musicValue: '',
@@ -634,7 +634,7 @@ module.exports = function() {
             title: 'Air pressure',
             value: '',
             constrain: false,
-            unit: '',
+            unit: 'Mbs',
             iconPath: '/img/pressure-icon.svg',
             music: 'Harp arpeggio intervals are ',
             musicValue: '',
@@ -649,7 +649,7 @@ module.exports = function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/pressure-icon.svg',
+            iconPath: '/img/sun-icon.svg',
             music: 'Rhodes arpeggio playing ',
             musicValue: ''
           }
