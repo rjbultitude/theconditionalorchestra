@@ -854,9 +854,10 @@ module.exports = function() {
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         var _longNoteVolArr = [0.1, 0.20, 0.5];
-        var _longNoteJumpArr = [0, 1.2, 3]; //Sample start in seconds
+        var _longNoteJumpArr = [0, 0.6, 1.2]; //Sample start in seconds
         var _longNoteVol;
         var _longNoteStart;
+        var _playMode;
         //playlogic
         //If weather is hot, dry and clear
         //play the longNote very quietly
@@ -867,22 +868,25 @@ module.exports = function() {
         }
         //If chord length varies
         //Play from varying start points
-        if (!playFullNotes) {
+        if (playFullNotes) {
           _longNoteStart = 0;
+          _playMode = 'restart';
         } else {
           _longNoteStart = sketch.random(_longNoteJumpArr);
+          _playMode = 'sustain';
         }
+        console.log('_longNoteStart', _longNoteStart);
         //Lower by one octave
         //if the lower chords are playing
         if (extraSeqPlaying || longNoteHigh) {
           _longNoteRate = _longNoteRate / 2;
         }
-        _longNote.playMode('restart');
+        _longNote.playMode(_playMode);
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));
         _longNote.setVolume(_longNoteVol);
-        _longNote.jump(_longNoteStart);
         _longNote.play();
+        _longNote.jump(_longNoteStart);
       }
 
       function bassCallback(bassRate) {
@@ -1832,7 +1836,7 @@ module.exports = function() {
             precipArpScaleIndex = 0;
           }
           dropSounds[dropSoundKey].play();
-          dropSounds[dropSoundKey].setVolume(0.8);
+          dropSounds[dropSoundKey].setVolume(avSettings.dropSoundVol[dropSoundKey]);
           dropSounds[dropSoundKey].rate(precipArpScale[precipArpScaleIndex]);
           precipArpScaleIndex++;
         }

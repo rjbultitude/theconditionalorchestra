@@ -125,11 +125,13 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+precip sound is really quiet
+
+When root note is too low we should turn the lower chords off
+
 Remove drum from Chinese Cymbal and put in file of its own for use in ominous conditions
 
 LongNote jump needs testing
-
-All chord sequences need testing, in particular melancholyDownward
 
 There seems to be a duff chord when using inversions
 

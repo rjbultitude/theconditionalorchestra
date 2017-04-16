@@ -74,8 +74,8 @@ module.exports = {
         key: 'heptatonicMinorIntervals'
       },
       {
-        index: 9,
-        key: 'heptatonicMajorIntervals'
+        index: 3,
+        key: 'majorSeventhIntervals'
       }
     ],
     purposefulUpAndDown: [

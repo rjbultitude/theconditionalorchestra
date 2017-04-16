@@ -5,7 +5,11 @@ module.exports = {
   //Colour offset
   colourDim: 18,
   //Pitch / rate / volume
-  dropVolume: 0.2,
+  dropSoundVol: {
+    dropSound: 1,
+    dropSoftSound: 0.8,
+    dropLightSound: 0.7,
+  },
   volume: 0.75,
   //padSounds
   organ: {volume : 0.75},
