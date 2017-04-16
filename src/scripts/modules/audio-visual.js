@@ -47,7 +47,7 @@ module.exports = function() {
   var brassBaritone2;
   //Percussion
   var percussion;
-  var percussion2;
+  var djembe;
   var rideCymbal;
   //clement / brass
   var harpSound;
@@ -159,7 +159,7 @@ module.exports = function() {
       bass2.fade(0, avSettings.fadeTime);
       harpSound.fade(0, avSettings.fadeTime);
       percussion.fade(0, avSettings.fadeTime);
-      percussion2.fade(0, avSettings.fadeTime);
+      djembe.fade(0, avSettings.fadeTime);
       rhodes.fade(0, avSettings.fadeTime);
       rideCymbal.fade(0, avSettings.fadeTime);
       //Stop after fades
@@ -172,7 +172,7 @@ module.exports = function() {
         bass2.stop();
         harpSound.stop();
         percussion.stop();
-        percussion2.stop();
+        djembe.stop();
         rhodes.stop();
         rideCymbal.stop();
       }, avSettings.fadeTime * 1000);
@@ -1683,7 +1683,7 @@ module.exports = function() {
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
           percussion = sketch.loadSound('/audio/drum.mp3');
-          percussion2 = sketch.loadSound('/audio/drum2.mp3');
+          djembe = sketch.loadSound('/audio/djembe.mp3');
           rhodes = sketch.loadSound('/audio/rhodes.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
@@ -1750,7 +1750,7 @@ module.exports = function() {
         }
       }
 
-      function updatePercussion2() {
+      function updateDjembe() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
           percussion.play();
           percussion.setVolume(0.5);
@@ -1833,7 +1833,7 @@ module.exports = function() {
           updatePercussion();
         }
         if (wCheck.isArid || wCheck.isCrisp) {
-          updatePercussion2();
+          updateDjembe();
         }
         if (wCheck.isWindy) {
           updateBrass();

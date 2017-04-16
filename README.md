@@ -127,17 +127,21 @@ The pan and volume are randomly selected from two arrays.
 
 LongNote jump needs testing
 
+All chord sequences need testing, in particular melancholyDownward
+
 There seems to be a duff chord when using inversions
+
+When longnote is high we should play at lower octave - needs testing
+
+nearestStormDistance should produce more ominous music - drums and ride perhaps
+
+---
 
 LongNote playMode could be a target for weather data
 
 LongNote start pos could be target for weather data
 
-When longnote is high we should play at lower octave - needs testing
-
 Refactor the display fns so that they're chained
-
-nearestStormDistance should produce more ominous music - drums and ride perhaps
 
 Create wCheck condition for very hot that uses different pad and longNote sounds
 
