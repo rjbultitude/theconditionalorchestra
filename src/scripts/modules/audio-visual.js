@@ -46,7 +46,7 @@ module.exports = function() {
   var brassBaritone;
   var brassBaritone2;
   //Percussion
-  var percussion;
+  var chinaCymbal;
   var djembe;
   var rideCymbal;
   //clement / brass
@@ -158,7 +158,7 @@ module.exports = function() {
       bass.fade(0, avSettings.fadeTime);
       bass2.fade(0, avSettings.fadeTime);
       harpSound.fade(0, avSettings.fadeTime);
-      percussion.fade(0, avSettings.fadeTime);
+      chinaCymbal.fade(0, avSettings.fadeTime);
       djembe.fade(0, avSettings.fadeTime);
       rhodes.fade(0, avSettings.fadeTime);
       rideCymbal.fade(0, avSettings.fadeTime);
@@ -171,7 +171,7 @@ module.exports = function() {
         bass.stop();
         bass2.stop();
         harpSound.stop();
-        percussion.stop();
+        chinaCymbal.stop();
         djembe.stop();
         rhodes.stop();
         rideCymbal.stop();
@@ -688,7 +688,7 @@ module.exports = function() {
       isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
-      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipProbability.value)
+      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value)
     };
     console.log('wCheck', wCheck);
     //Get and set core values
@@ -1682,7 +1682,7 @@ module.exports = function() {
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
           brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
           harpSound = sketch.loadSound('/audio/harp-C3.mp3');
-          percussion = sketch.loadSound('/audio/drum.mp3');
+          chinaCymbal = sketch.loadSound('/audio/china-cymbal.mp3');
           djembe = sketch.loadSound('/audio/djembe.mp3');
           rhodes = sketch.loadSound('/audio/rhodes.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
@@ -1742,19 +1742,19 @@ module.exports = function() {
         }
       }
 
-      function updatePercussion() {
+      function updateChinaCymbal() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
-          percussion.play();
-          percussion.setVolume(0.5);
-          percussion.rate(rootNoteRate);
+          chinaCymbal.play();
+          chinaCymbal.setVolume(0.5);
+          chinaCymbal.rate(rootNoteRate);
         }
       }
 
       function updateDjembe() {
         if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
-          percussion.play();
-          percussion.setVolume(0.5);
-          percussion.rate(rootNoteRate);
+          djembe.play();
+          djembe.setVolume(0.5);
+          djembe.rate(rootNoteRate);
         }
       }
 
@@ -1830,7 +1830,7 @@ module.exports = function() {
         }
         //playlogic
         if (wCheck.isOminous) {
-          updatePercussion();
+          updateChinaCymbal();
         }
         if (wCheck.isArid || wCheck.isCrisp) {
           updateDjembe();

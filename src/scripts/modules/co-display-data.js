@@ -44,7 +44,8 @@ module.exports = function() {
             unit: '',
             iconPath: '/img/cloud-cover-icon.svg',
             music: 'Master filter frequency ',
-            musicValue: ''
+            musicValue: '',
+            musicAppendage: ' Hz'
           },
           {
             key: 'ozone',
