@@ -309,20 +309,28 @@ module.exports = function() {
     return _chordType;
   }
 
-  function getChordSeqKey(wCheck, rootNoteHigh) {
+  function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
+    var _rootNoteMedian = Math.round((Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus) / 2);
+    console.log('rootNote', rootNote);
+    console.log('rootNoteRange', rootNoteRange);
+    console.log('_rootNoteMedian', _rootNoteMedian);
+    return _rootNoteMedian >= rootNote;
+  }
+
+  function getChordSeqKey(wCheck, rootNoteGrtrMedian) {
     var _key;
     //playlogic
     if (wCheck.isFine || wCheck.isFreezing || wCheck.isWindy) {
       //Inversions
       _key = 'noChordOffset';
     } else if (wCheck.isClement) {
-      if (rootNoteHigh) {
+      if (rootNoteGrtrMedian) {
         _key = 'blissfulDownward';
       } else {
         _key = 'blissfulUpward';
       }
     } else if (wCheck.isPrecip || wCheck.isCloudy) {
-      if (rootNoteHigh) {
+      if (rootNoteGrtrMedian) {
         _key = 'melancholyDownward';
       } else {
         _key = 'melancholyUpward';
@@ -375,18 +383,23 @@ module.exports = function() {
     ));
   }
 
-  function getRootNote(lwData, numSemisPerOctave) {
-    //Pressure determines root note.
+  function getRootNoteRange(numSemisPerOctave) {
     //In western scale it will be between + 6 or - 12
-    var _rangePlus = Math.round(numSemisPerOctave / 2);
-    var _rangeMinus = -Math.abs(numSemisPerOctave);
+    return {
+      rangePlus: Math.round(numSemisPerOctave / 2),
+      rangeMinus:  -Math.abs(numSemisPerOctave)
+    };
+  }
+
+  function getRootNote(lwData, rootNoteRange) {
+    //Pressure determines root note
     //playlogic
     var _rootNote = Math.round(microU.mapRange(
       lwData.pressure.value,
       lwData.pressure.min,
       lwData.pressure.max,
-      _rangeMinus,
-      _rangePlus
+      rootNoteRange.rangeMinus,
+      rootNoteRange.rangePlus
     ));
     if (_rootNote === -0) {
       _rootNote = 0;
@@ -527,8 +540,6 @@ module.exports = function() {
   }
 
   function getMasterFilterFreq(lwData) {
-    // TODO Use math.abs for all pitch and volume values?
-    // playlogic
     return microU.mapRange(
       lwData.cloudCover.value,
       lwData.cloudCover.max,
@@ -711,7 +722,8 @@ module.exports = function() {
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
     var humidArpIntervals = getHumidArpIntervals(lwData, chordType);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
-    var rootNote = getRootNote(lwData, numSemisPerOctave);
+    var rootNoteRange = getRootNoteRange(numSemisPerOctave);
+    var rootNote = getRootNote(lwData, rootNoteRange);
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
@@ -720,7 +732,9 @@ module.exports = function() {
     var reverbDecay = getReverbDecay(lwData);
     var longNoteType = getLongNoteType(wCheck);
     var masterFilterFreq = getMasterFilterFreq(lwData);
-    var chordSeqKey = getChordSeqKey(wCheck, rootNoteHigh);
+    var rootNoteGrtrMedian = isRootNoteGrtrMedian(rootNote, rootNoteRange);
+    console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
+    var chordSeqKey = getChordSeqKey(wCheck, rootNoteGrtrMedian);
     var rideCymbalRate = getRideCymbalRate(lwData);
     var rideCymbalBpm = getRideCymbalsBpm(lwData);
     var rideCymbalBps = rideCymbalBpm / 60;
@@ -840,8 +854,9 @@ module.exports = function() {
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         var _longNoteVolArr = [0.1, 0.20, 0.5];
-        var _longNoteJumpArr = [0, 0.6, 1.2];
+        var _longNoteJumpArr = [0, 1.2, 3]; //Sample start in seconds
         var _longNoteVol;
+        var _longNoteStart;
         //playlogic
         //If weather is hot, dry and clear
         //play the longNote very quietly
@@ -849,6 +864,13 @@ module.exports = function() {
           _longNoteVol = _longNoteVolArr[0];
         } else {
           _longNoteVol = sketch.random(_longNoteVolArr);
+        }
+        //If chord length varies
+        //Play from varying start points
+        if (!playFullNotes) {
+          _longNoteStart = 0;
+        } else {
+          _longNoteStart = sketch.random(_longNoteJumpArr);
         }
         //Lower by one octave
         //if the lower chords are playing
@@ -859,9 +881,7 @@ module.exports = function() {
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));
         _longNote.setVolume(_longNoteVol);
-        if (!playFullNotes) {
-          _longNote.jump(sketch.random(_longNoteJumpArr));
-        }
+        _longNote.jump(_longNoteStart);
         _longNote.play();
       }
 

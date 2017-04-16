@@ -125,6 +125,8 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Remove drum from Chinese Cymbal and put in file of its own for use in ominous conditions
+
 LongNote jump needs testing
 
 All chord sequences need testing, in particular melancholyDownward
