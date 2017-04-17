@@ -843,9 +843,7 @@ module.exports = function() {
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         var _longNoteVolArr = [0.1, 0.20, 0.5];
-        var _longNoteJumpArr = [0, 0.4, 0.8]; //Sample start in seconds
         var _longNoteVol;
-        var _longNoteStart;
         var _playMode;
         //playlogic
         //If weather is hot, dry and clear
@@ -855,26 +853,16 @@ module.exports = function() {
         } else {
           _longNoteVol = sketch.random(_longNoteVolArr);
         }
-        //If chord length varies
-        //Play from varying start points
-        if (playFullNotes) {
-          _longNoteStart = 0;
-          _playMode = 'restart';
-        } else {
-          _longNoteStart = sketch.random(_longNoteJumpArr);
-          _playMode = 'sustain';
-        }
         //Lower by one octave
         //if the lower chords are playing
         if (extraSeqPlaying || longNoteHigh) {
           _longNoteRate = _longNoteRate / 2;
         }
-        _longNote.playMode(_playMode);
+        _longNote.playMode('restart');
         _longNote.rate(_longNoteRate);
         _longNote.pan(sketch.random(panArr));
         _longNote.setVolume(_longNoteVol);
         _longNote.play();
-        _longNote.jump(_longNoteStart);
       }
 
       function bassCallback(bassRate) {
@@ -1665,6 +1653,7 @@ module.exports = function() {
         }
         //Format strings and numbers
         var _formattedCoData = formatCoStrings(_finalCoData);
+        //TODO perf - should use for loop for speed?
         _formattedCoData.forEach(function(coDisplayObj) {
           //Only show true or valid values
           //Zero is valid for most conditions
@@ -1681,7 +1670,7 @@ module.exports = function() {
             //console.log('Not displayed because not defined or false ', coProp);
           }
         });
-        //TODO could publish visuals ready here
+        channel.publish('displayDone', null);
       }
 
 			//Sound constructor
@@ -1708,6 +1697,7 @@ module.exports = function() {
         this.dropLightSound = dropLightSound;
       }
 
+      //P5 PRELOAD FN - 1
       sketch.preload = function() {
         //loadSound called during preload
         //will be ready to play in time for setup
@@ -1750,13 +1740,13 @@ module.exports = function() {
         }
       };
 
+      //P5 SETUP FN - 2
       sketch.setup = function setup() {
         sketch.frameRate(appFrameRate);
         //--------------------------
         // Handle sounds / Start app
         // -------------------------
         if (audioSupported) {
-          configureSounds();
           configureDisplay();
         } else {
           updateStatus('error', lwData.name, true);
@@ -1876,7 +1866,8 @@ module.exports = function() {
         }
       }
 
-			sketch.draw = function draw() {
+      //P5 DRAW LOOP - 3
+      sketch.draw = function draw() {
         if (!sequenceStart) {
           updateRideCymbal();
         }
@@ -1928,6 +1919,11 @@ module.exports = function() {
         }
 			};
 
+      //Prepare and play sounds
+      //Once the display is done loading
+      channel.subscribe('displayDone', function() {
+        configureSounds();
+      });
 		});
 		return myP5;
 	}
