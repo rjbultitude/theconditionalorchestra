@@ -126,8 +126,11 @@ The pan and volume are randomly selected from two arrays.
 ##Plans
 
 Consider dropping the windChime - it doesn't add much
-
 If so, use windSpeed to determine tempo of brassBaritones
+
+Consider only running configureDisplay when sounds are playing
+or run configureSounds when visuals are ready.
+Could use webworker thread for either of above.
 
 Consider only playing the precip or humid arpeggios when mainseq is playing
 as extra seq can now be pitched down by 5 rather than 12

@@ -57,8 +57,6 @@ module.exports = function() {
   var dropSounds;
   //Lead sounds
   var rhodes;
-  //windChime
-  var windChime;
   //Globals
   var soundFilter;
   var freezingFilter;
@@ -75,8 +73,6 @@ module.exports = function() {
   //Lead
   var leadBarComplete = false;
   var leadSoundIndex = 0;
-  // Visuals
-  var temperatureColour = 0;
   //Subscriptions
   var publishBrassOne;
   var publishBrassTwo;
@@ -152,7 +148,6 @@ module.exports = function() {
       fadeSoundsinObject(dropSounds);
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
-      windChime.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       bass2.fade(0, avSettings.fadeTime);
       harpSound.fade(0, avSettings.fadeTime);
@@ -165,7 +160,6 @@ module.exports = function() {
       setTimeout(function(){
         brassBaritone.stop();
         brassBaritone2.stop();
-        windChime.stop();
         bass.stop();
         bass2.stop();
         harpSound.stop();
@@ -668,8 +662,6 @@ module.exports = function() {
     var precipArpScaleIndex = 0;
     var humidArpScaleIndex = 0;
     var freezingFilterFreq = 2000;
-    var windChimeRate = 1;
-    var windChimeVol = 0.4;
     var masterGain = 0;
     //clear data
     padSounds = [];
@@ -1085,9 +1077,6 @@ module.exports = function() {
         if (precipArpScaleArray.length > 0) {
           playPrecipArp(precipArpScaleArray);
         }
-        windChime.loop();
-        windChime.rate(windChimeRate);
-        windChime.setVolume(windChimeVol);
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', audioSupported);
@@ -1525,9 +1514,6 @@ module.exports = function() {
               case 'apparentTemperature':
                 coProp.musicValue = Math.round(seqRepeatNum / numChords);
                 break;
-              case 'windSpeed':
-                coProp.musicValue = windChimeRate.toFixed(2);
-                break;
               case 'windBearing':
                 coProp.musicValue = microU.getOrdinal(longNoteIndex);
                 break;
@@ -1695,6 +1681,7 @@ module.exports = function() {
             //console.log('Not displayed because not defined or false ', coProp);
           }
         });
+        //TODO could publish visuals ready here
       }
 
 			//Sound constructor
@@ -1760,21 +1747,11 @@ module.exports = function() {
           djembe = sketch.loadSound('/audio/djembe.mp3');
           rhodes = sketch.loadSound('/audio/rhodes.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
-          windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
       };
 
       sketch.setup = function setup() {
         sketch.frameRate(appFrameRate);
-        //---------------------
-        //set runtime constants
-        //--------------------
-        avSettings.animAmount = Math.round(lwData.windSpeed.value);
-        avSettings.noiseInc = sketch.map(avSettings.animAmount, lwData.windSpeed.min, lwData.windSpeed.max, 0.01, 0.05);
-        temperatureColour = sketch.map(lwData.temperature.value, lwData.temperature.min, lwData.temperature.max, 25, 255);
-        // playlogic
-        windChimeRate = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.5, 1.4);
-        windChimeVol = sketch.map(lwData.windSpeed.value, lwData.windSpeed.min, lwData.windSpeed.max, 0.1, 0.6);
         //--------------------------
         // Handle sounds / Start app
         // -------------------------
