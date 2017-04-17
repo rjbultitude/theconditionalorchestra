@@ -125,8 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Consider dropping the windChime - it doesn't add much
-If so, use windSpeed to determine tempo of brassBaritones
+Having dropped the windChime, use windSpeed to determine tempo of brassBaritones
 
 Consider only running configureDisplay when sounds are playing
 or run configureSounds when visuals are ready.

@@ -68,16 +68,6 @@ module.exports = function() {
             musicValue: ''
           },
           {
-            key: 'windSpeed',
-            title: 'Wind speed',
-            value: '',
-            constrain: true,
-            unit: 'mph',
-            iconPath: '/img/windy-icon.svg',
-            music: 'Wind chime sound pitch ',
-            musicValue: ''
-          },
-          {
             key: 'isFine',
             title: 'Very fine conditions',
             value: '',
