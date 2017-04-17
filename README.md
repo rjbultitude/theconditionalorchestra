@@ -125,6 +125,10 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Consider dropping the windChime - it doesn't add much
+
+If so, use windSpeed to determine tempo of brassBaritones
+
 Consider only playing the precip or humid arpeggios when mainseq is playing
 as extra seq can now be pitched down by 5 rather than 12
 
