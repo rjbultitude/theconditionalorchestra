@@ -37,8 +37,6 @@ module.exports = function() {
   var appFrameRate = 30;
   var sequenceStart = true;
   var rootNoteRate;
-  //lead
-  var airpad;
   //bass
   var bass;
   var bass2;
@@ -59,7 +57,6 @@ module.exports = function() {
   var dropSounds;
   //Lead sounds
   var rhodes;
-  var vibraphone;
   //windChime
   var windChime;
   //Globals
@@ -78,7 +75,6 @@ module.exports = function() {
   //Lead
   var leadBarComplete = false;
   var leadSoundIndex = 0;
-  var leadOctave = 0;
   // Visuals
   var temperatureColour = 0;
   //Subscriptions
@@ -154,7 +150,6 @@ module.exports = function() {
       choralSounds.forEach(fadeChoralSounds);
       fadeSoundsinObject(longNotes);
       fadeSoundsinObject(dropSounds);
-      airpad.fade(0, avSettings.fadeTime);
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
       windChime.fade(0, avSettings.fadeTime);
@@ -165,11 +160,9 @@ module.exports = function() {
       timpani.fade(0, avSettings.fadeTime);
       djembe.fade(0, avSettings.fadeTime);
       rhodes.fade(0, avSettings.fadeTime);
-      vibraphone.fade(0, avSettings.fadeTime);
       rideCymbal.fade(0, avSettings.fadeTime);
       //Stop after fades
       setTimeout(function(){
-        airpad.stop();
         brassBaritone.stop();
         brassBaritone2.stop();
         windChime.stop();
@@ -180,7 +173,6 @@ module.exports = function() {
         timpani.stop();
         djembe.stop();
         rhodes.stop();
-        vibraphone.stop();
         rideCymbal.stop();
       }, avSettings.fadeTime * 1000);
       //Unsubs
@@ -959,7 +951,6 @@ module.exports = function() {
         if (leadSoundIndex === numPadNotes - 1) {
           leadSoundIndex = 0;
           leadBarComplete = true;
-          leadOctave++;
         } else {
           leadSoundIndex++;
           leadBarComplete = false;
@@ -1020,7 +1011,6 @@ module.exports = function() {
         setChordIndex();
         //Start the lead over
         leadBarComplete = false;
-        leadOctave = 0;
       }
 
       function playChoralSound(scaleArray) {
@@ -1760,7 +1750,6 @@ module.exports = function() {
             sketch.loadSound('/audio/drop-soft.mp3'),
             sketch.loadSound('/audio/drop-light.mp3')
           );
-          airpad = sketch.loadSound('/audio/airpad-C3.mp3');
           bass = sketch.loadSound('/audio/bass.mp3');
           bass2 = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
@@ -1770,7 +1759,6 @@ module.exports = function() {
           timpani = sketch.loadSound('/audio/timpani.mp3');
           djembe = sketch.loadSound('/audio/djembe.mp3');
           rhodes = sketch.loadSound('/audio/rhodes.mp3');
-          vibraphone = sketch.loadSound('/audio/vibraphone.mp3');
           rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
           windChime = sketch.loadSound('/audio/wooden-wind-chime-edit3a.mp3');
         }
@@ -1813,20 +1801,13 @@ module.exports = function() {
           //get the note
           var _leadSoundRate = synchedSoundsChords[chordIndex][leadSoundIndex];
           leadSoundReady = false;
-          //Play the next octave up
-          //if all notes in chord have played
-          _leadSoundRate *= leadOctave;
           //If we want to stop the lead
           //after each play of the notes in chord
           //if (!leadBarComplete) {
-            vibraphone.play();
             rhodes.play();
-            vibraphone.setVolume(leadVolume);
             rhodes.setVolume(leadVolume);
-            vibraphone.rate(_leadSoundRate);
             rhodes.rate(_leadSoundRate);
-            vibraphone.pan(-0.6);
-            rhodes.pan(0.6);
+            //rhodes.pan(0.6);
             updateLeadSoundIndex();
           //}
           updateLeadSoundLength();
