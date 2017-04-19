@@ -11,9 +11,10 @@ var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/index').codisplay;
 var he = require('he');
+var work = require('webworkify');
 //custom
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
-var coDisplayDataFn = require('./co-display-data');
+var coDisplayData = require('./co-display-data');
 var updateStatus = require('./update-status');
 var weatherCheck = require('./weather-checker-fns');
 var microU = require('../utilities/micro-utilities');
@@ -76,8 +77,6 @@ module.exports = function() {
   //Subscriptions
   var publishBrassOne;
   var publishBrassTwo;
-  //Display data
-  var coDisplayData = coDisplayDataFn();
   //DOM
   var cdContainer = document.querySelector('.conditions-display__list');
 
@@ -1596,7 +1595,30 @@ module.exports = function() {
         });
       }
 
-      function configureDisplay() {
+      function buildDisplay(coDisplayData) {
+        //Format strings and numbers
+        var _formattedCoData = formatCoStrings(coDisplayData);
+        //TODO perf - should use for loop for speed?
+        coDisplayData.forEach(function(coDisplayObj) {
+          //Only show true or valid values
+          //Zero is valid for most conditions
+          if (coDisplayObj.value !== undefined && coDisplayObj.value !== false) {
+            //filter out negative values that are true
+            //or don't exist
+            if (coDisplayObj.negativeValue === undefined || coDisplayObj.negativeValue === false) {
+              var _itemTmpl = appTemplate(coDisplayObj);
+              cdContainer.insertAdjacentHTML('beforeend', _itemTmpl);
+              var _lastItem = cdContainer.lastElementChild;
+              fadeInDisplayItem(_lastItem);
+            }
+          } else {
+            //console.log('Not displayed because not defined or false ', coProp);
+          }
+        });
+        channel.publish('displayDone', null);
+      }
+
+      function setCoDisplayGroupVals() {
         var _finalCoData = [];
         var _currArr;
         for (var coDataGroup in coDisplayData) {
@@ -1651,26 +1673,29 @@ module.exports = function() {
             _finalCoData.push.apply(_finalCoData, _currArr);
           }
         }
-        //Format strings and numbers
-        var _formattedCoData = formatCoStrings(_finalCoData);
-        //TODO perf - should use for loop for speed?
-        _formattedCoData.forEach(function(coDisplayObj) {
-          //Only show true or valid values
-          //Zero is valid for most conditions
-          if (coDisplayObj.value !== undefined && coDisplayObj.value !== false) {
-            //filter out negative values that are true
-            //or don't exist
-            if (coDisplayObj.negativeValue === undefined || coDisplayObj.negativeValue === false) {
-              var _itemTmpl = appTemplate(coDisplayObj);
-              cdContainer.insertAdjacentHTML('beforeend', _itemTmpl);
-              var _lastItem = cdContainer.lastElementChild;
-              fadeInDisplayItem(_lastItem);
-            }
-          } else {
-            //console.log('Not displayed because not defined or false ', coProp);
-          }
-        });
-        channel.publish('displayDone', null);
+        return _finalCoData;
+      }
+
+      function configureDisplay() {
+        setCoDisplayGroupVals();
+        buildDisplay(_formattedCoData);
+      }
+
+      function configureAudioVisual() {
+        //Create a thread to handle
+        //generation of allNotesScale
+        if (window.Worker) {
+          var displayWorker = work(require('./display-worker.js'));
+          console.log('displayWorker', displayWorker);
+          displayWorker.addEventListener('message', function (result) {
+            buildDisplay(result.data);
+          });
+          displayWorker.postMessage({coDisplayData: coDisplayData, lwData: lwData, wCheck: wCheck});
+        }
+        //Or just work it out in main thread
+        else {
+          configureDisplay();
+        }
       }
 
 			//Sound constructor
@@ -1747,7 +1772,7 @@ module.exports = function() {
         // Handle sounds / Start app
         // -------------------------
         if (audioSupported) {
-          configureDisplay();
+          configureAudioVisual();
         } else {
           updateStatus('error', lwData.name, true);
         }
