@@ -10,10 +10,8 @@ require('../libs/p5.sound');
 var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/index').codisplay;
-var he = require('he');
 var work = require('webworkify');
 //custom
-var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 var coDisplayData = require('./co-display-data');
 var updateStatus = require('./update-status');
 var weatherCheck = require('./weather-checker-fns');
@@ -26,6 +24,7 @@ var getLargestNegNumInArr = require('../utilities/largest-neg-num-in-array');
 var addMissingArrayItems = require('../utilities/add-missing-array-items');
 var avSettings = require('../settings/av-settings');
 var makeFibSequence = require('../utilities/fib-sequence');
+var coFns = require('./co-display-fns');
 
 module.exports = function() {
   /*
@@ -397,22 +396,6 @@ module.exports = function() {
     return _rootNote;
   }
 
-  function getRootNoteLetter(numSemisPerOctave, rootNote) {
-    var _rootNoteLetter = '';
-    //Add one as the 1st note is 0 based
-    var _rootNoteNumber = rootNote + 1;
-    if (numSemisPerOctave !== 12) {
-      _rootNoteLetter = microU.getOrdinal(_rootNoteNumber) + ' note in a non western scale';
-    } else {
-      if (rootNote < 0) {
-        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length + rootNote] + '2';
-      } else {
-        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote] + '3';
-      }
-    }
-    return _rootNoteLetter;
-  }
-
   function getLongNoteIndex(lwData, numPadNotes) {
     var _longNoteIndex;
     var _timesToDivide = numPadNotes;
@@ -617,17 +600,6 @@ module.exports = function() {
       appFrameRate / 3,
       appFrameRate / 9
     ));
-  }
-
-  function getMainMelodyTempoType(noteLengthMult, avSettings) {
-    var _meanVal = Math.round((avSettings.noteLengthMultMin + avSettings.noteLengthMultMax) / 2);
-    if (noteLengthMult < _meanVal) {
-      return 'swiftly';
-    } else if (noteLengthMult === _meanVal) {
-      return 'moderately';
-    } else {
-      return 'slowly';
-    }
   }
 
   /**
@@ -837,13 +809,12 @@ module.exports = function() {
         }
       }
 
-      function playLongNote(playFullNotes) {
+      function playLongNote() {
         //playlogic
         var _longNote = longNotes[longNoteType];
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         var _longNoteVolArr = [0.1, 0.20, 0.5];
         var _longNoteVol;
-        var _playMode;
         //playlogic
         //If weather is hot, dry and clear
         //play the longNote very quietly
@@ -985,7 +956,7 @@ module.exports = function() {
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass();
         }
-        playLongNote(playFullNotes);
+        playLongNote();
         //increment indices
         setChordIndex();
         //Start the lead over
@@ -1140,8 +1111,7 @@ module.exports = function() {
         return _scaleIntervals;
       }
 
-      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset, type) {
-        //console.log('type of instrument', type);
+      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset) {
         var _scaleArray = [];
         var _intervalIndexOffset = intervalIndexOffset || 0;
         //add missing scale intervals
@@ -1160,13 +1130,20 @@ module.exports = function() {
         return _scaleArray;
       }
 
-      function createMusicalScale(numNotes, centreNoteOffset, key, intervalIndexOffset, amountToAdd, repeatMultiple, type) {
+      //Accepts only an object
+      function createMusicalScale(msConfig) {
+        //Error check
+        if (typeof msConfig !== 'object') {
+          console.error('Musical Scale Config must be an object');
+          return;
+        }
+        //Set vars
         var _numOcts;
         var _allNotesScale = [];
         var _centreFreqIndex;
         var _scaleArray = [];
-        var _rootAndOffset = rootNote + centreNoteOffset;
-        var _scaleIntervals = errorCheckIntervalsArr(intervals[key], numNotes, amountToAdd, repeatMultiple, type);
+        var _rootAndOffset = rootNote + msConfig.centreNoteOffset;
+        var _scaleIntervals = errorCheckIntervalsArr(intervals[msConfig.key], msConfig.numNotes, msConfig.amountToAdd, msConfig.repeatMultiple, msConfig.type);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
@@ -1178,7 +1155,7 @@ module.exports = function() {
         //Get centre note
         //After all notes scale has been created
         var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
-        _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, numNotes, intervalIndexOffset, type);
+        _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, msConfig.numNotes, msConfig.intervalIndexOffset, msConfig.type);
         return _scaleArray;
       }
 
@@ -1239,27 +1216,27 @@ module.exports = function() {
         }
         //Create primary chords
         for (var i = 0; i < numChords; i++) {
-          _chordSeq.push(createMusicalScale(
-            numPadNotes,
-            _chordSeqOffsetArr[i].index,
-            getValidChordType(_chordSeqOffsetArr[i].key),
-            _inversionOffsetArr[i],
-            numSemisPerOctave,
-            0,
-            'pad'
-          ));
+          _chordSeq.push(createMusicalScale({
+              numNotes: numPadNotes,
+              startNote: _chordSeqOffsetArr[i].index,
+              chordKey: getValidChordType(_chordSeqOffsetArr[i].key),
+              inversionStartNote: _inversionOffsetArr[i],
+              amountToAdd: numSemisPerOctave,
+              repeatMultiple: 0,
+              type: 'pad'
+            }));
         }
         //Adding extra chord(s)
         for (var j = 0; j < numExtraChords; j++) {
-          _chordSeq.push(createMusicalScale(
-            numPadNotes,
-            _chordSeqOffsetArr[j].index - _extraOffset,
-            getValidChordType(_chordSeqOffsetArr[j].key),
-            _inversionOffsetArr[j],
-            numSemisPerOctave,
-            0,
-            'padLower'
-          ));
+          _chordSeq.push(createMusicalScale({
+              numNotes: numPadNotes,
+              startNote: _chordSeqOffsetArr[j].index - _extraOffset,
+              chordKey: getValidChordType(_chordSeqOffsetArr[j].key),
+              inversionStartNote: _inversionOffsetArr[j],
+              amountToAdd: numSemisPerOctave,
+              repeatMultiple: 0,
+              type: 'pad extra'
+            }));
         }
         return _chordSeq;
       }
@@ -1284,15 +1261,15 @@ module.exports = function() {
         if (wCheck.isClement) {
           _hArpCNoteOffset = -Math.abs(numSemisPerOctave);
         }
-        return createMusicalScale(
-          _numHumidArpNotes,
-          _hArpCNoteOffset,
-          humidArpIntervalsKey,
-          _intervalIndexOffset,
-          0,
-          0,
-          'humid arp'
-        );
+        return createMusicalScale({
+            numNotes: _numHumidArpNotes,
+            startNote: _hArpCNoteOffset,
+            chordKey: humidArpIntervalsKey,
+            inversionStartNote: _intervalIndexOffset,
+            amountToAdd: 0,
+            repeatMultiple: 0,
+            type: 'humid arp'
+          });
       }
 
       function createPrecipArpScale() {
@@ -1306,15 +1283,15 @@ module.exports = function() {
           _intervalType = 'safeNthMinorIntervals';
         }
         _repeatMultiple = 2;
-        return createMusicalScale(
-          avSettings.numPrecipArpNotes,
-          _pArpCNoteOffset,
-          _intervalType,
-          _intervalIndexOffset,
-          numSemisPerOctave,
-          _repeatMultiple,
-          'precip arp'
-        );
+        return createMusicalScale({
+            numNotes: avSettings.numPrecipArpNotes,
+            startNote: _pArpCNoteOffset,
+            chordKey: _intervalType,
+            inversionStartNote: _intervalIndexOffset,
+            amountToAdd: numSemisPerOctave,
+            repeatMultiple: _repeatMultiple,
+            type: 'precip arp'
+          });
       }
 
       /*
@@ -1345,241 +1322,7 @@ module.exports = function() {
         playSounds(_precipArpScaleArray, _humidArpScaleArray);
 			}
 
-      function outputChordSeqType() {
-        if (chordSeqKey === 'noChordOffset') {
-          return 'Using inversions';
-        } else {
-          return microU.addSpacesToString(chordSeqKey);
-        }
-      }
 
-      function outputPrecipArpType() {
-        if (precipCategory === 'hard') {
-          return 'forwards';
-        } else if (precipCategory === 'soft') {
-          return 'gently';
-        } else {
-          return 'backwards';
-        }
-      }
-
-      /**
-       * Display functions
-       */
-      function setLwDataVals(rawCoDisplayData, lwDataArr) {
-        return rawCoDisplayData.map(function(coDisplayObj) {
-          for (var i = 0; i < lwDataArr.length; i++) {
-            if (coDisplayObj.key === lwDataArr[i]) {
-              coDisplayObj.value = lwData[lwDataArr[i]].value === undefined ? lwData[lwDataArr[i]] : lwData[lwDataArr[i]].value;
-            }
-          }
-          return coDisplayObj;
-        });
-      }
-
-      //TODO too complex
-      function setCoDisplayDataNegVals(coDisplayData, weatherData) {
-        return coDisplayData.map(function(coDisplayObj) {
-          if (Array.isArray(coDisplayObj.negativeKey)) {
-            for (var i = 0; i < coDisplayObj.negativeKey.length; i++) {
-              if (weatherData.hasOwnProperty(coDisplayObj.negativeKey[i])) {
-                if (weatherData[coDisplayObj.negativeKey[i]]) {
-                  coDisplayObj.negativeValue = weatherData[coDisplayObj.negativeKey[i]];
-                  break;
-                }
-              }
-            }
-          } else if (typeof coDisplayObj.negativeKey === 'string') {
-            if (weatherData.hasOwnProperty(coDisplayObj.negativeKey)) {
-              coDisplayObj.negativeValue = weatherData[coDisplayObj.negativeKey];
-            }
-          }
-          return coDisplayObj;
-        });
-      }
-
-      function setWcheckDataVals(coDisplayDataLwNeg, wCheckArr) {
-        return coDisplayDataLwNeg.map(function(coDisplayObj) {
-          for (var i = 0; i < wCheckArr.length; i++) {
-            if (coDisplayObj.key === wCheckArr[i]) {
-              coDisplayObj.value = wCheck[wCheckArr[i]];
-            }
-          }
-          return coDisplayObj;
-        });
-      }
-
-      function mapConditionsToDisplayData(rawCoDisplayData) {
-        var _lwDataArr = Object.keys(lwData);
-        var _wCheckArr = Object.keys(wCheck);
-        var _coDisplayDataLw = setLwDataVals(rawCoDisplayData, _lwDataArr);
-        //TODO not sure this does anthing
-        //because negativeValues can only apply to booleans
-        var _coDisplayDataLwNeg = setCoDisplayDataNegVals(_coDisplayDataLw, lwData);
-        var _coDisplayDataWCheck = setWcheckDataVals(_coDisplayDataLwNeg, _wCheckArr);
-        var _coDisplayDataWCheckNeg = setCoDisplayDataNegVals(_coDisplayDataWCheck, wCheck);
-        return _coDisplayDataWCheckNeg;
-      }
-
-      function constrainDecimals(rawCoDisplayData) {
-        return rawCoDisplayData.map(function(coProp) {
-          if (typeof coProp.value === 'number' && coProp.constrain) {
-            if (coProp.key === 'precipIntensity') {
-              coProp.value = coProp.value.toFixed(4);
-            } else {
-              coProp.value = coProp.value.toFixed(2);
-            }
-          }
-          return coProp;
-        });
-      }
-
-      function unitiseData(rawCoDisplayData) {
-        return rawCoDisplayData.map(function(coProp) {
-          if (coProp.key === 'temperature' || coProp.key === 'apparentTemperature' || coProp.key === 'dewPoint') {
-            coProp.value = frnhtToCelcius(coProp.value).toFixed(2);
-            coProp.unit = 'C' + he.decode('&deg');
-          }
-          if (coProp.key === 'windBearing' || coProp.key === 'nearestStormBearing') {
-            coProp.unit = he.decode('&deg');
-          }
-          if (coProp.key === 'cloudCover' || coProp.key === 'humidity' || coProp.key === 'precipProbability') {
-            coProp.unit = he.decode('&#37');
-          }
-          return coProp;
-        });
-      }
-
-      function convertPercentages(rawCoDisplayData) {
-        return rawCoDisplayData.map(function(coProp) {
-          if (coProp.key === 'cloudCover' || coProp.key === 'humidity' || coProp.key === 'precipProbability') {
-            coProp.value = coProp.value *= 100;
-          }
-          return coProp;
-        });
-      }
-
-      //TODO why are we doing this?
-      function exceptionCheckData(rawCoDisplayData) {
-        return rawCoDisplayData.map(function(coProp) {
-          if (coProp.key === 'precipIntensity' && coProp.value === 0) {
-            coProp.value = false;
-          }
-          return coProp;
-        });
-      }
-
-      function setIconPath(rawCoDisplayData) {
-        return rawCoDisplayData.map(function(coProp) {
-          if (coProp.value) {
-            if(coProp.key === 'precipType' || coProp.key === 'precipIntensity' || coProp.key === 'precipProbability') {
-              coProp.iconPath = '/img/' + lwData.precipType + '-icon.svg';
-            }
-          }
-          return coProp;
-        });
-      }
-
-      function addPrimaryMusicVals(rawCoDisplayData) {
-        return rawCoDisplayData.map(function(coProp) {
-            switch (coProp.key) {
-              case 'dewPoint':
-                coProp.musicValue = numChords;
-                break;
-              case 'ozone':
-                coProp.musicValue = numExtraChords;
-                break;
-              case 'pressure':
-                coProp.musicValue = getRootNoteLetter(numSemisPerOctave, rootNote);
-                break;
-              case 'temperature':
-                coProp.musicValue = getMainMelodyTempoType(noteLengthMult, avSettings);
-                break;
-              case 'cloudCover':
-                coProp.musicValue = Math.round(masterFilterFreq);
-                break;
-              case 'apparentTemperature':
-                coProp.musicValue = Math.round(seqRepeatNum / numChords);
-                break;
-              case 'windBearing':
-                coProp.musicValue = microU.getOrdinal(longNoteIndex);
-                break;
-              case 'visibility':
-                coProp.musicValue = reverbLength;
-                break;
-              case 'precipIntensity':
-                coProp.musicValue = precipArpBpm;
-                break;
-              case 'precipType':
-                coProp.value = !coProp.value ? false : coProp.value;
-                coProp.musicValue = outputPrecipArpType();
-                break;
-              case 'precipProbability':
-                coProp.musicValue = rideCymbalBpm;
-                break;
-              case 'nearestStormBearing':
-                coProp.musicValue = rideCymbalRate.toFixed(2);
-                break;
-              case 'nearestStormDistance':
-                coProp.musicValue = rideCymbalMaxVolume.toFixed(2);
-                break;
-              case 'windSpeedHigh':
-                coProp.musicValue = humidArpBpm;
-                break;
-              case 'isWindyArp':
-                coProp.musicValue = humidArpIntervalsKey;
-                break;
-            }
-          return coProp;
-        });
-      }
-
-      function whichConditionTrue(displayDataGroup) {
-          var _anyValidPropTrue = false;
-          for (var i = 0; i < displayDataGroup.length; i++) {
-            if (displayDataGroup[i].key !== 'isOther' && displayDataGroup[i].value) {
-              _anyValidPropTrue = true;
-              //Return early
-              return displayDataGroup[i].key;
-            }
-          }
-          //or return isOther
-          return 'isOther';
-      }
-
-      function setStandardDisplayVals(displayDataGroup, musicVal) {
-        //Store only one true condition key
-        //to avoid repetitive display items
-        var _trueCondition = whichConditionTrue(displayDataGroup);
-        return displayDataGroup.map(function(displayProp) {
-          //Set all values to false
-          //except the first object we found that's true
-          if (displayProp.key !== _trueCondition) {
-            displayProp.value = false;
-          }
-          if (displayProp.hasOwnProperty('musicValue')) {
-            displayProp.musicValue = musicVal;
-          }
-          return displayProp;
-        });
-      }
-
-      function setHumidMapVals(displayDataGroup) {
-        return displayDataGroup.map(function(displayProp) {
-          //Set to false if not humid
-          //thus not rendering them
-          if (!wCheck.isHumid) {
-            displayProp.value = false;
-            return displayProp;
-          }
-          if (displayProp.key === 'humidity') {
-            displayProp.musicValue = humidArpBpm;
-          } else if (displayProp.key === 'pressure') {
-            displayProp.musicValue = humidArpIntervalsKey;
-          }
-          return displayProp;
-        });
-      }
 
       function formatCoStrings(displayData) {
         return displayData.map(function(displayProp) {
@@ -1599,7 +1342,7 @@ module.exports = function() {
         //Format strings and numbers
         var _formattedCoData = formatCoStrings(coDisplayData);
         //TODO perf - should use for loop for speed?
-        coDisplayData.forEach(function(coDisplayObj) {
+        _formattedCoData.forEach(function(coDisplayObj) {
           //Only show true or valid values
           //Zero is valid for most conditions
           if (coDisplayObj.value !== undefined && coDisplayObj.value !== false) {
@@ -1618,83 +1361,63 @@ module.exports = function() {
         channel.publish('displayDone', null);
       }
 
-      function setCoDisplayGroupVals() {
-        var _finalCoData = [];
-        var _currArr;
-        for (var coDataGroup in coDisplayData) {
-          if (coDisplayData.hasOwnProperty(coDataGroup)) {
-            //Assign condition values, images and units
-            //TODO refactor so these fns can be chained
-            var _mappedDisplayGroup = mapConditionsToDisplayData(coDisplayData[coDataGroup]);
-            var _unitisedDisplayGroup = unitiseData(_mappedDisplayGroup);
-            var _percentageCalcData = convertPercentages(_unitisedDisplayGroup);
-            var _exceptionCheckedGroup = exceptionCheckData(_percentageCalcData);
-            var _iconisedGroup = setIconPath(_exceptionCheckedGroup);
-            var _constrainedDisplayGroup = constrainDecimals(_iconisedGroup);
-            //Assgin music values
-            //Important - must include every group
-            //else it creates duplicates
-            switch (coDataGroup) {
-              case 'primaryMap':
-                _currArr = addPrimaryMusicVals(_constrainedDisplayGroup);
-                break;
-              case 'chordTypeMap':
-                _currArr = setStandardDisplayVals(_constrainedDisplayGroup, chordType);
-                break;
-              case 'chordSeqTypeMap':
-                _currArr = setStandardDisplayVals(_constrainedDisplayGroup, outputChordSeqType());
-                break;
-              case 'padTypeMap':
-                _currArr = setStandardDisplayVals(_constrainedDisplayGroup, padType);
-                break;
-              case 'longNoteTypeMap':
-                _currArr = setStandardDisplayVals(_constrainedDisplayGroup, longNoteType);
-                break;
-              case 'inversionMap':
-                _currArr = setStandardDisplayVals(_constrainedDisplayGroup, inversionOffsetType);
-                break;
-              case 'numNotesMap':
-                _currArr = setStandardDisplayVals(_constrainedDisplayGroup, numPadNotes);
-                break;
-              case 'semiTonesMap':
-                _currArr = setStandardDisplayVals(_constrainedDisplayGroup, numSemisPerOctave);
-                break;
-              case 'padLengthMap':
-                _currArr = setStandardDisplayVals(_constrainedDisplayGroup);
-                break;
-              case 'leadMap':
-                _currArr = _constrainedDisplayGroup;
-                break;
-              case 'humidArpMap':
-                _currArr = setHumidMapVals(_constrainedDisplayGroup);
-                break;
-            }
-            //Convert sets to one single array
-            _finalCoData.push.apply(_finalCoData, _currArr);
-          }
-        }
-        return _finalCoData;
+      function getDisplayDataVals() {
+        return {
+          numChords: numChords,
+          numExtraChords: numExtraChords,
+          numSemisPerOctave: numSemisPerOctave,
+          rootNote: rootNote,
+          noteLengthMult: noteLengthMult,
+          masterFilterFreq: masterFilterFreq,
+          seqRepeatNum: seqRepeatNum,
+          longNoteIndex: longNoteIndex,
+          reverbLength: reverbLength,
+          precipArpBpm: precipArpBpm,
+          precipCategory: precipCategory,
+          rideCymbalBpm: rideCymbalBpm,
+          rideCymbalRate: rideCymbalRate,
+          rideCymbalMaxVolume: rideCymbalMaxVolume,
+          humidArpBpm: humidArpBpm,
+          humidArpIntervalsKey: humidArpIntervalsKey,
+          chordType: chordType,
+          chordSeqKey: chordSeqKey,
+          padType: padType,
+          longNoteType: longNoteType,
+          inversionOffsetType: inversionOffsetType,
+          numPadNotes: numPadNotes
+        };
       }
 
-      function configureDisplay() {
-        setCoDisplayGroupVals();
-        buildDisplay(_formattedCoData);
+      function configureDisplay(musicDisplayVals) {
+        //Set the data vals using
+        //module scoped data
+        var _dataObjects = {};
+        var _coDisplayMod = coFns(
+          _dataObjects.coDisplayData,
+          _dataObjects.lwData,
+          _dataObjects.wCheck,
+          _dataObjects.musicDisplayVals
+        );
+        var _finalCoData = _coDisplayMod.setCoDisplayGroupVals();
+        var _coDisplayData = setCoDisplayGroupVals();
+        buildDisplay(_coDisplayData);
       }
 
       function configureAudioVisual() {
         //Create a thread to handle
         //generation of allNotesScale
+        var _musicDisplayVals = getDisplayDataVals();
         if (window.Worker) {
           var displayWorker = work(require('./display-worker.js'));
           console.log('displayWorker', displayWorker);
           displayWorker.addEventListener('message', function (result) {
             buildDisplay(result.data);
           });
-          displayWorker.postMessage({coDisplayData: coDisplayData, lwData: lwData, wCheck: wCheck});
+          displayWorker.postMessage({coDisplayData: coDisplayData, lwData: lwData, wCheck: wCheck, musicDisplayVals: _musicDisplayVals});
         }
         //Or just work it out in main thread
         else {
-          configureDisplay();
+          configureDisplay(_musicDisplayVals);
         }
       }
 
