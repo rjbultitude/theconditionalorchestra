@@ -3,16 +3,18 @@
 //Get display Data setter fns
 var coFns = require('./co-display-fns');
 
+//TODO handle errors
 module.exports = function (self) {
-    self.addEventListener('message', function (dataObjects) {
+    self.addEventListener('message', function (workerData) {
+      console.log('Data objects received ', workerData.data);
       //Make fns available
-      var _coDisplayMod = coFns(
-        dataObjects.coDisplayData,
-        dataObjects.lwData,
-        dataObjects.wCheck,
-        dataObjects.musicDisplayVals
+      var _setCoDisplayGroupVals = coFns(
+        workerData.data.coDisplayData,
+        workerData.data.lwData,
+        workerData.data.wCheck,
+        workerData.data.musicDisplayVals
       );
-      var _finalCoData = _coDisplayMod.setCoDisplayGroupVals();
+      var _finalCoData = _setCoDisplayGroupVals();
       self.postMessage(_finalCoData);
     });
 };

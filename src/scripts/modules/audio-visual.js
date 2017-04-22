@@ -1078,6 +1078,7 @@ module.exports = function() {
        * @return {Array}                [current or new array]
        */
       function errorCheckIntervalsArr(chosenIntervals, numNotes, amountToAdd, repeatMultiple, type) {
+        console.log('errorCheckIntervalsArr', arguments);
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _amountToAdd;
@@ -1142,8 +1143,11 @@ module.exports = function() {
         var _allNotesScale = [];
         var _centreFreqIndex;
         var _scaleArray = [];
-        var _rootAndOffset = rootNote + msConfig.centreNoteOffset;
-        var _scaleIntervals = errorCheckIntervalsArr(intervals[msConfig.key], msConfig.numNotes, msConfig.amountToAdd, msConfig.repeatMultiple, msConfig.type);
+        var _rootAndOffset = rootNote + msConfig.startNote;
+        if (msConfig.type === 'pad') {
+          console.log('msConfig', msConfig);
+        }
+        var _scaleIntervals = errorCheckIntervalsArr(intervals[msConfig.chordKey], msConfig.numNotes, msConfig.amountToAdd, msConfig.repeatMultiple, msConfig.type);
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
@@ -1361,6 +1365,8 @@ module.exports = function() {
         channel.publish('displayDone', null);
       }
 
+      //TODO Should all the app vars
+      //be in an object?
       function getDisplayDataVals() {
         return {
           numChords: numChords,
@@ -1411,9 +1417,15 @@ module.exports = function() {
           var displayWorker = work(require('./display-worker.js'));
           console.log('displayWorker', displayWorker);
           displayWorker.addEventListener('message', function (result) {
+            console.log('Worker returned ', result);
             buildDisplay(result.data);
           });
-          displayWorker.postMessage({coDisplayData: coDisplayData, lwData: lwData, wCheck: wCheck, musicDisplayVals: _musicDisplayVals});
+          displayWorker.postMessage({
+            coDisplayData: coDisplayData,
+            lwData: lwData,
+            wCheck: wCheck,
+            musicDisplayVals: _musicDisplayVals
+          });
         }
         //Or just work it out in main thread
         else {
