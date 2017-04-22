@@ -1078,7 +1078,6 @@ module.exports = function() {
        * @return {Array}                [current or new array]
        */
       function errorCheckIntervalsArr(chosenIntervals, numNotes, amountToAdd, repeatMultiple, type) {
-        console.log('errorCheckIntervalsArr', arguments);
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _amountToAdd;
@@ -1147,19 +1146,37 @@ module.exports = function() {
         if (msConfig.type === 'pad') {
           console.log('msConfig', msConfig);
         }
-        var _scaleIntervals = errorCheckIntervalsArr(intervals[msConfig.chordKey], msConfig.numNotes, msConfig.amountToAdd, msConfig.repeatMultiple, msConfig.type);
+        var _scaleIntervals = errorCheckIntervalsArr(
+          intervals[msConfig.chordKey],
+          msConfig.numNotes,
+          msConfig.amountToAdd,
+          msConfig.repeatMultiple,
+          msConfig.type
+        );
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
         //get all the notes/frequencies
-        var _allNotesNumOctsCentreFreq = getAllNotesScale(_largestPosNumber, _largestNegNumber, _rootAndOffset, numSemisPerOctave);
+        var _allNotesNumOctsCentreFreq = getAllNotesScale(
+          _largestPosNumber,
+          _largestNegNumber,
+          _rootAndOffset,
+          numSemisPerOctave
+        );
         _allNotesScale = _allNotesNumOctsCentreFreq.allNotesScale;
         _centreFreqIndex = _allNotesNumOctsCentreFreq.centreNoteIndex;
         _numOcts = _allNotesNumOctsCentreFreq.numOctaves;
         //Get centre note
         //After all notes scale has been created
         var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
-        _scaleArray = getPitchesFromIntervals(_allNotesScale, _scaleIntervals, _centreNoteIndex, msConfig.numNotes, msConfig.intervalIndexOffset, msConfig.type);
+        _scaleArray = getPitchesFromIntervals(
+          _allNotesScale,
+          _scaleIntervals,
+          _centreNoteIndex,
+          msConfig.numNotes,
+          msConfig.inversionStartNote,
+          msConfig.type
+        );
         return _scaleArray;
       }
 
@@ -1218,6 +1235,7 @@ module.exports = function() {
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
           _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
+        console.log('_inversionOffsetArr', _inversionOffsetArr);
         //Create primary chords
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale({
@@ -1398,15 +1416,14 @@ module.exports = function() {
         //Set the data vals using
         //module scoped data
         var _dataObjects = {};
-        var _coDisplayMod = coFns(
-          _dataObjects.coDisplayData,
-          _dataObjects.lwData,
-          _dataObjects.wCheck,
-          _dataObjects.musicDisplayVals
+        var _setCoDisplayGroupVals = coFns(
+          _dataObjects.coDisplayData = coDisplayData,
+          _dataObjects.lwData = lwData,
+          _dataObjects.wCheck = wCheck,
+          _dataObjects.musicDisplayVals = musicDisplayVals
         );
-        var _finalCoData = _coDisplayMod.setCoDisplayGroupVals();
-        var _coDisplayData = setCoDisplayGroupVals();
-        buildDisplay(_coDisplayData);
+        var _finalCoData = _setCoDisplayGroupVals();
+        buildDisplay(_finalCoData);
       }
 
       function configureAudioVisual() {
@@ -1415,9 +1432,7 @@ module.exports = function() {
         var _musicDisplayVals = getDisplayDataVals();
         if (window.Worker) {
           var displayWorker = work(require('./display-worker.js'));
-          console.log('displayWorker', displayWorker);
           displayWorker.addEventListener('message', function (result) {
-            console.log('Worker returned ', result);
             buildDisplay(result.data);
           });
           displayWorker.postMessage({
