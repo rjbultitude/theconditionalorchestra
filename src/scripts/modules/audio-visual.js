@@ -1415,12 +1415,11 @@ module.exports = function() {
       function configureDisplay(musicDisplayVals) {
         //Set the data vals using
         //module scoped data
-        var _dataObjects = {};
         var _setCoDisplayGroupVals = coFns(
-          _dataObjects.coDisplayData = coDisplayData,
-          _dataObjects.lwData = lwData,
-          _dataObjects.wCheck = wCheck,
-          _dataObjects.musicDisplayVals = musicDisplayVals
+          coDisplayData,
+          lwData,
+          wCheck,
+          musicDisplayVals
         );
         var _finalCoData = _setCoDisplayGroupVals();
         buildDisplay(_finalCoData);
@@ -1434,7 +1433,12 @@ module.exports = function() {
           var displayWorker = work(require('./display-worker.js'));
           displayWorker.addEventListener('message', function (result) {
             buildDisplay(result.data);
+            displayWorker.terminate();
           });
+          displayWorker.onerror = function(e) {
+            console.log('Error with web worker on ' + 'Line #' + e.lineno + ' - ' + e.message + ' in ' + e.filename);
+            configureDisplay(_musicDisplayVals);
+          }
           displayWorker.postMessage({
             coDisplayData: coDisplayData,
             lwData: lwData,
