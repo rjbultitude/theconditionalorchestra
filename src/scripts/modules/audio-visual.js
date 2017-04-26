@@ -114,10 +114,8 @@ module.exports = function() {
         padSound.stop();
       }, avSettings.fadeTime * 1000);
     }
-    for (var padSound in soundItem) {
-      soundItem[padSound].fade(0, avSettings.fadeTime);
-      stopPadSounds(soundItem[padSound]);
-    }
+    soundItem.fade(0, avSettings.fadeTime);
+    stopPadSounds(soundItem);
   }
 
   function fadeChoralSounds(soundItem) {
@@ -440,14 +438,12 @@ module.exports = function() {
   }
 
   function getPrecipCategory(lwData) {
-    if (lwData.precipType === undefined) {
-      return undefined;
-    } else if (lwData.precipType === 'rain') {
+    if (lwData.precipType === 'rain') {
       return 'hard';
     } else if (lwData.precipType === 'sleet') {
       return 'soft';
-    } else if (lwData.precipType === 'snow') {
-      return 'light';
+    } else {
+      return 'light'; //'snow' or undefined
     }
   }
 
@@ -886,19 +882,19 @@ module.exports = function() {
 
       function playPad(playFullNotes) {
         for (var i = 0; i < padSounds.length; i++) {
-          padSounds[i][padType].setVolume(avSettings[padType].volume);
-          padSounds[i][padType].disconnect();
-          padSounds[i][padType].connect(soundFilter);
-          padSounds[i][padType].connect(reverb);
-          padSounds[i][padType].rate(synchedSoundsChords[chordIndex][i]);
-          padSounds[i][padType].pan(panArr[panIndex]);
-          padSounds[i][padType].playMode('restart');
-          padSounds[i][padType].play();
-          padSounds[i][padType].setVolume(avSettings[padType].volume);
+          padSounds[i].setVolume(avSettings[padType].volume);
+          padSounds[i].disconnect();
+          padSounds[i].connect(soundFilter);
+          padSounds[i].connect(reverb);
+          padSounds[i].rate(synchedSoundsChords[chordIndex][i]);
+          padSounds[i].pan(panArr[panIndex]);
+          padSounds[i].playMode('restart');
+          padSounds[i].play();
+          padSounds[i].setVolume(avSettings[padType].volume);
           //If we want to play the play full note length
           //use the onended callback
           if (playFullNotes) {
-            padSounds[i][padType].onended(function() {
+            padSounds[i].onended(function() {
               padCallBack();
             });
           }
@@ -1426,17 +1422,6 @@ module.exports = function() {
         }
       }
 
-      //Sound constructor
-      //changes to this may need to be reflected
-      //within the volume objects in avSettings
-      function PadSound(organ, guitar, sax, aeroflute, harmonium) {
-				this.organ = organ;
-				this.guitar = guitar;
-				this.saxophone = sax;
-				this.aeroflute = aeroflute;
-        this.harmonium = harmonium;
-			}
-
       //P5 PRELOAD FN - 1
       sketch.preload = function() {
         //loadSound called during preload
@@ -1444,17 +1429,11 @@ module.exports = function() {
         if (audioSupported) {
           //Pad sounds for various weather types
           for (var i = 0; i < numPadNotes; i++) {
-            padSounds.push(new PadSound(
-              sketch.loadSound('/audio/organ-C2.mp3'),
-              sketch.loadSound('/audio/guitar-C2.mp3'),
-              sketch.loadSound('/audio/sax-C2.mp3'),
-              sketch.loadSound('/audio/aeroflute-C2.mp3'),
-              sketch.loadSound('/audio/harmonium-C2.mp3')
-            ));
+            padSounds.push(sketch.loadSound('/audio/' + padType + '-C2.mp3'));
           }
-          padSound = sketch.loadSound('/audio/' + padType + '-C2.mp3');
-          dropSound = sketch.loadSound('/audio/drop-' + precipCategory + '.mp3');
+          //Long note accompanies pad
           longNote = sketch.loadSound('/audio/' + longNoteType + '-C3.mp3');
+          dropSound = sketch.loadSound('/audio/drop-' + precipCategory + '.mp3');
           //choral sounds for fine/freezing weather
           for (var j = 0; j < 2; j++) {
             choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
