@@ -125,16 +125,15 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Having dropped the windChime, use windSpeed to determine tempo of brassBaritones
-
-Consider only running configureDisplay when sounds are playing
-or run configureSounds when visuals are ready.
-Could use webworker thread for either of above.
-
 Consider only playing the precip or humid arpeggios when mainseq is playing
 as extra seq can now be pitched down by 5 rather than 12
 
-There seems to be a duff chord when using inversions
+Create better harp scales:
+Could use chordOffset to pitch up/down
+Could create array of random notes from entire chordSet
+Could use current scale and add upper/lower octaves
+
+Consider dropping harp when brass is playing
 
 When longnote is high we should play at lower octave - needs testing
 
