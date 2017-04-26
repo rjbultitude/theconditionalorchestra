@@ -576,16 +576,6 @@ module.exports = (function() {
             musicValue: ''
           },
           {
-            key: 'isStormy',
-            title: 'Stormy conditions',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/storm-icon.svg',
-            music: 'Number of semitones in octave: ',
-            musicValue: ''
-          },
-          {
             key: 'isViolentStorm',
             title: 'Violent storm',
             value: '',

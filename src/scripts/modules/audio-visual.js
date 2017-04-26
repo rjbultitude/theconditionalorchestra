@@ -238,9 +238,6 @@ module.exports = function() {
       _numSemitones = avSettings.numSemitones * 2; //24
       console.log('non western: ', _numSemitones);
     } else if (wCheck.isViolentStorm) { //guitar
-      _numSemitones = avSettings.numSemitones * 2.5; //30
-      console.log('non western: ', _numSemitones);
-    } else if (wCheck.isStormy) { //guitar
       _numSemitones = avSettings.numSemitones * 1.5; //18
       console.log('non western: ', _numSemitones);
     } else {
@@ -441,7 +438,7 @@ module.exports = function() {
       lwData.windSpeed.value,
       lwData.windSpeed.min,
       lwData.windSpeed.max,
-      0.5,
+      0.6,
       1
     );
   }
@@ -795,7 +792,7 @@ module.exports = function() {
 
       function playBrassBaritone(scale) {
         brassBaritone.rate(scale[brassOneScaleArrayIndex]);
-        brassBaritone.setVolume(0.9);
+        brassBaritone.setVolume(brassBaritoneVol);
         brassBaritone.play();
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
@@ -1573,7 +1570,7 @@ module.exports = function() {
         if (sketch.frameCount % brassBaritoneStepTime === 0) {
           channel.publish('triggerBrassOne');
         }
-        if (sketch.frameCount % 650 === 0) {
+        if (sketch.frameCount % brassBaritone2StepTime === 0) {
           channel.publish('triggerBrassTwo');
         }
         angle += 0.03;
