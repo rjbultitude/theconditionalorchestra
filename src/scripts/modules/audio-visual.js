@@ -266,6 +266,8 @@ module.exports = function() {
     } else if (wCheck.isCold) {
       padType = 'saxophone';
     } else if (wCheck.isCloudy) {
+      //TODO use another sound
+      //for this or isBitter
       padType = 'organ';
     } else if (wCheck.isSmoggy) {
       padType = 'homeswinger';
@@ -431,6 +433,26 @@ module.exports = function() {
       lwData.visibility.max,
       40,
       0
+    ));
+  }
+
+  function getBrassVolume(lwData) {
+    return microU.mapRange(
+      lwData.windSpeed.value,
+      lwData.windSpeed.min,
+      lwData.windSpeed.max,
+      0.5,
+      1
+    );
+  }
+
+  function getBrassBpm(lwData) {
+    return Math.round(microU.mapRange(
+      lwData.windSpeed.value,
+      lwData.windSpeed.min,
+      lwData.windSpeed.max,
+      6,
+      12
     ));
   }
 
@@ -677,6 +699,11 @@ module.exports = function() {
     var rootNoteGrtrMedian = isRootNoteGrtrMedian(rootNote, rootNoteRange);
     console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteGrtrMedian);
+    var brassBaritoneVol = getBrassVolume(lwData);
+    var brassBaritoneBpm = getBrassBpm(lwData);
+    var brassBaritoneBps = brassBaritoneBpm / 60;
+    var brassBaritoneStepTime = Math.round(appFrameRate / brassBaritoneBps);
+    var brassBaritone2StepTime = brassBaritoneStepTime * 2 + 57;
     var rideCymbalRate = getRideCymbalRate(lwData);
     var rideCymbalBpm = getRideCymbalsBpm(lwData);
     var rideCymbalBps = rideCymbalBpm / 60;
@@ -1543,7 +1570,7 @@ module.exports = function() {
         cosVal = sketch.cos(angle);
         brassBaritone.pan(sinVal);
         brassBaritone2.pan(cosVal);
-        if (sketch.frameCount % 350 === 0) {
+        if (sketch.frameCount % brassBaritoneStepTime === 0) {
           channel.publish('triggerBrassOne');
         }
         if (sketch.frameCount % 650 === 0) {
