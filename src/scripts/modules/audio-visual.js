@@ -166,10 +166,11 @@ module.exports = function() {
   function getLongNoteType(wCheck) {
     var _longNoteType;
     //playlogic
-    // TODO This errs towards the flute/zummarta
+    // TODO This errs towards the flute
     if (wCheck.isMuggy || wCheck.isOminous) {
       _longNoteType = 'harmonica';
     } else if (wCheck.isSirocco) {
+      //Very rare
       _longNoteType = 'shiney';
     } else if (wCheck.isCrisp) {
       _longNoteType = 'string';
@@ -258,9 +259,9 @@ module.exports = function() {
     //organ is used so as not to use a sound
     //that might clash with the brass barritone
     //when conditions are windy
-    if (wCheck.isBitter || wCheck.isStormy) {
+    if (wCheck.isBitter) {
       padType = 'organ';
-    } else if (wCheck.isViolentStorm) {
+    } else if (wCheck.isStormy) {
       padType = 'guitar';
     } else if (wCheck.isCold) {
       padType = 'saxophone';

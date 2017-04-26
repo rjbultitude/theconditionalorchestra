@@ -378,16 +378,6 @@ module.exports = (function() {
             musicValue: ''
           },
           {
-            key: 'isViolentStorm',
-            title: 'Violent storm',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/storm-icon.svg',
-            music: 'Pad instrument is ',
-            musicValue: ''
-          },
-          {
             key: 'isCold',
             title: 'Cold conditions',
             value: '',
