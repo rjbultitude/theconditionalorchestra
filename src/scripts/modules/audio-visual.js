@@ -52,9 +52,9 @@ module.exports = function() {
   //clement / brass
   var harpSound;
   //long notes
-  var longNotes;
+  var longNote;
   //precipitation / drops
-  var dropSounds;
+  var dropSound;
   //Lead sounds
   var rhodes;
   //Globals
@@ -108,17 +108,6 @@ module.exports = function() {
     }, 50);
   }
 
-  function fadeSoundsinObject(soundObject) {
-    for (var _thisSound in soundObject) {
-      if (soundObject.hasOwnProperty(_thisSound)) {
-        soundObject[_thisSound].fade(0, avSettings.fadeTime);
-        setTimeout(function(){
-          soundObject[_thisSound].stop();
-        }, avSettings.fadeTime * 1000);
-      }
-    }
-  }
-
   function fadeOutPadSounds(soundItem) {
     function stopPadSounds(padSound) {
       setTimeout(function() {
@@ -140,32 +129,34 @@ module.exports = function() {
 
   function killCurrentSounds(autoStart) {
       //Fades
-      padSounds.forEach(fadeOutPadSounds);
-      choralSounds.forEach(fadeChoralSounds);
-      fadeSoundsinObject(longNotes);
-      fadeSoundsinObject(dropSounds);
       brassBaritone.fade(0, avSettings.fadeTime);
       brassBaritone2.fade(0, avSettings.fadeTime);
       bass.fade(0, avSettings.fadeTime);
       bass2.fade(0, avSettings.fadeTime);
-      harpSound.fade(0, avSettings.fadeTime);
       chineseCymbal.fade(0, avSettings.fadeTime);
-      timpani.fade(0, avSettings.fadeTime);
+      choralSounds.forEach(fadeChoralSounds);
       djembe.fade(0, avSettings.fadeTime);
+      dropSound.fade(0, avSettings.fadeTime);
+      harpSound.fade(0, avSettings.fadeTime);
+      longNote.fade(0, avSettings.fadeTime);
+      padSounds.forEach(fadeOutPadSounds);
       rhodes.fade(0, avSettings.fadeTime);
       rideCymbal.fade(0, avSettings.fadeTime);
+      timpani.fade(0, avSettings.fadeTime);
       //Stop after fades
       setTimeout(function(){
         brassBaritone.stop();
         brassBaritone2.stop();
         bass.stop();
         bass2.stop();
-        harpSound.stop();
         chineseCymbal.stop();
-        timpani.stop();
         djembe.stop();
+        harpSound.stop();
+        dropSound.stop();
+        longNote.stop();
         rhodes.stop();
         rideCymbal.stop();
+        timpani.stop();
       }, avSettings.fadeTime * 1000);
       //Unsubs
       publishBrassOne.unsubscribe();
@@ -460,18 +451,6 @@ module.exports = function() {
     }
   }
 
-  function getDropSoundKey(precipCategory) {
-    if (precipCategory === 'hard') {
-      return 'dropSound';
-    } else if (precipCategory === 'soft') {
-      return 'dropSoftSound';
-    } else if (precipCategory === 'light') {
-      return 'dropLightSound';
-    } else {
-      return 'none';
-    }
-  }
-
   function getPrecipArpBpm(lwData) {
     // playlogic
     return Math.round(microU.mapRange(
@@ -672,7 +651,6 @@ module.exports = function() {
     var precipArpBpm = getPrecipArpBpm(lwData);
     var precipArpBps = precipArpBpm / 60;
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
-    var dropSoundKey = getDropSoundKey(precipCategory);
     var leadVolume = getLeadSoundVolume(wCheck);
     var padType = getPadType(wCheck);
     var chordType = getChordType(wCheck);
@@ -811,9 +789,8 @@ module.exports = function() {
 
       function playLongNote() {
         //playlogic
-        var _longNote = longNotes[longNoteType];
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
-        var _longNoteVolArr = [0.1, 0.20, 0.5];
+        var _longNoteVolArr = [0.1, 0.3, 0.7];
         var _longNoteVol;
         //playlogic
         //If weather is hot, dry and clear
@@ -828,11 +805,11 @@ module.exports = function() {
         if (extraSeqPlaying || longNoteHigh) {
           _longNoteRate = _longNoteRate / 2;
         }
-        _longNote.playMode('restart');
-        _longNote.rate(_longNoteRate);
-        _longNote.pan(sketch.random(panArr));
-        _longNote.setVolume(_longNoteVol);
-        _longNote.play();
+        longNote.playMode('restart');
+        longNote.pan(sketch.random(panArr));
+        longNote.play();
+        longNote.rate(_longNoteRate);
+        longNote.setVolume(_longNoteVol);
       }
 
       function bassCallback(bassRate) {
@@ -993,7 +970,7 @@ module.exports = function() {
        * @param  {Array} humidArpScaleArray a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
-			function playSounds(precipArpScaleArray, humidArpScaleArray) {
+      function playSounds(precipArpScaleArray, humidArpScaleArray) {
         // playlogic
         // Only the first chord is passed in
         if (wCheck.isFine || wCheck.isFreezing) {
@@ -1143,9 +1120,6 @@ module.exports = function() {
         var _centreFreqIndex;
         var _scaleArray = [];
         var _rootAndOffset = rootNote + msConfig.startNote;
-        if (msConfig.type === 'pad') {
-          console.log('msConfig', msConfig);
-        }
         var _scaleIntervals = errorCheckIntervalsArr(
           intervals[msConfig.chordKey],
           msConfig.numNotes,
@@ -1438,7 +1412,7 @@ module.exports = function() {
           displayWorker.onerror = function(e) {
             console.log('Error with web worker on ' + 'Line #' + e.lineno + ' - ' + e.message + ' in ' + e.filename);
             configureDisplay(_musicDisplayVals);
-          }
+          };
           displayWorker.postMessage({
             coDisplayData: coDisplayData,
             lwData: lwData,
@@ -1452,29 +1426,16 @@ module.exports = function() {
         }
       }
 
-			//Sound constructor
-			//changes to this may need to be reflected
-			//within the volume objects in avSettings
-			function PadSound(organ, guitar, sax, aeroflute, harmonium) {
+      //Sound constructor
+      //changes to this may need to be reflected
+      //within the volume objects in avSettings
+      function PadSound(organ, guitar, sax, aeroflute, harmonium) {
 				this.organ = organ;
 				this.guitar = guitar;
 				this.saxophone = sax;
 				this.aeroflute = aeroflute;
         this.harmonium = harmonium;
 			}
-
-      function LongNotes(harmonica, flute, shiney, string) {
-        this.harmonica = harmonica;
-        this.flute = flute;
-        this.shiney = shiney;
-        this.string = string;
-      }
-
-      function DropSounds(dropSound, dropSoftSound, dropLightSound) {
-        this.dropSound = dropSound;
-        this.dropSoftSound = dropSoftSound;
-        this.dropLightSound = dropLightSound;
-      }
 
       //P5 PRELOAD FN - 1
       sketch.preload = function() {
@@ -1491,21 +1452,14 @@ module.exports = function() {
               sketch.loadSound('/audio/harmonium-C2.mp3')
             ));
           }
-          longNotes = new LongNotes(
-            sketch.loadSound('/audio/harmonica-C3.mp3'),
-            sketch.loadSound('/audio/flute-C3.mp3'),
-            sketch.loadSound('/audio/shiney-C3.mp3'),
-            sketch.loadSound('/audio/string-C3.mp3')
-          );
-          //choral sounds for fine weather
+          padSound = sketch.loadSound('/audio/' + padType + '-C2.mp3');
+          dropSound = sketch.loadSound('/audio/drop-' + precipCategory + '.mp3');
+          longNote = sketch.loadSound('/audio/' + longNoteType + '-C3.mp3');
+          //choral sounds for fine/freezing weather
           for (var j = 0; j < 2; j++) {
             choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
           }
-          dropSounds = new DropSounds(
-            sketch.loadSound('/audio/drop.mp3'),
-            sketch.loadSound('/audio/drop-soft.mp3'),
-            sketch.loadSound('/audio/drop-light.mp3')
-          );
+          //TODO only load these if conditions are so
           bass = sketch.loadSound('/audio/bass.mp3');
           bass2 = sketch.loadSound('/audio/bass.mp3');
           brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
@@ -1638,9 +1592,9 @@ module.exports = function() {
           if (precipArpScaleIndex >= precipArpScale.length) {
             precipArpScaleIndex = 0;
           }
-          dropSounds[dropSoundKey].play();
-          dropSounds[dropSoundKey].setVolume(avSettings.dropSoundVol[dropSoundKey]);
-          dropSounds[dropSoundKey].rate(precipArpScale[precipArpScaleIndex]);
+          dropSound.play();
+          dropSound.setVolume(avSettings.dropSoundVol[precipCategory]);
+          dropSound.rate(precipArpScale[precipArpScaleIndex]);
           precipArpScaleIndex++;
         }
       }

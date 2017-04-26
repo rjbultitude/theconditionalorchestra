@@ -6,9 +6,9 @@ module.exports = {
   colourDim: 18,
   //Pitch / rate / volume
   dropSoundVol: {
-    dropSound: 1,
-    dropSoftSound: 0.8,
-    dropLightSound: 0.7,
+    hard: 1,
+    soft: 0.8,
+    light: 0.7,
   },
   volume: 0.75,
   //padSounds
