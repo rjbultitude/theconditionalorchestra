@@ -388,6 +388,26 @@ module.exports = (function() {
             musicValue: ''
           },
           {
+            key: 'isCloudy',
+            title: 'Cloud conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/cloud-cover-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isSmoggy',
+            title: 'Dull or hazy conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/cloud-cover-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
             key: 'isFine',
             title: 'Fine conditions',
             value: '',
@@ -510,16 +530,6 @@ module.exports = (function() {
             constrain: false,
             unit: '',
             iconPath: '/img/freezing-icon.svg',
-            music: 'Number of notes per chord is ',
-            musicValue: ''
-          },
-          {
-            key: 'isViolentStorm',
-            title: 'Violent storm',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/storm-icon.svg',
             music: 'Number of notes per chord is ',
             musicValue: ''
           },

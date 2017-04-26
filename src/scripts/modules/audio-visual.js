@@ -189,9 +189,9 @@ module.exports = function() {
     var _numPadNotes;
     //playlogic
     // We use a non western scale
-    // and the guitar sound for windy and freezing
+    // and the guitar sound for stormy
     // so only use 3 notes in a chord
-    if (wCheck.isBitter || wCheck.isViolentStorm || wCheck.isStormy) {
+    if (wCheck.isBitter || wCheck.isStormy) {
       _numPadNotes = 3;
     } else if (wCheck.isFine) {
       _numPadNotes = 4;
@@ -234,13 +234,13 @@ module.exports = function() {
     var _numSemitones;
     //playlogic
     // non western eq temp scale
-    if (wCheck.isBitter) {
+    if (wCheck.isBitter) { //organ
       _numSemitones = avSettings.numSemitones * 2; //24
       console.log('non western: ', _numSemitones);
-    } else if (wCheck.isViolentStorm) {
+    } else if (wCheck.isViolentStorm) { //guitar
       _numSemitones = avSettings.numSemitones * 2.5; //30
       console.log('non western: ', _numSemitones);
-    } else if (wCheck.isStormy) {
+    } else if (wCheck.isStormy) { //guitar
       _numSemitones = avSettings.numSemitones * 1.5; //18
       console.log('non western: ', _numSemitones);
     } else {
@@ -265,6 +265,10 @@ module.exports = function() {
       padType = 'guitar';
     } else if (wCheck.isCold) {
       padType = 'saxophone';
+    } else if (wCheck.isCloudy) {
+      padType = 'organ';
+    } else if (wCheck.isSmoggy) {
+      padType = 'homeswinger';
     } else if (wCheck.isFine) {
       padType = 'aeroflute';
     } else {
@@ -624,6 +628,7 @@ module.exports = function() {
       //Humidity
       isHumid: weatherCheck.isHumid(lwData.humidity.value),
       isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
+      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature.value, lwData.cloudCover.value, lwData.visibility.value),
       isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature.value),
       isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value),
       isSirocco: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value, lwData.windSpeed.value),
