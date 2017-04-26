@@ -194,7 +194,7 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
             coProp.musicValue = Math.round(mDVals.seqRepeatNum / mDVals.numChords);
             break;
           case 'windBearing':
-            coProp.musicValue = microU.getOrdinal(mDVals.longNoteIndex);
+            coProp.musicValue = microU.getOrdinal(mDVals.longNoteIndex + 1);
             break;
           case 'visibility':
             coProp.musicValue = mDVals.reverbLength;

@@ -386,16 +386,18 @@ module.exports = function() {
   }
 
   function getLongNoteIndex(lwData, numPadNotes) {
-    var _longNoteIndex;
+    var _longNoteIndex = 0;
     var _timesToDivide = numPadNotes;
     var _bearingSlice = 360 / _timesToDivide;
     //playlogic
     //bearing decides which note in scale to play
     //Could use reduce
     for (var i = 0; i < _timesToDivide; i++) {
-      var _currentBearingSlice = _bearingSlice * i;
+      var _mult = i + 1;
+      var _currentBearingSlice = _bearingSlice * _mult;
       if (lwData.windBearing.value <= _currentBearingSlice) {
         _longNoteIndex = i;
+        break;
       } else {
         _longNoteIndex = _timesToDivide - 1;
       }
@@ -1314,8 +1316,6 @@ module.exports = function() {
         playSounds(_precipArpScaleArray, _humidArpScaleArray);
 			}
 
-
-
       function formatCoStrings(displayData) {
         return displayData.map(function(displayProp) {
           var _musicValue;
@@ -1350,7 +1350,6 @@ module.exports = function() {
             //console.log('Not displayed because not defined or false ', coProp);
           }
         });
-        channel.publish('displayDone', null);
       }
 
       //TODO Should all the app vars
@@ -1396,9 +1395,9 @@ module.exports = function() {
       }
 
       function configureAudioVisual() {
-        //Create a thread to handle
-        //generation of allNotesScale
         var _musicDisplayVals = getDisplayDataVals();
+        //Create a thread to set
+        //values for display
         if (window.Worker) {
           var displayWorker = work(require('./display-worker.js'));
           displayWorker.addEventListener('message', function (result) {
@@ -1420,6 +1419,9 @@ module.exports = function() {
         else {
           configureDisplay(_musicDisplayVals);
         }
+        //While other thread runs
+        //configure Sounds
+        configureSounds();
       }
 
       //P5 PRELOAD FN - 1
@@ -1630,12 +1632,6 @@ module.exports = function() {
           masterGain += 0.01;
         }
 			};
-
-      //Prepare and play sounds
-      //Once the display is done loading
-      channel.subscribe('displayDone', function() {
-        configureSounds();
-      });
 		});
 		return myP5;
 	}
