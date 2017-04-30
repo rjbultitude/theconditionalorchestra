@@ -1338,7 +1338,7 @@ module.exports = function() {
         }
         //Humid arpeggio will not play if
         //other lead sounds are playing
-        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine) {
+        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy) {
           _humidArpScaleArray = createHumidArpScale();
         }
         //Explicitly passing these arrays as args
@@ -1639,7 +1639,7 @@ module.exports = function() {
             updatePrecipArp();
           }
         }
-        if (wCheck.isHumid && !wCheck.isPrecip) {
+        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy) {
           if (humidArpReady && sequenceStart) {
             updateHumidArp();
           }

@@ -208,7 +208,7 @@ module.exports = (function() {
             iconPath: '/img/humidity-icon.svg',
             music: 'Harp arpeggio is playing',
             musicValue: '',
-            negativeKey: ['isPrecip', 'isFine'],
+            negativeKey: ['isPrecip', 'isFine', 'isWindy'],
             negativeValue: ''
           },
           {
@@ -606,7 +606,7 @@ module.exports = (function() {
             iconPath: '/img/humidity-icon.svg',
             music: 'Harp arpeggio tempo is ',
             musicValue: '',
-            negativeKey: 'isPrecip',
+            negativeKey: ['isPrecip', 'isFine', 'isWindy'],
             negativeValue: ''
           },
           {
@@ -618,7 +618,7 @@ module.exports = (function() {
             iconPath: '/img/pressure-icon.svg',
             music: 'Harp arpeggio intervals are ',
             musicValue: '',
-            negativeKey: 'isPrecip',
+            negativeKey: ['isPrecip', 'isFine', 'isWindy'],
             negativeValue: ''
           }
         ],

@@ -139,15 +139,13 @@ When longnote is high we should play at lower octave - needs testing
 
 ---
 
-Create wCheck condition for very hot that uses different pad and longNote sounds
-
-Some arpeggio melodies still clash a little with the chords
-
 Test the master filter against the pad and longNote sounds, particularly with lower frequencies
 
 Consider using a state manager to update the humid arpeggio and display (chords)
 
 Create 'Add to home screen' button
+
+Create wCheck condition for very hot that uses different pad and longNote sounds
 
 Update logic App Logic and spreadsheet
 
