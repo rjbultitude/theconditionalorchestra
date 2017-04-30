@@ -125,9 +125,6 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Consider only playing the precip or humid arpeggios when mainseq is playing
-as extra seq can now be pitched down by 5 rather than 12
-
 Create better harp scales:
 Could use chordOffset to pitch up/down
 Could create array of random notes from entire chordSet
