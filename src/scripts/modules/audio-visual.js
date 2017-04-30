@@ -1421,6 +1421,7 @@ module.exports = function() {
         };
       }
 
+      //Only used if web worker is not available
       function configureDisplay(musicDisplayVals) {
         //Set the data vals using
         //module scoped data

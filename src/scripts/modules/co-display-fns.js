@@ -72,11 +72,15 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
   //TODO too complex
   function setCoDisplayDataNegVals(coDisplayDataGroup, lwDataArr) {
     return coDisplayDataGroup.map(function(coDisplayObj) {
+      //Negative values can come in arrays
       if (Array.isArray(coDisplayObj.negativeKey)) {
         for (var i = 0; i < coDisplayObj.negativeKey.length; i++) {
           if (lwDataArr.hasOwnProperty(coDisplayObj.negativeKey[i])) {
-            if (lwDataArr[coDisplayObj.negativeKey[i]]) {
-              coDisplayObj.negativeValue = lwDataArr[coDisplayObj.negativeKey[i]];
+            //If any of the negativeKey props are true
+            if (lwDataArr[coDisplayObj.negativeKey[i]] === true) {
+              //Set the value to true
+              //coDisplayObj.negativeValue = lwDataArr[coDisplayObj.negativeKey[i]];
+              coDisplayObj.negativeValue = true;
               break;
             }
           }

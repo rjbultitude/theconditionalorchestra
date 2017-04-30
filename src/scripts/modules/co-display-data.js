@@ -23,7 +23,7 @@ module.exports = (function() {
             music: 'Bass note playing',
             musicValue: '',
             negativeKey: 'isWindy',
-            negativeValue: ''
+            negativeValue: false
           },
           {
             key: 'visibility',
@@ -209,7 +209,7 @@ module.exports = (function() {
             music: 'Harp arpeggio is playing',
             musicValue: '',
             negativeKey: ['isPrecip', 'isFine', 'isWindy'],
-            negativeValue: ''
+            negativeValue: false
           },
           {
             key: 'isSublime',
@@ -607,7 +607,7 @@ module.exports = (function() {
             music: 'Harp arpeggio tempo is ',
             musicValue: '',
             negativeKey: ['isPrecip', 'isFine', 'isWindy'],
-            negativeValue: ''
+            negativeValue: false
           },
           {
             key: 'pressure',
@@ -619,7 +619,7 @@ module.exports = (function() {
             music: 'Harp arpeggio intervals are ',
             musicValue: '',
             negativeKey: ['isPrecip', 'isFine', 'isWindy'],
-            negativeValue: ''
+            negativeValue: false
           }
         ],
         leadMap: [
