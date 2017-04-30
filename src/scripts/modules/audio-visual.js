@@ -265,7 +265,7 @@ module.exports = function() {
     } else if (wCheck.isCloudy) {
       //TODO use another sound
       //for this or isBitter
-      padType = 'organ';
+      padType = 'vocal';
     } else if (wCheck.isSmoggy) {
       padType = 'homeswinger';
     } else if (wCheck.isFine) {

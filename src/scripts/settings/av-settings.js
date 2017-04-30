@@ -17,6 +17,7 @@ module.exports = {
   aeroflute: {volume : 0.5},
   saxophone: {volume : 0.75},
   harmonium: {volume : 0.5},
+  vocal: {volume : 0.75},
   piano: {volume : 1},
   homeswinger: {volume : 0.6},
   numPadNotes: 5,
