@@ -133,8 +133,6 @@ Could use chordOffset to pitch up/down
 Could create array of random notes from entire chordSet
 Could use current scale and add upper/lower octaves
 
-Consider dropping harp when brass is playing
-
 When longnote is high we should play at lower octave - needs testing
 
 ---

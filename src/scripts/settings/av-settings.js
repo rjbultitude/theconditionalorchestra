@@ -30,7 +30,7 @@ module.exports = {
   noteLengthMultMin: 1,
   noteLengthMultMax: 5,
   numPrecipArpNotes: 12,
-  numHumidArpNotes: 4, //should match closeIntervals
+  numHumidArpNotes: 6, //should match closeIntervals
   numOctaves: 2,
   numSemitones: 12,
   scaleStartIndexBuffer: 10,
