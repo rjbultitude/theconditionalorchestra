@@ -23,7 +23,7 @@ module.exports = {
   },
 
   isMuggy: function(humidity, temperatureInFrnht) {
-    return humidity > 0.4 && frnhtToCelcius(temperatureInFrnht) > 15;
+    return humidity > 0.48 && frnhtToCelcius(temperatureInFrnht) > 16;
   },
 
   isSmoggy: function(humidity, temperatureInFrnht, cloudCover, visibility) {

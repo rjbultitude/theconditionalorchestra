@@ -263,8 +263,6 @@ module.exports = function() {
     } else if (wCheck.isCold) {
       padType = 'saxophone';
     } else if (wCheck.isCloudy) {
-      //TODO use another sound
-      //for this or isBitter
       padType = 'vocal';
     } else if (wCheck.isSmoggy) {
       padType = 'homeswinger';
