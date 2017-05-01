@@ -594,6 +594,7 @@ module.exports = function() {
       var _multiplierAmt = minMultiplier + i;
       _noteLengths.push(_multiplierAmt * appFrameRate);
     }
+    console.log('_noteLengths', _noteLengths);
     return _noteLengths;
   }
 
@@ -901,6 +902,7 @@ module.exports = function() {
         //If the lower chords are playing halve the time
         currNoteLength = extraSeqPlaying ? sketch.random(noteLengths) * 2 : sketch.random(noteLengths);
         //Start the call of the updateNoteLength fn again
+        console.log('currNoteLength', currNoteLength);
         padReady = true;
       }
 

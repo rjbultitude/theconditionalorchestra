@@ -27,7 +27,6 @@ module.exports = {
   },
 
   isSmoggy: function(humidity, temperatureInFrnht, cloudCover, visibility) {
-    console.log('isSmoggy', arguments);
     return humidity > 0.4 && frnhtToCelcius(temperatureInFrnht) > 15 && cloudCover > 0.6 && visibility < 9;
   },
 
