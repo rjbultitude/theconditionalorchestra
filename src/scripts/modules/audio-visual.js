@@ -246,6 +246,7 @@ module.exports = function() {
     return Math.round(_numSemitones);
   }
 
+  //TODO return early
   function getPadType(wCheck) {
     var padType = '';
     //playlogic
@@ -274,6 +275,7 @@ module.exports = function() {
     return padType;
   }
 
+  //TODO return early
   function getChordType(wCheck) {
     var _chordType;
     //playlogic
@@ -297,6 +299,7 @@ module.exports = function() {
     return rootNote + _rootNoteMedian >= _rootNoteMedian;
   }
 
+  //TODO return early
   function getChordSeqKey(wCheck, rootNoteGrtrMedian) {
     var _key;
     //playlogic
@@ -322,6 +325,7 @@ module.exports = function() {
   }
 
   //Inversions manager
+  //TODO return early
   function getInversionOffsetKey(wCheck) {
     var _key;
     // playlogic
@@ -500,6 +504,7 @@ module.exports = function() {
     ));
   }
 
+  //TODO return early
   function getHumidArpIntervals(lwData, chordType) {
     var _hIntervals;
     //playlogic
@@ -749,7 +754,7 @@ module.exports = function() {
 
       function getAllegrettoRhythm(scaleArray, includeFills) {
         var _newScaleArr = [];
-        for (var i = 0; i < scaleArray.length; i++) {
+        for (var i = 0, length = scaleArray.length; i < length; i++) {
           if (i % 2 === 0) {
             _newScaleArr.push(scaleArray[i]);
             _newScaleArr.push(0);
@@ -929,7 +934,7 @@ module.exports = function() {
       }
 
       function playPad(playFullNotes) {
-        for (var i = 0; i < padSounds.length; i++) {
+        for (var i = 0, length = padSounds.length; i < length; i++) {
           padSounds[i].setVolume(avSettings[padType].volume);
           padSounds[i].disconnect();
           padSounds[i].connect(soundFilter);
