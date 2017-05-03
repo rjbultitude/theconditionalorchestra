@@ -1710,7 +1710,7 @@ module.exports = function() {
 
   channel.subscribe('stop', function(autoStart) {
     var _allDisplayItems = document.querySelectorAll('.conditions-display__item');
-    for (var i = 0; i < _allDisplayItems.length; i++) {
+    for (var i = 0, length = _allDisplayItems.length; i < length; i++) {
       fadeOutDisplayItems(_allDisplayItems[i], i, _allDisplayItems.length, clearAndStopWhenDone, autoStart);
     }
   });

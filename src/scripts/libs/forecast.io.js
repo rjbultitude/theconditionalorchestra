@@ -1,3 +1,4 @@
+/* Version 1.0.1 */
 'use strict';
 
 (function(root, factory) {
