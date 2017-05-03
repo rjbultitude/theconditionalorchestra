@@ -1,6 +1,6 @@
 'use strict';
 
-var Forecastio = require('../libs/forecast.io');
+var Darksky = require('../libs/darksky.io');
 var GoogleMapsLoader = require('google-maps');
 var postal = require('postal');
 var channel = postal.channel();
@@ -105,7 +105,7 @@ module.exports = function() {
   function updateApp(lat, long, name) {
 		var newLocation = new Nll(lat, long, name);
 		updateStatus('weather');
-		var forecast = new Forecastio({
+		var forecast = new Darksky({
 			PROXY_SCRIPT: '/proxy.php'
 		});
 
