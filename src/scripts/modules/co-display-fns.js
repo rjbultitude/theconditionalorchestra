@@ -60,7 +60,7 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
 
   function setLwDataVals(coDisplayDataGroup, lwDataArr) {
     return coDisplayDataGroup.map(function(coDisplayObj) {
-      for (var i = 0; i < lwDataArr.length; i++) {
+      for (var i = 0, length = lwDataArr.length; i < length; i++) {
         if (coDisplayObj.key === lwDataArr[i]) {
           coDisplayObj.value = lwData[lwDataArr[i]].value === undefined ? lwData[lwDataArr[i]] : lwData[lwDataArr[i]].value;
         }
@@ -74,7 +74,7 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
     return coDisplayDataGroup.map(function(coDisplayObj) {
       //Negative values can come in arrays
       if (Array.isArray(coDisplayObj.negativeKey)) {
-        for (var i = 0; i < coDisplayObj.negativeKey.length; i++) {
+        for (var i = 0, length = coDisplayObj.negativeKey.length; i < length; i++) {
           if (lwDataArr.hasOwnProperty(coDisplayObj.negativeKey[i])) {
             //If any of the negativeKey props are true
             if (lwDataArr[coDisplayObj.negativeKey[i]] === true) {
@@ -96,7 +96,7 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
 
   function setWcheckDataVals(coDisplayDataGroup, wCheckArr) {
     return coDisplayDataGroup.map(function(coDisplayObj) {
-      for (var i = 0; i < wCheckArr.length; i++) {
+      for (var i = 0, length = wCheckArr.length; i < length; i++) {
         if (coDisplayObj.key === wCheckArr[i]) {
           coDisplayObj.value = wCheck[wCheckArr[i]];
         }
@@ -233,7 +233,7 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
   function whichConditionTrue(displayDataGroup) {
     var _anyValidPropTrue = false;
     //TODO why is this not a for in?
-    for (var i = 0; i < displayDataGroup.length; i++) {
+    for (var i = 0, length = displayDataGroup.length; i < length; i++) {
       if (displayDataGroup[i].key !== 'isOther' && displayDataGroup[i].value) {
         _anyValidPropTrue = true;
         //Return early
