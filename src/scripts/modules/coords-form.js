@@ -14,8 +14,8 @@ var getMeanVal = require('../utilities/get-mean-val');
 
 module.exports = function() {
 	//Vars
-	var userLocBtnEl = document.getElementById('use-location-btn');
-	var linkLocationSelectEl = document.getElementById('link-location-select');
+  var userLocBtnEl = document.getElementById('use-location-btn');
+  var linkLocationSelectEl = document.getElementById('link-location-select');
   var coordsFormEl = document.querySelector('[data-ref="form-coords"]');
   var coordsFormInputEl = coordsFormEl.querySelector('[data-ref="place-field"]');
   var coordsFormSubmitBtnEl = coordsFormEl.querySelector('[data-ref="submit"]');
