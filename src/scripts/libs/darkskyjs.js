@@ -150,7 +150,6 @@
             locations[i].name || 'no name provided'
           ));
         }
-        console.log('currDataSets', currDataSets);
         //Pass data to callback
         appFn(currDataSets);
         return currDataSets;

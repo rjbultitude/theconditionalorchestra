@@ -125,6 +125,12 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Delete forecast.io js
+
+Add higher octave to vocal sound
+
+Not sure currNoteLength is working properly
+
 Create better harp scales:
 Could use chordOffset to pitch up/down
 Could create array of random notes from entire chordSet

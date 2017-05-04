@@ -74,11 +74,11 @@ module.exports = function() {
     for (var condition in lwData) {
       if (lwData.hasOwnProperty(condition)) {
         if (lwData[condition].value < lwData[condition].min) {
+          console.log('Value out of range', condition, lwData[condition]);
           lwData[condition].value = lwData[condition].min;
-          console.log('Value out of range', lwData[condition]);
         } else if (lwData[condition].value > lwData[condition].max) {
+          console.log('Value out of range', condition, lwData[condition]);
           lwData[condition].value = lwData[condition].max;
-          console.log('Value out of range', lwData[condition]);
         }
       }
     }

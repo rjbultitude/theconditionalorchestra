@@ -91,7 +91,8 @@ module.exports = function() {
     }, 50);
   }
 
-  function fadeOutDisplayItems(thisDisplayItem, index, totalItems, doneFn, autoStart) {
+  function fadeOutDisplayItems(thisDisplayItem, index, totalItems, doneFn,
+    autoStart) {
     var _opacity = 1;
     var _aniLoop = setInterval(function() {
       if (_opacity > 0) {
@@ -120,47 +121,47 @@ module.exports = function() {
 
   function fadeChoralSounds(soundItem) {
     soundItem.fade(0, avSettings.fadeTime);
-    setTimeout(function(){
+    setTimeout(function() {
       soundItem.stop();
     }, avSettings.fadeTime * 1000);
   }
 
   function killCurrentSounds(autoStart) {
-      //Fades
-      brassBaritone.fade(0, avSettings.fadeTime);
-      brassBaritone2.fade(0, avSettings.fadeTime);
-      bass.fade(0, avSettings.fadeTime);
-      bass2.fade(0, avSettings.fadeTime);
-      chineseCymbal.fade(0, avSettings.fadeTime);
-      choralSounds.forEach(fadeChoralSounds);
-      djembe.fade(0, avSettings.fadeTime);
-      dropSound.fade(0, avSettings.fadeTime);
-      harpSound.fade(0, avSettings.fadeTime);
-      longNote.fade(0, avSettings.fadeTime);
-      padSounds.forEach(fadeOutPadSounds);
-      rhodes.fade(0, avSettings.fadeTime);
-      rideCymbal.fade(0, avSettings.fadeTime);
-      timpani.fade(0, avSettings.fadeTime);
-      //Stop after fades
-      setTimeout(function(){
-        brassBaritone.stop();
-        brassBaritone2.stop();
-        bass.stop();
-        bass2.stop();
-        chineseCymbal.stop();
-        djembe.stop();
-        harpSound.stop();
-        dropSound.stop();
-        longNote.stop();
-        rhodes.stop();
-        rideCymbal.stop();
-        timpani.stop();
-      }, avSettings.fadeTime * 1000);
-      //Unsubs
-      publishBrassOne.unsubscribe();
-      publishBrassTwo.unsubscribe();
-      isPlaying = false;
-      channel.publish('allStopped', autoStart);
+    //Fades
+    brassBaritone.fade(0, avSettings.fadeTime);
+    brassBaritone2.fade(0, avSettings.fadeTime);
+    bass.fade(0, avSettings.fadeTime);
+    bass2.fade(0, avSettings.fadeTime);
+    chineseCymbal.fade(0, avSettings.fadeTime);
+    choralSounds.forEach(fadeChoralSounds);
+    djembe.fade(0, avSettings.fadeTime);
+    dropSound.fade(0, avSettings.fadeTime);
+    harpSound.fade(0, avSettings.fadeTime);
+    longNote.fade(0, avSettings.fadeTime);
+    padSounds.forEach(fadeOutPadSounds);
+    rhodes.fade(0, avSettings.fadeTime);
+    rideCymbal.fade(0, avSettings.fadeTime);
+    timpani.fade(0, avSettings.fadeTime);
+    //Stop after fades
+    setTimeout(function() {
+      brassBaritone.stop();
+      brassBaritone2.stop();
+      bass.stop();
+      bass2.stop();
+      chineseCymbal.stop();
+      djembe.stop();
+      harpSound.stop();
+      dropSound.stop();
+      longNote.stop();
+      rhodes.stop();
+      rideCymbal.stop();
+      timpani.stop();
+    }, avSettings.fadeTime * 1000);
+    //Unsubs
+    publishBrassOne.unsubscribe();
+    publishBrassTwo.unsubscribe();
+    isPlaying = false;
+    channel.publish('allStopped', autoStart);
   }
 
   function getLongNoteType(wCheck) {
@@ -346,7 +347,8 @@ module.exports = function() {
   function getSeqRepeatMaxMult(numChords) {
     //If the number of chords is high
     //lower the multiplier
-    var _mean = Math.round((avSettings.numChordsMin + avSettings.numChordsMax) / 2);
+    var _mean = Math.round((avSettings.numChordsMin + avSettings.numChordsMax) /
+      2);
     var _diff = avSettings.numChordsMax - _mean;
     if (numChords > _mean) {
       return avSettings.mainSeqRepeatMax - _diff;
@@ -371,7 +373,7 @@ module.exports = function() {
     //In western scale it will be between + 6 or - 12
     return {
       rangePlus: Math.round(numSemisPerOctave / 2),
-      rangeMinus:  -Math.abs(numSemisPerOctave)
+      rangeMinus: -Math.abs(numSemisPerOctave)
     };
   }
 
@@ -576,7 +578,8 @@ module.exports = function() {
     var _rideCymbalVolumeArr = [];
     var _min = 0.1;
     for (var i = 0; i < 10; i++) {
-      _rideCymbalVolumeArr.push(Math.random() * (rideCymbalMaxVolume - _min) + _min);
+      _rideCymbalVolumeArr.push(Math.random() * (rideCymbalMaxVolume - _min) +
+        _min);
     }
     return _rideCymbalVolumeArr;
   }
@@ -624,8 +627,8 @@ module.exports = function() {
     reverb = new P5.Reverb();
   }
 
-	// main app init
-	function init(lwData) {
+  // main app init
+  function init(lwData) {
     console.log('lwData', lwData);
     //Init scoped values
     var mainSeqCount = 0;
@@ -653,34 +656,48 @@ module.exports = function() {
     // grouped weather booleans
     var wCheck = {
       //single concept items
-      isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value),
+      isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity
+        .value),
       isWindy: weatherCheck.isWindy(lwData.windSpeed.value),
       isCloudy: weatherCheck.isCloudy(lwData.cloudCover.value),
       //Humidity
       isHumid: weatherCheck.isHumid(lwData.humidity.value),
-      isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
-      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature.value, lwData.cloudCover.value, lwData.visibility.value),
-      isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature.value),
-      isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value),
-      isSirocco: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value, lwData.windSpeed.value),
+      isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature
+        .value),
+      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature
+        .value, lwData.cloudCover.value, lwData.visibility.value),
+      isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature
+        .value),
+      isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature
+        .value),
+      isSirocco: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature
+        .value, lwData.windSpeed.value),
       //temperature
       isCold: weatherCheck.isCold(lwData.temperature.value),
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
       //broad conditions
-      isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
-      isSublime: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
-      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value, lwData.humidity.value),
-      isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
-      isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
-      isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
-      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value)
+      isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed
+        .value, lwData.temperature.value),
+      isSublime: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed
+        .value, lwData.temperature.value),
+      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed
+        .value, lwData.precipIntensity.value, lwData.humidity.value),
+      isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed
+        .value),
+      isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed
+        .value, lwData.precipIntensity.value),
+      isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value,
+        lwData.windSpeed.value, lwData.precipIntensity.value),
+      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance
+        .value, lwData.precipProbability.value)
     };
     console.log('wCheck', wCheck);
     //Get and set core values
     var numPadNotes = getNumPadNotes(wCheck, avSettings);
     var numChords = getNumChords(lwData).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
-    var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
+    var chordNumGreatest = numChords > numExtraChords ? numChords :
+      numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     //Precipitation
     var precipCategory = getPrecipCategory(lwData);
@@ -702,7 +719,8 @@ module.exports = function() {
     var rootNote = getRootNote(lwData, rootNoteRange);
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
-    var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
+    var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex,
+      numPadNotes);
     console.log('longNoteHigh', longNoteHigh);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
@@ -710,7 +728,8 @@ module.exports = function() {
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var rootNoteGrtrMedian = isRootNoteGrtrMedian(rootNote, rootNoteRange);
     console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
-    var extraSeqOffset = getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
+    var extraSeqOffset = getExtraChordsOffset(rootNoteGrtrMedian,
+      numSemisPerOctave);
     console.log('extraSeqOffset', extraSeqOffset);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteGrtrMedian);
     var brassBaritoneVol = getBrassVolume(lwData);
@@ -727,13 +746,14 @@ module.exports = function() {
     var noteLengthMult = getNoteLengthMult(lwData, avSettings);
     var noteLengths = getNoteLengths(appFrameRate, noteLengthMult);
     var leadNoteLengthStart = getLeadNoteLengthStart(appFrameRate, lwData);
-    var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
+    var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes *
+      2);
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
 
-		//Create p5 sketch
-		var myP5 = new P5(function(sketch) {
+    //Create p5 sketch
+    var myP5 = new P5(function(sketch) {
 
       channel.subscribe('allStopped', function() {
         sketch.noLoop();
@@ -746,7 +766,7 @@ module.exports = function() {
         var _randomIndex;
         //Add stops
         for (var i = 0; i < _randomStopCount; i++) {
-          _randomIndex = sketch.random(0,_newNotesArray.length);
+          _randomIndex = sketch.random(0, _newNotesArray.length);
           _newNotesArray.splice(_randomIndex, 0, 0);
         }
         return _newNotesArray;
@@ -777,7 +797,7 @@ module.exports = function() {
       }
 
       function updatePanIndex() {
-        if (panIndex < panArr.length -1) {
+        if (panIndex < panArr.length - 1) {
           panIndex++;
         } else {
           panIndex = 0;
@@ -825,10 +845,11 @@ module.exports = function() {
         var _newScaleArr = scale.slice().reverse();
         var _rateMultArr = [1, 2];
         var _randomRateMultVal = sketch.random(_rateMultArr);
-        brassBaritone2.rate(_newScaleArr[brassTwoScaleArrayIndex] * _randomRateMultVal);
+        brassBaritone2.rate(_newScaleArr[brassTwoScaleArrayIndex] *
+          _randomRateMultVal);
         brassBaritone2.setVolume(0.4);
         brassBaritone2.play();
-        if (brassTwoScaleArrayIndex >= scale.length -1) {
+        if (brassTwoScaleArrayIndex >= scale.length - 1) {
           brassTwoScaleArrayIndex = 0;
         } else {
           brassTwoScaleArrayIndex++;
@@ -905,7 +926,8 @@ module.exports = function() {
 
       function updateNoteLength() {
         //If the lower chords are playing halve the time
-        currNoteLength = extraSeqPlaying ? sketch.random(noteLengths) * 2 : sketch.random(noteLengths);
+        currNoteLength = extraSeqPlaying ? sketch.random(noteLengths) * 2 :
+          sketch.random(noteLengths);
         //Start the call of the updateNoteLength fn again
         console.log('currNoteLength', currNoteLength);
         padReady = true;
@@ -961,7 +983,8 @@ module.exports = function() {
           //If we've played the whole sequence
           //seqRepeatNum number of times
           //play the first chord of extraChords
-          chordIndex = synchedSoundsChords.length - numExtraChords + extraSeqCount;
+          chordIndex = synchedSoundsChords.length - numExtraChords +
+            extraSeqCount;
           extraSeqCount++;
           extraSeqPlaying = true;
           //Once we've played all the extraChords
@@ -1064,7 +1087,7 @@ module.exports = function() {
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', audioSupported);
-			}
+      }
 
       /**
        * Critical function - if the correct number of octaves
@@ -1075,9 +1098,11 @@ module.exports = function() {
        * @param  {Number} semisInOct      [Number of semitones in octave]
        * @return {Object}                 [The scale and the total number of octaves]
        */
-      function getAllNotesScale(largestNumber, smallestNumber, rootAndOffset, semisInOct) {
+      function getAllNotesScale(largestNumber, smallestNumber,
+        rootAndOffset, semisInOct) {
         var _highestNoteIndex = largestNumber + Math.abs(rootAndOffset);
-        var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(rootAndOffset);
+        var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(
+          rootAndOffset);
         var _highestFraction = _highestNoteIndex / semisInOct;
         var _lowestFraction = _lowestNoteIndex / semisInOct;
         var _numUpperOctaves = Math.ceil(_highestFraction);
@@ -1088,7 +1113,8 @@ module.exports = function() {
           _downFirst = true;
         }
         //console.log('creating array with ' + _totalOctaves + ' octaves ');
-        var _allNotesScaleCentreNoteObj = getFreqScales.createEqTempMusicalScale(1, _totalOctaves, semisInOct, _downFirst);
+        var _allNotesScaleCentreNoteObj = getFreqScales.createEqTempMusicalScale(
+          1, _totalOctaves, semisInOct, _downFirst);
         return {
           allNotesScale: _allNotesScaleCentreNoteObj.scale,
           centreNoteIndex: _allNotesScaleCentreNoteObj.centreFreqIndex,
@@ -1103,7 +1129,8 @@ module.exports = function() {
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function errorCheckIntervalsArr(chosenIntervals, numNotes, amountToAdd, repeatMultiple, type) {
+      function errorCheckIntervalsArr(chosenIntervals, numNotes,
+        amountToAdd, repeatMultiple, type) {
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _amountToAdd;
@@ -1117,7 +1144,8 @@ module.exports = function() {
         }
         //Error check
         if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _amountToAdd, _repeatMultiple);
+          _newIntervals = addMissingArrayItems(chosenIntervals,
+            _difference, _amountToAdd, _repeatMultiple);
           console.log('added missing items to ' + type, _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
@@ -1125,26 +1153,31 @@ module.exports = function() {
         return _newIntervals;
       }
 
-      function errorCheckScaleIntervals(scaleIntervals, intervalIndexOffset, numNotes) {
+      function errorCheckScaleIntervals(scaleIntervals,
+        intervalIndexOffset, numNotes) {
         var _scaleIntervals = [];
         var _highestIndex = intervalIndexOffset + numNotes;
         if (_highestIndex > scaleIntervals.length) {
           var _diff = _highestIndex - scaleIntervals.length;
-          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, null, null);
+          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff,
+            null, null);
         } else {
           _scaleIntervals = scaleIntervals;
         }
         return _scaleIntervals;
       }
 
-      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset) {
+      function getPitchesFromIntervals(allNotesScale, scaleIntervals,
+        centreNoteIndex, numNotes, intervalIndexOffset) {
         var _scaleArray = [];
         var _intervalIndexOffset = intervalIndexOffset || 0;
         //add missing scale intervals
-        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes);
+        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals,
+          _intervalIndexOffset, numNotes);
         var _newNote;
         for (var i = 0; i < numNotes; i++) {
-          _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
+          _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] +
+            centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
             _scaleArray.push(_newNote);
@@ -1210,7 +1243,8 @@ module.exports = function() {
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
-          _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null, null);
+          _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff,
+            null, null);
         }
         return _chordOffsetArr;
       }
@@ -1220,7 +1254,8 @@ module.exports = function() {
         var _diff;
         if (numChords > _chordInversionOffSetArr.length) {
           _diff = numChords - _chordInversionOffSetArr.length;
-          _chordInversionOffSetArr = addMissingArrayItems(_chordInversionOffSetArr, _diff, null, null);
+          _chordInversionOffSetArr = addMissingArrayItems(
+            _chordInversionOffSetArr, _diff, null, null);
         }
         return _chordInversionOffSetArr;
       }
@@ -1246,32 +1281,32 @@ module.exports = function() {
         var _inversionOffsetArr = getInversionOffsetArr(chordNumGreatest);
         //Handle array lengths
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
-          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
+          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr,
+            chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
-        console.log('_inversionOffsetArr', _inversionOffsetArr);
         //Create primary chords
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale({
-              numNotes: numPadNotes,
-              startNote: _chordSeqOffsetArr[i].index,
-              chordKey: getValidChordType(_chordSeqOffsetArr[i].key),
-              inversionStartNote: _inversionOffsetArr[i],
-              amountToAdd: numSemisPerOctave,
-              repeatMultiple: 0,
-              type: 'pad'
-            }));
+            numNotes: numPadNotes,
+            startNote: _chordSeqOffsetArr[i].index,
+            chordKey: getValidChordType(_chordSeqOffsetArr[i].key),
+            inversionStartNote: _inversionOffsetArr[i],
+            amountToAdd: numSemisPerOctave,
+            repeatMultiple: 0,
+            type: 'pad'
+          }));
         }
         //Adding extra chord(s)
         for (var j = 0; j < numExtraChords; j++) {
           _chordSeq.push(createMusicalScale({
-              numNotes: numPadNotes,
-              startNote: _chordSeqOffsetArr[j].index - extraSeqOffset,
-              chordKey: getValidChordType(_chordSeqOffsetArr[j].key),
-              inversionStartNote: _inversionOffsetArr[j],
-              amountToAdd: numSemisPerOctave,
-              repeatMultiple: 0,
-              type: 'pad extra'
-            }));
+            numNotes: numPadNotes,
+            startNote: _chordSeqOffsetArr[j].index - extraSeqOffset,
+            chordKey: getValidChordType(_chordSeqOffsetArr[j].key),
+            inversionStartNote: _inversionOffsetArr[j],
+            amountToAdd: numSemisPerOctave,
+            repeatMultiple: 0,
+            type: 'pad extra'
+          }));
         }
         return _chordSeq;
       }
@@ -1288,27 +1323,28 @@ module.exports = function() {
       function createHumidArpScales() {
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
-        var _numHumidArpNotes =  avSettings.numHumidArpNotes;
+        var _numHumidArpNotes = avSettings.numHumidArpNotes;
         var _mainHArpScale = createMusicalScale({
-            numNotes: _numHumidArpNotes,
-            startNote: _hArpCNoteOffset,
-            chordKey: humidArpIntervalsKey,
-            inversionStartNote: _intervalIndexOffset,
-            amountToAdd: 0,
-            repeatMultiple: 0,
-            type: 'humid arp'
-          });
+          numNotes: _numHumidArpNotes,
+          startNote: _hArpCNoteOffset + extraSeqOffset,
+          chordKey: humidArpIntervalsKey,
+          inversionStartNote: _intervalIndexOffset,
+          amountToAdd: 0,
+          repeatMultiple: 0,
+          type: 'humid arp'
+        });
         var _extraHArpScale = createMusicalScale({
-            numNotes: _numHumidArpNotes,
-            startNote: extraSeqOffset,
-            chordKey: humidArpIntervalsKey,
-            inversionStartNote: _intervalIndexOffset,
-            amountToAdd: 0,
-            repeatMultiple: 0,
-            type: 'humid arp'
-          });
-          humidArpScales.push(_mainHArpScale, _extraHArpScale);
-          return humidArpScales;
+          numNotes: _numHumidArpNotes,
+          startNote: _hArpCNoteOffset,
+          chordKey: humidArpIntervalsKey,
+          inversionStartNote: _intervalIndexOffset,
+          amountToAdd: 0,
+          repeatMultiple: 0,
+          type: 'humid arp'
+        });
+        humidArpScales.push(_mainHArpScale, _extraHArpScale);
+        console.log('humidArpScales', humidArpScales);
+        return humidArpScales;
       }
 
       function createPrecipArpScale() {
@@ -1323,14 +1359,14 @@ module.exports = function() {
         }
         _repeatMultiple = 2;
         return createMusicalScale({
-            numNotes: avSettings.numPrecipArpNotes,
-            startNote: _pArpCNoteOffset,
-            chordKey: _intervalType,
-            inversionStartNote: _intervalIndexOffset,
-            amountToAdd: numSemisPerOctave,
-            repeatMultiple: _repeatMultiple,
-            type: 'precip arp'
-          });
+          numNotes: avSettings.numPrecipArpNotes,
+          startNote: _pArpCNoteOffset,
+          chordKey: _intervalType,
+          inversionStartNote: _intervalIndexOffset,
+          amountToAdd: numSemisPerOctave,
+          repeatMultiple: _repeatMultiple,
+          type: 'precip arp'
+        });
       }
 
       /*
@@ -1353,21 +1389,24 @@ module.exports = function() {
         }
         //Humid arpeggio will not play if
         //other lead sounds are playing
-        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy) {
+        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !
+          wCheck.isWindy) {
           _humidArpScalesNoStops = createHumidArpScales();
         }
         //Explicitly passing these arrays as args
         //For clarity
         playSounds(_precipArpScaleArray, _humidArpScalesNoStops);
-			}
+      }
 
       function formatCoStrings(displayData) {
         return displayData.map(function(displayProp) {
           var _musicValue;
           //Add spaces where necessary
           if (typeof displayProp.musicValue === 'string') {
-            _musicValue = microU.removeStrFromStart('inversions', displayProp.musicValue);
-            displayProp.musicValue = microU.addSpacesToString(_musicValue);
+            _musicValue = microU.removeStrFromStart('inversions',
+              displayProp.musicValue);
+            displayProp.musicValue = microU.addSpacesToString(
+              _musicValue);
           } else {
             displayProp.musicValue = displayProp.musicValue;
           }
@@ -1382,10 +1421,12 @@ module.exports = function() {
         _formattedCoData.forEach(function(coDisplayObj) {
           //Only show true or valid values
           //Zero is valid for most conditions
-          if (coDisplayObj.value !== undefined && coDisplayObj.value !== false) {
+          if (coDisplayObj.value !== undefined && coDisplayObj.value !==
+            false) {
             //filter out negative values that are true
             //or don't exist
-            if (coDisplayObj.negativeValue === undefined || coDisplayObj.negativeValue === false) {
+            if (coDisplayObj.negativeValue === undefined ||
+              coDisplayObj.negativeValue === false) {
               var _itemTmpl = appTemplate(coDisplayObj);
               cdContainer.insertAdjacentHTML('beforeend', _itemTmpl);
               var _lastItem = cdContainer.lastElementChild;
@@ -1446,12 +1487,13 @@ module.exports = function() {
         //values for display
         if (window.Worker) {
           var displayWorker = work(require('./display-worker.js'));
-          displayWorker.addEventListener('message', function (result) {
+          displayWorker.addEventListener('message', function(result) {
             buildDisplay(result.data);
             displayWorker.terminate();
           });
           displayWorker.onerror = function(e) {
-            console.log('Error with web worker on ' + 'Line #' + e.lineno + ' - ' + e.message + ' in ' + e.filename);
+            console.log('Error with web worker on ' + 'Line #' + e.lineno +
+              ' - ' + e.message + ' in ' + e.filename);
             configureDisplay(_musicDisplayVals);
           };
           displayWorker.postMessage({
@@ -1477,11 +1519,14 @@ module.exports = function() {
         if (audioSupported) {
           //Pad sounds for various weather types
           for (var i = 0; i < numPadNotes; i++) {
-            padSounds.push(sketch.loadSound('/audio/' + padType + '-C2.mp3'));
+            padSounds.push(sketch.loadSound('/audio/' + padType +
+              '-C2.mp3'));
           }
           //Long note accompanies pad
-          longNote = sketch.loadSound('/audio/' + longNoteType + '-C3.mp3');
-          dropSound = sketch.loadSound('/audio/drop-' + precipCategory + '.mp3');
+          longNote = sketch.loadSound('/audio/' + longNoteType +
+            '-C3.mp3');
+          dropSound = sketch.loadSound('/audio/drop-' + precipCategory +
+            '.mp3');
           //choral sounds for fine/freezing weather
           for (var j = 0; j < 2; j++) {
             choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
@@ -1514,7 +1559,8 @@ module.exports = function() {
       };
 
       function updateSynchedSounds() {
-        if (sketch.frameCount === 1 || sketch.frameCount % currNoteLength === 0) {
+        if (sketch.frameCount === 1 || sketch.frameCount % currNoteLength ===
+          0) {
           playSynchedSounds(false);
           //Temporarily stop the call of this fn
           //while we set a new note length
@@ -1524,18 +1570,21 @@ module.exports = function() {
       }
 
       function updateLeadSound() {
-        if (sketch.frameCount === 1 || sketch.frameCount % currLeadLength === 0) {
+        if (sketch.frameCount === 1 || sketch.frameCount % currLeadLength ===
+          0) {
           //get the note
-          var _leadSoundRate = synchedSoundsChords[chordIndex][leadSoundIndex];
+          var _leadSoundRate = synchedSoundsChords[chordIndex][
+            leadSoundIndex
+          ];
           leadSoundReady = false;
           //If we want to stop the lead
           //after each play of the notes in chord
           //if (!leadBarComplete) {
-            rhodes.play();
-            rhodes.setVolume(leadVolume);
-            rhodes.rate(_leadSoundRate);
-            //rhodes.pan(0.6);
-            updateLeadSoundIndex();
+          rhodes.play();
+          rhodes.setVolume(leadVolume);
+          rhodes.rate(_leadSoundRate);
+          //rhodes.pan(0.6);
+          updateLeadSoundIndex();
           //}
           updateLeadSoundLength();
         }
@@ -1661,7 +1710,8 @@ module.exports = function() {
             updatePrecipArp();
           }
         }
-        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy) {
+        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !
+          wCheck.isWindy) {
           if (humidArpReady && sequenceStart) {
             updateHumidArp();
           }
@@ -1673,7 +1723,8 @@ module.exports = function() {
         if (sketch.frameCount % 2000 === 0 && sequenceStart === false) {
           sequenceStart = true;
           console.log('sequenceStart', sequenceStart);
-        } else if (sketch.frameCount % 2000 === 0 && sequenceStart === true) {
+        } else if (sketch.frameCount % 2000 === 0 && sequenceStart ===
+          true) {
           sequenceStart = false;
           console.log('sequenceStart', sequenceStart);
         }
@@ -1683,10 +1734,10 @@ module.exports = function() {
         if (masterGain < 0.9) {
           masterGain += 0.01;
         }
-			};
-		});
-		return myP5;
-	}
+      };
+    });
+    return myP5;
+  }
 
   // Check for audioContext support
   function isAudioSuppored() {
@@ -1701,7 +1752,7 @@ module.exports = function() {
     audioSupported = isAudioSuppored();
     createP5SoundObjs();
     init(data);
-	});
+  });
 
   function clearAndStopWhenDone(autoStart) {
     cdContainer.innerHTML = '';
@@ -1709,11 +1760,13 @@ module.exports = function() {
   }
 
   channel.subscribe('stop', function(autoStart) {
-    var _allDisplayItems = document.querySelectorAll('.conditions-display__item');
+    var _allDisplayItems = document.querySelectorAll(
+      '.conditions-display__item');
     for (var i = 0, length = _allDisplayItems.length; i < length; i++) {
-      fadeOutDisplayItems(_allDisplayItems[i], i, _allDisplayItems.length, clearAndStopWhenDone, autoStart);
+      fadeOutDisplayItems(_allDisplayItems[i], i, _allDisplayItems.length,
+        clearAndStopWhenDone, autoStart);
     }
   });
 
-	return true;
+  return true;
 };
