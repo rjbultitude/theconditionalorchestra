@@ -699,7 +699,7 @@ module.exports = function() {
       harpCanPlay : getHarpCanPlay(wCheck),
       timpaniCanPlay : getTimpaniCanPlay(wCheck),
       choralCanPlay : getChoralCanPlay(wCheck)
-    }
+    };
     //Get and set core values
     var numPadNotes = getNumPadNotes(wCheck, avSettings);
     var numChords = getNumChords(lwData).numChords;
@@ -1049,7 +1049,7 @@ module.exports = function() {
       function playSounds(precipArpScaleArray, humidArpScalesNoRests) {
         // playlogic
         // Only the first chord is passed in
-        if (wCheck.isFine || wCheck.isFreezing) {
+        if (sCheck.choralCanPlay) {
           playChoralSound(synchedSoundsChords[0]);
         }
         //Play the lead if the weather is fine
@@ -1393,7 +1393,7 @@ module.exports = function() {
         }
         //Humid arpeggio will not play if
         //other lead sounds are playing
-        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy) {
+        if (sCheck.harpCanPlay) {
           _humidArpScalesNoStops = createHumidArpScales();
         }
         //Explicitly passing these arrays as args
@@ -1711,7 +1711,7 @@ module.exports = function() {
             updateDjembe();
           }
         }
-        if (wCheck.isArid || wCheck.isCrisp) {
+        if (sCheck.timpaniCanPlay) {
           updateTimpani();
         }
         if (wCheck.isWindy) {
@@ -1722,7 +1722,7 @@ module.exports = function() {
             updatePrecipArp();
           }
         }
-        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy) {
+        if (sCheck.harpCanPlay) {
           if (humidArpReady && sequenceStart) {
             updateHumidArp();
           }
