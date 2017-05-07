@@ -33,6 +33,7 @@ module.exports = function() {
   */
   var audioSupported = true;
   var isPlaying = false;
+  var maxMasterVolSet = false;
   //rate
   var appFrameRate = 30;
   var sequenceStart = true;
@@ -618,6 +619,18 @@ module.exports = function() {
     ));
   }
 
+  function getHarpCanPlay(wCheck) {
+    return wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy;
+  }
+
+  function getTimpaniCanPlay(wCheck) {
+    return wCheck.isArid || wCheck.isCrisp;
+  }
+
+  function getChoralCanPlay(wCheck) {
+    return wCheck.isFine || wCheck.isFreezing;
+  }
+
   /**
    * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
    */
@@ -656,48 +669,42 @@ module.exports = function() {
     // grouped weather booleans
     var wCheck = {
       //single concept items
-      isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity
-        .value),
+      isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value),
       isWindy: weatherCheck.isWindy(lwData.windSpeed.value),
       isCloudy: weatherCheck.isCloudy(lwData.cloudCover.value),
       //Humidity
       isHumid: weatherCheck.isHumid(lwData.humidity.value),
-      isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature
-        .value),
-      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature
-        .value, lwData.cloudCover.value, lwData.visibility.value),
-      isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature
-        .value),
-      isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature
-        .value),
-      isSirocco: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature
-        .value, lwData.windSpeed.value),
+      isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
+      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature.value, lwData.cloudCover.value, lwData.visibility.value),
+      isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature.value),
+      isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value),
+      isSirocco: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value, lwData.windSpeed.value),
       //temperature
       isCold: weatherCheck.isCold(lwData.temperature.value),
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
       //broad conditions
-      isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed
-        .value, lwData.temperature.value),
-      isSublime: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed
-        .value, lwData.temperature.value),
-      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed
-        .value, lwData.precipIntensity.value, lwData.humidity.value),
-      isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed
-        .value),
-      isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed
-        .value, lwData.precipIntensity.value),
-      isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value,
-        lwData.windSpeed.value, lwData.precipIntensity.value),
-      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance
-        .value, lwData.precipProbability.value)
+      isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
+      isSublime: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
+      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value, lwData.humidity.value),
+      isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
+      isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
+      isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value,lwData.windSpeed.value, lwData.precipIntensity.value),
+      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value)
     };
     console.log('wCheck', wCheck);
+    // grouped sound booleans
+    // Only require these three as
+    // all other sounds rely on just one condition
+    var sCheck = {
+      harpCanPlay : getHarpCanPlay(wCheck),
+      timpaniCanPlay : getTimpaniCanPlay(wCheck),
+      choralCanPlay : getChoralCanPlay(wCheck)
+    }
     //Get and set core values
     var numPadNotes = getNumPadNotes(wCheck, avSettings);
     var numChords = getNumChords(lwData).numChords;
     var numExtraChords = getNumChords(lwData, avSettings, wCheck).numExtraChords;
-    var chordNumGreatest = numChords > numExtraChords ? numChords :
-      numExtraChords;
+    var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     //Precipitation
     var precipCategory = getPrecipCategory(lwData);
@@ -719,8 +726,7 @@ module.exports = function() {
     var rootNote = getRootNote(lwData, rootNoteRange);
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
-    var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex,
-      numPadNotes);
+    var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
     console.log('longNoteHigh', longNoteHigh);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
@@ -728,8 +734,7 @@ module.exports = function() {
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var rootNoteGrtrMedian = isRootNoteGrtrMedian(rootNote, rootNoteRange);
     console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
-    var extraSeqOffset = getExtraChordsOffset(rootNoteGrtrMedian,
-      numSemisPerOctave);
+    var extraSeqOffset = getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
     console.log('extraSeqOffset', extraSeqOffset);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteGrtrMedian);
     var brassBaritoneVol = getBrassVolume(lwData);
@@ -746,8 +751,7 @@ module.exports = function() {
     var noteLengthMult = getNoteLengthMult(lwData, avSettings);
     var noteLengths = getNoteLengths(appFrameRate, noteLengthMult);
     var leadNoteLengthStart = getLeadNoteLengthStart(appFrameRate, lwData);
-    var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes *
-      2);
+    var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
@@ -1389,8 +1393,7 @@ module.exports = function() {
         }
         //Humid arpeggio will not play if
         //other lead sounds are playing
-        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !
-          wCheck.isWindy) {
+        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy) {
           _humidArpScalesNoStops = createHumidArpScales();
         }
         //Explicitly passing these arrays as args
@@ -1558,6 +1561,15 @@ module.exports = function() {
         }
       };
 
+      function updateMasterVol() {
+        sketch.masterVolume(masterGain);
+        if (masterGain < 0.9) {
+          masterGain += 0.01;
+        } else {
+          maxMasterVolSet = true;
+        }
+      }
+
       function updateSynchedSounds() {
         if (sketch.frameCount === 1 || sketch.frameCount % currNoteLength ===
           0) {
@@ -1710,8 +1722,7 @@ module.exports = function() {
             updatePrecipArp();
           }
         }
-        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !
-          wCheck.isWindy) {
+        if (wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy) {
           if (humidArpReady && sequenceStart) {
             updateHumidArp();
           }
@@ -1723,16 +1734,14 @@ module.exports = function() {
         if (sketch.frameCount % 2000 === 0 && sequenceStart === false) {
           sequenceStart = true;
           console.log('sequenceStart', sequenceStart);
-        } else if (sketch.frameCount % 2000 === 0 && sequenceStart ===
-          true) {
+        } else if (sketch.frameCount % 2000 === 0 && sequenceStart === true) {
           sequenceStart = false;
           console.log('sequenceStart', sequenceStart);
         }
         //Master volume
         //Fade in on play
-        sketch.masterVolume(masterGain);
-        if (masterGain < 0.9) {
-          masterGain += 0.01;
+        if (!maxMasterVolSet) {
+          updateMasterVol();
         }
       };
     });
