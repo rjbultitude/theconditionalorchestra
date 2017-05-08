@@ -1,12 +1,9 @@
 {
-  "name": "musical-weathervane",
-  "title": "Musical Weathervane",
-  "version": "1.0.0",
+  "name": "the-conditional-orchestra",
+  "title": "The Conditional Orhestra",
+  "version": "1.1.0",
   "description": "App that takes real-time weather data and converts it to music",
-  "author": {
-    "name": "RB",
-    "url": "http://point-b.co.uk"
-  },
+  "author": "Richard Bultitude <richard.bultitude@gmail.com>",
   "contributors": [
     "Richard Bultitude"
   ],
@@ -14,12 +11,21 @@
     "type": "git",
     "url": "tbc"
   },
+  "keywords": [
+    "darksky",
+    "weather",
+    "api",
+    "music",
+    "audio"
+  ],
   "scripts": {
     "gulp": "gulp"
   },
+  "license": "MIT",
   "devDependencies": {
     "browserify": "^11.2.0",
     "clean-css": "^3.4.18",
+    "darkskyjs": "0.0.3",
     "del": "^2.0.2",
     "es6-promise": "^3.0.2",
     "google-maps": "^3.2.1",
