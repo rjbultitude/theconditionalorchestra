@@ -131,8 +131,7 @@ module.exports = function() {
         if (locationData.hasOwnProperty(key)) {
           locationData[key] = new NumericCondition(
             key !== 'visibility' && conditions[0][key]() === undefined ?
-            getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max,
-              key, true) : conditions[0][key](),
+              getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max, key, true) : conditions[0][key](),
             maxMin.wParams[key].min,
             maxMin.wParams[key].max
           );
