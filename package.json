@@ -9,7 +9,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "tbc"
+    "url": "https://github.com/rjbultitude/theconditionalorchestra"
   },
   "keywords": [
     "darksky",
@@ -25,9 +25,8 @@
   "devDependencies": {
     "browserify": "^11.2.0",
     "clean-css": "^3.4.18",
-    "darkskyjs": "0.0.3",
+    "darkskyjs": "^0.0.5",
     "del": "^2.0.2",
-    "es6-promise": "^3.0.2",
     "google-maps": "^3.2.1",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^3.0.2",
@@ -45,7 +44,6 @@
     "gulp-wrap": "^0.13.0",
     "he": "^1.1.0",
     "jshint-stylish": "^2.0.1",
-    "moment": "^2.10.6",
     "postal": "^1.0.8",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
