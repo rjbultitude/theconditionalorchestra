@@ -85,7 +85,7 @@
               <h2 class="tab__heading">Help</h2>
               <p>If it can't find your location ensure you've clicked "allow" when the browser asks to use your location.</p>
               <p>Alternatively click "choose another location" where you can enter any place you like.</p>
-              <p>Tip: try picking extreme places such as Nordvik, Dubai, Jakarta or cape farewell.</p>
+              <p>Tip: try picking extreme places such as Nordvik, Dubai, Jakarta or Cape Farewell.</p>
               <p>To see a weather map of the world try <a href="https://www.windy.com/">Windy.com</a></p>
               <button class="button-close" data-ref="tab-close">
                 <span class="text">
@@ -98,7 +98,7 @@
             </div>
             <div class="tab__panel" id="credits" data-ref="tab-panel">
               <h2 class="tab__heading">Credits</h2>
-              <p>This project uses <a href="http://forecast.io/">Forecast.io</a> to obtain the weather data.</p>
+              <p>This project uses <a href="https://darksky.net">DarkSky.net</a> to obtain the weather data.</p>
               <p>The JavaScript library used to access the API can be found on <a href="https://github.com/iantearle/forecast.io-javascript-api">GitHub here</a>.</p>
               <p><a href="http://p5js.org/">P5.js</a> is used to generate the graphical interface and audio.</p>
               <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html">Google maps</a> is used to reverse Geocode the location information</p>

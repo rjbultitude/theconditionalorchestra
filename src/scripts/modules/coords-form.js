@@ -169,7 +169,7 @@ module.exports = function() {
       //console.log('local storage set', locationDataString);
       // Post the data to rest of app
       channel.publish('userUpdate', locationData);
-      updateStatus('playing', locationData.name);
+      //updateStatus('playing', locationData.name);
       if (conditions.length > 1) {
         console.log('There seems to be more than one location: ',
           conditions.length);
@@ -470,10 +470,11 @@ module.exports = function() {
 
   userLocBtnEl.addEventListener('click', userLocationSubmit, false);
 
-  channel.subscribe('playing', function(audioSupported) {
-    if (audioSupported === false) {
+  channel.subscribe('playing', function(data) {
+    if (data.audioSupported === false) {
       updateStatus('error', null, true);
     }
+    updateStatus('playing', data.name);
     setStopState();
   });
 

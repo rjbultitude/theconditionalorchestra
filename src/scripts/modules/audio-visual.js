@@ -1090,7 +1090,13 @@ module.exports = function() {
         }
         //Tell rest of app we're playing
         isPlaying = true;
-        channel.publish('playing', audioSupported);
+        channel.publish(
+          'playing',
+          {
+            audioSupported: audioSupported,
+            name: lwData.name
+          }
+        );
       }
 
       /**
