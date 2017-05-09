@@ -2,7 +2,7 @@
 <html class="no-js" lang="">
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>The Conditional Orchestra</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +15,7 @@
           <!-- begin article -->
           <article>
               <!-- begin header -->
-              <header class="article-header">
+              <header class="article-header" role="banner">
                 <div class="wrapper">
                   <h1 class="page-heading">The Conditional Orchestra</h1>
                   <p class="intro">Using current weather conditions The Conditional Orchestra generates unique compositions for your listening pleasure.</p>
@@ -24,7 +24,7 @@
               </header>
               <!-- end header -->
               <!-- begin body -->
-              <div class="article-body">
+              <div class="article-body" role="article">
                 <div class="wrapper">
                   <!-- begin forms -->
                   <section class="form-section section">
@@ -67,7 +67,7 @@
                   <!-- Begin conditions display -->
                   <section class="conditions-display section">
                     <h2 class="section-heading">Conditions and musical equivalents</h2>
-                    <ul class="conditions-display__list">
+                    <ul class="conditions-display__list" aria-live="assertive">
                     </ul>
                   </section>
                   <!-- End conditions display -->
@@ -79,7 +79,7 @@
         </main>
         <!-- end main -->
         <!-- begin footer -->
-        <footer class="footer">
+        <footer class="footer" role="contentinfo">
           <div class="wrapper">
             <div class="tab__panel" id="help" data-ref="tab-panel">
               <h2 class="tab__heading">Help</h2>
