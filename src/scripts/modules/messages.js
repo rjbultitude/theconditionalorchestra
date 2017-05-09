@@ -6,11 +6,6 @@
 'use strict';
 
 module.exports = {
-    start: 'Ready',
-    weather: 'Fetching weather data',
-    location: 'Looking up name',
-    playing: 'You are listening to the weather of ',
-    noAudioPlaying: 'Showing the weather for ',
     error: 'Error getting your location',
     errorData: 'Error getting static weather data, sorry',
     noGeo: 'Geolocation is not supported by your browser Try searching',
@@ -26,8 +21,13 @@ module.exports = {
     badGMapsConnection: 'Unable to retrieve that location. Are you offline?',
     badGMapsConnectionLastKnown: 'Unable to retrieve that location. Are you offline?  Using last known location ',
     badGMapsConnectionStatic: 'Unable to retrieve that location. Are you offline? Using default location ',
-    stringError: 'Please enter text',
-    obtainedLocation: 'Successfully retieved your location',
+    location: 'Looking up name',
     noAddress: 'Could not find that place...perhaps it\'s just the ocean',
-    noAudio: 'Your browser doesn\'t support web audio. Try using Chrome, Firefox or Edge'
+    noAudio: 'Your browser doesn\'t support web audio. Try updating your browser or use Chrome, Firefox, Safari or Edge',
+    noAudioPlaying: 'Showing the weather for ',
+    obtainedLocation: 'Successfully retieved your location',
+    playing: 'You are listening to the weather of ',
+    start: 'Ready',
+    stringError: 'Please enter text',
+    weather: 'Fetching weather data'
 };

@@ -830,9 +830,9 @@ module.exports = function() {
       }
 
       function playBrassBaritone(scale) {
-        brassBaritone.rate(scale[brassOneScaleArrayIndex]);
-        brassBaritone.setVolume(brassBaritoneVol);
         brassBaritone.play();
+        brassBaritone.setVolume(brassBaritoneVol);
+        brassBaritone.rate(scale[brassOneScaleArrayIndex]);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
         } else {
@@ -844,10 +844,9 @@ module.exports = function() {
         var _newScaleArr = scale.slice().reverse();
         var _rateMultArr = [1, 2];
         var _randomRateMultVal = sketch.random(_rateMultArr);
-        brassBaritone2.rate(_newScaleArr[brassTwoScaleArrayIndex] *
-          _randomRateMultVal);
-        brassBaritone2.setVolume(0.4);
         brassBaritone2.play();
+        brassBaritone2.setVolume(0.4);
+        brassBaritone2.rate(_newScaleArr[brassTwoScaleArrayIndex] * _randomRateMultVal);
         if (brassTwoScaleArrayIndex >= scale.length - 1) {
           brassTwoScaleArrayIndex = 0;
         } else {
@@ -876,25 +875,24 @@ module.exports = function() {
         longNote.playMode('restart');
         longNote.pan(sketch.random(panArr));
         longNote.play();
-        longNote.rate(_longNoteRate);
         longNote.setVolume(_longNoteVol);
+        longNote.rate(_longNoteRate);
       }
 
       function bassCallback(bassRate) {
         bass2.playMode('restart');
-        bass2.rate(bassRate * 2);
-        bass2.setVolume(0.5);
         bass2.play();
+        bass2.setVolume(0.5);
+        bass2.rate(bassRate * 2);
       }
 
       function playBass() {
         //Play 1st note of each chord
         var _bassRate = synchedSoundsChords[chordIndex][0];
-        bass.stop();
         bass.playMode('restart');
-        bass.rate(_bassRate);
-        bass.setVolume(1);
         bass.play();
+        bass.setVolume(1);
+        bass.rate(_bassRate);
         //playlogic
         if (wCheck.isClement) {
           bass.onended(function() {
@@ -960,11 +958,11 @@ module.exports = function() {
           padSounds[i].disconnect();
           padSounds[i].connect(soundFilter);
           padSounds[i].connect(reverb);
-          padSounds[i].rate(synchedSoundsChords[chordIndex][i]);
           padSounds[i].pan(panArr[panIndex]);
           padSounds[i].playMode('restart');
           padSounds[i].play();
           padSounds[i].setVolume(avSettings[padType].volume);
+          padSounds[i].rate(synchedSoundsChords[chordIndex][i]);
           //If we want to play the play full note length
           //use the onended callback
           if (playFullNotes) {
@@ -1663,8 +1661,8 @@ module.exports = function() {
           if (humidArpScaleIndex >= humidArpScales[_harpSeqIndex].length) {
             humidArpScaleIndex = 0;
           }
-          harpSound.setVolume(_harpVol);
           harpSound.play();
+          harpSound.setVolume(_harpVol);
           harpSound.rate(humidArpScales[_harpSeqIndex][humidArpScaleIndex]);
           humidArpScaleIndex++;
         }
