@@ -13,7 +13,6 @@ var appTemplate = require('../templates/index').codisplay;
 var work = require('webworkify');
 //custom
 var coDisplayData = require('./co-display-data');
-var updateStatus = require('./update-status');
 var weatherCheck = require('./weather-checker-fns');
 var microU = require('../utilities/micro-utilities');
 var intervals = require('../utilities/intervals');
@@ -31,7 +30,6 @@ module.exports = function() {
     Module scoped vars
     and constants
   */
-  var audioSupported = true;
   var isPlaying = false;
   var maxMasterVolSet = false;
   //rate
@@ -631,9 +629,6 @@ module.exports = function() {
     return wCheck.isFine || wCheck.isFreezing;
   }
 
-  /**
-   * [createP5SoundObjs creates various P5 sound objects if AudioContext is supported]
-   */
   function createP5SoundObjs() {
     soundFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
@@ -1090,13 +1085,7 @@ module.exports = function() {
         }
         //Tell rest of app we're playing
         isPlaying = true;
-        channel.publish(
-          'playing',
-          {
-            audioSupported: audioSupported,
-            name: lwData.name
-          }
-        );
+        channel.publish('playing', lwData.name);
       }
 
       /**
@@ -1525,33 +1514,31 @@ module.exports = function() {
       sketch.preload = function() {
         //loadSound called during preload
         //will be ready to play in time for setup
-        if (audioSupported) {
-          //Pad sounds for various weather types
-          for (var i = 0; i < numPadNotes; i++) {
-            padSounds.push(sketch.loadSound('/audio/' + padType +
-              '-C2.mp3'));
-          }
-          //Long note accompanies pad
-          longNote = sketch.loadSound('/audio/' + longNoteType +
-            '-C3.mp3');
-          dropSound = sketch.loadSound('/audio/drop-' + precipCategory +
-            '.mp3');
-          //choral sounds for fine/freezing weather
-          for (var j = 0; j < 2; j++) {
-            choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
-          }
-          //TODO only load these if conditions are so
-          bass = sketch.loadSound('/audio/bass.mp3');
-          bass2 = sketch.loadSound('/audio/bass.mp3');
-          brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
-          brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
-          harpSound = sketch.loadSound('/audio/harp-C3.mp3');
-          chineseCymbal = sketch.loadSound('/audio/chinese-cymbal.mp3');
-          timpani = sketch.loadSound('/audio/timpani.mp3');
-          djembe = sketch.loadSound('/audio/djembe.mp3');
-          rhodes = sketch.loadSound('/audio/rhodes.mp3');
-          rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
+        //Pad sounds for various weather types
+        for (var i = 0; i < numPadNotes; i++) {
+          padSounds.push(sketch.loadSound('/audio/' + padType +
+            '-C2.mp3'));
         }
+        //Long note accompanies pad
+        longNote = sketch.loadSound('/audio/' + longNoteType +
+          '-C3.mp3');
+        dropSound = sketch.loadSound('/audio/drop-' + precipCategory +
+          '.mp3');
+        //choral sounds for fine/freezing weather
+        for (var j = 0; j < 2; j++) {
+          choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
+        }
+        //TODO only load these if conditions are so
+        bass = sketch.loadSound('/audio/bass.mp3');
+        bass2 = sketch.loadSound('/audio/bass.mp3');
+        brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
+        brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
+        harpSound = sketch.loadSound('/audio/harp-C3.mp3');
+        chineseCymbal = sketch.loadSound('/audio/chinese-cymbal.mp3');
+        timpani = sketch.loadSound('/audio/timpani.mp3');
+        djembe = sketch.loadSound('/audio/djembe.mp3');
+        rhodes = sketch.loadSound('/audio/rhodes.mp3');
+        rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
       };
 
       //P5 SETUP FN - 2
@@ -1560,11 +1547,7 @@ module.exports = function() {
         //--------------------------
         // Handle sounds / Start app
         // -------------------------
-        if (audioSupported) {
-          configureAudioVisual();
-        } else {
-          updateStatus('error', lwData.name, true);
-        }
+        configureAudioVisual();
       };
 
       function updateMasterVol() {
@@ -1754,17 +1737,7 @@ module.exports = function() {
     return myP5;
   }
 
-  // Check for audioContext support
-  function isAudioSuppored() {
-    if (!window.AudioContext && !window.webkitAudioContext) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   channel.subscribe('userUpdate', function(data) {
-    audioSupported = isAudioSuppored();
     createP5SoundObjs();
     init(data);
   });

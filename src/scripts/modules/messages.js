@@ -29,5 +29,5 @@ module.exports = {
     stringError: 'Please enter text',
     obtainedLocation: 'Successfully retieved your location',
     noAddress: 'Could not find that place...perhaps it\'s just the ocean',
-    noAudio: 'Your browser doesn\'t support web audio. Try using Chrome or Firefox'
+    noAudio: 'Your browser doesn\'t support web audio. Try using Chrome, Firefox or Edge'
 };

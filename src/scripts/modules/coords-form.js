@@ -470,11 +470,8 @@ module.exports = function() {
 
   userLocBtnEl.addEventListener('click', userLocationSubmit, false);
 
-  channel.subscribe('playing', function(data) {
-    if (data.audioSupported === false) {
-      updateStatus('error', null, true);
-    }
-    updateStatus('playing', data.name);
+  channel.subscribe('playing', function(locName) {
+    updateStatus('playing', locName);
     setStopState();
   });
 

@@ -1,11 +1,20 @@
 'use strict';
 
-var coordsForm = require('./modules/coords-form');
-var audioVisual = require('./modules/audio-visual');
 var Tabs = require('./modules/tabs');
 var jsLoad = require('./utilities/js-load');
-//start app
-coordsForm();
-audioVisual();
-jsLoad();
-new Tabs( document.querySelector('[data-directive=tabs]') );
+var updateStatus = require('./modules/update-status');
+
+// Web audio support?
+if (!window.AudioContext && !window.webkitAudioContext) {
+  updateStatus('noAudio');
+  console.log('No Audio Context');
+  return false;
+} else {
+  // start app
+  var coordsForm = require('./modules/coords-form');
+  var audioVisual = require('./modules/audio-visual');
+  coordsForm();
+  audioVisual();
+  jsLoad();
+  new Tabs( document.querySelector('[data-directive=tabs]') );
+}
