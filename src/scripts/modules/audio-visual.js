@@ -568,18 +568,18 @@ module.exports = function() {
       Math.round(lwData.nearestStormDistance.value),
       lwData.nearestStormDistance.min,
       lwData.nearestStormDistance.max,
-      0.8,
-      0
+      0.9,
+      0.3
     );
   }
 
   function getRideCymbalVolumeArr(rideCymbalMaxVolume) {
     var _rideCymbalVolumeArr = [];
     var _min = 0.1;
-    for (var i = 0; i < 10; i++) {
-      _rideCymbalVolumeArr.push(Math.random() * (rideCymbalMaxVolume - _min) +
-        _min);
+    for (var i = 0; i < 6; i++) {
+      _rideCymbalVolumeArr.push(Math.random() * (rideCymbalMaxVolume - _min) + _min);
     }
+    console.log('_rideCymbalVolumeArr', _rideCymbalVolumeArr);
     return _rideCymbalVolumeArr;
   }
 
@@ -857,7 +857,7 @@ module.exports = function() {
       function playLongNote() {
         //playlogic
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
-        var _longNoteVolArr = [0.1, 0.3, 0.7];
+        var _longNoteVolArr = [0.175, 0.35, 0.7];
         var _longNoteVol;
         //playlogic
         //If weather is hot, dry and clear
