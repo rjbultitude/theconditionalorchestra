@@ -126,7 +126,8 @@ module.exports = (function() {
             unit: '',
             iconPath: '/img/rain-icon.svg',
             music: 'Ride cymbals tempo is ',
-            musicValue: ''
+            musicValue: '',
+            musicAppendage: ' bpm'
           },
           {
             key: 'isWindy',
@@ -606,6 +607,7 @@ module.exports = (function() {
             iconPath: '/img/humidity-icon.svg',
             music: 'Harp arpeggio tempo is ',
             musicValue: '',
+            musicAppendage: ' bpm',
             negativeKey: ['isPrecip', 'isFine', 'isWindy'],
             negativeValue: false
           },
