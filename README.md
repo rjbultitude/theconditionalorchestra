@@ -132,9 +132,11 @@ Add higher octave to vocal sound
 Not sure currNoteLength is working properly
 
 Create better harp scales:
-Could only play when using inversions
+Could only play when using inversions±
 Could use chordOffset to pitch up/down
 Could use current scale and add upper/lower octaves
+
+± in which case a new sound should be used for humid non isFine, isFreezing or wCheck.isWindy conditions - really??
 
 When longnote is high we should play at lower octave - needs testing
 
