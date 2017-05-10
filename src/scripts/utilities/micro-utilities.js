@@ -20,6 +20,11 @@ module.exports = {
   addSpacesToString: function addSpacesToString(string) {
     return string.replace(/([A-Z][a-z]+)/g, ' ' + '$&');
   },
+  strToLowerCase: function strToLowerCase(string) {
+    return string.replace(/[A-Z]/g, function(match) {
+      return match.toLowerCase();
+    });
+  },
   removeStrFromStart: function removeStrFromStart(stringToRemove, originalString) {
     var _pattern = new RegExp('^' + stringToRemove);
     return originalString.replace(_pattern, '');

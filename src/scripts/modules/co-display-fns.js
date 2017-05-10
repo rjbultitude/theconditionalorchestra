@@ -142,7 +142,10 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
     });
   }
 
-  //TODO why are we doing this?
+  // make an exception for precipIntensity
+  // because we're not using falsy values
+  // to filter out display items
+  // we're using undefined or false
   function exceptionCheckData(coDisplayDataGroup) {
     return coDisplayDataGroup.map(function(coProp) {
       if (coProp.key === 'precipIntensity' && coProp.value === 0) {

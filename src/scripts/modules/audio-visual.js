@@ -1257,9 +1257,9 @@ module.exports = function() {
         return _chordInversionOffSetArr;
       }
 
-      //If the key's not from a sequence
-      //i.e. it's an inversion
-      //then get the generic chord type
+      // If the key's not from a sequence
+      // i.e. it's an inversion
+      // then get the generic chord type
       function getValidChordType(key) {
         var _chordType;
         if (key) {
@@ -1396,15 +1396,13 @@ module.exports = function() {
 
       function formatCoStrings(displayData) {
         return displayData.map(function(displayProp) {
+          var _musicValueLowerCase;
           var _musicValue;
           //Add spaces where necessary
           if (typeof displayProp.musicValue === 'string') {
-            _musicValue = microU.removeStrFromStart('inversions',
-              displayProp.musicValue);
-            displayProp.musicValue = microU.addSpacesToString(
-              _musicValue);
-          } else {
-            displayProp.musicValue = displayProp.musicValue;
+            _musicValue = microU.addSpacesToString(displayProp.musicValue);
+            _musicValueLowerCase = microU.strToLowerCase(_musicValue);
+            displayProp.musicValue = microU.removeStrFromStart('inversions', _musicValueLowerCase);
           }
           return displayProp;
         });
@@ -1421,8 +1419,7 @@ module.exports = function() {
             false) {
             //filter out negative values that are true
             //or don't exist
-            if (coDisplayObj.negativeValue === undefined ||
-              coDisplayObj.negativeValue === false) {
+            if (coDisplayObj.negativeValue === undefined || coDisplayObj.negativeValue === false) {
               var _itemTmpl = appTemplate(coDisplayObj);
               cdContainer.insertAdjacentHTML('beforeend', _itemTmpl);
               var _lastItem = cdContainer.lastElementChild;
