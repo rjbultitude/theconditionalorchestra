@@ -127,6 +127,11 @@ The pan and volume are randomly selected from two arrays.
 
 Consider dropping reverb (for perforance purposes)
 
+Not sure whether disconnect should be used in conjunction with filters or not.
+Seems when it's used with reverb it significantly reduces the volume.
+
+Sounds need testing on their own
+
 Add higher octave to vocal sound
 
 Not sure currNoteLength is working properly

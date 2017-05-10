@@ -429,8 +429,8 @@ module.exports = function() {
       lwData.visibility.value,
       lwData.visibility.min,
       lwData.visibility.max,
-      6,
-      0
+      9,
+      2
     ));
   }
 
@@ -439,8 +439,8 @@ module.exports = function() {
       lwData.visibility.value,
       lwData.visibility.min,
       lwData.visibility.max,
-      40,
-      0
+      50,
+      10
     ));
   }
 
@@ -629,6 +629,15 @@ module.exports = function() {
     return wCheck.isFine || wCheck.isFreezing;
   }
 
+  // Quieten the pad when the harp plays
+  function getPadVolume(sCheck, padType) {
+    if (sCheck.harpCanPlay) {
+      return avSettings[padType].volume / 3;
+    } else {
+      return avSettings[padType].volume;
+    }
+  }
+
   function createP5SoundObjs() {
     soundFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
@@ -750,6 +759,9 @@ module.exports = function() {
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
+    // Pad volume is special case
+    var padVolume = getPadVolume(sCheck, padType);
+    console.log('padVolume', padVolume);
 
     //Create p5 sketch
     var myP5 = new P5(function(sketch) {
@@ -859,7 +871,9 @@ module.exports = function() {
       function playLongNote() {
         //playlogic
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
-        var _longNoteVolArr = [0.225, 0.375, 0.7];
+        //var _longNoteVolArr = [0.225, 0.375, 0.7];
+        // turned up now that reverb is applied
+        var _longNoteVolArr = [0.425, 0.575, 0.825];
         var _longNoteVol;
         //playlogic
         //If weather is hot, dry and clear
@@ -874,11 +888,11 @@ module.exports = function() {
         if (extraSeqPlaying || longNoteHigh) {
           _longNoteRate = _longNoteRate / 2;
         }
-        longNote.disconnect();
+        //longNote.disconnect();
         longNote.connect(reverb);
         longNote.playMode('restart');
-        longNote.pan(sketch.random(panArr));
         longNote.play();
+        longNote.pan(sketch.random(panArr));
         longNote.setVolume(_longNoteVol);
         longNote.rate(_longNoteRate);
       }
@@ -958,11 +972,12 @@ module.exports = function() {
 
       function playPad(playFullNotes) {
         for (var i = 0, length = padSounds.length; i < length; i++) {
+          padSounds[i].disconnect();
           padSounds[i].connect(soundFilter);
           padSounds[i].pan(panArr[panIndex]);
           padSounds[i].playMode('restart');
           padSounds[i].play();
-          padSounds[i].setVolume(avSettings[padType].volume);
+          padSounds[i].setVolume(padVolume);
           padSounds[i].rate(synchedSoundsChords[chordIndex][i]);
           //If we want to play the play full note length
           //use the onended callback
@@ -1316,6 +1331,7 @@ module.exports = function() {
 
       function setReverb() {
         reverb.set(reverbLength, reverbDecay);
+        reverb.amp(1);
       }
 
       function createHumidArpScales() {
