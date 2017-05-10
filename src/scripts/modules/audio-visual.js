@@ -680,7 +680,7 @@ module.exports = function() {
       //broad conditions
       isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
       isSublime: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
-      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value, lwData.humidity.value),
+      isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value,lwData.windSpeed.value, lwData.precipIntensity.value),

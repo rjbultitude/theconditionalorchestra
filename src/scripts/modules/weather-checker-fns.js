@@ -70,9 +70,9 @@ module.exports = {
 
   // @param cloudCover floating point
   // @param windSpeed floating point
-  isClement: function(cloudCover, windSpeed, precipIntensity, humidity) {
+  isClement: function(cloudCover, windSpeed, precipIntensity) {
     console.log('isClement', arguments);
-   return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0 && humidity < 0.57;
+   return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0;
   },
 
   // @param temperatureInFrnht floating point
