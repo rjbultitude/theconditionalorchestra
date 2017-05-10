@@ -380,23 +380,11 @@ module.exports = function() {
     navigator.geolocation.getCurrentPosition(success, failure);
   }
 
-  // function getTestLocation(index) {
-  // 	var fetchStaticPlaces = makeRequest('GET', 'data/static-places.json');
-  // 	fetchStaticPlaces.then(function (staticPlaces) {
-  // 		var staticPlacesJSON = JSON.parse(staticPlaces);
-  // 		getPlaces(staticPlacesJSON[index].lat, staticPlacesJSON[index].long);
-  // 		console.log('Using static test data');
-  // 	}, function (status) {
-  // 		console.log(status.statusText);
-  // 	});
-  // }
-
   function startApp(inputType, placeInput) {
     // Temporarily disable buttons
     disableControls();
 
     if (inputType === 'userLocation') {
-      //getTestLocation(0); //Test
       getGeo(); //Live
     } else if (inputType === 'customLocation') {
       getLatLong(placeInput);
@@ -440,20 +428,6 @@ module.exports = function() {
       startApp('userLocation', null);
     }
   }
-
-  // function userLocationSubmitTest(e) {
-  //   e.preventDefault();
-  //   if (isPlaying) {
-  //       setStartState();
-  //   } else {
-  //     var staticWeatherData = makeRequest('GET', 'data/static-weather.json');
-  //     staticWeatherData.then(function(weatherData) {
-  //       var locationData = JSON.parse(weatherData);
-  //       channel.publish('userUpdate', locationData);
-  //       updateStatus('playing', locationData.name);
-  //     });
-  //   }
-  // }
 
   coordsFormCloseBtnEl.addEventListener('click', function(e) {
     e.preventDefault();
