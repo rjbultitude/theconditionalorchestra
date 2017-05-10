@@ -32,7 +32,7 @@ module.exports = (function() {
             constrain: true,
             unit: 'miles',
             iconPath: '/img/visibility-icon.svg',
-            music: 'Pad chords reverb length ',
+            music: 'Long note reverb length ',
             musicValue: '',
             musicAppendage: ' seconds'
           },

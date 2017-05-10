@@ -771,7 +771,6 @@ module.exports = function() {
         return _newNotesArray;
       }
 
-      // TODO do we need the fills?
       function getAllegrettoRhythm(scaleArray, includeFills) {
         var _newScaleArr = [];
         for (var i = 0, length = scaleArray.length; i < length; i++) {
@@ -793,7 +792,6 @@ module.exports = function() {
             }
           }
         }
-        console.log('getAllegrettoRhythm _newScaleArr', _newScaleArr);
         return _newScaleArr;
       }
 
@@ -819,7 +817,6 @@ module.exports = function() {
       }
 
       function prepareHumidArp(humidArpScalesNoRests) {
-        console.log('humidArpScalesNoRests', humidArpScalesNoRests);
         //Overwrite empty array with sequences
         //that include rests
         humidArpScales = humidArpScalesNoRests.map(function(hArpScale) {
@@ -862,7 +859,7 @@ module.exports = function() {
       function playLongNote() {
         //playlogic
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
-        var _longNoteVolArr = [0.175, 0.35, 0.7];
+        var _longNoteVolArr = [0.225, 0.375, 0.7];
         var _longNoteVol;
         //playlogic
         //If weather is hot, dry and clear
@@ -877,6 +874,8 @@ module.exports = function() {
         if (extraSeqPlaying || longNoteHigh) {
           _longNoteRate = _longNoteRate / 2;
         }
+        longNote.disconnect();
+        longNote.connect(reverb);
         longNote.playMode('restart');
         longNote.pan(sketch.random(panArr));
         longNote.play();
@@ -959,10 +958,7 @@ module.exports = function() {
 
       function playPad(playFullNotes) {
         for (var i = 0, length = padSounds.length; i < length; i++) {
-          padSounds[i].setVolume(avSettings[padType].volume);
-          padSounds[i].disconnect();
           padSounds[i].connect(soundFilter);
-          padSounds[i].connect(reverb);
           padSounds[i].pan(panArr[panIndex]);
           padSounds[i].playMode('restart');
           padSounds[i].play();
