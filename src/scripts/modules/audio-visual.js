@@ -522,6 +522,7 @@ module.exports = function() {
         _hIntervals = 'farMinorIntervals';
       }
     }
+    console.log('_hIntervals', _hIntervals);
     return _hIntervals;
   }
 
@@ -758,7 +759,6 @@ module.exports = function() {
       });
 
       function addRandomStops(notesArray) {
-        console.log('addRandomStops notesArray', notesArray);
         //duplicate notes
         var _newNotesArray = duplicateArray(notesArray, 10);
         var _randomStopCount = _newNotesArray.length / 2;
@@ -768,7 +768,6 @@ module.exports = function() {
           _randomIndex = sketch.random(0, _newNotesArray.length);
           _newNotesArray.splice(_randomIndex, 0, 0);
         }
-        console.log('addRandomStops _newNotesArray', _newNotesArray);
         return _newNotesArray;
       }
 
@@ -820,6 +819,7 @@ module.exports = function() {
       }
 
       function prepareHumidArp(humidArpScalesNoRests) {
+        console.log('humidArpScalesNoRests', humidArpScalesNoRests);
         //Overwrite empty array with sequences
         //that include rests
         humidArpScales = humidArpScalesNoRests.map(function(hArpScale) {
@@ -1325,7 +1325,8 @@ module.exports = function() {
       function createHumidArpScales() {
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
-        var _numHumidArpNotes = avSettings.numHumidArpNotes;
+        //var _numHumidArpNotes = avSettings.numHumidArpNotes;
+        var _numHumidArpNotes = intervals[humidArpIntervalsKey].length;
         var _mainHArpScale = createMusicalScale({
           numNotes: _numHumidArpNotes,
           startNote: _hArpCNoteOffset + extraSeqOffset,
@@ -1654,9 +1655,10 @@ module.exports = function() {
       function updateHumidArp() {
         if (sketch.frameCount % humidArpStepTime === 0) {
           var _harpSeqIndex = 0;
-          var _harpVol = sketch.random([0.45, 0.65, 0.85]);
+          var _harpVol = sketch.random([0.5, 0.75, 0.95]);
           //Handle extra seq
           if (extraSeqPlaying) {
+            console.log('extraSeqPlaying', extraSeqPlaying);
             _harpSeqIndex = 1;
           }
           //Loop
