@@ -15,15 +15,15 @@ module.exports = {
     //9th
     majorNinthIntervals: [0, 4, 7, 11, 14, 0, 2, 4, 7, 11, 14],
     minorNinthIntervals: [0, 3, 7, 10, 14, 0, 2, 3, 7, 10, 14],
-    //Safe
-    safeIntervals: [0, 5, 7, 9], //for rain arrpeggio
+    //Safe notes for rain arrpeggio
+    safeIntervals: [0, 5, 7, 9], //
     safeNthMajorIntervals: [0, 4, 7], //for rain arrpeggio
     safeNthMinorIntervals: [0, 3, 7], //for rain arrpeggio
-    //Close
-    closeMajorIntervals: [0, -1, 0, 2], //for humid arrpeggio
-    closeMinorIntervals: [0, -2, 0, 2], //for humid arrpeggio
-    farMajorIntervals: [0, -8, 0, -12], //for humid arrpeggio
-    farMinorIntervals: [0, -9, 0, -12], //for humid arrpeggio
+    //for humid arrpeggio
+    closeMajorIntervals: [-12, -13, -12, -10, 0, -1, 0, 2, 12, 11, 12, 14],
+    closeMinorIntervals: [-12, -14, -12, -10, 0, -2, 0, 2, 12, 10, 12, 14],
+    farMajorIntervals: [0, -8, 0, -12],
+    farMinorIntervals: [0, -9, 0, -12],
     //Chord sequences
     //max number of chords is 6
     melancholyUpward: [

@@ -125,7 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Delete forecast.io js
+Consider dropping reverb (for perforance purposes)
 
 Add higher octave to vocal sound
 

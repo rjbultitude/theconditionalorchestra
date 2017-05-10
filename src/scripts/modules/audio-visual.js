@@ -501,7 +501,7 @@ module.exports = function() {
       lwData.humidity.min,
       lwData.humidity.max,
       60,
-      100
+      120
     ));
   }
 
@@ -579,7 +579,6 @@ module.exports = function() {
     for (var i = 0; i < 6; i++) {
       _rideCymbalVolumeArr.push(Math.random() * (rideCymbalMaxVolume - _min) + _min);
     }
-    console.log('_rideCymbalVolumeArr', _rideCymbalVolumeArr);
     return _rideCymbalVolumeArr;
   }
 
@@ -759,6 +758,7 @@ module.exports = function() {
       });
 
       function addRandomStops(notesArray) {
+        console.log('addRandomStops notesArray', notesArray);
         //duplicate notes
         var _newNotesArray = duplicateArray(notesArray, 10);
         var _randomStopCount = _newNotesArray.length / 2;
@@ -768,9 +768,11 @@ module.exports = function() {
           _randomIndex = sketch.random(0, _newNotesArray.length);
           _newNotesArray.splice(_randomIndex, 0, 0);
         }
+        console.log('addRandomStops _newNotesArray', _newNotesArray);
         return _newNotesArray;
       }
 
+      // TODO do we need the fills?
       function getAllegrettoRhythm(scaleArray, includeFills) {
         var _newScaleArr = [];
         for (var i = 0, length = scaleArray.length; i < length; i++) {
@@ -782,16 +784,17 @@ module.exports = function() {
               _newScaleArr.push(scaleArray[i]);
             }
             if (includeFills) {
-              _newScaleArr.splice(_newScaleArr.length - 1, 0, 0, 0, 0);
+              _newScaleArr.splice(_newScaleArr.length - 1, 0, 0);
             }
           } else if (i % 2 !== 0) {
             _newScaleArr.push(scaleArray[i]);
             if (includeFills) {
-              _newScaleArr.splice(_newScaleArr.length - 1, 0, 0, 0, 0);
+              _newScaleArr.splice(_newScaleArr.length - 1, 0, 0);
               _newScaleArr.push(scaleArray[i]);
             }
           }
         }
+        console.log('getAllegrettoRhythm _newScaleArr', _newScaleArr);
         return _newScaleArr;
       }
 
@@ -805,8 +808,10 @@ module.exports = function() {
 
       function getAllegrettoRhythmType(humidArpScaleArray) {
         var _newNotesArray = [];
-        //playlogic
-        if (wCheck.isWindy) {
+        // playlogic
+        // humard arpeggio doesn't play if
+        // it's fine, raining or windy
+        if (wCheck.isClement) {
           _newNotesArray = getAllegrettoRhythm(humidArpScaleArray, true);
         } else {
           _newNotesArray = getAllegrettoRhythm(humidArpScaleArray, false);
@@ -1649,7 +1654,7 @@ module.exports = function() {
       function updateHumidArp() {
         if (sketch.frameCount % humidArpStepTime === 0) {
           var _harpSeqIndex = 0;
-          var _harpVol = sketch.random([0.4, 0.55, 0.7, 0.3]);
+          var _harpVol = sketch.random([0.45, 0.65, 0.85]);
           //Handle extra seq
           if (extraSeqPlaying) {
             _harpSeqIndex = 1;
