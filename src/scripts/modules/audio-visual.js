@@ -1688,8 +1688,8 @@ module.exports = function() {
       }
 
       function stopBrass() {
-        brassBaritone.stop();
-        brassBaritone2.stop();
+        brassBaritone.setVolume(0);
+        brassBaritone2.setVolume(0);
       }
 
       function updateBrass() {
