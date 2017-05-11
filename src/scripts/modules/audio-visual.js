@@ -794,7 +794,7 @@ module.exports = function() {
 
       function addRandomStops(notesArray) {
         //duplicate notes
-        var _newNotesArray = duplicateArray(notesArray, 2);
+        var _newNotesArray = duplicateArray(notesArray, 1);
         var _randomStopCount = _newNotesArray.length / 2;
         var _randomIndex;
         //Add stops
