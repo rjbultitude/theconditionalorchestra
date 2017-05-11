@@ -125,7 +125,9 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Consider dropping reverb (for perforance purposes)
+Consider dropping reverb (for performance purposes)
+
+Consider using two arrays for Precipitation as with humidity arpeggio
 
 Not sure whether disconnect should be used in conjunction with filters or not.
 Seems when it's used with reverb it significantly reduces the volume.

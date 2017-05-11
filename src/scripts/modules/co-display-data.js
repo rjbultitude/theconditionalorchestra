@@ -389,12 +389,12 @@ module.exports = (function() {
             musicValue: ''
           },
           {
-            key: 'isCloudy',
-            title: 'Cloud conditions',
+            key: 'isMild',
+            title: 'Mild weather',
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },

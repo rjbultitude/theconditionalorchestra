@@ -263,7 +263,7 @@ module.exports = function() {
       padType = 'guitar';
     } else if (wCheck.isCold) {
       padType = 'saxophone';
-    } else if (wCheck.isCloudy) {
+    } else if (wCheck.isMild) {
       padType = 'vocal';
     } else if (wCheck.isSmoggy) {
       padType = 'homeswinger';
@@ -687,8 +687,9 @@ module.exports = function() {
       isCold: weatherCheck.isCold(lwData.temperature.value),
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
       //broad conditions
+      isMild: weatherCheck.isMild(lwData.temperature.value, lwData.windSpeed.value),
       isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
-      isSublime: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
+      isSublime: weatherCheck.isSublime(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
       isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
@@ -891,7 +892,7 @@ module.exports = function() {
         //longNote.disconnect();
         longNote.connect(reverb);
         longNote.playMode('restart');
-        longNote.play();
+        //longNote.play();
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(_longNoteVol);
         longNote.rate(_longNoteRate);
@@ -944,7 +945,6 @@ module.exports = function() {
         currNoteLength = extraSeqPlaying ? sketch.random(noteLengths) * 2 :
           sketch.random(noteLengths);
         //Start the call of the updateNoteLength fn again
-        console.log('currNoteLength', currNoteLength);
         padReady = true;
       }
 

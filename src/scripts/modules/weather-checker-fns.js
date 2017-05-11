@@ -8,7 +8,7 @@ module.exports = {
    */
   // @param precipType String
   // @param precipIntensity floating point
-  isPrecip: function(precipType, precipIntensity) {
+  isPrecip: function isPrecip(precipType, precipIntensity) {
     //TODO do we need this check?
     if (precipType !== undefined) {
       return precipIntensity > 0;
@@ -18,36 +18,37 @@ module.exports = {
     }
   },
 
-  isHumid: function(humidity) {
+  isHumid: function isHumid(humidity) {
     return humidity > 0.57;
   },
 
-  isMuggy: function(humidity, temperatureInFrnht) {
+  isMuggy: function isMuggy(humidity, temperatureInFrnht) {
     return humidity > 0.48 && frnhtToCelcius(temperatureInFrnht) > 16;
   },
 
-  isSmoggy: function(humidity, temperatureInFrnht, cloudCover, visibility) {
+  isSmoggy: function isSmoggy(humidity, temperatureInFrnht, cloudCover, visibility) {
     return humidity > 0.4 && frnhtToCelcius(temperatureInFrnht) > 15 && cloudCover > 0.6 && visibility < 9;
   },
 
-  isArid: function(humidity, temperatureInFrnht) {
+  isArid: function isArid(humidity, temperatureInFrnht) {
     return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) > 15;
   },
 
-  isCrisp: function(humidity, temperatureInFrnht) {
+  isCrisp: function isCrisp(humidity, temperatureInFrnht) {
     return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) < 0;
   },
 
-  isSirocco: function(humidity, temperatureInFrnht, windSpeed) {
+  isSirocco: function isSirocco(humidity, temperatureInFrnht, windSpeed) {
     return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) > 21 && windSpeed > 20;
   },
 
   // @param windSpeed floating point
-  isWindy: function(windSpeed) {
+  isWindy: function isWindy(windSpeed) {
     return windSpeed > 22;
   },
+
   // @param cloudCover floating point
-  isCloudy: function(cloudCover) {
+  isCloudy: function isCloudy(cloudCover) {
     return cloudCover > 0.5;
   },
 
@@ -55,59 +56,64 @@ module.exports = {
    * temperature
    */
   // @param temperatureInFrnht floating point
-  isCold: function(temperatureInFrnht) {
+  isCold: function isCold(temperatureInFrnht) {
     return frnhtToCelcius(temperatureInFrnht) <= 12;
   },
 
   // @param temperatureInFrnht floating point
-  isFreezing: function(temperatureInFrnht) {
+  isFreezing: function isFreezing(temperatureInFrnht) {
     return frnhtToCelcius(temperatureInFrnht) < -1;
   },
 
   /**
-   * Broad concept conditions
+   * Broader concept conditions
    */
 
   // @param cloudCover floating point
   // @param windSpeed floating point
-  isClement: function(cloudCover, windSpeed, precipIntensity) {
-    console.log('isClement', arguments);
+  isClement: function isClement(cloudCover, windSpeed, precipIntensity) {
    return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0;
   },
 
   // @param temperatureInFrnht floating point
-  isFine: function(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 16 && windSpeed < 10 && cloudCover <= 0.32;
+  // @param windSpeed floating point
+  isMild: function isMild(temperatureInFrnht, windSpeed) {
+    return frnhtToCelcius(temperatureInFrnht) >= 14 && windSpeed < 12;
   },
 
-  isSublime: function(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 22 && windSpeed < 8 && cloudCover <= 0.15;
+  // @param temperatureInFrnht floating point
+  isFine: function isFine(cloudCover, windSpeed, temperatureInFrnht) {
+   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.32;
+  },
+
+  isSublime: function isSublime(cloudCover, windSpeed, temperatureInFrnht) {
+   return frnhtToCelcius(temperatureInFrnht) > 26 && windSpeed < 8 && cloudCover <= 0.15;
   },
 
   // @param temperatureInFrnht floating point
   // @param windSpeed floating point
-  isBitter: function(temperatureInFrnht, windSpeed) {
+  isBitter: function isBitter(temperatureInFrnht, windSpeed) {
     return frnhtToCelcius(temperatureInFrnht) < 3 && windSpeed > 23;
   },
 
   // @param cloudCover floating point
   // @param windSpeed floating point
   // @param precipIntensity floating point
-  isStormy: function(cloudCover, windSpeed, precipIntensity) {
+  isStormy: function isStormy(cloudCover, windSpeed, precipIntensity) {
     return cloudCover > 0.5 && windSpeed > 32 && precipIntensity > 0.3;
   },
 
   // @param cloudCover floating point
   // @param windSpeed floating point
   // @param precipIntensity floating point
-  isViolentStorm: function(cloudCover, windSpeed, precipIntensity) {
+  isViolentStorm: function isViolentStorm(cloudCover, windSpeed, precipIntensity) {
     return cloudCover > 0.8 && windSpeed > 60 && precipIntensity > 0.4;
   },
 
   // @param cloudCover floating point
   // @param windSpeed floating point
   // @param precipProbability floating point
-  isOminous: function(cloudCover, nearestStormDistance, precipProbability) {
+  isOminous: function isOminous(cloudCover, nearestStormDistance, precipProbability) {
     return cloudCover > 0.5 && nearestStormDistance < 10 && precipProbability > 0;
   }
 };
