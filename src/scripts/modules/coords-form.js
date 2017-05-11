@@ -72,14 +72,16 @@ module.exports = function() {
       if (_locationData.hasOwnProperty(_condition)) {
         if (altData.hasOwnProperty(_condition) === false) {
           console.error(_condition + ' Property doesn\'t exist');
+          return false;
         }
       }
     }
+    return true;
   }
 
   function fixlwDataRanges(lwData) {
     for (var condition in lwData) {
-      if (lwData.hasOwnProperty(condition)) {
+      if (lwData.hasOwnProperty(condition) && typeof lwData[condition].value === 'number') {
         if (lwData[condition].value < lwData[condition].min) {
           console.log('Value out of range', condition, lwData[condition]);
           lwData[condition].value = lwData[condition].min;
@@ -200,11 +202,15 @@ module.exports = function() {
         //TODO should probably stop
         //the program if this errors
         var staticDataJSON = JSON.parse(staticData);
-        checkLocationDataKeys(staticDataJSON);
-        handleNoGeoData(statusString, staticDataJSON);
-        enableControls();
-        console.log('using static data');
-        channel.publish('userUpdate', staticDataJSON);
+        if(checkLocationDataKeys(staticDataJSON)) {
+          var _fixedStaticData = fixlwDataRanges(staticDataJSON);
+          handleNoGeoData(statusString, _fixedStaticData);
+          enableControls();
+          console.log('using static data');
+          channel.publish('userUpdate', _fixedStaticData);
+        } else {
+          console.log('incorrect static data');
+        }
       },
       function failure() {
         updateStatus('errorData');

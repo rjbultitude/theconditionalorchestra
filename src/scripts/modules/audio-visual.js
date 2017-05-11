@@ -1005,6 +1005,7 @@ module.exports = function() {
       }
 
       function playPad(playFullNotes) {
+        //console.log('chord', synchedSoundsChords[chordIndex]);
         for (var i = 0, length = padSounds.length; i < length; i++) {
           padSounds[i].disconnect();
           padSounds[i].connect(soundFilter);
