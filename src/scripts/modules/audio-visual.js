@@ -293,6 +293,15 @@ module.exports = function() {
     return _chordType;
   }
 
+  // Quieten the pad when the harp plays
+  function getPadVolume(wCheck, sCheck, padType) {
+    if (sCheck.harpCanPlay && wCheck.isMild) {
+      return avSettings[padType].volume / 3;
+    } else {
+      return avSettings[padType].volume;
+    }
+  }
+
   function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
     var _totalRange = Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus;
     var _rootNoteMedian = Math.round(_totalRange / 2);
@@ -625,6 +634,14 @@ module.exports = function() {
     ));
   }
 
+  function getHarpVolArr(wCheck, sCheck) {
+    if (sCheck.harpCanPlay && wCheck.isMild) {
+      return [0.6, 0.8, 1];
+    } else {
+      return [0.45, 0.625, 0.8];
+    }
+  }
+
   function getHarpCanPlay(wCheck) {
     return wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy;
   }
@@ -635,15 +652,6 @@ module.exports = function() {
 
   function getChoralCanPlay(wCheck) {
     return wCheck.isFine || wCheck.isFreezing;
-  }
-
-  // Quieten the pad when the harp plays
-  function getPadVolume(sCheck, padType) {
-    if (sCheck.harpCanPlay) {
-      return avSettings[padType].volume / 3;
-    } else {
-      return avSettings[padType].volume;
-    }
   }
 
   function createP5SoundObjs() {
@@ -727,6 +735,7 @@ module.exports = function() {
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var leadVolume = getLeadSoundVolume(wCheck);
     var padType = getPadType(wCheck);
+    var padVolume = getPadVolume(sCheck, padType);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
     //Humidity
@@ -734,6 +743,7 @@ module.exports = function() {
     var humidArpBps = humidArpBpm / 60;
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
     var humidArpIntervalsKey = getHumidArpIntervals(lwData, chordType);
+    var harpVolArr = getHarpVolArr(wCheck, sCheck);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
     //Root note
     var rootNoteRange = getRootNoteRange(numSemisPerOctave);
@@ -770,9 +780,6 @@ module.exports = function() {
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
-    // Pad volume is special case
-    var padVolume = getPadVolume(sCheck, padType);
-    console.log('padVolume', padVolume);
 
     //Create p5 sketch
     var myP5 = new P5(function(sketch) {
@@ -1679,7 +1686,7 @@ module.exports = function() {
       function updateHumidArp() {
         if (sketch.frameCount % humidArpStepTime === 0) {
           var _harpSeqIndex = 0;
-          var _harpVol = sketch.random([0.5, 0.75, 0.95]);
+          var _harpVol = sketch.random(harpVolArr);
           //Handle extra seq
           if (extraSeqPlaying) {
             console.log('extraSeqPlaying', extraSeqPlaying);

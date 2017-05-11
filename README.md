@@ -138,6 +138,8 @@ Add higher octave to vocal sound
 
 Not sure currNoteLength is working properly
 
+Harp should be something other than humidity - humidity should be evoked by noise or suchlike
+
 Create better harp scales:
 Could only play when using inversions±
 Could use chordOffset to pitch up/down
