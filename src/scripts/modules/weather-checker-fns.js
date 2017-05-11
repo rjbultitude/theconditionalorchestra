@@ -52,6 +52,10 @@ module.exports = {
     return cloudCover > 0.5;
   },
 
+  isVisbilityPoor: function isVisbilityPoor(visibility) {
+    return visibility < 8;
+  },
+
   /**
    * temperature
    */

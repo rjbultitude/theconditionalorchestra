@@ -22,9 +22,16 @@ module.exports = function() {
   var coordsFormSubmitBtnEl = coordsFormEl.querySelector(
     '[data-ref="submit"]');
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
-  var isPlaying = false;
   var lastKnownSuffix = 'LastKnown';
   var staticSuffix = 'Static';
+  // module state vars
+  var isPlaying = false;
+  var usingStaticData = false;
+
+  function resetModState() {
+    isPlaying = false;
+    usingStaticData = false;
+  }
 
   function enableControls() {
     userLocBtnEl.disabled = false;
@@ -208,6 +215,8 @@ module.exports = function() {
 
   //Use previous state to run app
   function useLocalStorageData(statusString) {
+    // Set var for use with isPlaying subscriber
+    usingStaticData = true;
     if (Object.keys(window.localStorage).length > 0) {
       var restoredData = localStorage.getItem('locationData');
       var restoredDataJSON = JSON.parse(restoredData);
@@ -252,11 +261,11 @@ module.exports = function() {
         });
       });
     }, function failure(rejectObj) {
-      console.log(rejectObj.status);
-      console.log(rejectObj.statusText);
-      var statusString = 'badGMapsConnection';
-      updateStatus('error');
-      useLocalStorageData(statusString);
+        console.log(rejectObj.status);
+        console.log(rejectObj.statusText);
+        var statusString = 'badGMapsConnection';
+        updateStatus('error');
+        useLocalStorageData(statusString);
     });
   }
 
@@ -383,9 +392,9 @@ module.exports = function() {
   function startApp(inputType, placeInput) {
     // Temporarily disable buttons
     disableControls();
-
+    // assess user action
     if (inputType === 'userLocation') {
-      getGeo(); //Live
+      getGeo();
     } else if (inputType === 'customLocation') {
       getLatLong(placeInput);
     } else {
@@ -445,12 +454,15 @@ module.exports = function() {
   userLocBtnEl.addEventListener('click', userLocationSubmit, false);
 
   channel.subscribe('playing', function(locName) {
-    updateStatus('playing', locName);
+    // Only show this message if using live data
+    if (!usingStaticData) {
+      updateStatus('playing', locName);
+    }
     setStopState();
   });
 
   channel.subscribe('allStopped', function(autoStart) {
-    isPlaying = false;
+    resetModState();
     updateStatus('start');
     userLocBtnEl.innerHTML = 'Play my weather';
     coordsFormSubmitBtnEl.innerHTML = 'Play';
@@ -463,5 +475,6 @@ module.exports = function() {
   updateStatus('start');
   hideForm();
   enableControls();
+  resetModState();
   localStorage.clear();
 };

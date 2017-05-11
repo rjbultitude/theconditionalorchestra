@@ -416,6 +416,14 @@ module.exports = function() {
     return rootNoteHigh && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
   }
 
+  function getLongNoteVolArr(wCheck) {
+    if (wCheck.isVisbilityPoor) {
+      return [0.425, 0.575, 0.825];
+    } else {
+      return [0.225, 0.375, 0.7125];
+    }
+  }
+
   function getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave) {
     if (rootNoteGrtrMedian) {
       return numSemisPerOctave;
@@ -676,6 +684,7 @@ module.exports = function() {
       isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value),
       isWindy: weatherCheck.isWindy(lwData.windSpeed.value),
       isCloudy: weatherCheck.isCloudy(lwData.cloudCover.value),
+      isVisbilityPoor: weatherCheck.isVisbilityPoor(lwData.visibility.value),
       //Humidity
       isHumid: weatherCheck.isHumid(lwData.humidity.value),
       isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
@@ -732,7 +741,8 @@ module.exports = function() {
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
-    console.log('longNoteHigh', longNoteHigh);
+    var longNoteVolArr = getLongNoteVolArr(wCheck);
+    console.log('longNoteVolArr', longNoteVolArr);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
     var longNoteType = getLongNoteType(wCheck);
@@ -872,24 +882,26 @@ module.exports = function() {
       function playLongNote() {
         //playlogic
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
-        //var _longNoteVolArr = [0.225, 0.375, 0.7];
-        // turned up now that reverb is applied
-        var _longNoteVolArr = [0.425, 0.575, 0.825];
         var _longNoteVol;
         // playlogic
         // If weather is hot, dry and clear
         // play the longNote very quietly
         if (wCheck.isSublime) {
-          _longNoteVol = _longNoteVolArr[0];
+          _longNoteVol = longNoteVolArr[0];
         } else {
-          _longNoteVol = sketch.random(_longNoteVolArr);
+          _longNoteVol = sketch.random(longNoteVolArr);
         }
-        //Lower by one octave
-        //if the lower chords are playing
+        // Lower by one octave
+        // if the lower chords are playing
         if (extraSeqPlaying || longNoteHigh) {
           _longNoteRate = _longNoteRate / 2;
         }
-        longNote.disconnect();
+        // Play the wet signal alone
+        // if visibility is less than 8 miles /
+        // if the reverb is long
+        if (wCheck.isVisbilityPoor) {
+          longNote.disconnect();
+        }
         longNote.connect(reverb);
         longNote.playMode('restart');
         longNote.play();
