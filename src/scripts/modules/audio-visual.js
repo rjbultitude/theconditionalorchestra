@@ -1505,7 +1505,7 @@ module.exports = function() {
           precipCategory: precipCategory,
           rideCymbalBpm: rideCymbalBpm,
           rideCymbalRate: rideCymbalRate,
-          rideCymbalMaxVolume: rideCymbalMaxVolume,
+          rideCymbalMaxVolume: rideCymbalMaxVolume * 10,
           humidArpBpm: humidArpBpm,
           humidArpIntervalsKey: humidArpIntervalsKey,
           chordType: chordType,
