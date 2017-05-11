@@ -38,8 +38,8 @@ module.exports = {
   //Frequency
   //Lowest (10 Hz) to highest (22,050 Hz)
   masterFilter: {
-    min: 700,
-    max: 5000
+    min: 1000,
+    max: 6000
   },
 	//DOM
 	cContainerName: 'canvas-container'

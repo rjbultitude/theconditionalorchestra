@@ -738,6 +738,7 @@ module.exports = function() {
     var leadVolume = getLeadSoundVolume(wCheck);
     var padType = getPadType(wCheck);
     var padVolume = getPadVolume(wCheck, sCheck, padType);
+    console.log('padVolume', padVolume);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
     //Humidity
@@ -882,11 +883,17 @@ module.exports = function() {
 
       function playBrassBaritoneTwo(scale) {
         var _newScaleArr = scale.slice().reverse();
-        var _rateMultArr = [1, 2];
-        var _randomRateMultVal = sketch.random(_rateMultArr);
+        var _brassBaritoneTwoRate;
+        if (rootNoteGrtrMedian) {
+          var _rateMultArr = [1, 2];
+          var _randomRateMultVal = sketch.random(_rateMultArr);
+          _brassBaritoneTwoRate = _newScaleArr[brassTwoScaleArrayIndex] * _randomRateMultVal;
+        } else {
+          _brassBaritoneTwoRate = _newScaleArr[brassTwoScaleArrayIndex];
+        }
         brassBaritone2.play();
         brassBaritone2.setVolume(0.4);
-        brassBaritone2.rate(_newScaleArr[brassTwoScaleArrayIndex] * _randomRateMultVal);
+        brassBaritone2.rate(_brassBaritoneTwoRate);
         if (brassTwoScaleArrayIndex >= scale.length - 1) {
           brassTwoScaleArrayIndex = 0;
         } else {
@@ -1018,6 +1025,7 @@ module.exports = function() {
       }
 
       function playSynchedSounds(playFullNotes) {
+        //console.log('synchedSoundsChords', synchedSoundsChords);
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence
@@ -1679,6 +1687,11 @@ module.exports = function() {
         }
       }
 
+      function stopBrass() {
+        brassBaritone.stop();
+        brassBaritone2.stop();
+      }
+
       function updateBrass() {
         if (angle > 360) {
           angle = 0;
@@ -1768,7 +1781,11 @@ module.exports = function() {
           updateTimpani();
         }
         if (wCheck.isWindy) {
-          updateBrass();
+          if (!extraSeqPlaying) {
+            updateBrass();
+          } else {
+            stopBrass();
+          }
         }
         if (wCheck.isPrecip) {
           if (precipArpReady && sequenceStart) {
