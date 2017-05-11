@@ -427,7 +427,7 @@ module.exports = function() {
 
   function getLongNoteVolArr(wCheck) {
     if (wCheck.isVisbilityPoor) {
-      return [0.425, 0.575, 0.825];
+      return [0.55, 0.725, 0.975];
     } else {
       return [0.225, 0.375, 0.7125];
     }
@@ -1665,6 +1665,7 @@ module.exports = function() {
           rideCymbal.play();
           rideCymbal.setVolume(_rideVol);
           rideCymbal.rate(rideCymbalRate);
+          djembe.pan(-0.35);
         }
       }
 
@@ -1674,6 +1675,7 @@ module.exports = function() {
           djembe.play();
           djembe.setVolume(_djembeVol);
           djembe.rate(1);
+          djembe.pan(0.35);
         }
       }
 
