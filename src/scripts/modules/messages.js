@@ -6,7 +6,9 @@
 'use strict';
 
 module.exports = {
-    error: 'Error getting your location',
+    error: 'Error getting your location, please try again',
+    errorNoConnLocSearch: 'You appear to be offline so you can\'t search for new places',
+    errorWithStatic: 'Sorry, error with static data. Try again when online',
     errorData: 'Error getting static weather data, sorry',
     noGeo: 'Geolocation is not supported by your browser Try searching',
     noGeoAccess: 'Please check that you\'ve granted permission to use your location or try a custom location',

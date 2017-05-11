@@ -198,9 +198,6 @@ module.exports = function() {
   function useStaticData(statusString) {
     var fetchStaticData = makeRequest('GET', 'data/static-data.json');
     fetchStaticData.then(function success(staticData) {
-        //error check
-        //TODO should probably stop
-        //the program if this errors
         var staticDataJSON = JSON.parse(staticData);
         if(checkLocationDataKeys(staticDataJSON)) {
           var _fixedStaticData = fixlwDataRanges(staticDataJSON);
@@ -209,6 +206,7 @@ module.exports = function() {
           console.log('using static data');
           channel.publish('userUpdate', _fixedStaticData);
         } else {
+          updateStatus('error');
           console.log('incorrect static data');
         }
       },
@@ -243,6 +241,12 @@ module.exports = function() {
    * @return {Boolean}
    */
   function getLatLong(placeString) {
+    if (!navigator.onLine) {
+      console.log('offline');
+      updateStatus('errorNoConnLocSearch');
+      enableControls();
+      return;
+    }
     var gpKey = makeRequest('GET', '/gm-key.php');
     gpKey.then(function success(key) {
       GoogleMapsLoader.KEY = key;
