@@ -231,6 +231,16 @@ module.exports = (function() {
             iconPath: '/img/temperature-icon.svg',
             music: 'Melody playing ',
             musicValue: ''
+          },
+          {
+            key: 'isVisbilityPoor',
+            title: 'Poor visibility',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/visibility-icon.svg',
+            music: 'Chords playing very softly',
+            musicValue: ''
           }
         ],
         chordTypeMap: [
