@@ -876,9 +876,9 @@ module.exports = function() {
         // turned up now that reverb is applied
         var _longNoteVolArr = [0.425, 0.575, 0.825];
         var _longNoteVol;
-        //playlogic
-        //If weather is hot, dry and clear
-        //play the longNote very quietly
+        // playlogic
+        // If weather is hot, dry and clear
+        // play the longNote very quietly
         if (wCheck.isSublime) {
           _longNoteVol = _longNoteVolArr[0];
         } else {
@@ -889,10 +889,10 @@ module.exports = function() {
         if (extraSeqPlaying || longNoteHigh) {
           _longNoteRate = _longNoteRate / 2;
         }
-        //longNote.disconnect();
+        longNote.disconnect();
         longNote.connect(reverb);
         longNote.playMode('restart');
-        //longNote.play();
+        longNote.play();
         longNote.pan(sketch.random(panArr));
         longNote.setVolume(_longNoteVol);
         longNote.rate(_longNoteRate);
