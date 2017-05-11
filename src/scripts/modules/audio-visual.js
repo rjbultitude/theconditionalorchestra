@@ -427,7 +427,7 @@ module.exports = function() {
 
   function getLongNoteVolArr(wCheck) {
     if (wCheck.isVisbilityPoor) {
-      return [0.55, 0.725, 0.975];
+      return [0.65, 0.825, 1];
     } else {
       return [0.225, 0.375, 0.7125];
     }
