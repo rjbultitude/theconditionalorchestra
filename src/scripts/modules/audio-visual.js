@@ -673,14 +673,16 @@ module.exports = function() {
     var padIndexCount = 0;
     var fibIndex = 0;
     var panIndex = 0;
-    var precipArpScales = [];
     var humidArpScales = [];
     var humidArpReady = false;
+    var humidArpScaleIndex = 0;
+    var hArpSeqIndex = 0;
     var padReady = false;
     var leadSoundReady = false;
+    var precipArpScales = [];
     var precipArpReady = false;
     var precipArpScaleIndex = 0;
-    var humidArpScaleIndex = 0;
+    var pArpSeqIndex = 0;
     var freezingFilterFreq = 2000;
     var masterGain = 0;
     //clear data
@@ -735,7 +737,7 @@ module.exports = function() {
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var leadVolume = getLeadSoundVolume(wCheck);
     var padType = getPadType(wCheck);
-    var padVolume = getPadVolume(sCheck, padType);
+    var padVolume = getPadVolume(wCheck, sCheck, padType);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
     //Humidity
@@ -744,6 +746,7 @@ module.exports = function() {
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
     var humidArpIntervalsKey = getHumidArpIntervals(lwData, chordType);
     var harpVolArr = getHarpVolArr(wCheck, sCheck);
+    console.log('harpVolArr', harpVolArr);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
     //Root note
     var rootNoteRange = getRootNoteRange(numSemisPerOctave);
@@ -761,6 +764,8 @@ module.exports = function() {
     console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
     var extraSeqOffset = getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
     console.log('extraSeqOffset', extraSeqOffset);
+    var invExtraSeqOffset = numSemisPerOctave - extraSeqOffset;
+    console.log('invExtraSeqOffset', invExtraSeqOffset);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteGrtrMedian);
     var brassBaritoneVol = getBrassVolume(lwData);
     var brassBaritoneBpm = getBrassBpm(lwData);
@@ -1358,7 +1363,7 @@ module.exports = function() {
       function createHumidArpScales() {
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
-        var _hArpScalesNoRests;
+        var _hArpScalesNoRests = [];
         //var _numHumidArpNotes = avSettings.numHumidArpNotes;
         var _numHumidArpNotes = intervals[humidArpIntervalsKey].length;
         var _mainHArpScale = createMusicalScale({
@@ -1372,7 +1377,7 @@ module.exports = function() {
         });
         var _extraHArpScale = createMusicalScale({
           numNotes: _numHumidArpNotes,
-          startNote: _hArpCNoteOffset + extraSeqOffset,
+          startNote: _hArpCNoteOffset + invExtraSeqOffset,
           chordKey: humidArpIntervalsKey,
           inversionStartNote: _intervalIndexOffset,
           amountToAdd: 0,
@@ -1389,7 +1394,7 @@ module.exports = function() {
         var _repeatMultiple = 1;
         var _intervalIndexOffset = 0;
         var _intervalType;
-        var _pArpScalesNoRests;
+        var _pArpScalesNoRests = [];
         if (hasMajor(chordType)) {
           _intervalType = 'safeNthMajorIntervals';
         } else {
@@ -1407,7 +1412,7 @@ module.exports = function() {
         });
         var _extraPArpScale = createMusicalScale({
           numNotes: avSettings.numPrecipArpNotes,
-          startNote: _pArpCNoteOffset + extraSeqOffset,
+          startNote: _pArpCNoteOffset + invExtraSeqOffset,
           chordKey: _intervalType,
           inversionStartNote: _intervalIndexOffset,
           amountToAdd: numSemisPerOctave,
@@ -1701,39 +1706,41 @@ module.exports = function() {
 
       function updateHumidArp() {
         if (sketch.frameCount % humidArpStepTime === 0) {
-          var _harpSeqIndex = 0;
           var _harpVol = sketch.random(harpVolArr);
           //Handle extra seq
           if (extraSeqPlaying) {
             console.log('extraSeqPlaying', extraSeqPlaying);
-            _harpSeqIndex = 1;
+            hArpSeqIndex = 1;
+          } else {
+            hArpSeqIndex = 0;
           }
           //Loop
-          if (humidArpScaleIndex >= humidArpScales[_harpSeqIndex].length) {
+          if (humidArpScaleIndex >= humidArpScales[hArpSeqIndex].length) {
             humidArpScaleIndex = 0;
           }
           harpSound.play();
           harpSound.setVolume(_harpVol);
-          harpSound.rate(humidArpScales[_harpSeqIndex][humidArpScaleIndex]);
+          harpSound.rate(humidArpScales[hArpSeqIndex][humidArpScaleIndex]);
           humidArpScaleIndex++;
         }
       }
 
       function updatePrecipArp() {
         if (sketch.frameCount % precipArpStepTime === 0) {
-          var _dropSeqIndex = 0;
           // Handle extra seq
           if (extraSeqPlaying) {
             console.log('extraSeqPlaying', extraSeqPlaying);
-            _dropSeqIndex = 1;
+            pArpSeqIndex = 1;
+          } else {
+            pArpSeqIndex = 0;
           }
           // loop
-          if (precipArpScaleIndex >= precipArpScales[_dropSeqIndex].length) {
+          if (precipArpScaleIndex >= precipArpScales[pArpSeqIndex].length) {
             precipArpScaleIndex = 0;
           }
           dropSound.play();
           dropSound.setVolume(avSettings.dropSoundVol[precipCategory]);
-          dropSound.rate(precipArpScales[_dropSeqIndex][precipArpScaleIndex]);
+          dropSound.rate(precipArpScales[pArpSeqIndex][precipArpScaleIndex]);
           precipArpScaleIndex++;
         }
       }

@@ -21,16 +21,16 @@
     "max":1050
   },
   "precipIntensity":{
-    "value":0,
+    "value":0.25,
     "min":0,
     "max":0.5
   },
   "precipProbability":{
-    "value":0,
+    "value":0.4,
     "min":0,
     "max":1
   },
-  "precipType": "",
+  "precipType": "sleet",
   "temperature":{
     "value":66.2,
     "min":-35,
