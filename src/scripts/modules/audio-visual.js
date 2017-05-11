@@ -755,7 +755,6 @@ module.exports = function() {
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
     var longNoteVolArr = getLongNoteVolArr(wCheck);
-    console.log('longNoteVolArr', longNoteVolArr);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
     var longNoteType = getLongNoteType(wCheck);
@@ -795,7 +794,7 @@ module.exports = function() {
 
       function addRandomStops(notesArray) {
         //duplicate notes
-        var _newNotesArray = duplicateArray(notesArray, 10);
+        var _newNotesArray = duplicateArray(notesArray, 2);
         var _randomStopCount = _newNotesArray.length / 2;
         var _randomIndex;
         //Add stops
@@ -857,6 +856,7 @@ module.exports = function() {
         humidArpScales = hScalesNoRests.map(function(hArpScale) {
           return getAllegrettoRhythmType(hArpScale);
         });
+        console.log('humidArpScales', humidArpScales);
         humidArpReady = true;
       }
 
@@ -865,6 +865,7 @@ module.exports = function() {
         precipArpScales = precipArpScaleNoRests.map(function(pArpScale) {
           return addRandomStops(pArpScale).reverse();
         });
+        console.log('precipArpScales', precipArpScales);
         precipArpReady = true;
       }
 
@@ -1385,7 +1386,6 @@ module.exports = function() {
           type: 'humid arp'
         });
         _hArpScalesNoRests.push(_mainHArpScale, _extraHArpScale);
-        console.log('_hArpScalesNoRests', _hArpScalesNoRests);
         return _hArpScalesNoRests;
       }
 
@@ -1420,7 +1420,6 @@ module.exports = function() {
           type: 'precip arp'
         });
         _pArpScalesNoRests.push(_mainPArpScale, _extraPArpScale);
-        console.log('_pArpScalesNoRests', _pArpScalesNoRests);
         return _pArpScalesNoRests;
       }
 
