@@ -127,16 +127,7 @@ The pan and volume are randomly selected from two arrays.
 
 Consider dropping reverb (for performance purposes)
 
-Consider using two arrays for Precipitation as with humidity arpeggio
-
-Not sure whether disconnect should be used in conjunction with filters or not.
-Seems when it's used with reverb it significantly reduces the volume.
-
 Sounds need testing on their own
-
-Add higher octave to vocal sound
-
-Not sure currNoteLength is working properly
 
 Harp should be something other than humidity - humidity should be evoked by noise or suchlike
 
@@ -144,8 +135,6 @@ Create better harp scales:
 Could only play when using inversions±
 Could use chordOffset to pitch up/down
 Could use current scale and add upper/lower octaves
-
-± in which case a new sound should be used for humid non isFine, isFreezing or wCheck.isWindy conditions - really??
 
 When longnote is high we should play at lower octave - needs testing
 
