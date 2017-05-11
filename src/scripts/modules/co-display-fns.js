@@ -159,7 +159,11 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
     return coDisplayDataGroup.map(function(coProp) {
       if (coProp.value) {
         if(coProp.key === 'precipType' || coProp.key === 'precipIntensity' || coProp.key === 'precipProbability') {
-          coProp.iconPath = '/img/' + lwData.precipType + '-icon.svg';
+          if (lwData.precipType) {
+            coProp.iconPath = '/img/' + lwData.precipType + '-icon.svg';
+          } else {
+            coProp.iconPath = '/img/rain-icon.svg';
+          }
         }
       }
       return coProp;
