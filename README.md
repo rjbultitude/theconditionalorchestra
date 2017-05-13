@@ -127,6 +127,8 @@ The pan and volume are randomly selected from two arrays.
 
 Lead and precip arpeggio should not play at the same time
 
+change name of homeswinger to zither perhaps
+
 isMild display object needs another positive key: isHumid
 
 Consider dropping reverb (for performance purposes)

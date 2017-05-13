@@ -242,6 +242,7 @@ module.exports = (function() {
             music: 'Chords playing very softly',
             musicValue: '',
             negativeKey: ['isPrecip', 'isFine', 'isWindy'],
+            negativeValue: false
           }
         ],
         chordTypeMap: [
@@ -390,26 +391,6 @@ module.exports = (function() {
             musicValue: ''
           },
           {
-            key: 'isCold',
-            title: 'Cold conditions',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/freezing-icon.svg',
-            music: 'Pad instrument is ',
-            musicValue: ''
-          },
-          {
-            key: 'isMild',
-            title: 'Mild weather',
-            value: '',
-            constrain: false,
-            unit: '',
-            iconPath: '/img/weather-icon.svg',
-            music: 'Pad instrument is ',
-            musicValue: ''
-          },
-          {
             key: 'isSmoggy',
             title: 'Dull or hazy conditions',
             value: '',
@@ -426,6 +407,26 @@ module.exports = (function() {
             constrain: false,
             unit: '',
             iconPath: '/img/sun-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isCold',
+            title: 'Cold conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/freezing-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
+            key: 'isMild',
+            title: 'Mild weather',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/weather-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },
@@ -644,7 +645,9 @@ module.exports = (function() {
             unit: '',
             iconPath: '/img/sun-icon.svg',
             music: 'Rhodes arpeggio playing ',
-            musicValue: ''
+            musicValue: '',
+            negativeKey: 'isPrecip',
+            negativeValue: false
           }
         ],
         padLengthMap: [

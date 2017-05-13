@@ -249,29 +249,30 @@ module.exports = function() {
   //TODO return early
   function getPadType(wCheck) {
     var padType = '';
-    //playlogic
-    //Start with harshest conditions
-    //and work our way up
+    // playlogic
+    // Start with harshest conditions
+    // and work our way up
 
-    //isBitter generates a non western scale
-    //organ is used so as not to use a sound
-    //that might clash with the brass barritone
-    //when conditions are windy
+    // isBitter generates a non western scale
+    // organ is used so as not to use a sound
+    // that might clash with the brass barritone
+    // when conditions are windy
     if (wCheck.isBitter) {
       padType = 'organ';
     } else if (wCheck.isStormy) {
       padType = 'guitar';
-    } else if (wCheck.isCold) {
-      padType = 'saxophone';
-    } else if (wCheck.isMild) {
-      padType = 'vocal';
     } else if (wCheck.isSmoggy) {
       padType = 'homeswinger';
     } else if (wCheck.isFine) {
       padType = 'aeroflute';
+    } else if (wCheck.isMild) {
+      padType = 'vocal';
+    } else if (wCheck.isCold) {
+      padType = 'saxophone';
     } else {
-      padType = 'harmonium'; //was horn
+      padType = 'harmonium';
     }
+    console.log('padType', padType);
     return padType;
   }
 
@@ -1097,8 +1098,9 @@ module.exports = function() {
         if (sCheck.choralCanPlay) {
           playChoralSound(synchedSoundsChords[0]);
         }
-        //Play the lead if the weather is fine
-        if (wCheck.isFine) {
+        // Play the lead if the weather is fine
+        // but not raining so as to avoid clash
+        if (wCheck.isFine && !wCheck.isPrecip) {
           leadSoundReady = true;
         }
         // Play brass
