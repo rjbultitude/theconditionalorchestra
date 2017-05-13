@@ -233,7 +233,7 @@ module.exports = (function() {
             musicValue: ''
           },
           {
-            key: 'isMild',
+            key: 'isMildAndHumid',
             title: 'Mild and humid conditions',
             value: '',
             constrain: false,

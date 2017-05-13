@@ -707,13 +707,14 @@ module.exports = function() {
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
       //broad conditions
       isMild: weatherCheck.isMild(lwData.temperature.value, lwData.windSpeed.value),
+      isMildAndHumid: weatherCheck.isMildAndHumid(lwData.temperature.value, lwData.windSpeed.value, lwData.humidity.value),
       isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
       isSublime: weatherCheck.isSublime(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
       isClement: weatherCheck.isClement(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value,lwData.windSpeed.value, lwData.precipIntensity.value),
-      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value)
+      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value),
     };
     console.log('wCheck', wCheck);
     // grouped sound booleans
@@ -757,6 +758,7 @@ module.exports = function() {
     var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
     console.log('longNoteHigh', longNoteHigh);
     var longNoteVolArr = getLongNoteVolArr(wCheck);
+    console.log('longNoteVolArr', longNoteVolArr);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
     var longNoteType = getLongNoteType(wCheck);

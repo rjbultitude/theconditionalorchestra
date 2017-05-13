@@ -11,7 +11,7 @@
     "max":75
   },
   "visibility":{
-    "value":7,
+    "value":9,
     "min":0.1,
     "max":10
   },

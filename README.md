@@ -132,8 +132,6 @@ change name of homeswinger to zither perhaps
 isMild display object needs another positive key: isHumid
 
 Consider dropping reverb (for performance purposes)
-
-Sounds need testing on their own
 ---
 Harp should be something other than humidity - humidity should be evoked by noise or suchlike
 
