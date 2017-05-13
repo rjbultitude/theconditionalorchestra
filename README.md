@@ -125,7 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Lead and precip arpeggio should not play at the same time
+Update homeswiger sound to be a little more palatable
 
 change name of homeswinger to zither perhaps
 
