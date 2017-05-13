@@ -129,8 +129,6 @@ Lead and precip arpeggio should not play at the same time
 
 change name of homeswinger to zither perhaps
 
-isMild display object needs another positive key: isHumid
-
 Consider dropping reverb (for performance purposes)
 ---
 Harp should be something other than humidity - humidity should be evoked by noise or suchlike
