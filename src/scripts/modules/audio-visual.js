@@ -697,7 +697,7 @@ module.exports = function() {
       //Humidity
       isHumid: weatherCheck.isHumid(lwData.humidity.value),
       isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
-      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature.value, lwData.ozone.value, lwData.visibility.value),
+      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature.value, lwData.visibility.value),
       isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature.value),
       isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value),
       isSirocco: weatherCheck.isSirocco(lwData.humidity.value, lwData.temperature.value, lwData.windSpeed.value),
