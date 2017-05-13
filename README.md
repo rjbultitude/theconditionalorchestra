@@ -128,7 +128,7 @@ The pan and volume are randomly selected from two arrays.
 Consider dropping reverb (for performance purposes)
 
 Sounds need testing on their own
-
+---
 Harp should be something other than humidity - humidity should be evoked by noise or suchlike
 
 Create better harp scales:
@@ -136,13 +136,7 @@ Could only play when using inversions±
 Could use chordOffset to pitch up/down
 Could use current scale and add upper/lower octaves
 
-When longnote is high we should play at lower octave - needs testing
-
----
-
-Test the master filter against the pad and longNote sounds, particularly with lower frequencies
-
-Consider using a state manager to update the humid arpeggio and display (chords)
+Consider using a state manager and one master sound object
 
 Create 'Add to home screen' button
 
@@ -152,27 +146,15 @@ Update logic App Logic and spreadsheet
 
 Refactor the display fns so that they're chained
 
-Refactor createMusicalScale and calls so that object with explicit values is passed in as args
-
-Consider program reflow where only one master set of frequencies is used for all instruments.
-In this scenario the maximum number of octaves for _all_ sounds is determined and then one master array used for all (this is on `feature/webworker`)
-
-Test offline, bad connection states (after refactor of handleNoGeoData fn)
-
 May need to Upgrade to google maps 3 : https://developers.google.com/maps/documentation/javascript/v2tov3
 
 ###Bugs
 
-Choral sound seems to be only one semitone apart
+No playback on 1st load Safari - might be ok now
 
 After stop fade out is louder than normal playback, firefox only
 
-No playback on 1st load Safari - might be ok now
+Night time should also manage the filter frequency as it affects visibility.
+Only works with daily endpoint :[
 
-Minor - Sequencer onStep only counts the steps in one single pass rather than the loop
-
-Night time should also manage the filter frequency as it affects visibility. Only works with daily endpoint :[
-
-Add service worker for offline joy
-
-Write a blog piece about creating the musical scales
+No longer relevant - Sequencer onStep only counts the steps in one single pass rather than the loop

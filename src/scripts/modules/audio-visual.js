@@ -405,9 +405,8 @@ module.exports = function() {
     var _longNoteIndex = 0;
     var _timesToDivide = numPadNotes;
     var _bearingSlice = 360 / _timesToDivide;
-    //playlogic
-    //bearing decides which note in scale to play
-    //Could use reduce
+    // playlogic
+    // bearing decides which note in scale to play
     for (var i = 0; i < _timesToDivide; i++) {
       var _mult = i + 1;
       var _currentBearingSlice = _bearingSlice * _mult;
@@ -698,7 +697,7 @@ module.exports = function() {
       //Humidity
       isHumid: weatherCheck.isHumid(lwData.humidity.value),
       isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
-      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature.value, lwData.cloudCover.value, lwData.visibility.value),
+      isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature.value, lwData.ozone.value, lwData.visibility.value),
       isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature.value),
       isCrisp: weatherCheck.isCrisp(lwData.humidity.value, lwData.temperature.value),
       isSirocco: weatherCheck.isSirocco(lwData.humidity.value, lwData.temperature.value, lwData.windSpeed.value),
@@ -755,6 +754,7 @@ module.exports = function() {
     var rootNoteHigh = isRootNoteHigh(rootNote);
     var longNoteIndex = getLongNoteIndex(lwData, numPadNotes);
     var longNoteHigh = isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
+    console.log('longNoteHigh', longNoteHigh);
     var longNoteVolArr = getLongNoteVolArr(wCheck);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
