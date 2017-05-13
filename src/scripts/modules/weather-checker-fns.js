@@ -27,7 +27,7 @@ module.exports = {
   },
 
   isSmoggy: function isSmoggy(humidity, temperatureInFrnht, ozone, visibility) {
-    return humidity > 0.45 && frnhtToCelcius(temperatureInFrnht) > 15 && ozone > 350 && visibility < 8;
+    return humidity > 0.45 && frnhtToCelcius(temperatureInFrnht) > 18 && ozone > 350 && visibility < 8;
   },
 
   isArid: function isArid(humidity, temperatureInFrnht) {
