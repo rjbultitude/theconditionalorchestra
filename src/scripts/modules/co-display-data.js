@@ -233,14 +233,15 @@ module.exports = (function() {
             musicValue: ''
           },
           {
-            key: 'isVisbilityPoor',
-            title: 'Poor visibility',
+            key: 'isMild',
+            title: 'Mild and humid conditions',
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/visibility-icon.svg',
+            iconPath: '/img/weather-icon.svg',
             music: 'Chords playing very softly',
-            musicValue: ''
+            musicValue: '',
+            negativeKey: ['isPrecip', 'isFine', 'isWindy'],
           }
         ],
         chordTypeMap: [

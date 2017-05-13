@@ -87,7 +87,7 @@ module.exports = {
 
   // @param temperatureInFrnht floating point
   isFine: function isFine(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.32;
+   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.3;
   },
 
   isSublime: function isSublime(cloudCover, windSpeed, temperatureInFrnht) {
