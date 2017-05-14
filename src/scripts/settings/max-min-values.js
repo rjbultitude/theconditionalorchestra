@@ -60,9 +60,10 @@ module.exports = {
       min: -35,
       max: 120
     },
+    // violent rain is in excess of 2 inches per hour
     precipIntensity: {
       min: 0,
-      max: 0.5
+      max: 3
     },
     precipProbability: {
       min: 0,
