@@ -262,7 +262,7 @@ module.exports = function() {
     } else if (wCheck.isStormy) {
       padType = 'guitar';
     } else if (wCheck.isSmoggy) {
-      padType = 'homeswinger';
+      padType = 'zither';
     } else if (wCheck.isFine) {
       padType = 'aeroflute';
     } else if (wCheck.isMild) {

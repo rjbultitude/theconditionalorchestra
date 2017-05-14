@@ -108,7 +108,7 @@ module.exports = {
   // @param windSpeed floating point
   // @param precipIntensity floating point
   isStormy: function isStormy(cloudCover, windSpeed, precipIntensity) {
-    return cloudCover > 0.5 && windSpeed > 32 && precipIntensity > 0.3;
+    return cloudCover > 0.5 && windSpeed > 32 || precipIntensity >= 0.3;
   },
 
   // @param cloudCover floating point
