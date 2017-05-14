@@ -125,10 +125,6 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Update homeswiger sound to be a little more palatable
-
-change name of homeswinger to zither perhaps
-
 Consider dropping reverb (for performance purposes)
 ---
 Harp should be something other than humidity - humidity should be evoked by noise or suchlike
@@ -151,8 +147,6 @@ Refactor the display fns so that they're chained
 May need to Upgrade to google maps 3 : https://developers.google.com/maps/documentation/javascript/v2tov3
 
 ###Bugs
-
-No playback on 1st load Safari - might be ok now
 
 After stop fade out is louder than normal playback, firefox only
 
