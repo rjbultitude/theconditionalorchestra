@@ -62,12 +62,12 @@
     "max":120
   },
   "nearestStormBearing":{
-    "value":66,
+    "value":166,
     "min":0,
     "max":360
   },
   "nearestStormDistance":{
-    "value":40,
+    "value":8,
     "min":0,
     "max":200
   }

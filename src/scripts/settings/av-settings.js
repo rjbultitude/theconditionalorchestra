@@ -13,9 +13,9 @@ module.exports = {
   volume: 0.75,
   //padSounds
   aeroflute: {volume : 0.5},
-  guitar: {volume : 0.425},
+  guitar: {volume : 0.55},
   harmonium: {volume : 0.5},
-  homeswinger: {volume : 0.6},
+  zither: {volume : 0.6},
   organ: {volume : 0.75},
   saxophone: {volume : 0.75},
   vocal: {volume : 0.75},
