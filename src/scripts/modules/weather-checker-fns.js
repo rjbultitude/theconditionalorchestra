@@ -30,8 +30,8 @@ module.exports = {
     return humidity > 0.45 && frnhtToCelcius(temperatureInFrnht) > 18 && visibility < 8;
   },
 
-  isArid: function isArid(humidity, temperatureInFrnht) {
-    return humidity < 0.35 && frnhtToCelcius(temperatureInFrnht) > 20;
+  isArid: function isArid(humidity, temperatureInFrnht, precipIntensity) {
+    return humidity < 0.35 && frnhtToCelcius(temperatureInFrnht) > 20 && precipIntensity === 0;
   },
 
   isCrisp: function isCrisp(humidity, temperatureInFrnht) {
