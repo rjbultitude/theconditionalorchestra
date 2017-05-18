@@ -61,7 +61,7 @@ module.exports = function() {
   var freezingFilter;
   var reverb;
   //pan
-  var angle = 0;
+  var angle = 180;
   var sinVal = 0;
   var cosVal = 0;
   var panArr = [-0.8, 0, 0.8];
@@ -791,6 +791,8 @@ module.exports = function() {
 
     //Create p5 sketch
     var myP5 = new P5(function(sketch) {
+      // used for Brass pan
+      var inc = sketch.TWO_PI / 150;
 
       channel.subscribe('allStopped', function() {
         sketch.noLoop();
@@ -1107,16 +1109,10 @@ module.exports = function() {
         }
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function() {
-          //playlogic
-          if (wCheck.isWindy) {
-            playBrassBaritone(synchedSoundsChords[chordIndex]);
-          }
+          playBrassBaritone(synchedSoundsChords[chordIndex]);
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
-          //playlogic
-          if (wCheck.isWindy) {
-            playBrassBaritoneTwo(synchedSoundsChords[chordIndex]);
-          }
+          playBrassBaritoneTwo(synchedSoundsChords[chordIndex]);
         });
         //Pads, long note and bass
         //playlogic
@@ -1702,7 +1698,9 @@ module.exports = function() {
           angle = 0;
         }
         sinVal = sketch.sin(angle);
-        cosVal = sketch.cos(angle);
+        console.log('sinVal', sinVal);
+        cosVal = sketch.cos(angle + 90);
+        console.log('cosVal', cosVal);
         brassBaritone.pan(sinVal);
         brassBaritone2.pan(cosVal);
         if (sketch.frameCount % brassBaritoneStepTime === 0) {
@@ -1711,7 +1709,8 @@ module.exports = function() {
         if (sketch.frameCount % brassBaritone2StepTime === 0) {
           channel.publish('triggerBrassTwo');
         }
-        angle += 0.03;
+        //angle += 0.03;
+        angle += inc;
       }
 
       function updateFilter() {
