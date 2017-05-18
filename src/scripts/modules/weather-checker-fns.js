@@ -122,6 +122,6 @@ module.exports = {
   // @param windSpeed floating point
   // @param precipProbability floating point
   isOminous: function isOminous(cloudCover, nearestStormDistance, precipProbability) {
-    return cloudCover > 0.5 && nearestStormDistance < 10 && precipProbability > 0;
+    return cloudCover > 0.5 && nearestStormDistance < 15 && precipProbability > 0;
   }
 };

@@ -48,7 +48,7 @@ module.exports = function() {
   var timpani;
   var rideCymbal;
   var djembe;
-  var djembeVolArr = [0.45, 0.8, 0.2, 0.65];
+  var djembeVolArr = [0.95, 0.7];
   //clement / brass
   var harpSound;
   //long notes
@@ -782,6 +782,7 @@ module.exports = function() {
     var rideCymbalStepTime = Math.round(appFrameRate / rideCymbalBps);
     var rideCymbalMaxVolume = getRideCymbalMaxVolume(lwData);
     var rideCymbalVolumeArr = getRideCymbalVolumeArr(rideCymbalMaxVolume);
+    var djembeStepTime = rideCymbalStepTime * 2;
     var noteLengthMult = getNoteLengthMult(lwData, avSettings);
     var noteLengths = getNoteLengths(appFrameRate, noteLengthMult);
     var leadNoteLengthStart = getLeadNoteLengthStart(appFrameRate, lwData);
@@ -1679,10 +1680,10 @@ module.exports = function() {
       }
 
       function updateDjembe() {
-        if (sketch.frameCount % rideCymbalStepTime * 2 === 0) {
+        if (sketch.frameCount % djembeStepTime === 0) {
           var _djembeVol = sketch.random(djembeVolArr);
           djembe.play();
-          djembe.setVolume(_djembeVol);
+          djembe.setVolume(1);
           djembe.rate(1);
           djembe.pan(0.35);
         }

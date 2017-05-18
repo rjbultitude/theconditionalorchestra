@@ -16,7 +16,7 @@
     "max":10
   },
   "pressure":{
-    "value":1008,
+    "value":1000,
     "min":980,
     "max":1050
   },
@@ -67,7 +67,7 @@
     "max":360
   },
   "nearestStormDistance":{
-    "value":10,
+    "value":12,
     "min":0,
     "max":200
   }
