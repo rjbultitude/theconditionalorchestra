@@ -35,6 +35,7 @@ module.exports = function() {
   //rate
   var appFrameRate = 30;
   var sequenceStart = true;
+  var sequenceLength = 1500;
   var rootNoteRate;
   //bass
   var bass;
@@ -1802,10 +1803,10 @@ module.exports = function() {
           updateFilter();
         }
         //sequencer counter
-        if (sketch.frameCount % 2000 === 0 && sequenceStart === false) {
+        if (sketch.frameCount % sequenceLength === 0 && sequenceStart === false) {
           sequenceStart = true;
           console.log('sequenceStart', sequenceStart);
-        } else if (sketch.frameCount % 2000 === 0 && sequenceStart === true) {
+        } else if (sketch.frameCount % sequenceLength === 0 && sequenceStart === true) {
           sequenceStart = false;
           console.log('sequenceStart', sequenceStart);
         }
