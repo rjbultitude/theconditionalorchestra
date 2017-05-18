@@ -66,6 +66,7 @@ module.exports = function() {
   var sinVal = 0;
   var cosVal = 0;
   var panArr = [-0.8, 0, 0.8];
+  var longNotePanArr = [-0.2, 0, 0.2];
   //Sound objects
   var padSounds = [];
   var choralSounds = [];
@@ -298,7 +299,7 @@ module.exports = function() {
 
   // Quieten the pad when the harp plays
   function getPadVolume(wCheck, sCheck, padType) {
-    if (sCheck.harpCanPlay && wCheck.isMild) {
+    if (sCheck.harpCanPlay && wCheck.isMild || wCheck.isVisbilityPoor) {
       return avSettings[padType].volume / 3;
     } else {
       return avSettings[padType].volume;
@@ -429,7 +430,7 @@ module.exports = function() {
 
   function getLongNoteVolArr(wCheck) {
     if (wCheck.isVisbilityPoor) {
-      return [0.65, 0.825, 1];
+      return [0.75, 0.875, 1];
     } else {
       return [0.225, 0.375, 0.7125];
     }
@@ -458,8 +459,8 @@ module.exports = function() {
       lwData.visibility.value,
       lwData.visibility.min,
       lwData.visibility.max,
-      50,
-      10
+      150,
+      30
     ));
   }
 
@@ -763,6 +764,7 @@ module.exports = function() {
     console.log('longNoteVolArr', longNoteVolArr);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
+    console.log('reverbDecay', reverbDecay);
     var longNoteType = getLongNoteType(wCheck);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var rootNoteGrtrMedian = isRootNoteGrtrMedian(rootNote, rootNoteRange);
@@ -933,9 +935,11 @@ module.exports = function() {
           longNote.disconnect();
         }
         longNote.connect(reverb);
-        longNote.playMode('restart');
+        if (!wCheck.isVisbilityPoor) {
+          longNote.playMode('restart');
+        }
         longNote.play();
-        longNote.pan(sketch.random(panArr));
+        longNote.pan(sketch.random(longNotePanArr));
         longNote.setVolume(_longNoteVol);
         longNote.rate(_longNoteRate);
       }
