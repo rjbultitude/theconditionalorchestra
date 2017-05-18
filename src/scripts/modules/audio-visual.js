@@ -1621,8 +1621,7 @@ module.exports = function() {
       }
 
       function updateSynchedSounds() {
-        if (sketch.frameCount === 1 || sketch.frameCount % currNoteLength ===
-          0) {
+        if (sketch.frameCount === 1 || sketch.frameCount % currNoteLength === 0) {
           playSynchedSounds(false);
           //Temporarily stop the call of this fn
           //while we set a new note length
@@ -1653,7 +1652,7 @@ module.exports = function() {
       }
 
       function updateChinaCymbal() {
-        if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
+        if (sketch.frameCount % 600 === 0 && sketch.frameCount !== 0) {
           chineseCymbal.play();
           chineseCymbal.setVolume(0.5);
           chineseCymbal.rate(rootNoteRate);
@@ -1661,7 +1660,7 @@ module.exports = function() {
       }
 
       function updateTimpani() {
-        if (sketch.frameCount % 1000 === 0 && sketch.frameCount !== 0) {
+        if (sketch.frameCount % 300 === 0 && sketch.frameCount !== 0) {
           timpani.play();
           timpani.setVolume(0.5);
           timpani.rate(rootNoteRate);
@@ -1679,7 +1678,7 @@ module.exports = function() {
       }
 
       function updateDjembe() {
-        if (sketch.frameCount % rideCymbalStepTime === 0) {
+        if (sketch.frameCount % rideCymbalStepTime * 2 === 0) {
           var _djembeVol = sketch.random(djembeVolArr);
           djembe.play();
           djembe.setVolume(_djembeVol);
@@ -1698,9 +1697,7 @@ module.exports = function() {
           angle = 0;
         }
         sinVal = sketch.sin(angle);
-        console.log('sinVal', sinVal);
         cosVal = sketch.cos(angle + 90);
-        console.log('cosVal', cosVal);
         brassBaritone.pan(sinVal);
         brassBaritone2.pan(cosVal);
         if (sketch.frameCount % brassBaritoneStepTime === 0) {
