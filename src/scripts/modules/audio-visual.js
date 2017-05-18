@@ -279,16 +279,17 @@ module.exports = function() {
 
   //TODO return early
   function getChordType(wCheck) {
+    // Inversions are Fine | freezing | windy
     var _chordType;
     //playlogic
     if (wCheck.isClement && wCheck.isCold) {
-      _chordType = 'octatonicMinorIntervals';
+      _chordType = 'heptatonicMinorIntervals';
     } else if (wCheck.isFine) {
       _chordType = 'heptatonicMajorIntervals';
     } else if (wCheck.isCold) {
       _chordType = 'minorSeventhIntervals';
     } else if (wCheck.isStormy) {
-      _chordType = 'heptatonicMinorIntervals';
+      _chordType = 'octatonicMinorIntervals';
     } else {
       _chordType = 'majorSeventhIntervals';
     }
@@ -1442,6 +1443,7 @@ module.exports = function() {
         var _hArpScalesNoRests = [];
         //Make arrays of frequencies for playback
         synchedSoundsChords = makeChordSequence();
+        console.log('synchedSoundsChords', synchedSoundsChords);
         // Set filter for pad sounds
         setFilter();
         setReverb();
@@ -1683,7 +1685,7 @@ module.exports = function() {
         if (sketch.frameCount % djembeStepTime === 0) {
           var _djembeVol = sketch.random(djembeVolArr);
           djembe.play();
-          djembe.setVolume(1);
+          djembe.setVolume(_djembeVol);
           djembe.rate(1);
           djembe.pan(0.35);
         }
