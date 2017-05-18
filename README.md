@@ -140,6 +140,8 @@ Create 'Add to home screen' button
 
 Create wCheck condition for very hot that uses different pad and longNote sounds
 
+Add notes about precipIntensity
+
 Update logic App Logic and spreadsheet
 
 Refactor the display fns so that they're chained
