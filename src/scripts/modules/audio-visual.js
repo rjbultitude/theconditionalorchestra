@@ -278,7 +278,7 @@ module.exports = function() {
     return padType;
   }
 
-  //TODO return early
+  // Only applies to inversions
   function getChordType(wCheck) {
     // Inversions are Fine | freezing | windy
     var _chordType;
@@ -1154,8 +1154,7 @@ module.exports = function() {
        * @param  {Number} semisInOct      [Number of semitones in octave]
        * @return {Object}                 [The scale and the total number of octaves]
        */
-      function getAllNotesScale(largestNumber, smallestNumber,
-        rootAndOffset, semisInOct) {
+      function getAllNotesScale(largestNumber, smallestNumber, rootAndOffset, semisInOct) {
         var _highestNoteIndex = largestNumber + Math.abs(rootAndOffset);
         var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(
           rootAndOffset);
@@ -1185,8 +1184,7 @@ module.exports = function() {
        * @param  {Number} numNotes      [Number of notes needed]
        * @return {Array}                [current or new array]
        */
-      function errorCheckIntervalsArr(chosenIntervals, numNotes,
-        amountToAdd, repeatMultiple, type) {
+      function errorCheckIntervalsArr(chosenIntervals, numNotes, amountToAdd, repeatMultiple, type) {
         var _newIntervals;
         var _difference = numNotes - chosenIntervals.length;
         var _amountToAdd;
@@ -1200,8 +1198,8 @@ module.exports = function() {
         }
         //Error check
         if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(chosenIntervals,
-            _difference, _amountToAdd, _repeatMultiple);
+          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _amountToAdd, _repeatMultiple);
+          console.log('_newIntervals', _newIntervals);
           console.log('added missing items to ' + type, _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
@@ -1215,8 +1213,7 @@ module.exports = function() {
         var _highestIndex = intervalIndexOffset + numNotes;
         if (_highestIndex > scaleIntervals.length) {
           var _diff = _highestIndex - scaleIntervals.length;
-          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff,
-            null, null);
+          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, null, null);
         } else {
           _scaleIntervals = scaleIntervals;
         }
@@ -1228,8 +1225,7 @@ module.exports = function() {
         var _scaleArray = [];
         var _intervalIndexOffset = intervalIndexOffset || 0;
         //add missing scale intervals
-        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals,
-          _intervalIndexOffset, numNotes);
+        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes);
         var _newNote;
         for (var i = 0; i < numNotes; i++) {
           _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] +
@@ -1299,19 +1295,18 @@ module.exports = function() {
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
-          _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff,
-            null, null);
+          _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null, null);
         }
         return _chordOffsetArr;
       }
 
       function getInversionOffsetArr(numChords) {
         var _chordInversionOffSetArr = intervals[inversionOffsetType];
+        console.log('_chordInversionOffSetArr', _chordInversionOffSetArr);
         var _diff;
         if (numChords > _chordInversionOffSetArr.length) {
           _diff = numChords - _chordInversionOffSetArr.length;
-          _chordInversionOffSetArr = addMissingArrayItems(
-            _chordInversionOffSetArr, _diff, null, null);
+          _chordInversionOffSetArr = addMissingArrayItems(_chordInversionOffSetArr, _diff, null, null);
         }
         return _chordInversionOffSetArr;
       }
@@ -1337,8 +1332,7 @@ module.exports = function() {
         var _inversionOffsetArr = getInversionOffsetArr(chordNumGreatest);
         //Handle array lengths
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
-          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr,
-            chordNumGreatest - _chordSeqOffsetArr.length, null, null);
+          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
         //Create primary chords
         for (var i = 0; i < numChords; i++) {
@@ -1447,7 +1441,6 @@ module.exports = function() {
         var _hArpScalesNoRests = [];
         //Make arrays of frequencies for playback
         synchedSoundsChords = makeChordSequence();
-        console.log('synchedSoundsChords', synchedSoundsChords);
         // Set filter for pad sounds
         setFilter();
         setReverb();

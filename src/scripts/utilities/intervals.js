@@ -10,11 +10,11 @@ module.exports = {
     majorSixthIntervals: [0, 4, 7, 9, 0, 4, 7, 9],
     minorSixthIntervals: [0, 3, 7, 9, 0, 3, 7, 9],
     //7th
-    majorSeventhIntervals: [0, 4, 7, 11, 0, 4, 7, 11],
-    minorSeventhIntervals: [0, 3, 7, 10, 0, 4, 7, 10],
+    majorSeventhIntervals: [0, 4, 7, 11],
+    minorSeventhIntervals: [0, 3, 7, 10],
     //9th
-    majorNinthIntervals: [0, 4, 7, 11, 14, 0, 2, 4, 7, 11, 14],
-    minorNinthIntervals: [0, 3, 7, 10, 14, 0, 2, 3, 7, 10, 14],
+    majorNinthIntervals: [0, 4, 7, 11, 14],
+    minorNinthIntervals: [0, 3, 7, 10, 14],
     //Safe notes for rain arrpeggio
     safeIntervals: [0, 5, 7, 9], //
     safeNthMajorIntervals: [0, 4, 7], //for rain arrpeggio

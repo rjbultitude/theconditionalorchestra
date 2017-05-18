@@ -125,6 +125,8 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Check inversions are working properly - should be chords that use only the selected notes
+
 Consider dropping reverb (for performance purposes)
 ---
 Harp should be something other than humidity - humidity should be evoked by noise or suchlike
@@ -141,6 +143,8 @@ Create 'Add to home screen' button
 Create wCheck condition for very hot that uses different pad and longNote sounds
 
 Add notes about precipIntensity
+
+Consider using windyTv map rather than text input
 
 Update logic App Logic and spreadsheet
 
