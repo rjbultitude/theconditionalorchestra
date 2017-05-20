@@ -1454,7 +1454,11 @@ module.exports = function() {
           //Add spaces where necessary
           if (typeof displayProp.musicValue === 'string') {
             _musicValue = microU.addSpacesToString(displayProp.musicValue);
-            _musicValueLowerCase = microU.strToLowerCase(_musicValue);
+            if (displayProp.key !== 'pressure') {
+              _musicValueLowerCase = microU.strToLowerCase(_musicValue);
+            } else {
+              _musicValueLowerCase = _musicValue;
+            }
             displayProp.musicValue = microU.removeStrFromStart('inversions', _musicValueLowerCase);
           }
           return displayProp;
