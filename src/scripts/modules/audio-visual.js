@@ -621,7 +621,6 @@ module.exports = function() {
       var _multiplierAmt = minMultiplier + i;
       _noteLengths.push(_multiplierAmt * appFrameRate);
     }
-    console.log('_noteLengths', _noteLengths);
     return _noteLengths;
   }
 
@@ -742,7 +741,6 @@ module.exports = function() {
     var leadVolume = getLeadSoundVolume(wCheck);
     var padType = getPadType(wCheck);
     var padVolume = getPadVolume(wCheck, sCheck, padType);
-    console.log('padVolume', padVolume);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
     //Humidity
@@ -751,7 +749,6 @@ module.exports = function() {
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
     var humidArpIntervalsKey = getHumidArpIntervals(lwData, chordType);
     var harpVolArr = getHarpVolArr(wCheck, sCheck);
-    console.log('harpVolArr', harpVolArr);
     var seqRepeatNum = getMainSeqRepeatNum(lwData, numChords);
     //Root note
     var rootNoteRange = getRootNoteRange(numSemisPerOctave);
@@ -764,7 +761,6 @@ module.exports = function() {
     console.log('longNoteVolArr', longNoteVolArr);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
-    console.log('reverbDecay', reverbDecay);
     var longNoteType = getLongNoteType(wCheck);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var rootNoteGrtrMedian = isRootNoteGrtrMedian(rootNote, rootNoteRange);
@@ -867,7 +863,6 @@ module.exports = function() {
         humidArpScales = hScalesNoRests.map(function(hArpScale) {
           return getAllegrettoRhythmType(hArpScale);
         });
-        console.log('humidArpScales', humidArpScales);
         humidArpReady = true;
       }
 
@@ -876,7 +871,6 @@ module.exports = function() {
         precipArpScales = precipArpScaleNoRests.map(function(pArpScale) {
           return addRandomStops(pArpScale).reverse();
         });
-        console.log('precipArpScales', precipArpScales);
         precipArpReady = true;
       }
 
@@ -1017,7 +1011,6 @@ module.exports = function() {
       }
 
       function playPad(playFullNotes) {
-        //console.log('chord', synchedSoundsChords[chordIndex]);
         for (var i = 0, length = padSounds.length; i < length; i++) {
           padSounds[i].disconnect();
           padSounds[i].connect(soundFilter);
@@ -1038,14 +1031,12 @@ module.exports = function() {
       }
 
       function playSynchedSounds(playFullNotes) {
-        //console.log('synchedSoundsChords', synchedSoundsChords);
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence
           //seqRepeatNum number of times
           //play the first chord of extraChords
-          chordIndex = synchedSoundsChords.length - numExtraChords +
-            extraSeqCount;
+          chordIndex = synchedSoundsChords.length - numExtraChords + extraSeqCount;
           extraSeqCount++;
           extraSeqPlaying = true;
           //Once we've played all the extraChords
@@ -1075,6 +1066,7 @@ module.exports = function() {
 
       function playChoralSound(scaleArray) {
         // playlogic
+        // TODO consider for loop for speed
         choralSounds.forEach(function(choralSound, i) {
           // must loop before rate is set
           // issue in Chrome only
@@ -1091,7 +1083,6 @@ module.exports = function() {
             choralSound.rate(scaleArray[i]);
             choralSound.setVolume(0.1);
           }
-          console.log('choral sounds rate', scaleArray[i]);
         });
       }
 
@@ -1167,7 +1158,6 @@ module.exports = function() {
         if (_lowestNoteIndex > _highestNoteIndex) {
           _downFirst = true;
         }
-        //console.log('creating array with ' + _totalOctaves + ' octaves ');
         var _allNotesScaleCentreNoteObj = getFreqScales.createEqTempMusicalScale(
           1, _totalOctaves, semisInOct, _downFirst);
         return {
@@ -1199,7 +1189,6 @@ module.exports = function() {
         //Error check
         if (_difference > 0) {
           _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _amountToAdd, _repeatMultiple);
-          console.log('_newIntervals', _newIntervals);
           console.log('added missing items to ' + type, _newIntervals);
         } else {
           _newIntervals = chosenIntervals;
@@ -1220,16 +1209,14 @@ module.exports = function() {
         return _scaleIntervals;
       }
 
-      function getPitchesFromIntervals(allNotesScale, scaleIntervals,
-        centreNoteIndex, numNotes, intervalIndexOffset) {
+      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset) {
         var _scaleArray = [];
         var _intervalIndexOffset = intervalIndexOffset || 0;
         //add missing scale intervals
         var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes);
         var _newNote;
         for (var i = 0; i < numNotes; i++) {
-          _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] +
-            centreNoteIndex];
+          _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
             _scaleArray.push(_newNote);
@@ -1302,7 +1289,6 @@ module.exports = function() {
 
       function getInversionOffsetArr(numChords) {
         var _chordInversionOffSetArr = intervals[inversionOffsetType];
-        console.log('_chordInversionOffSetArr', _chordInversionOffSetArr);
         var _diff;
         if (numChords > _chordInversionOffSetArr.length) {
           _diff = numChords - _chordInversionOffSetArr.length;
@@ -1493,7 +1479,7 @@ module.exports = function() {
               fadeInDisplayItem(_lastItem);
             }
           } else {
-            //console.log('Not displayed because not defined or false ', coProp);
+            //'Not displayed because not defined or false ', coProp);
           }
         });
       }
@@ -1552,8 +1538,7 @@ module.exports = function() {
             displayWorker.terminate();
           });
           displayWorker.onerror = function(e) {
-            console.log('Error with web worker on ' + 'Line #' + e.lineno +
-              ' - ' + e.message + ' in ' + e.filename);
+            console.log('Error with web worker on ' + 'Line #' + e.lineno +' - ' + e.message + ' in ' + e.filename);
             configureDisplay(_musicDisplayVals);
           };
           displayWorker.postMessage({
@@ -1769,7 +1754,7 @@ module.exports = function() {
         if (padReady) {
           updateSynchedSounds();
         }
-        if (leadSoundReady) {
+        if (sequenceStart && leadSoundReady) {
           updateLeadSound();
         }
         //playlogic
@@ -1831,11 +1816,9 @@ module.exports = function() {
   }
 
   channel.subscribe('stop', function(autoStart) {
-    var _allDisplayItems = document.querySelectorAll(
-      '.conditions-display__item');
+    var _allDisplayItems = document.querySelectorAll('.conditions-display__item');
     for (var i = 0, length = _allDisplayItems.length; i < length; i++) {
-      fadeOutDisplayItems(_allDisplayItems[i], i, _allDisplayItems.length,
-        clearAndStopWhenDone, autoStart);
+      fadeOutDisplayItems(_allDisplayItems[i], i, _allDisplayItems.length, clearAndStopWhenDone, autoStart);
     }
   });
 

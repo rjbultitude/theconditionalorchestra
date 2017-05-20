@@ -54,7 +54,7 @@ module.exports = (function() {
             constrain: true,
             unit: '',
             iconPath: '/img/ozone-icon.svg',
-            music: 'Number of lower chords: ',
+            music: 'Number of 2nd sequence chords: ',
             musicValue: ''
           },
           {
