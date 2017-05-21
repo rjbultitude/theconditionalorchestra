@@ -1,7 +1,7 @@
 {
   "name": "London, UK",
   "cloudCover":{
-    "value":0.2,
+    "value":0.5,
     "min":0,
     "max":1
   },
@@ -11,12 +11,12 @@
     "max":75
   },
   "visibility":{
-    "value":6,
+    "value":8,
     "min":0.1,
     "max":10
   },
   "pressure":{
-    "value":1010,
+    "value":1022,
     "min":980,
     "max":1050
   },
@@ -32,7 +32,7 @@
   },
   "precipType": "",
   "temperature":{
-    "value":20.2,
+    "value":70.2,
     "min":-35,
     "max":120
   },
@@ -57,7 +57,7 @@
     "max":72
   },
   "apparentTemperature":{
-    "value":20.2,
+    "value":70.2,
     "min":-35,
     "max":120
   },

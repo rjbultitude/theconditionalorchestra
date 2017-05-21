@@ -90,7 +90,6 @@ module.exports = (function generateFrequencyScales() {
           _negCount = _negCount / 2;
         } else {
           //Create upwards _scale
-          //TODO avoid mutation
           _scale = _scale.concat(createScale(_posCount, numSemitones, true, true));
           _posCount *= 2;
         }

@@ -1166,46 +1166,14 @@ module.exports = function() {
         };
       }
 
-      /**
-       * Returns a set of intervals that is
-       * long enough for the sequence to play
-       * @param  {Array} chosenIntervals  [Set of initial intervals]
-       * @param  {Number} numNotes      [Number of notes needed]
-       * @return {Array}                [current or new array]
-       */
-      function errorCheckIntervalsArr(chosenIntervals, numNotes, amountToAdd, repeatMultiple, type) {
-        var _newIntervals;
-        // Is this correct?
-        // surely we need the offset too
-        var _difference = numNotes - chosenIntervals.length;
-        var _amountToAdd;
-        var _repeatMultiple = repeatMultiple || 0;
-        // If using non western scale
-        // ensure numbers don't balloon
-        // TODO Is this the right thing to do?
-        // It might produce a larger array but
-        // it would be correct to continue up an ocatave
-        if (amountToAdd > avSettings.numSemitones) {
-          _amountToAdd = 0;
-        } else {
-          _amountToAdd = amountToAdd;
-        }
-        // Error check
-        if (_difference > 0) {
-          _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _amountToAdd, _repeatMultiple);
-          console.log('added missing items to ' + type, _newIntervals);
-        } else {
-          _newIntervals = chosenIntervals;
-        }
-        return _newIntervals;
-      }
-
-      function errorCheckScaleIntervals(scaleIntervals, intervalIndexOffset, numNotes, amountToAdd, type) {
+      // Adds new items to the intervals array
+      // should it not have enough notes
+      function errorCheckScaleIntervals(scaleIntervals, intervalIndexOffset, numNotes, amountToAdd, repeatMultiple, type) {
         var _scaleIntervals = [];
         var _highestIndex = intervalIndexOffset + numNotes;
         if (_highestIndex > scaleIntervals.length) {
           var _diff = _highestIndex - scaleIntervals.length;
-          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, amountToAdd, null);
+          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, amountToAdd, repeatMultiple);
           console.log('added missing items to ' + type, _scaleIntervals);
         } else {
           _scaleIntervals = scaleIntervals;
@@ -1213,14 +1181,14 @@ module.exports = function() {
         return _scaleIntervals;
       }
 
-      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset, amountToAdd, type) {
+      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset, amountToAdd, repeatMultiple, type) {
         var _scaleArray = [];
         var _intervalIndexOffset = intervalIndexOffset || 0;
         // add missing scale intervals
-        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes, amountToAdd, type);
+        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes, amountToAdd, repeatMultiple, type);
         var _newNote;
         for (var i = 0; i < numNotes; i++) {
-          console.log('note ' + i + ' ' + type, _scaleIntervals[_intervalIndexOffset]);
+          //console.log('note ' + i + ' ' + type, _scaleIntervals[_intervalIndexOffset]);
           _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
@@ -1246,14 +1214,7 @@ module.exports = function() {
         var _centreFreqIndex;
         var _scaleArray = [];
         var _rootAndOffset = rootNote + msConfig.startNote;
-        // ensure there are enough items in the intervals array
-        var _scaleIntervals = errorCheckIntervalsArr(
-          intervals[msConfig.chordKey],
-          msConfig.numNotes,
-          msConfig.amountToAdd,
-          msConfig.repeatMultiple,
-          msConfig.type
-        );
+        var _scaleIntervals = intervals[msConfig.chordKey];
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
@@ -1281,6 +1242,7 @@ module.exports = function() {
           msConfig.numNotes,
           msConfig.inversionStartNote,
           msConfig.amountToAdd,
+          msConfig.repeatMultiple,
           msConfig.type
         );
         return _scaleArray;
@@ -1323,15 +1285,16 @@ module.exports = function() {
 
       function makeChordSequence() {
         var _chordSeq = [];
-        //Chord shift
+        // Chord shift
         var _chordSeqOffsetArr = getChordSeqOffsetArr(chordNumGreatest);
-        //Chord inversion shift
+        // Chord inversion shift
         var _inversionOffsetArr = getInversionOffsetArr(chordNumGreatest);
-        //Handle array lengths
+        // Handle array lengths
+        // if there's not enough chords (offset indices) in the array
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
           _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
         }
-        //Create primary chords
+        // Create primary chords
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(createMusicalScale({
             numNotes: numPadNotes,
@@ -1343,7 +1306,7 @@ module.exports = function() {
             type: 'pad'
           }));
         }
-        //Adding extra chord(s)
+        // Create extra sequence chord(s)
         for (var j = 0; j < numExtraChords; j++) {
           _chordSeq.push(createMusicalScale({
             numNotes: numPadNotes,
@@ -1398,6 +1361,8 @@ module.exports = function() {
 
       function createPrecipArpScales() {
         var _pArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
+        // Add a whole copy of the array
+        // TODO why are we doing this?
         var _repeatMultiple = 1;
         var _intervalIndexOffset = 0;
         var _intervalType;

@@ -125,7 +125,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Check inversions are working properly - should be chords that use only the selected notes
+Only output chordType if using inversions
 
 Consider dropping reverb (for performance purposes)
 ---
