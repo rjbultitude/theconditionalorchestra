@@ -248,7 +248,6 @@ module.exports = function() {
     return Math.round(_numSemitones);
   }
 
-  //TODO return early
   function getPadType(wCheck) {
     var padType = '';
     // playlogic
@@ -1137,8 +1136,8 @@ module.exports = function() {
       }
 
       /**
-       * Critical function - if the correct number of octaves
-       * are not produced the app fails
+       * Critical function - creates a set of octaves
+       * if the correct number of octaves are not produced the app fails
        * @param  {Number}  largestNumber  [highest positive number]
        * @param  {Number}  smallestNumber [highest negative number]
        * @param  {Number}  rootAndOffset  [root note plus the chord offset]
@@ -1176,17 +1175,22 @@ module.exports = function() {
        */
       function errorCheckIntervalsArr(chosenIntervals, numNotes, amountToAdd, repeatMultiple, type) {
         var _newIntervals;
+        // Is this correct?
+        // surely we need the offset too
         var _difference = numNotes - chosenIntervals.length;
         var _amountToAdd;
         var _repeatMultiple = repeatMultiple || 0;
-        //When using non western scale
-        //ensure numbers don't balloon
+        // If using non western scale
+        // ensure numbers don't balloon
+        // TODO Is this the right thing to do?
+        // It might produce a larger array but
+        // it would be correct to continue up an ocatave
         if (amountToAdd > avSettings.numSemitones) {
           _amountToAdd = 0;
         } else {
           _amountToAdd = amountToAdd;
         }
-        //Error check
+        // Error check
         if (_difference > 0) {
           _newIntervals = addMissingArrayItems(chosenIntervals, _difference, _amountToAdd, _repeatMultiple);
           console.log('added missing items to ' + type, _newIntervals);
@@ -1196,26 +1200,27 @@ module.exports = function() {
         return _newIntervals;
       }
 
-      function errorCheckScaleIntervals(scaleIntervals,
-        intervalIndexOffset, numNotes) {
+      function errorCheckScaleIntervals(scaleIntervals, intervalIndexOffset, numNotes, amountToAdd, type) {
         var _scaleIntervals = [];
         var _highestIndex = intervalIndexOffset + numNotes;
         if (_highestIndex > scaleIntervals.length) {
           var _diff = _highestIndex - scaleIntervals.length;
-          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, null, null);
+          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, amountToAdd, null);
+          console.log('added missing items to ' + type, _scaleIntervals);
         } else {
           _scaleIntervals = scaleIntervals;
         }
         return _scaleIntervals;
       }
 
-      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset) {
+      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset, amountToAdd, type) {
         var _scaleArray = [];
         var _intervalIndexOffset = intervalIndexOffset || 0;
-        //add missing scale intervals
-        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes);
+        // add missing scale intervals
+        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes, amountToAdd, type);
         var _newNote;
         for (var i = 0; i < numNotes; i++) {
+          console.log('note ' + i + ' ' + type, _scaleIntervals[_intervalIndexOffset]);
           _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
@@ -1241,6 +1246,7 @@ module.exports = function() {
         var _centreFreqIndex;
         var _scaleArray = [];
         var _rootAndOffset = rootNote + msConfig.startNote;
+        // ensure there are enough items in the intervals array
         var _scaleIntervals = errorCheckIntervalsArr(
           intervals[msConfig.chordKey],
           msConfig.numNotes,
@@ -1261,15 +1267,20 @@ module.exports = function() {
         _allNotesScale = _allNotesNumOctsCentreFreq.allNotesScale;
         _centreFreqIndex = _allNotesNumOctsCentreFreq.centreNoteIndex;
         _numOcts = _allNotesNumOctsCentreFreq.numOctaves;
-        //Get centre note
-        //After all notes scale has been created
+        // Start at the centre note
+        // Then find the root note
+        // Then the offset (used by chord seq)
+        // After all notes scale has been created
         var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
+        // Inversions are acheived by
+        // selecting an index from within the intervals themselves
         _scaleArray = getPitchesFromIntervals(
           _allNotesScale,
           _scaleIntervals,
           _centreNoteIndex,
           msConfig.numNotes,
           msConfig.inversionStartNote,
+          msConfig.amountToAdd,
           msConfig.type
         );
         return _scaleArray;
