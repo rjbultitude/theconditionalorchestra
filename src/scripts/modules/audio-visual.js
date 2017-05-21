@@ -1361,9 +1361,9 @@ module.exports = function() {
 
       function createPrecipArpScales() {
         var _pArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
-        // Add a whole copy of the array
-        // TODO why are we doing this?
-        var _repeatMultiple = 1;
+        // When adding missing values
+        // go up two octaves
+        var _repeatMultiple = 2;
         var _intervalIndexOffset = 0;
         var _intervalType;
         var _pArpScalesNoRests = [];
@@ -1372,7 +1372,6 @@ module.exports = function() {
         } else {
           _intervalType = 'safeNthMinorIntervals';
         }
-        _repeatMultiple = 2;
         var _mainPArpScale = createMusicalScale({
           numNotes: avSettings.numPrecipArpNotes,
           startNote: _pArpCNoteOffset,
