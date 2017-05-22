@@ -524,7 +524,6 @@ module.exports = function() {
     ));
   }
 
-  //TODO return early
   function getHumidArpIntervals(lwData, chordType) {
     var _hIntervals;
     //playlogic
@@ -733,6 +732,8 @@ module.exports = function() {
     var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
     var numSemisPerOctave = getNumSemisPerOctave(avSettings, wCheck);
     //Precipitation
+    // TODO Group these into object
+    // and only create it if it's raining
     var precipCategory = getPrecipCategory(lwData);
     var precipArpBpm = getPrecipArpBpm(lwData);
     var precipArpBps = precipArpBpm / 60;
@@ -742,7 +743,9 @@ module.exports = function() {
     var padVolume = getPadVolume(wCheck, sCheck, padType);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
-    //Humidity
+    // Humidity
+    // TODO Group these into object
+    // and only create it if it's humid
     var humidArpBpm = getHumidArpBpm(lwData);
     var humidArpBps = humidArpBpm / 60;
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
@@ -769,11 +772,14 @@ module.exports = function() {
     var invExtraSeqOffset = numSemisPerOctave - extraSeqOffset;
     console.log('invExtraSeqOffset', invExtraSeqOffset);
     var chordSeqKey = getChordSeqKey(wCheck, rootNoteGrtrMedian);
+    // TODO Group these into object
+    // and only create it if it's windy
     var brassBaritoneVol = getBrassVolume(lwData);
     var brassBaritoneBpm = getBrassBpm(lwData);
     var brassBaritoneBps = brassBaritoneBpm / 60;
     var brassBaritoneStepTime = Math.round(appFrameRate / brassBaritoneBps);
     var brassBaritone2StepTime = brassBaritoneStepTime * 2 + 57;
+    // Ride
     var rideCymbalRate = getRideCymbalRate(lwData);
     var rideCymbalBpm = getRideCymbalsBpm(lwData);
     var rideCymbalBps = rideCymbalBpm / 60;
@@ -1036,7 +1042,6 @@ module.exports = function() {
       }
 
       function playSynchedSounds(playFullNotes) {
-        console.log('synchedSoundsChords', synchedSoundsChords);
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence
@@ -1203,7 +1208,7 @@ module.exports = function() {
         var _scaleIntervals = errorCheckScaleIntervals(pConfig);
         var _newNote;
         for (var i = 0; i < pConfig.numNotes; i++) {
-          //console.log('note ' + i + ' ' + pConfig.type, _scaleIntervals[pConfig.intervalIndexOffset]);
+          //console.log('note ' + i + ' ' + pConfig.type, _scaleIntervals[_intervalIndexOffset]);
           _newNote = pConfig.allNotesArr[_scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
@@ -1230,10 +1235,11 @@ module.exports = function() {
         var _scaleArray = [];
         var _rootAndOffset = rootNote + msConfig.startNote;
         var _scaleIntervals = intervals[msConfig.chordKey];
-        var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals);
+        // Inlcude amountToAdd to get true upper number
+        var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals) + msConfig.amountToAdd;
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
-        //Once we know the total range required
-        //get all the notes/frequencies
+        // Once we know the total range required
+        // get all the notes/frequencies
         var _allNotesNumOctsCentreFreq = getAllNotesScale({
             largestPosNumber: _largestPosNumber,
             largestNegNumber: _largestNegNumber,
@@ -1333,7 +1339,6 @@ module.exports = function() {
             type: 'pad extra'
           }));
         }
-        console.log('_chordSeq', _chordSeq);
         return _chordSeq;
       }
 
