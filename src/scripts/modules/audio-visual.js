@@ -873,6 +873,12 @@ module.exports = function() {
         precipArpReady = true;
       }
 
+      /**
+       * ------------------------
+       * Music playback functions
+       * ------------------------
+       */
+
       function playBrassBaritone(scale) {
         brassBaritone.play();
         brassBaritone.setVolume(brassBaritoneVol);
@@ -1030,6 +1036,7 @@ module.exports = function() {
       }
 
       function playSynchedSounds(playFullNotes) {
+        console.log('synchedSoundsChords', synchedSoundsChords);
         // Master sequence
         if (mainSeqCount === seqRepeatNum && numExtraChords > 0) {
           //If we've played the whole sequence
@@ -1136,20 +1143,26 @@ module.exports = function() {
       }
 
       /**
+       * ------------------------
+       * Scale creation functions
+       * ------------------------
+       */
+
+      /**
        * Critical function - creates a set of octaves
        * if the correct number of octaves are not produced the app fails
-       * @param  {Number}  largestNumber  [highest positive number]
-       * @param  {Number}  smallestNumber [highest negative number]
+       * @param  {Number}  largestPosNumber  [highest positive number]
+       * @param  {Number}  largestNegNumber [highest negative number]
        * @param  {Number}  rootAndOffset  [root note plus the chord offset]
        * @param  {Number} semisInOct      [Number of semitones in octave]
        * @return {Object}                 [The scale and the total number of octaves]
        */
-      function getAllNotesScale(largestNumber, smallestNumber, rootAndOffset, semisInOct) {
-        var _highestNoteIndex = largestNumber + Math.abs(rootAndOffset);
-        var _lowestNoteIndex = Math.abs(smallestNumber) + Math.abs(
-          rootAndOffset);
-        var _highestFraction = _highestNoteIndex / semisInOct;
-        var _lowestFraction = _lowestNoteIndex / semisInOct;
+      function getAllNotesScale(anConfig) {
+        //largestPosNumber, largestNegNumber, rootAndOffset, semisInOct
+        var _highestNoteIndex = anConfig.largestPosNumber + Math.abs(anConfig.rootAndOffset);
+        var _lowestNoteIndex = Math.abs(anConfig.largestNegNumber) + Math.abs(anConfig.rootAndOffset);
+        var _highestFraction = _highestNoteIndex / anConfig.numSemisPerOctave;
+        var _lowestFraction = _lowestNoteIndex / anConfig.numSemisPerOctave;
         var _numUpperOctaves = Math.ceil(_highestFraction);
         var _numLowerOctaves = Math.ceil(_lowestFraction);
         var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
@@ -1157,10 +1170,11 @@ module.exports = function() {
         if (_lowestNoteIndex > _highestNoteIndex) {
           _downFirst = true;
         }
-        var _allNotesScaleCentreNoteObj = getFreqScales.createEqTempMusicalScale(
-          1, _totalOctaves, semisInOct, _downFirst);
+        // TODO use latest version of createEqTempMusicalScale
+        // which only accepts a config object
+        var _allNotesScaleCentreNoteObj = getFreqScales.createEqTempMusicalScale(1, _totalOctaves, anConfig.numSemisPerOctave, _downFirst);
         return {
-          allNotesScale: _allNotesScaleCentreNoteObj.scale,
+          allNotesArr: _allNotesScaleCentreNoteObj.scale,
           centreNoteIndex: _allNotesScaleCentreNoteObj.centreFreqIndex,
           numOctaves: _totalOctaves
         };
@@ -1168,28 +1182,29 @@ module.exports = function() {
 
       // Adds new items to the intervals array
       // should it not have enough notes
-      function errorCheckScaleIntervals(scaleIntervals, intervalIndexOffset, numNotes, amountToAdd, repeatMultiple, type) {
+      function errorCheckScaleIntervals(pConfig) {
         var _scaleIntervals = [];
-        var _highestIndex = intervalIndexOffset + numNotes;
-        if (_highestIndex > scaleIntervals.length) {
-          var _diff = _highestIndex - scaleIntervals.length;
-          _scaleIntervals = addMissingArrayItems(scaleIntervals, _diff, amountToAdd, repeatMultiple);
-          console.log('added missing items to ' + type, _scaleIntervals);
+        var _highestIndex = pConfig.intervalIndexOffset + pConfig.numNotes;
+        var _scaleIntervalsLength = pConfig.scaleIntervals.length;
+        if (_highestIndex > _scaleIntervalsLength) {
+          var _diff = _highestIndex - _scaleIntervalsLength;
+          _scaleIntervals = addMissingArrayItems(pConfig.scaleIntervals, _diff, pConfig.amountToAdd, pConfig.repeatMultiple);
+          console.log('added missing items to ' + pConfig.type, _scaleIntervals);
         } else {
-          _scaleIntervals = scaleIntervals;
+          _scaleIntervals = pConfig.scaleIntervals;
         }
         return _scaleIntervals;
       }
 
-      function getPitchesFromIntervals(allNotesScale, scaleIntervals, centreNoteIndex, numNotes, intervalIndexOffset, amountToAdd, repeatMultiple, type) {
+      function getPitchesFromIntervals(pConfig) {
         var _scaleArray = [];
-        var _intervalIndexOffset = intervalIndexOffset || 0;
+        var _intervalIndexOffset = pConfig.intervalIndexOffset;
         // add missing scale intervals
-        var _scaleIntervals = errorCheckScaleIntervals(scaleIntervals, _intervalIndexOffset, numNotes, amountToAdd, repeatMultiple, type);
+        var _scaleIntervals = errorCheckScaleIntervals(pConfig);
         var _newNote;
-        for (var i = 0; i < numNotes; i++) {
-          //console.log('note ' + i + ' ' + type, _scaleIntervals[_intervalIndexOffset]);
-          _newNote = allNotesScale[_scaleIntervals[_intervalIndexOffset] + centreNoteIndex];
+        for (var i = 0; i < pConfig.numNotes; i++) {
+          //console.log('note ' + i + ' ' + pConfig.type, _scaleIntervals[pConfig.intervalIndexOffset]);
+          _newNote = pConfig.allNotesArr[_scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
             _scaleArray.push(_newNote);
@@ -1210,7 +1225,7 @@ module.exports = function() {
         }
         //Set vars
         var _numOcts;
-        var _allNotesScale = [];
+        var _allNotesArr = [];
         var _centreFreqIndex;
         var _scaleArray = [];
         var _rootAndOffset = rootNote + msConfig.startNote;
@@ -1219,13 +1234,13 @@ module.exports = function() {
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
         //Once we know the total range required
         //get all the notes/frequencies
-        var _allNotesNumOctsCentreFreq = getAllNotesScale(
-          _largestPosNumber,
-          _largestNegNumber,
-          _rootAndOffset,
-          numSemisPerOctave
-        );
-        _allNotesScale = _allNotesNumOctsCentreFreq.allNotesScale;
+        var _allNotesNumOctsCentreFreq = getAllNotesScale({
+            largestPosNumber: _largestPosNumber,
+            largestNegNumber: _largestNegNumber,
+            rootAndOffset: _rootAndOffset,
+            numSemisPerOctave: numSemisPerOctave
+          });
+        _allNotesArr = _allNotesNumOctsCentreFreq.allNotesArr;
         _centreFreqIndex = _allNotesNumOctsCentreFreq.centreNoteIndex;
         _numOcts = _allNotesNumOctsCentreFreq.numOctaves;
         // Start at the centre note
@@ -1235,16 +1250,16 @@ module.exports = function() {
         var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
         // Inversions are acheived by
         // selecting an index from within the intervals themselves
-        _scaleArray = getPitchesFromIntervals(
-          _allNotesScale,
-          _scaleIntervals,
-          _centreNoteIndex,
-          msConfig.numNotes,
-          msConfig.inversionStartNote,
-          msConfig.amountToAdd,
-          msConfig.repeatMultiple,
-          msConfig.type
-        );
+        _scaleArray = getPitchesFromIntervals({
+            allNotesArr: _allNotesArr,
+            scaleIntervals: _scaleIntervals,
+            centreNoteIndex: _centreNoteIndex,
+            numNotes: msConfig.numNotes,
+            intervalIndexOffset: msConfig.inversionStartNote,
+            amountToAdd: msConfig.amountToAdd,
+            repeatMultiple: msConfig.repeatMultiple,
+            type: msConfig.type
+          });
         return _scaleArray;
       }
 
@@ -1318,6 +1333,7 @@ module.exports = function() {
             type: 'pad extra'
           }));
         }
+        console.log('_chordSeq', _chordSeq);
         return _chordSeq;
       }
 
@@ -1421,6 +1437,12 @@ module.exports = function() {
         //For clarity
         playSounds(_pArpScalesNoRests, _hArpScalesNoRests);
       }
+
+      /**
+       * ------------------------
+       * Display creation functions
+       * ------------------------
+       */
 
       function formatCoStrings(displayData) {
         return displayData.map(function(displayProp) {
@@ -1542,14 +1564,11 @@ module.exports = function() {
         //will be ready to play in time for setup
         //Pad sounds for various weather types
         for (var i = 0; i < numPadNotes; i++) {
-          padSounds.push(sketch.loadSound('/audio/' + padType +
-            '-C2.mp3'));
+          padSounds.push(sketch.loadSound('/audio/' + padType + '-C2.mp3'));
         }
         //Long note accompanies pad
-        longNote = sketch.loadSound('/audio/' + longNoteType +
-          '-C3.mp3');
-        dropSound = sketch.loadSound('/audio/drop-' + precipCategory +
-          '.mp3');
+        longNote = sketch.loadSound('/audio/' + longNoteType + '-C3.mp3');
+        dropSound = sketch.loadSound('/audio/drop-' + precipCategory + '.mp3');
         //choral sounds for fine/freezing weather
         for (var j = 0; j < 2; j++) {
           choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
@@ -1575,6 +1594,12 @@ module.exports = function() {
         // -------------------------
         configureAudioVisual();
       };
+
+      /**
+       * ------------------------
+       * Music update functions
+       * ------------------------
+       */
 
       function updateMasterVol() {
         sketch.masterVolume(masterGain);
