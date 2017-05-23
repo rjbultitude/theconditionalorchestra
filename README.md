@@ -127,6 +127,8 @@ The pan and volume are randomly selected from two arrays.
 
 Only output chordType if using inversions
 
+Form inout seems to accept non word characters
+
 Consider dropping reverb (for performance purposes)
 ---
 Harp should be something other than humidity - humidity should be evoked by noise or suchlike

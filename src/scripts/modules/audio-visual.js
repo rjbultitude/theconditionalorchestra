@@ -1187,7 +1187,7 @@ module.exports = function() {
 
       // Adds new items to the intervals array
       // should it not have enough notes
-      function errorCheckScaleIntervals(pConfig) {
+      function addMissingNotesFromInterval(pConfig) {
         var _scaleIntervals = [];
         var _highestIndex = pConfig.intervalIndexOffset + pConfig.numNotes;
         var _scaleIntervalsLength = pConfig.scaleIntervals.length;
@@ -1204,12 +1204,11 @@ module.exports = function() {
       function getPitchesFromIntervals(pConfig) {
         var _scaleArray = [];
         var _intervalIndexOffset = pConfig.intervalIndexOffset;
-        // add missing scale intervals
-        var _scaleIntervals = errorCheckScaleIntervals(pConfig);
         var _newNote;
         for (var i = 0; i < pConfig.numNotes; i++) {
-          //console.log('note ' + i + ' ' + pConfig.type, _scaleIntervals[_intervalIndexOffset]);
-          _newNote = pConfig.allNotesArr[_scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex];
+          //console.log('note ' + i + ' ' + pConfig.type + ' scaleInterval', pConfig.scaleIntervals[_intervalIndexOffset]);
+          //console.log('intervaloffset ' + _intervalIndexOffset + ' centreNoteI ' + pConfig.centreNoteIndex + ' Final index ', pConfig.scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex);
+          _newNote = pConfig.allNotesArr[pConfig.scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
             _scaleArray.push(_newNote);
@@ -1229,15 +1228,23 @@ module.exports = function() {
           return;
         }
         //Set vars
-        var _numOcts;
         var _allNotesArr = [];
         var _centreFreqIndex;
         var _scaleArray = [];
         var _rootAndOffset = rootNote + msConfig.startNote;
         var _scaleIntervals = intervals[msConfig.chordKey];
+        // add missing scale intervals
+        var _scaleIntervalsFull = addMissingNotesFromInterval({
+          amountToAdd: msConfig.amountToAdd,
+          intervalIndexOffset: msConfig.inversionStartNote,
+          numNotes: msConfig.numNotes,
+          repeatMultiple: msConfig.repeatMultiple,
+          scaleIntervals: _scaleIntervals,
+          type: msConfig.type
+        });
         // Inlcude amountToAdd to get true upper number
-        var _largestPosNumber = getLargestPosNumInArr(_scaleIntervals) + msConfig.amountToAdd;
-        var _largestNegNumber = getLargestNegNumInArr(_scaleIntervals);
+        var _largestPosNumber = getLargestPosNumInArr(_scaleIntervalsFull) + msConfig.amountToAdd;
+        var _largestNegNumber = getLargestNegNumInArr(_scaleIntervalsFull);
         // Once we know the total range required
         // get all the notes/frequencies
         var _allNotesNumOctsCentreFreq = getAllNotesScale({
@@ -1248,7 +1255,6 @@ module.exports = function() {
           });
         _allNotesArr = _allNotesNumOctsCentreFreq.allNotesArr;
         _centreFreqIndex = _allNotesNumOctsCentreFreq.centreNoteIndex;
-        _numOcts = _allNotesNumOctsCentreFreq.numOctaves;
         // Start at the centre note
         // Then find the root note
         // Then the offset (used by chord seq)
@@ -1258,7 +1264,7 @@ module.exports = function() {
         // selecting an index from within the intervals themselves
         _scaleArray = getPitchesFromIntervals({
             allNotesArr: _allNotesArr,
-            scaleIntervals: _scaleIntervals,
+            scaleIntervals: _scaleIntervalsFull,
             centreNoteIndex: _centreNoteIndex,
             numNotes: msConfig.numNotes,
             intervalIndexOffset: msConfig.inversionStartNote,
