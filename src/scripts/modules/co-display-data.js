@@ -243,6 +243,16 @@ module.exports = (function() {
             musicValue: '',
             negativeKey: ['isPrecip', 'isFine', 'isWindy'],
             negativeValue: false
+          },
+          {
+            key: 'isVisbilityPoor',
+            title: 'Visibility is poor',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/visibility-icon.svg',
+            music: 'Long notes overlap',
+            musicValue: ''
           }
         ],
         chordTypeMap: [
