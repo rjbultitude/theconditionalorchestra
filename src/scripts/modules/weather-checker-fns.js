@@ -53,7 +53,7 @@ module.exports = {
   },
 
   isVisbilityPoor: function isVisbilityPoor(visibility) {
-    return visibility < 8;
+    return visibility < 7.5;
   },
 
   /**

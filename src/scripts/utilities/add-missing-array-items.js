@@ -23,7 +23,6 @@ module.exports = function addMissingArrayItems(origArray, difference, amountToAd
   var _diffArr = [];
   var _newVal;
   var _repeatPoint = (origArray.length * repeat) - 1;
-  console.log('adding ' + difference + ' number of missing items');
   // loop the number of times
   // needed to make the missing items
   addMissingLoop:

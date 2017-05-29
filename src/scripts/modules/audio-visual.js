@@ -299,7 +299,7 @@ module.exports = function() {
   // Quieten the pad when the harp plays
   function getPadVolume(wCheck, sCheck, padType) {
     if (sCheck.harpCanPlay && wCheck.isMild || wCheck.isVisbilityPoor) {
-      return avSettings[padType].volume / 3;
+      return avSettings[padType].volume / 2;
     } else {
       return avSettings[padType].volume;
     }
@@ -741,6 +741,7 @@ module.exports = function() {
     var leadVolume = getLeadSoundVolume(wCheck);
     var padType = getPadType(wCheck);
     var padVolume = getPadVolume(wCheck, sCheck, padType);
+    console.log('padVolume', padVolume);
     var chordType = getChordType(wCheck);
     var inversionOffsetType = getInversionOffsetKey(wCheck);
     // Humidity
