@@ -5,6 +5,7 @@ module.exports = (function() {
         primaryMap: [
           {
             key: 'pressure',
+            musicKey: 'rootNote',
             title: 'Air pressure',
             value: '',
             constrain: true,

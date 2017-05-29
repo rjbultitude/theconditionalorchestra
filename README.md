@@ -156,7 +156,7 @@ May need to Upgrade to google maps 3 : https://developers.google.com/maps/docume
 
 ###Bugs
 
-After stop fade out is louder than normal playback, firefox only
+After stop fade out is louder than normal playback, firefox only - caused by the filter not being applied. 
 
 Night time should also manage the filter frequency as it affects visibility.
 Only works with daily endpoint :[

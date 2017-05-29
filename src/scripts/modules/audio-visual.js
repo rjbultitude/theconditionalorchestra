@@ -1462,7 +1462,7 @@ module.exports = function() {
           //Add spaces where necessary
           if (typeof displayProp.musicValue === 'string') {
             _musicValue = microU.addSpacesToString(displayProp.musicValue);
-            if (displayProp.key !== 'pressure') {
+            if (displayProp.musicKey !== 'rootNote') {
               _musicValueLowerCase = microU.strToLowerCase(_musicValue);
             } else {
               _musicValueLowerCase = _musicValue;
