@@ -298,7 +298,7 @@ module.exports = function() {
 
   // Quieten the pad when the harp plays
   function getPadVolume(wCheck, sCheck, padType) {
-    if (sCheck.harpCanPlay && wCheck.isMild || wCheck.isVisbilityPoor) {
+    if (sCheck.harpCanPlay && wCheck.isMild) {
       return avSettings[padType].volume / 2;
     } else {
       return avSettings[padType].volume;
@@ -427,6 +427,7 @@ module.exports = function() {
     return rootNoteHigh && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
   }
 
+  // TODO check effect of reverb on volume
   function getLongNoteVolArr(wCheck) {
     if (wCheck.isVisbilityPoor) {
       return [0.75, 0.875, 1];
@@ -486,9 +487,9 @@ module.exports = function() {
   function getLeadSoundVolume(wCheck) {
     var _leadVolume;
     if (wCheck.isSublime) {
-      _leadVolume = 0.6;
+      _leadVolume = 0.8;
     } else {
-      _leadVolume = 0.3;
+      _leadVolume = 0.55;
     }
     return _leadVolume;
   }
