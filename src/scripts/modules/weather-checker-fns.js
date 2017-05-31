@@ -18,6 +18,10 @@ module.exports = {
     }
   },
 
+  /**
+   * Air moisture related functions
+   */
+
   isHumid: function isHumid(humidity) {
     return humidity > 0.57;
   },
@@ -54,6 +58,12 @@ module.exports = {
 
   isVisbilityPoor: function isVisbilityPoor(visibility) {
     return visibility < 7.5;
+  },
+
+  isFoggy: function isFoggy(visibility, temperatureInFrnht, dewPoint) {
+    var _tempDewDiff = temperatureInFrnht - dewPoint;
+    console.log('_tempDewDiff', _tempDewDiff);
+    return visibility < 3.5 || _tempDewDiff <= 4;
   },
 
   /**

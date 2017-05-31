@@ -298,7 +298,9 @@ module.exports = function() {
 
   // Quieten the pad when the harp plays
   function getPadVolume(wCheck, sCheck, padType) {
-    if (sCheck.harpCanPlay && wCheck.isMild) {
+    if(wCheck.isFoggy) {
+      return avSettings[padType].volume / 6;
+    } else if (sCheck.harpCanPlay && wCheck.isMild) {
       return avSettings[padType].volume / 2;
     } else {
       return avSettings[padType].volume;
@@ -427,7 +429,6 @@ module.exports = function() {
     return rootNoteHigh && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
   }
 
-  // TODO check effect of reverb on volume
   function getLongNoteVolArr(wCheck) {
     if (wCheck.isVisbilityPoor) {
       return [0.75, 0.875, 1];
@@ -445,21 +446,23 @@ module.exports = function() {
   }
 
   function getReverbLength(lwData) {
+    // Max length 10 seconds
     return Math.round(microU.mapRange(
       lwData.visibility.value,
       lwData.visibility.min,
       lwData.visibility.max,
-      9,
+      10,
       2
     ));
   }
 
   function getReverbDecay(lwData) {
+    // Max decay 100
     return Math.round(microU.mapRange(
       lwData.visibility.value,
       lwData.visibility.min,
       lwData.visibility.max,
-      150,
+      100,
       30
     ));
   }
@@ -696,6 +699,7 @@ module.exports = function() {
       isWindy: weatherCheck.isWindy(lwData.windSpeed.value),
       isCloudy: weatherCheck.isCloudy(lwData.cloudCover.value),
       isVisbilityPoor: weatherCheck.isVisbilityPoor(lwData.visibility.value),
+      isFoggy: weatherCheck.isFoggy(lwData.visibility.value, lwData.temperature.value, lwData.dewPoint.value),
       //Humidity
       isHumid: weatherCheck.isHumid(lwData.humidity.value),
       isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
@@ -765,6 +769,7 @@ module.exports = function() {
     console.log('longNoteVolArr', longNoteVolArr);
     var reverbLength = getReverbLength(lwData);
     var reverbDecay = getReverbDecay(lwData);
+    console.log('reverbDecay', reverbDecay);
     var longNoteType = getLongNoteType(wCheck);
     var masterFilterFreq = getMasterFilterFreq(lwData);
     var rootNoteGrtrMedian = isRootNoteGrtrMedian(rootNote, rootNoteRange);
@@ -1032,8 +1037,8 @@ module.exports = function() {
           padSounds[i].play();
           padSounds[i].setVolume(padVolume);
           padSounds[i].rate(synchedSoundsChords[chordIndex][i]);
-          //If we want to play the play full note length
-          //use the onended callback
+          // If we want to play the play full note length
+          // use the onended callback
           if (playFullNotes) {
             padSounds[i].onended(function() {
               padCallBack();
@@ -1062,18 +1067,18 @@ module.exports = function() {
           extraSeqPlaying = false;
           mainSeqCount++;
         }
-        //Play the pad chord
-        //and pass in the playback mode
+        // Play the pad chord
+        // and pass in the playback mode
         playPad(playFullNotes);
-        //playlogic
-        //Avoid sound clash with Brass
+        // playlogic
+        // Avoid sound clash with Brass
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass();
         }
         playLongNote();
-        //increment indices
+        // increment indices
         setChordIndex();
-        //Start the lead over
+        // Start the lead over
         leadBarComplete = false;
       }
 
@@ -1725,16 +1730,21 @@ module.exports = function() {
       function updateHumidArp() {
         if (sketch.frameCount % humidArpStepTime === 0) {
           var _harpVol = sketch.random(harpVolArr);
-          //Handle extra seq
+          // Handle extra seq
           if (extraSeqPlaying) {
             console.log('extraSeqPlaying', extraSeqPlaying);
             hArpSeqIndex = 1;
           } else {
             hArpSeqIndex = 0;
           }
-          //Loop
+          // Loop
           if (humidArpScaleIndex >= humidArpScales[hArpSeqIndex].length) {
             humidArpScaleIndex = 0;
+          }
+          // Handle filter
+          if (wCheck.isFoggy) {
+            harpSound.disconnect();
+            harpSound.connect(freezingFilter);
           }
           harpSound.play();
           harpSound.setVolume(_harpVol);
@@ -1801,7 +1811,7 @@ module.exports = function() {
             updateHumidArp();
           }
         }
-        if (wCheck.isFreezing) {
+        if (wCheck.isFreezing || wCheck.isFoggy) {
           updateFilter();
         }
         //sequencer counter
