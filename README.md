@@ -127,26 +127,21 @@ The pan and volume are randomly selected from two arrays.
 
 Only output chordType if using inversions
 
-Form inout seems to accept non word characters
+Consider creating more chord sequences
 
 Consider dropping reverb (for performance purposes)
----
-Harp should be something other than humidity - humidity should be evoked by noise or suchlike
 
-Create better harp scales:
-Could only play when using inversions±
-Could use chordOffset to pitch up/down
-Could use current scale and add upper/lower octaves
+Ensure that form doesn't submit unless valid characters are used
+---
+Harp could be something other than humidity - humidity should be evoked by noise
 
 Consider using a state manager and one master sound object
 
+Enable routing so that #placename url triggers search
+
 Create 'Add to home screen' button
 
-Create wCheck condition for very hot that uses different pad and longNote sounds
-
-Add notes about precipIntensity
-
-Consider using windyTv map rather than text input
+Consider using windyTV map rather than text input
 
 Update logic App Logic and spreadsheet
 
