@@ -314,7 +314,6 @@ module.exports = function() {
     return rootNote + _rootNoteMedian >= _rootNoteMedian;
   }
 
-  //TODO return early
   function getChordSeqKey(wCheck, rootNoteGrtrMedian) {
     var _key;
     //playlogic
@@ -340,7 +339,6 @@ module.exports = function() {
   }
 
   //Inversions manager
-  //TODO return early
   function getInversionOffsetKey(wCheck) {
     var _key;
     // playlogic
@@ -1655,7 +1653,6 @@ module.exports = function() {
           rhodes.play();
           rhodes.setVolume(leadVolume);
           rhodes.rate(_leadSoundRate);
-          //rhodes.pan(0.6);
           updateLeadSoundIndex();
           //}
           updateLeadSoundLength();

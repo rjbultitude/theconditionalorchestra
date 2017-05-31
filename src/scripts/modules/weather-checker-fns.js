@@ -62,7 +62,6 @@ module.exports = {
 
   isFoggy: function isFoggy(visibility, temperatureInFrnht, dewPoint) {
     var _tempDewDiff = temperatureInFrnht - dewPoint;
-    console.log('_tempDewDiff', _tempDewDiff);
     return visibility < 3.5 || _tempDewDiff <= 4;
   },
 

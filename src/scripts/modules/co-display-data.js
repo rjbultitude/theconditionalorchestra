@@ -89,6 +89,16 @@ module.exports = (function() {
             musicValue: ''
           },
           {
+            key: 'isFoggy',
+            title: 'Foggy conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/visibility-icon.svg',
+            music: 'Percussion filtered; pad playing very softly',
+            musicValue: ''
+          },
+          {
             key: 'apparentTemperature',
             title: 'Apparent temperature',
             value: '',
