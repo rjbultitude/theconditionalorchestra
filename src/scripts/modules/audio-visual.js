@@ -60,6 +60,7 @@ module.exports = function() {
   //Globals
   var soundFilter;
   var freezingFilter;
+  var foggyFilter;
   var reverb;
   //pan
   var angle = 180;
@@ -661,6 +662,7 @@ module.exports = function() {
   function createP5SoundObjs() {
     soundFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
+    foggyFilter = new P5.HighPass();
     reverb = new P5.Reverb();
   }
 
@@ -688,6 +690,7 @@ module.exports = function() {
     var precipArpScaleIndex = 0;
     var pArpSeqIndex = 0;
     var freezingFilterFreq = 2000;
+    var foggyFilterFreq = 750;
     var masterGain = 0;
     //clear data
     padSounds = [];
@@ -1677,7 +1680,13 @@ module.exports = function() {
 
       function updateRideCymbal() {
         if (sketch.frameCount % rideCymbalStepTime === 0) {
+          // Handle volumes
           var _rideVol = sketch.random(rideCymbalVolumeArr);
+          // Handle filter
+          if (wCheck.isFoggy) {
+            rideCymbal.disconnect();
+            rideCymbal.connect(foggyFilter);
+          }
           rideCymbal.play();
           rideCymbal.setVolume(_rideVol);
           rideCymbal.rate(rideCymbalRate);
@@ -1718,13 +1727,22 @@ module.exports = function() {
         angle += inc;
       }
 
-      function updateFilter() {
+      function updateFreezingFilter() {
         if (freezingFilterFreq >= 5500) {
           freezingFilterFreq = 0;
         }
         freezingFilter.freq(freezingFilterFreq);
         freezingFilter.res(33);
         freezingFilterFreq++;
+      }
+
+      function updateFoggyFilter() {
+        if (foggyFilterFreq >= 2000) {
+          foggyFilterFreq = 0;
+        }
+        foggyFilter.freq(foggyFilterFreq);
+        foggyFilter.res(22);
+        foggyFilterFreq++;
       }
 
       function updateHumidArp() {
@@ -1744,7 +1762,7 @@ module.exports = function() {
           // Handle filter
           if (wCheck.isFoggy) {
             harpSound.disconnect();
-            harpSound.connect(freezingFilter);
+            harpSound.connect(foggyFilter);
           }
           harpSound.play();
           harpSound.setVolume(_harpVol);
@@ -1811,8 +1829,11 @@ module.exports = function() {
             updateHumidArp();
           }
         }
-        if (wCheck.isFreezing || wCheck.isFoggy) {
-          updateFilter();
+        if (wCheck.isFreezing) {
+          updateFreezingFilter();
+        }
+        if (wCheck.isFoggy) {
+          updateFoggyFilter();
         }
         //sequencer counter
         if (sketch.frameCount % sequenceLength === 0 && sequenceStart === false) {
