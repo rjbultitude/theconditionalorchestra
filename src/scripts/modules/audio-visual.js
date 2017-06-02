@@ -32,53 +32,56 @@ module.exports = function() {
   */
   var isPlaying = false;
   var maxMasterVolSet = false;
-  //rate
+  // rate
   var appFrameRate = 30;
   var sequenceStart = true;
   var sequenceLength = 1500;
   var rootNoteRate;
-  //bass
+  // bass
   var bass;
   var bass2;
-  //Windy/ Brass
+  // Windy/ Brass
   var brassBaritone;
   var brassBaritone2;
-  //Percussion
+  // Percussion
   var chineseCymbal;
   var timpani;
   var rideCymbal;
   var djembe;
   var djembeVolArr = [0.95, 0.7];
-  //clement / brass
+  // clement / brass
   var harpSound;
-  //long notes
+  // long notes
   var longNote;
-  //precipitation / drops
+  // precipitation / drops
   var dropSound;
-  //Lead sounds
+  // Lead sounds
   var rhodes;
-  //Globals
+  // Globals
   var soundFilter;
   var freezingFilter;
   var foggyFilter;
   var reverb;
-  //pan
+  // pan
   var angle = 180;
   var sinVal = 0;
   var cosVal = 0;
   var panArr = [-0.8, 0, 0.8];
   var longNotePanArr = [-0.2, 0, 0.2];
-  //Sound objects
+  // Sound objects
   var padSounds = [];
   var choralSounds = [];
   var synchedSoundsChords = [];
-  //Lead
+  // Lead
   var leadBarComplete = false;
   var leadSoundIndex = 0;
-  //Subscriptions
+  // Subscriptions
   var publishBrassOne;
   var publishBrassTwo;
-  //DOM
+  // Ramp times
+  var rampTime = .001;
+  var timeFromNow = .001;
+  // DOM
   var cdContainer = document.querySelector('.conditions-display__list');
 
   function fadeInDisplayItem(thisDisplayItem) {
@@ -895,7 +898,7 @@ module.exports = function() {
 
       function playBrassBaritone(scale) {
         brassBaritone.play();
-        brassBaritone.setVolume(brassBaritoneVol);
+        brassBaritone.setVolume(brassBaritoneVol, rampTime, timeFromNow);
         brassBaritone.rate(scale[brassOneScaleArrayIndex]);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
@@ -915,7 +918,7 @@ module.exports = function() {
           _brassBaritoneTwoRate = _newScaleArr[brassTwoScaleArrayIndex];
         }
         brassBaritone2.play();
-        brassBaritone2.setVolume(0.4);
+        brassBaritone2.setVolume(0.4, rampTime, timeFromNow);
         brassBaritone2.rate(_brassBaritoneTwoRate);
         if (brassTwoScaleArrayIndex >= scale.length - 1) {
           brassTwoScaleArrayIndex = 0;
@@ -953,14 +956,14 @@ module.exports = function() {
         }
         longNote.play();
         longNote.pan(sketch.random(longNotePanArr));
-        longNote.setVolume(_longNoteVol);
+        longNote.setVolume(_longNoteVol, rampTime, timeFromNow);
         longNote.rate(_longNoteRate);
       }
 
       function bassCallback(bassRate) {
         bass2.playMode('restart');
         bass2.play();
-        bass2.setVolume(0.5);
+        bass2.setVolume(0.5, rampTime, timeFromNow);
         bass2.rate(bassRate * 2);
       }
 
@@ -969,7 +972,7 @@ module.exports = function() {
         var _bassRate = synchedSoundsChords[chordIndex][0];
         bass.playMode('restart');
         bass.play();
-        bass.setVolume(1);
+        bass.setVolume(1, rampTime, timeFromNow);
         bass.rate(_bassRate);
         //playlogic
         if (wCheck.isClement) {
@@ -1036,7 +1039,7 @@ module.exports = function() {
           padSounds[i].pan(panArr[panIndex]);
           padSounds[i].playMode('restart');
           padSounds[i].play();
-          padSounds[i].setVolume(padVolume);
+          padSounds[i].setVolume(padVolume, rampTime, timeFromNow);
           padSounds[i].rate(synchedSoundsChords[chordIndex][i]);
           // If we want to play the play full note length
           // use the onended callback
@@ -1097,10 +1100,10 @@ module.exports = function() {
           //playlogic
           if (wCheck.isFreezing) {
             choralSound.rate(scaleArray[i] / 2);
-            choralSound.setVolume(0.23);
+            choralSound.setVolume(0.23, rampTime, timeFromNow);
           } else {
             choralSound.rate(scaleArray[i]);
-            choralSound.setVolume(0.1);
+            choralSound.setVolume(0.1, rampTime, timeFromNow);
           }
         });
       }
@@ -1651,7 +1654,7 @@ module.exports = function() {
           //after each play of the notes in chord
           //if (!leadBarComplete) {
           rhodes.play();
-          rhodes.setVolume(leadVolume);
+          rhodes.setVolume(leadVolume, rampTime, timeFromNow);
           rhodes.rate(_leadSoundRate);
           updateLeadSoundIndex();
           //}
@@ -1662,7 +1665,7 @@ module.exports = function() {
       function updateChinaCymbal() {
         if (sketch.frameCount % 600 === 0 && sketch.frameCount !== 0) {
           chineseCymbal.play();
-          chineseCymbal.setVolume(0.5);
+          chineseCymbal.setVolume(0.5, rampTime, timeFromNow);
           chineseCymbal.rate(rootNoteRate);
         }
       }
@@ -1670,7 +1673,7 @@ module.exports = function() {
       function updateTimpani() {
         if (sketch.frameCount % 300 === 0 && sketch.frameCount !== 0) {
           timpani.play();
-          timpani.setVolume(0.5);
+          timpani.setVolume(0.5, rampTime, timeFromNow);
           timpani.rate(rootNoteRate);
         }
       }
@@ -1685,7 +1688,7 @@ module.exports = function() {
             rideCymbal.connect(foggyFilter);
           }
           rideCymbal.play();
-          rideCymbal.setVolume(_rideVol);
+          rideCymbal.setVolume(_rideVol, rampTime, timeFromNow);
           rideCymbal.rate(rideCymbalRate);
           djembe.pan(-0.35);
         }
@@ -1695,15 +1698,15 @@ module.exports = function() {
         if (sketch.frameCount % djembeStepTime === 0) {
           var _djembeVol = sketch.random(djembeVolArr);
           djembe.play();
-          djembe.setVolume(_djembeVol);
+          djembe.setVolume(_djembeVol, rampTime, timeFromNow);
           djembe.rate(1);
           djembe.pan(0.35);
         }
       }
 
       function stopBrass() {
-        brassBaritone.setVolume(0);
-        brassBaritone2.setVolume(0);
+        brassBaritone.setVolume(0, rampTime, timeFromNow);
+        brassBaritone2.setVolume(0, rampTime, timeFromNow);
       }
 
       function updateBrass() {
@@ -1761,8 +1764,9 @@ module.exports = function() {
             harpSound.disconnect();
             harpSound.connect(foggyFilter);
           }
+          // NB differs from order used elsewhere
+          harpSound.setVolume(_harpVol, 1, timeFromNow);
           harpSound.play();
-          harpSound.setVolume(_harpVol);
           harpSound.rate(humidArpScales[hArpSeqIndex][humidArpScaleIndex]);
           humidArpScaleIndex++;
         }
@@ -1782,7 +1786,7 @@ module.exports = function() {
             precipArpScaleIndex = 0;
           }
           dropSound.play();
-          dropSound.setVolume(avSettings.dropSoundVol[precipCategory]);
+          dropSound.setVolume(avSettings.dropSoundVol[precipCategory], rampTime, timeFromNow);
           dropSound.rate(precipArpScales[pArpSeqIndex][precipArpScaleIndex]);
           precipArpScaleIndex++;
         }
