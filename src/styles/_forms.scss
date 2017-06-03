@@ -49,6 +49,7 @@ textarea {
   width: 100%;
   max-width: $max-width;
   min-height: 10em;
+  @include outputBg;
 
   @media all and (max-width: $bp-mobile) {
     padding: $padding/1.5;
@@ -59,6 +60,7 @@ textarea {
     padding: 11px;
     font-size: 16px;
     min-width: 100px;
+    @include outputBg;
   }
 
   .form-coords__legend {
