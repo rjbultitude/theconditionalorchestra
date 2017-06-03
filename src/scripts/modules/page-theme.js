@@ -1,16 +1,18 @@
 'use strict';
 
+var frnhtToCelcius = require('../utilities/frnht-to-celcius');
+
 module.exports = function(lwData, wCheck) {
 
   var wrapper = document.querySelector('.innerwrapper');
   console.log('wrapper', wrapper);
 
   function getThemeTempName() {
-    if (lwData.temperature.value > 26) {
+    if (frnhtToCelcius(lwData.temperature.value) > 26) {
       return 'hot';
-    } else if (lwData.temperature.value > 14) {
+    } else if (frnhtToCelcius(lwData.temperature.value) > 14) {
       return 'warm';
-    } else if (lwData.temperature.value > 2) {
+    } else if (frnhtToCelcius(lwData.temperature.value) > 2) {
       return 'cold';
     } else {
       return 'freezing';
