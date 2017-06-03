@@ -31,10 +31,74 @@ html {
 }
 
 body {
-  background: linear-gradient(to bottom, $color-purple-dark 20%, $color-purple-light 100%);
   min-height: 100%;
   margin: 0;
+  position: relative;
+  background-color: $color-purple-dark;
   background-attachment: fixed;
+  transition: background-color 2s;
+
+  @each $key, $value in $themeColors {
+    &.#{$key} {
+      //background-image: linear-gradient(to bottom, $value 20%, lighten($value,15%) 100%);
+      background-color: $value;
+    }
+  }
+}
+
+canvas {
+  display: none;
+}
+
+.outerWrapper {
+  background-image: linear-gradient(to bottom, transparent 20%, rgba(255, 255, 255, 0.2) 100%);
+}
+
+%innerProps {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  z-index: -1;
+  width: 300%;
+  height: 100%;
+  transform: rotate(8deg);
+}
+
+.innerwrapper {
+  position: relative;
+  overflow: hidden;
+  &.storm {
+      background-image: repeating-linear-gradient(135deg, rgba(0,0,0,.3), rgba(0,0,0,.3) 1px, transparent 2px, transparent 2px, rgba(0,0,0,.3) 4px);
+      background-size: 14px 12px;
+      background-attachment: fixed;
+  }
+  &.rain {
+    &::after {
+      @extend %innerProps;
+      background-image: repeating-radial-gradient(center center, rgba(255,255,255,.5), rgba(255,255,255,.5) 1px, transparent 1px, transparent 100%);
+      background-size: 8px 8px;
+    }
+  }
+
+  &.sleet {
+    &::after {
+      @extend %innerProps;
+      background-image: repeating-radial-gradient(center center, rgba(255,255,255,.3), rgba(255,255,255,.3) 2px, transparent 2px, transparent 100%);
+      background-size: 14px 14px;
+    }
+  }
+  &.snow {
+    &::after {
+      @extend %innerProps;
+      background-image: repeating-radial-gradient(center center, rgba(255,255,255,.1), rgba(255,255,255,.1) 3px, transparent 3px, transparent 100%);
+      background-size: 20px 20px;
+    }
+  }
+  &.fog {
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.3), rgba(255,255,255,.3) 1px, transparent 2px, transparent 2px, rgba(0,0,0,.3) 3px);
+    background-size: 4px 4px;
+  }
 }
 
 .main-section {

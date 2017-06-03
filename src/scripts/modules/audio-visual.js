@@ -24,6 +24,7 @@ var addMissingArrayItems = require('../utilities/add-missing-array-items');
 var avSettings = require('../settings/av-settings');
 var makeFibSequence = require('../utilities/fib-sequence');
 var coFns = require('./co-display-fns');
+var pageTheme = require('./page-theme');
 
 module.exports = function() {
   /*
@@ -79,8 +80,8 @@ module.exports = function() {
   var publishBrassOne;
   var publishBrassTwo;
   // Ramp times
-  var rampTime = .001;
-  var timeFromNow = .001;
+  var rampTime = 0.001;
+  var timeFromNow = 0.001;
   // DOM
   var cdContainer = document.querySelector('.conditions-display__list');
 
@@ -1575,9 +1576,11 @@ module.exports = function() {
         else {
           configureDisplay(_musicDisplayVals);
         }
-        //While other thread runs
-        //configure Sounds
+        // While other thread runs
+        // configure Sounds
         configureSounds();
+        // Change page styles to match conditions
+        pageTheme(lwData, wCheck);
       }
 
       //P5 PRELOAD FN - 1
