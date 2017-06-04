@@ -1,0 +1,14 @@
+@mixin outputBg($dark: false) {
+  @each $key, $value in $themeColors {
+    @if $dark {
+      .#{$key} & {
+        background-color: darken($value, 25%);
+      }
+    }
+    @else {
+      .#{$key} & {
+        background-color: $value;
+      }
+    }
+  }
+}
