@@ -57,6 +57,7 @@
 
   .conditions-display__value {
     color: $color-blue-pale;
+    @include outputThemeTextColour;
     font-size: 24px;
   }
 

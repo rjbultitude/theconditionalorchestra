@@ -11,6 +11,7 @@
   .wrapper {
     padding: 12px;
     background-color: $color-purple-darkest;
+    @include outputThemeBg(true);
   }
 
   .tab__heading {

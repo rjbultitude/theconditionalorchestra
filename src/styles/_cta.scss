@@ -2,14 +2,14 @@
     @extend %cta-base;
     padding: 22px;
     font-size: 20px;
-    @include outputBg;
+    @include outputThemeBg(true, 10%);
 
     &:hover,
     &:focus,
     &:active {
       cursor: pointer;
       background-color: $color-purple-dark;
-      @include outputBg(true);
+      @include outputThemeBg(true);
     }
 }
 
@@ -17,14 +17,14 @@
   @extend %cta-base;
   background-color: $color-purple-dark;
   padding: 18px;
-  @include outputBg;
+  @include outputThemeBg(true, 10%);
 
   &:hover,
   &:focus,
   &:active {
     cursor: pointer;
     background-color: $color-cyan;
-    @include outputBg(true);
+    @include outputThemeBg(true);
   }
 }
 

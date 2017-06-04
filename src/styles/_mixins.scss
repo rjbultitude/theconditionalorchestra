@@ -1,14 +1,22 @@
-@mixin outputBg($dark: false) {
+@mixin outputThemeBg($dark: false, $darkenValue: 25%) {
   @each $key, $value in $themeColors {
     @if $dark {
       .#{$key} & {
-        background-color: darken($value, 25%);
+        background-color: darken($value, $darkenValue);
       }
     }
     @else {
       .#{$key} & {
         background-color: $value;
       }
+    }
+  }
+}
+
+@mixin outputThemeTextColour() {
+  @each $key, $value in $themeColors {
+    .#{$key} & {
+      color: lighten($value, 50%);
     }
   }
 }

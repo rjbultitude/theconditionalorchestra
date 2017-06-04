@@ -5,7 +5,6 @@ var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 module.exports = function(lwData, wCheck) {
 
   var wrapper = document.querySelector('.innerwrapper');
-  console.log('wrapper', wrapper);
 
   function getThemeTempName() {
     if (frnhtToCelcius(lwData.temperature.value) > 26) {
