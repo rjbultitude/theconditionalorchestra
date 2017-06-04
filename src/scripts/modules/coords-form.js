@@ -340,6 +340,27 @@ module.exports = function() {
     });
   }
 
+  function getStaticMap(lat, long) {
+    var gpKey = makeRequest('GET', '/gm-key.php');
+    gpKey.then(function success(key) {
+      GoogleMapsLoader.KEY = key;
+      GoogleMapsLoader.load(function(google) {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: lat, lng: long},
+          // Set mapTypeId to SATELLITE in order
+          // to activate satellite imagery.
+          mapTypeId: 'satellite',
+          scrollwheel: false,
+          zoom: 12,
+          disableDefaultUI: true
+        });
+      });
+    }, function failure(rejectObj) {
+        console.log(rejectObj.status);
+        console.log(rejectObj.statusText);
+    });
+  }
+
   function showForm() {
     classListChain(coordsFormEl).remove('inactive').add('active');
     coordsFormInputEl.focus();
@@ -374,6 +395,7 @@ module.exports = function() {
     function success(position) {
       updateStatus('obtainedLocation');
       getPlaces(position.coords.latitude, position.coords.longitude);
+      getStaticMap(position.coords.latitude, position.coords.longitude);
     }
 
     function failure(failure) {

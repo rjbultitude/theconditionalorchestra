@@ -68,6 +68,7 @@
 
                     <!-- Begin conditions display -->
                     <section class="conditions-display section">
+                      <div id="map"></div>
                       <h2 class="section-heading">Conditions and musical equivalents</h2>
                       <ul class="conditions-display__list" aria-live="assertive">
                       </ul>
