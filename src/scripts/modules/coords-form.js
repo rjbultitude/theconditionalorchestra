@@ -345,6 +345,7 @@ module.exports = function() {
     gpKey.then(function success(key) {
       GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.load(function(google) {
+        console.log('google.maps.version', google.maps.version);
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: lat, lng: long},
           // Set mapTypeId to SATELLITE in order
@@ -352,7 +353,9 @@ module.exports = function() {
           mapTypeId: 'satellite',
           scrollwheel: false,
           zoom: 12,
-          disableDefaultUI: true
+          disableDefaultUI: true,
+          scrollwheel: false,
+          draggable: false
         });
       });
     }, function failure(rejectObj) {
