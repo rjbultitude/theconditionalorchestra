@@ -1,11 +1,13 @@
 'use strict';
 
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
-var classListChain = require('../utilities/class-list-chain');
 
 module.exports = function(lwData, wCheck) {
 
-  var wrapper = document.querySelector('.innerwrapper');
+  var innerwrapperStr = 'innerwrapper';
+  var wrapper = document.querySelector('.' + innerwrapperStr);
+  var curThemeTempName = document.body.classList['0'];
+  var curThemeTypeList = wrapper.classList;
 
   function getThemeTempName() {
     if (frnhtToCelcius(lwData.temperature.value) > 26) {
@@ -29,15 +31,22 @@ module.exports = function(lwData, wCheck) {
     } else {
       return 'null';
     }
-
   }
 
-  var curThemeName = document.body.classList['0'];
-  var curThemeType = wrapper.classList['0'];
-  if (curThemeName) {
-    document.body.classList.remove(curThemeName);
-    wrapper.classList.remove(curThemeType);
+  function removeThemeType() {
+    for (var className in curThemeTypeList) {
+      if (curThemeTypeList.hasOwnProperty(className)) {
+        if (curThemeTypeList[className] !== innerwrapperStr) {
+          wrapper.classList.remove(curThemeTypeList[className]);
+        }
+      }
+    }
   }
+
+  if (curThemeTempName) {
+    document.body.classList.remove(curThemeTempName);
+  }
+  removeThemeType();
   var newThemeName = getThemeTempName();
   var newThemeType = getThemeTypeName();
   document.body.classList.add(newThemeName);
