@@ -11,6 +11,7 @@ var microU = require('../utilities/micro-utilities');
 var makeRequest = require('../utilities/make-request');
 var classListChain = require('../utilities/class-list-chain');
 var getMeanVal = require('../utilities/get-mean-val');
+var summaryIcon = require('./summary-icon');
 
 module.exports = function() {
   //Vars
@@ -108,8 +109,8 @@ module.exports = function() {
         0,
         100
       ) / 100);
-      return 10 - (microU.addArrayItems(_altVisVals) / _altVisVals.length) *
-        10;
+      console.log('invalid visibility data');
+      return 10 - (microU.addArrayItems(_altVisVals) / _altVisVals.length) * 10;
     }
   }
 
@@ -137,23 +138,26 @@ module.exports = function() {
     });
   }
 
-  function updateApp(lat, long, name) {
-    var newLocation = new Nll(lat, long, name);
-    var newLocations = [];
-    //Notify UI
-    updateStatus('weather');
-    //create map
-    getStaticMap(lat, long);
+  function inferMissingNumValue(conditions, key) {
+    if (key !== 'visibility' && conditions[0][key]() === undefined) {
+      return getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max, key, true);
+    } else {
+      return conditions[0][key]();
+    }
+  }
+
+  function getAndLoadConditions(lat, long, name) {
     //Get API wrapper
     var forecast = new Darksky({
       PROXY_SCRIPT: '/proxy.php'
     });
-    //Must use array for darksky wrapper
+    var newLocation = new Nll(lat, long, name);
+    var newLocations = [];
+    // Must use array for darksky wrapper
     newLocations.push(newLocation);
     forecast.getCurrentConditions(newLocations, function(conditions) {
-      //If there's a problem with the darksky service
-      //load the static weather
-      //TODO test this
+      // If there's a problem with the darksky service
+      // load the static weather
       if (conditions === false) {
         console.log('There was a problem retrieving data from darksky');
         conditions = makeRequest('GET', 'data/static-data.json');
@@ -164,8 +168,7 @@ module.exports = function() {
       for (var key in locationData) {
         if (locationData.hasOwnProperty(key)) {
           locationData[key] = new NumericCondition(
-            key !== 'visibility' && conditions[0][key]() === undefined ?
-              getMeanVal(maxMin.wParams[key].min, maxMin.wParams[key].max, key, true) : conditions[0][key](),
+            inferMissingNumValue(conditions, key),
             maxMin.wParams[key].min,
             maxMin.wParams[key].max
           );
@@ -173,8 +176,7 @@ module.exports = function() {
       }
       //As visibility often returns undefined
       //infer it from other values
-      locationData.visibility.value = inferVisibility(conditions,
-        locationData);
+      locationData.visibility.value = inferVisibility(conditions, locationData);
       //Error check here
       locationData = fixlwDataRanges(locationData);
       //Add the location name
@@ -184,32 +186,45 @@ module.exports = function() {
         configurable: true,
         enumerable: true
       });
-      //Add string or time values
+      // Add string or time values
       Object.defineProperty(locationData, 'precipType', {
         writable: true,
         enumerable: true,
         value: conditions[0].precipType() || ''
       });
-      //Add summary
+      // Add summary
       Object.defineProperty(locationData, 'summary', {
         writable: false,
         enumerable: true,
         value: conditions[0].summary() || 'no summary'
       });
-      //Keep last state for next time
-      //in case user should be offline
+      // Add icon
+      Object.defineProperty(locationData, 'icon', {
+        writable: false,
+        enumerable: true,
+        value: conditions[0].icon() || 'no icon'
+      });
+      // Keep last state for next time
+      // in case user should be offline
       var locationDataString = JSON.stringify(locationData);
       localStorage.setItem('locationData', locationDataString);
-      //console.log('local storage set', locationDataString);
       // Post the data to rest of app
       channel.publish('userUpdate', locationData);
-      //updateStatus('playing', locationData.name);
       if (conditions.length > 1) {
-        console.log('There seems to be more than one location: ',
-          conditions.length);
+        console.log('There seems to be more than one location: ', conditions.length);
       }
       enableControls();
+      summaryIcon(locationData);
     });
+  }
+
+  function updateApp(lat, long, name) {
+    //Notify UI
+    updateStatus('weather');
+    //create map
+    getStaticMap(lat, long);
+    // get conditions
+    getAndLoadConditions(lat, long, name);
   }
 
   function handleNoGeoData(statusString, data) {

@@ -1,5 +1,7 @@
 {
   "name": "London, UK",
+  "summary": "Foggy",
+  "icon": "fog",
   "cloudCover":{
     "value":0.5,
     "min":0,
