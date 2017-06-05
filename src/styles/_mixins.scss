@@ -13,10 +13,26 @@
   }
 }
 
+@mixin outputThemeBgGrad() {
+  @each $key, $value in $themeColors {
+    .#{$key} & {
+      background-image: linear-gradient(to bottom, $value, darken($value, 5%));
+    }
+  }
+}
+
 @mixin outputThemeTextColour() {
   @each $key, $value in $themeColors {
     .#{$key} & {
       color: lighten($value, 50%);
+    }
+  }
+}
+
+@mixin outputThemeBorderColour() {
+  @each $key, $value in $themeColors {
+    .#{$key} & {
+      border-color: lighten($value, 50%);
     }
   }
 }

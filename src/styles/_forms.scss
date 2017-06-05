@@ -49,7 +49,7 @@ textarea {
   width: 100%;
   max-width: $max-width;
   min-height: 10em;
-  @include outputThemeBg;
+  @include outputThemeBgGrad;
 
   @media all and (max-width: $bp-mobile) {
     padding: $padding/1.5;

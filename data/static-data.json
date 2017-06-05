@@ -30,7 +30,7 @@
     "min":0,
     "max":1
   },
-  "precipType": "",
+  "precipType": "sleet",
   "temperature":{
     "value":80.2,
     "min":-35,

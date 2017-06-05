@@ -68,32 +68,30 @@ canvas {
 .innerwrapper {
   position: relative;
   overflow: hidden;
+  background-attachment: fixed;
   &.storm {
       background-image: repeating-linear-gradient(135deg, rgba(0,0,0,.3), rgba(0,0,0,.3) 1px, transparent 2px, transparent 2px, rgba(0,0,0,.3) 4px);
       background-size: 14px 12px;
-      background-attachment: fixed;
   }
   &.rain {
-    &::after {
-      @extend %innerProps;
-      background-image: repeating-radial-gradient(center center, rgba(255,255,255,.5), rgba(255,255,255,.5) 1px, transparent 1px, transparent 100%);
-      background-size: 8px 8px;
-    }
+    //background-image: repeating-linear-gradient(98deg, rgba(255,255,255,.5), rgba(255,255,255,.5) 1px, transparent 1px, transparent 100%, rgba(0,0,0,.3) 4px);
+    background-image: linear-gradient(135deg,
+		transparent calc(50% - .015em), rgba(255,255,255,.1) 0,
+		white calc(50% + .015em), transparent 0);
+    background-size: 10px 14px;
   }
 
   &.sleet {
-    &::after {
-      @extend %innerProps;
-      background-image: repeating-radial-gradient(center center, rgba(255,255,255,.3), rgba(255,255,255,.3) 2px, transparent 2px, transparent 100%);
-      background-size: 14px 14px;
-    }
+    background-image: linear-gradient(215deg,
+    transparent calc(42% - .015em),
+    rgba(255, 255, 255, 0.1) 0,
+    rgba(255, 255, 255, 0.5) calc(50% + .015em), transparent 0);
+    background-size: 13px 14px;
   }
   &.snow {
-    &::after {
-      @extend %innerProps;
-      background-image: repeating-radial-gradient(center center, rgba(255,255,255,.1), rgba(255,255,255,.1) 3px, transparent 3px, transparent 100%);
-      background-size: 20px 20px;
-    }
+    //background-image: repeating-radial-gradient(center center, rgba(255,255,255,.1), rgba(255,255,255,.1) 3px, transparent 3px, transparent 100%);
+    background-image: repeating-radial-gradient(center center, rgba(255,255,255,.3), rgba(255,255,255,.3) 2px, transparent 2px, transparent 100%);
+    background-size: 14px 14px;
   }
   &.fog {
     background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.3), rgba(255,255,255,.3) 1px, transparent 2px, transparent 2px, rgba(0,0,0,.3) 3px);

@@ -346,7 +346,8 @@ module.exports = function() {
       GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.load(function(google) {
         console.log('google.maps.version', google.maps.version);
-        var map = new google.maps.Map(document.getElementById('map'), {
+        var mapEl = document.getElementById('map');
+        new google.maps.Map(mapEl, {
           center: {lat: lat, lng: long},
           // Set mapTypeId to SATELLITE in order
           // to activate satellite imagery.
@@ -354,9 +355,9 @@ module.exports = function() {
           scrollwheel: false,
           zoom: 12,
           disableDefaultUI: true,
-          scrollwheel: false,
           draggable: false
         });
+        mapEl.classList.add('active');
       });
     }, function failure(rejectObj) {
         console.log(rejectObj.status);
