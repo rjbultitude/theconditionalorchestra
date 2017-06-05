@@ -33,7 +33,7 @@
                       <h2 class="section-heading">Generate music from the weather</h2>
                       <div class="form-user-location" data-ref="form-user-location">
                         <button id="use-location-btn" class="cta" aria-controls="message-block" disabled>Play my weather</button>
-                        <span class="conjuction">Or</span>
+                        <span class="conjunction">Or</span>
                         <a href="#form-coords" class="cta--secondary" id="link-location-select">Choose a location</a>
                       </div>
                       <form class="form-coords inactive" id="form-coords" data-ref="form-coords">
@@ -69,7 +69,7 @@
                     <!-- Begin conditions display -->
                     <section class="conditions-display section">
                       <div id="map"></div>
-                      <h2 class="section-heading">Conditions and musical equivalents</h2>
+                      <h2 class="section-heading">How it works</h2>
                       <ul class="conditions-display__list" aria-live="assertive">
                       </ul>
                     </section>

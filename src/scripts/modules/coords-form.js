@@ -17,11 +17,10 @@ module.exports = function() {
   var userLocBtnEl = document.getElementById('use-location-btn');
   var linkLocationSelectEl = document.getElementById('link-location-select');
   var coordsFormEl = document.querySelector('[data-ref="form-coords"]');
-  var coordsFormInputEl = coordsFormEl.querySelector(
-    '[data-ref="place-field"]');
-  var coordsFormSubmitBtnEl = coordsFormEl.querySelector(
-    '[data-ref="submit"]');
+  var coordsFormInputEl = coordsFormEl.querySelector('[data-ref="place-field"]');
+  var coordsFormSubmitBtnEl = coordsFormEl.querySelector('[data-ref="submit"]');
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
+  var mapEl = document.getElementById('map');
   var lastKnownSuffix = 'LastKnown';
   var staticSuffix = 'Static';
   // module state vars
@@ -119,6 +118,8 @@ module.exports = function() {
     var newLocations = [];
     //Notify UI
     updateStatus('weather');
+    //create map
+    getStaticMap(lat, long);
     //Get API wrapper
     var forecast = new Darksky({
       PROXY_SCRIPT: '/proxy.php'
@@ -346,7 +347,7 @@ module.exports = function() {
       GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.load(function(google) {
         console.log('google.maps.version', google.maps.version);
-        var mapEl = document.getElementById('map');
+        mapEl.classList.add('active');
         new google.maps.Map(mapEl, {
           center: {lat: lat, lng: long},
           // Set mapTypeId to SATELLITE in order
@@ -357,7 +358,6 @@ module.exports = function() {
           disableDefaultUI: true,
           draggable: false
         });
-        mapEl.classList.add('active');
       });
     }, function failure(rejectObj) {
         console.log(rejectObj.status);
@@ -399,7 +399,6 @@ module.exports = function() {
     function success(position) {
       updateStatus('obtainedLocation');
       getPlaces(position.coords.latitude, position.coords.longitude);
-      getStaticMap(position.coords.latitude, position.coords.longitude);
     }
 
     function failure(failure) {
@@ -502,6 +501,7 @@ module.exports = function() {
     updateStatus('start');
     userLocBtnEl.innerHTML = 'Play my weather';
     coordsFormSubmitBtnEl.innerHTML = 'Play';
+    mapEl.classList.remove('active');
     if (autoStart) {
       useCustomLocation();
     }
