@@ -1,6 +1,7 @@
 'use strict';
 
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
+var classListChain = require('../utilities/class-list-chain');
 
 module.exports = function(lwData, wCheck) {
 
@@ -26,11 +27,19 @@ module.exports = function(lwData, wCheck) {
     } else if (wCheck.isFoggy) {
       return 'fog';
     } else {
-      return '';
+      return 'null';
     }
 
   }
 
-  document.body.classList.add(getThemeTempName());
-  wrapper.classList.add(getThemeTypeName() || null);
+  var curThemeName = document.body.classList['0'];
+  var curThemeType = wrapper.classList['0'];
+  if (curThemeName) {
+    document.body.classList.remove(curThemeName);
+    wrapper.classList.remove(curThemeType);
+  }
+  var newThemeName = getThemeTempName();
+  var newThemeType = getThemeTypeName();
+  document.body.classList.add(newThemeName);
+  wrapper.classList.add(newThemeType);
 };

@@ -113,6 +113,30 @@ module.exports = function() {
     }
   }
 
+  function getStaticMap(lat, long) {
+    var gpKey = makeRequest('GET', '/gm-key.php');
+    gpKey.then(function success(key) {
+      GoogleMapsLoader.KEY = key;
+      GoogleMapsLoader.load(function(google) {
+        console.log('google.maps.version', google.maps.version);
+        mapEl.classList.add('active');
+        new google.maps.Map(mapEl, {
+          center: {lat: lat, lng: long},
+          // Set mapTypeId to SATELLITE in order
+          // to activate satellite imagery.
+          mapTypeId: 'satellite',
+          scrollwheel: false,
+          zoom: 12,
+          disableDefaultUI: true,
+          draggable: false
+        });
+      });
+    }, function failure(rejectObj) {
+        console.log(rejectObj.status);
+        console.log(rejectObj.statusText);
+    });
+  }
+
   function updateApp(lat, long, name) {
     var newLocation = new Nll(lat, long, name);
     var newLocations = [];
@@ -341,29 +365,6 @@ module.exports = function() {
     });
   }
 
-  function getStaticMap(lat, long) {
-    var gpKey = makeRequest('GET', '/gm-key.php');
-    gpKey.then(function success(key) {
-      GoogleMapsLoader.KEY = key;
-      GoogleMapsLoader.load(function(google) {
-        console.log('google.maps.version', google.maps.version);
-        mapEl.classList.add('active');
-        new google.maps.Map(mapEl, {
-          center: {lat: lat, lng: long},
-          // Set mapTypeId to SATELLITE in order
-          // to activate satellite imagery.
-          mapTypeId: 'satellite',
-          scrollwheel: false,
-          zoom: 12,
-          disableDefaultUI: true,
-          draggable: false
-        });
-      });
-    }, function failure(rejectObj) {
-        console.log(rejectObj.status);
-        console.log(rejectObj.statusText);
-    });
-  }
 
   function showForm() {
     classListChain(coordsFormEl).remove('inactive').add('active');

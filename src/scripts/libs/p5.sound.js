@@ -97,7 +97,7 @@ sndcore = function () {
       if (typeof AudioContext.prototype.createDelay !== 'function')
         AudioContext.prototype.createDelay = AudioContext.prototype.createDelayNode;
       if (typeof AudioContext.prototype.createScriptProcessor !== 'function')
-        AudioContext.prototype.createScriptProcessor = AudioContext.prototype.createJavaScriptNode;
+        AudioContext.prototype.createScriptProcessor = AudioContext.prototype.createScriptProcessor;
       if (typeof AudioContext.prototype.createPeriodicWave !== 'function')
         AudioContext.prototype.createPeriodicWave = AudioContext.prototype.createWaveTable;
       AudioContext.prototype.internal_createGain = AudioContext.prototype.createGain;
@@ -466,7 +466,7 @@ helpers = function () {
    *  converter.
    *
    *  @method soundFormats
-   *  @param {String|Strings} formats i.e. 'mp3', 'wav', 'ogg'
+   *  @param {String} formats i.e. 'mp3', 'wav', 'ogg'
    *  @example
    *  <div><code>
    *  function preload() {
@@ -752,7 +752,7 @@ soundfile = function () {
    *
    *  @class p5.SoundFile
    *  @constructor
-   *  @param {String/Array} path   path to a sound file (String). Optionally,
+   *  @param {String|Array} path   path to a sound file (String). Optionally,
    *                               you may include multiple file formats in
    *                               an array. Alternately, accepts an object
    *                               from the HTML5 File API, or a p5.File.
@@ -861,7 +861,7 @@ soundfile = function () {
    *  local server</a> is recommended when loading external files.
    *
    *  @method loadSound
-   *  @param  {String/Array}   path     Path to the sound file, or an array with
+   *  @param  {String|Array}   path     Path to the sound file, or an array with
    *                                    paths to soundfiles in multiple formats
    *                                    i.e. ['sound.ogg', 'sound.mp3'].
    *                                    Alternately, accepts an object: either
@@ -1341,16 +1341,28 @@ soundfile = function () {
    *  @param {Number} [rampTime]  Fade for t seconds
    *  @param {Number} [timeFromNow]  Schedule this event to happen at
    *                                 t seconds in the future
+   *  @param {Number} [volFrom]  Volume to fade from
+   *  @param {Number} [volTo]    Volume to fade to
    */
-  p5.SoundFile.prototype.setVolume = function (vol, rampTime, tFromNow) {
+  p5.SoundFile.prototype.setVolume = function (vol, rampTime, tFromNow, volFrom, volTo) {
     if (typeof vol === 'number') {
       var rampTime = rampTime || 0;
       var tFromNow = tFromNow || 0;
       var now = p5sound.audiocontext.currentTime;
       var currentVol = this.output.gain.value;
       this.output.gain.cancelScheduledValues(now + tFromNow);
-      this.output.gain.linearRampToValueAtTime(currentVol, now + tFromNow);
-      this.output.gain.linearRampToValueAtTime(vol, now + tFromNow + rampTime);
+      // Attack
+      if (typeof volFrom === 'number' && volFrom >= 0) {
+        this.output.gain.linearRampToValueAtTime(volFrom, now + tFromNow);
+      } else {
+        this.output.gain.linearRampToValueAtTime(currentVol, now + tFromNow);
+      }
+      // Decay
+      if (typeof volTo === 'number' && volTo >= 0) {
+        this.output.gain.linearRampToValueAtTime(volTo, now + tFromNow + rampTime);
+      } else {
+        this.output.gain.linearRampToValueAtTime(vol, now + tFromNow + rampTime);
+      }
     } else if (vol) {
       vol.connect(this.output.gain);
     } else {
@@ -4304,7 +4316,7 @@ signal = function () {
    *
    *  @method  fade
    *  @param  {Number} value          Value to set this signal
-   *  @param  {[Number]} secondsFromNow Length of fade, in seconds from now
+   *  @param  {Number} [secondsFromNow] Length of fade, in seconds from now
    */
   Signal.prototype.fade = Signal.prototype.linearRampToValueAtTime;
   Mult.prototype.fade = Signal.prototype.fade;
@@ -4850,7 +4862,7 @@ oscillator = function () {
    *  See p5.Oscillator for methods.
    *
    *  @method  p5.SinOsc
-   *  @param {[Number]} freq Set the frequency
+   *  @param {Number} [freq] Set the frequency
    */
   p5.SinOsc = function (freq) {
     p5.Oscillator.call(this, freq, 'sine');
@@ -4865,7 +4877,7 @@ oscillator = function () {
    *  See p5.Oscillator for methods.
    *
    *  @method  p5.TriOsc
-   *  @param {[Number]} freq Set the frequency
+   *  @param {Number} [freq] Set the frequency
    */
   p5.TriOsc = function (freq) {
     p5.Oscillator.call(this, freq, 'triangle');
@@ -4880,7 +4892,7 @@ oscillator = function () {
    *  See p5.Oscillator for methods.
    *
    *  @method  p5.SawOsc
-   *  @param {[Number]} freq Set the frequency
+   *  @param {Number} [freq] Set the frequency
    */
   p5.SawOsc = function (freq) {
     p5.Oscillator.call(this, freq, 'sawtooth');
@@ -4895,7 +4907,7 @@ oscillator = function () {
    *  See p5.Oscillator for methods.
    *
    *  @method  p5.SqrOsc
-   *  @param {[Number]} freq Set the frequency
+   *  @param {Number} [freq] Set the frequency
    */
   p5.SqrOsc = function (freq) {
     p5.Oscillator.call(this, freq, 'square');
@@ -6480,9 +6492,9 @@ audioin = function () {
       } else {
         window.alert('This browser does not support AudioIn');
       }
-    } else if (typeof window.MediaStreamTrack.getSources === 'function') {
+    } else if (typeof window.MediaDevices.enumerateDevices === 'function') {
       // Chrome supports getSources to list inputs. Dev picks default
-      window.MediaStreamTrack.getSources(this._gotSources);
+      window.MediaDevices.enumerateDevices(this._gotSources);
     } else {
     }
     // add to soundArray so we can dispose on close
@@ -6767,7 +6779,7 @@ filter = function () {
    *
    *  @class p5.Filter
    *  @constructor
-   *  @param {[String]} type 'lowpass' (default), 'highpass', 'bandpass'
+   *  @param {String} [type] 'lowpass' (default), 'highpass', 'bandpass'
    *  @return {Object} p5.Filter
    *  @example
    *  <div><code>
@@ -6847,8 +6859,8 @@ filter = function () {
    *
    *  @method  process
    *  @param  {Object} Signal  An object that outputs audio
-   *  @param {[Number]} freq Frequency in Hz, from 10 to 22050
-   *  @param {[Number]} res Resonance/Width of the filter frequency
+   *  @param {Number} [freq] Frequency in Hz, from 10 to 22050
+   *  @param {Number} [res] Resonance/Width of the filter frequency
    *                        from 0.001 to 1000
    */
   p5.Filter.prototype.process = function (src, freq, res) {
@@ -6928,7 +6940,7 @@ filter = function () {
    *  "allpass".
    *
    *  @method  setType
-   *  @param {String}
+   *  @param {String} t type of filter
    */
   p5.Filter.prototype.setType = function (t) {
     this.biquad.type = t;
@@ -9267,7 +9279,6 @@ distortion = function () {
    * @param {Number} [amount=0.25] Unbounded distortion amount.
    *                                Normal values range from 0-1.
    * @param {String} [oversample='none'] 'none', '2x', or '4x'.
-   * @param {String}
    */
   p5.Distortion.prototype.set = function (amount, oversample) {
     if (amount) {

@@ -82,6 +82,7 @@ module.exports = function() {
   // Ramp times
   var rampTime = 0.001;
   var timeFromNow = 0.001;
+  var startVol = 0.001;
   // DOM
   var cdContainer = document.querySelector('.conditions-display__list');
 
@@ -899,7 +900,7 @@ module.exports = function() {
 
       function playBrassBaritone(scale) {
         brassBaritone.play();
-        brassBaritone.setVolume(brassBaritoneVol, rampTime, timeFromNow);
+        brassBaritone.setVolume(brassBaritoneVol, rampTime, timeFromNow, startVol);
         brassBaritone.rate(scale[brassOneScaleArrayIndex]);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
@@ -919,7 +920,7 @@ module.exports = function() {
           _brassBaritoneTwoRate = _newScaleArr[brassTwoScaleArrayIndex];
         }
         brassBaritone2.play();
-        brassBaritone2.setVolume(0.4, rampTime, timeFromNow);
+        brassBaritone2.setVolume(0.4, rampTime, timeFromNow, startVol);
         brassBaritone2.rate(_brassBaritoneTwoRate);
         if (brassTwoScaleArrayIndex >= scale.length - 1) {
           brassTwoScaleArrayIndex = 0;
@@ -957,14 +958,14 @@ module.exports = function() {
         }
         longNote.play();
         longNote.pan(sketch.random(longNotePanArr));
-        longNote.setVolume(_longNoteVol, rampTime, timeFromNow);
+        longNote.setVolume(_longNoteVol, rampTime, timeFromNow, startVol);
         longNote.rate(_longNoteRate);
       }
 
       function bassCallback(bassRate) {
         bass2.playMode('restart');
         bass2.play();
-        bass2.setVolume(0.5, rampTime, timeFromNow);
+        bass2.setVolume(0.5, rampTime, timeFromNow, startVol);
         bass2.rate(bassRate * 2);
       }
 
@@ -973,7 +974,7 @@ module.exports = function() {
         var _bassRate = synchedSoundsChords[chordIndex][0];
         bass.playMode('restart');
         bass.play();
-        bass.setVolume(1, rampTime, timeFromNow);
+        bass.setVolume(1, rampTime, timeFromNow, startVol);
         bass.rate(_bassRate);
         //playlogic
         if (wCheck.isClement) {
@@ -1040,7 +1041,7 @@ module.exports = function() {
           padSounds[i].pan(panArr[panIndex]);
           padSounds[i].playMode('restart');
           padSounds[i].play();
-          padSounds[i].setVolume(padVolume, rampTime, timeFromNow);
+          padSounds[i].setVolume(padVolume, rampTime, timeFromNow, startVol);
           padSounds[i].rate(synchedSoundsChords[chordIndex][i]);
           // If we want to play the play full note length
           // use the onended callback
@@ -1101,10 +1102,10 @@ module.exports = function() {
           //playlogic
           if (wCheck.isFreezing) {
             choralSound.rate(scaleArray[i] / 2);
-            choralSound.setVolume(0.23, rampTime, timeFromNow);
+            choralSound.setVolume(0.23, rampTime, timeFromNow, startVol);
           } else {
             choralSound.rate(scaleArray[i]);
-            choralSound.setVolume(0.1, rampTime, timeFromNow);
+            choralSound.setVolume(0.1, rampTime, timeFromNow, startVol);
           }
         });
       }
@@ -1657,7 +1658,7 @@ module.exports = function() {
           //after each play of the notes in chord
           //if (!leadBarComplete) {
           rhodes.play();
-          rhodes.setVolume(leadVolume, rampTime, timeFromNow);
+          rhodes.setVolume(leadVolume, rampTime, timeFromNow, startVol);
           rhodes.rate(_leadSoundRate);
           updateLeadSoundIndex();
           //}
@@ -1668,7 +1669,7 @@ module.exports = function() {
       function updateChinaCymbal() {
         if (sketch.frameCount % 600 === 0 && sketch.frameCount !== 0) {
           chineseCymbal.play();
-          chineseCymbal.setVolume(0.5, rampTime, timeFromNow);
+          chineseCymbal.setVolume(0.5, rampTime, timeFromNow, startVol);
           chineseCymbal.rate(rootNoteRate);
         }
       }
@@ -1676,7 +1677,7 @@ module.exports = function() {
       function updateTimpani() {
         if (sketch.frameCount % 300 === 0 && sketch.frameCount !== 0) {
           timpani.play();
-          timpani.setVolume(0.5, rampTime, timeFromNow);
+          timpani.setVolume(0.5, rampTime, timeFromNow, startVol);
           timpani.rate(rootNoteRate);
         }
       }
@@ -1691,7 +1692,7 @@ module.exports = function() {
             rideCymbal.connect(foggyFilter);
           }
           rideCymbal.play();
-          rideCymbal.setVolume(_rideVol, rampTime, timeFromNow);
+          rideCymbal.setVolume(_rideVol, rampTime, timeFromNow, startVol);
           rideCymbal.rate(rideCymbalRate);
           djembe.pan(-0.35);
         }
@@ -1701,15 +1702,15 @@ module.exports = function() {
         if (sketch.frameCount % djembeStepTime === 0) {
           var _djembeVol = sketch.random(djembeVolArr);
           djembe.play();
-          djembe.setVolume(_djembeVol, rampTime, timeFromNow);
+          djembe.setVolume(_djembeVol, rampTime, timeFromNow, startVol);
           djembe.rate(1);
           djembe.pan(0.35);
         }
       }
 
       function stopBrass() {
-        brassBaritone.setVolume(0, rampTime, timeFromNow);
-        brassBaritone2.setVolume(0, rampTime, timeFromNow);
+        brassBaritone.setVolume(0, rampTime, timeFromNow, startVol);
+        brassBaritone2.setVolume(0, rampTime, timeFromNow, startVol);
       }
 
       function updateBrass() {
@@ -1768,7 +1769,7 @@ module.exports = function() {
             harpSound.connect(foggyFilter);
           }
           // NB differs from order used elsewhere
-          harpSound.setVolume(_harpVol, 1, timeFromNow);
+          harpSound.setVolume(_harpVol, 1, timeFromNow, startVol);
           harpSound.play();
           harpSound.rate(humidArpScales[hArpSeqIndex][humidArpScaleIndex]);
           humidArpScaleIndex++;
@@ -1789,7 +1790,7 @@ module.exports = function() {
             precipArpScaleIndex = 0;
           }
           dropSound.play();
-          dropSound.setVolume(avSettings.dropSoundVol[precipCategory], rampTime, timeFromNow);
+          dropSound.setVolume(avSettings.dropSoundVol[precipCategory]);
           dropSound.rate(precipArpScales[pArpSeqIndex][precipArpScaleIndex]);
           precipArpScaleIndex++;
         }
