@@ -704,8 +704,8 @@ module.exports = function() {
         var _intervalIndexOffset = pConfig.intervalIndexOffset;
         var _newNote;
         for (var i = 0; i < pConfig.numNotes; i++) {
-          console.log('note ' + i + ' ' + pConfig.type + ' scaleInterval', pConfig.scaleIntervals[_intervalIndexOffset]);
-          console.log('intervaloffset ' + _intervalIndexOffset + ' centreNoteI ' + pConfig.centreNoteIndex + ' Final index ', pConfig.scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex);
+          //console.log('note ' + i + ' ' + pConfig.type + ' scaleInterval', pConfig.scaleIntervals[_intervalIndexOffset]);
+          //console.log('intervaloffset ' + _intervalIndexOffset + ' centreNoteI ' + pConfig.centreNoteIndex + ' Final index ', pConfig.scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex);
           _newNote = pConfig.allNotesArr[pConfig.scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex];
           //error check
           if (_newNote !== undefined || isNaN(_newNote) === false) {
@@ -731,7 +731,6 @@ module.exports = function() {
         var _scaleArray = [];
         var _rootAndOffset = rootNote + msConfig.startNote;
         var _scaleIntervals = intervals[msConfig.chordKey];
-        console.log('msConfig.inversionStartNote', msConfig.inversionStartNote);
         // add missing scale intervals
         var _scaleIntervalsFull = addMissingNotesFromInterval({
           amountToAdd: msConfig.amountToAdd,
@@ -741,7 +740,6 @@ module.exports = function() {
           scaleIntervals: _scaleIntervals,
           type: msConfig.type
         });
-        console.log('_scaleIntervalsFull', _scaleIntervalsFull);
         // Inlcude amountToAdd to get true upper number
         var _largestPosNumber = getLargestPosNumInArr(_scaleIntervalsFull) + msConfig.amountToAdd;
         var _largestNegNumber = getLargestNegNumInArr(_scaleIntervalsFull);
