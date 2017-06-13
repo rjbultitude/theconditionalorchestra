@@ -22,7 +22,7 @@
                     <h1 class="page-heading">The Conditional Orchestra</h1>
                     <p class="intro">Using current weather conditions The Conditional Orchestra generates unique compositions for your listening pleasure.</p>
                   </div>
-                  <div class="version-sash">Alpha</div>
+                  <div class="version-sash">Beta</div>
                 </header>
                 <!-- end header -->
                 <!-- begin body -->
