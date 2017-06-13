@@ -4,7 +4,7 @@ var duplicateArray = require('../utilities/duplicate-array-vals');
 
 module.exports = (function() {
 
-  function addRandomStops(notesArray) {
+  function addRandomStops(notesArray, sketch) {
     //duplicate notes
     var _newNotesArray = duplicateArray(notesArray, 1);
     var _randomStopCount = _newNotesArray.length / 2;
@@ -58,5 +58,5 @@ module.exports = (function() {
       addRandomStops: addRandomStops,
       getAllegrettoRhythm: getAllegrettoRhythm,
       getAllegrettoRhythmType: getAllegrettoRhythmType
-  }
+  };
 })();

@@ -50,8 +50,9 @@
   & + .conditions-display__item {
     @media all and (max-width: $bp-mobile) {
       margin-top: 8px;
-      padding-top: 12px;
+      padding-top: 24px;
       border-top: 1px solid $color-purple-dark;
+      @include outputThemeBorderColour;
     }
   }
 

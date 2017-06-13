@@ -103,8 +103,6 @@ module.exports = (function generateFrequencyScales() {
     }
 
     return {
-        createScale: createScale,
-        findCentreFreqIndex: findCentreFreqIndex,
         createEqTempMusicalScale: createEqTempMusicalScale,
         CHROMATIC_SCALE: CHROMATIC_SCALE
     };

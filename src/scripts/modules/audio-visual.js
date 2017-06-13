@@ -133,7 +133,7 @@ module.exports = function() {
       soundItem.stop();
     }, avSettings.fadeTime * 1000);
   }
-  
+
   function fadeOutAllSounds(autoStart) {
     //Fades
     brassBaritone.fade(0, avSettings.fadeTime);
@@ -416,7 +416,7 @@ module.exports = function() {
       function preparePrecipArp(precipArpScaleNoRests) {
         //Overwrite sequence with new notes
         precipArpScales = precipArpScaleNoRests.map(function(pArpScale) {
-          return audioHlpr.addRandomStops(pArpScale).reverse();
+          return audioHlpr.addRandomStops(pArpScale, sketch).reverse();
         });
         precipArpReady = true;
       }
