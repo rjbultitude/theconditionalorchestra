@@ -17,7 +17,6 @@ var weatherCheck = require('./weather-checker-fns');
 var microU = require('../utilities/micro-utilities');
 var intervals = require('../utilities/intervals');
 var getFreqScales = require('../utilities/create-freq-scales');
-var duplicateArray = require('../utilities/duplicate-array-vals');
 var getLargestPosNumInArr = require('../utilities/largest-pos-num-in-array');
 var getLargestNegNumInArr = require('../utilities/largest-neg-num-in-array');
 var addMissingArrayItems = require('../utilities/add-missing-array-items');
@@ -26,6 +25,7 @@ var makeFibSequence = require('../utilities/fib-sequence');
 var coFns = require('./co-display-fns');
 var pageTheme = require('./page-theme');
 var audioGets = require('./audio-getters');
+var audioHlpr = require('./audio-helpers');
 
 module.exports = function() {
   /*
@@ -127,21 +127,21 @@ module.exports = function() {
     stopPadSounds(soundItem);
   }
 
-  function fadeChoralSounds(soundItem) {
+  function fadeOutChoralSounds(soundItem) {
     soundItem.fade(0, avSettings.fadeTime);
     setTimeout(function() {
       soundItem.stop();
     }, avSettings.fadeTime * 1000);
   }
-
-  function killCurrentSounds(autoStart) {
+  
+  function fadeOutAllSounds(autoStart) {
     //Fades
     brassBaritone.fade(0, avSettings.fadeTime);
     brassBaritone2.fade(0, avSettings.fadeTime);
     bass.fade(0, avSettings.fadeTime);
     bass2.fade(0, avSettings.fadeTime);
     chineseCymbal.fade(0, avSettings.fadeTime);
-    choralSounds.forEach(fadeChoralSounds);
+    choralSounds.forEach(fadeOutChoralSounds);
     djembe.fade(0, avSettings.fadeTime);
     dropSound.fade(0, avSettings.fadeTime);
     harpSound.fade(0, avSettings.fadeTime);
@@ -323,6 +323,7 @@ module.exports = function() {
 
     //Create p5 sketch
     var myP5 = new P5(function(sketch) {
+
       // used for Brass pan
       var inc = sketch.TWO_PI / 150;
 
@@ -330,42 +331,26 @@ module.exports = function() {
         sketch.noLoop();
       });
 
-      function addRandomStops(notesArray) {
-        //duplicate notes
-        var _newNotesArray = duplicateArray(notesArray, 1);
-        var _randomStopCount = _newNotesArray.length / 2;
-        var _randomIndex;
-        //Add stops
-        for (var i = 0; i < _randomStopCount; i++) {
-          _randomIndex = sketch.random(0, _newNotesArray.length);
-          _newNotesArray.splice(_randomIndex, 0, 0);
-        }
-        return _newNotesArray;
+      /**
+       * ------------------------
+       * Set base effects
+       * ------------------------
+       */
+      function setFilter() {
+        soundFilter.freq(masterFilterFreq);
+        soundFilter.res(20);
       }
 
-      function getAllegrettoRhythm(scaleArray, includeFills) {
-        var _newScaleArr = [];
-        for (var i = 0, length = scaleArray.length; i < length; i++) {
-          if (i % 2 === 0) {
-            _newScaleArr.push(scaleArray[i]);
-            _newScaleArr.push(0);
-            _newScaleArr.push(scaleArray[i]);
-            if (!includeFills) {
-              _newScaleArr.push(scaleArray[i]);
-            }
-            if (includeFills) {
-              _newScaleArr.splice(_newScaleArr.length - 1, 0, 0);
-            }
-          } else if (i % 2 !== 0) {
-            _newScaleArr.push(scaleArray[i]);
-            if (includeFills) {
-              _newScaleArr.splice(_newScaleArr.length - 1, 0, 0);
-              _newScaleArr.push(scaleArray[i]);
-            }
-          }
-        }
-        return _newScaleArr;
+      function setReverb() {
+        reverb.set(reverbLength, reverbDecay);
+        reverb.amp(1);
       }
+
+      /**
+       * ------------------------
+       * Music loop index updaters
+       * ------------------------
+       */
 
       function updatePanIndex() {
         if (panIndex < panArr.length - 1) {
@@ -375,24 +360,55 @@ module.exports = function() {
         }
       }
 
-      function getAllegrettoRhythmType(humidArpScaleArray) {
-        var _newNotesArray = [];
-        // playlogic
-        // humard arpeggio doesn't play if
-        // it's fine, raining or windy
-        if (wCheck.isClement) {
-          _newNotesArray = getAllegrettoRhythm(humidArpScaleArray, true);
+      function setChordIndex() {
+        if (chordIndex >= synchedSoundsChords.length - 1 - numExtraChords) {
+          chordIndex = 0;
         } else {
-          _newNotesArray = getAllegrettoRhythm(humidArpScaleArray, false);
+          chordIndex++;
         }
-        return _newNotesArray;
+        return chordIndex;
       }
 
+      function updateNoteLength() {
+        //If the lower chords are playing halve the time
+        currNoteLength = extraSeqPlaying ? sketch.random(noteLengths) * 2 :
+          sketch.random(noteLengths);
+        //Start the call of the updateNoteLength fn again
+        padReady = true;
+      }
+
+      //Set amount of time each lead note
+      //plays using fibonacci sequence
+      function updateLeadSoundLength() {
+        currLeadLength = leadNoteLengths[fibIndex];
+        if (fibIndex === leadNoteLengths.length - 1) {
+          fibIndex = 0;
+        } else {
+          fibIndex++;
+        }
+        leadSoundReady = true;
+      }
+
+      function updateLeadSoundIndex() {
+        if (leadSoundIndex === numPadNotes - 1) {
+          leadSoundIndex = 0;
+          leadBarComplete = true;
+        } else {
+          leadSoundIndex++;
+          leadBarComplete = false;
+        }
+      }
+
+      /**
+       * ------------------------
+       * Music preparation functions
+       * ------------------------
+       */
       function prepareHumidArp(hScalesNoRests) {
         //Overwrite empty array with sequences
         //that include rests
         humidArpScales = hScalesNoRests.map(function(hArpScale) {
-          return getAllegrettoRhythmType(hArpScale);
+          return audioHlpr.getAllegrettoRhythmType(wCheck, hArpScale);
         });
         humidArpReady = true;
       }
@@ -400,7 +416,7 @@ module.exports = function() {
       function preparePrecipArp(precipArpScaleNoRests) {
         //Overwrite sequence with new notes
         precipArpScales = precipArpScaleNoRests.map(function(pArpScale) {
-          return addRandomStops(pArpScale).reverse();
+          return audioHlpr.addRandomStops(pArpScale).reverse();
         });
         precipArpReady = true;
       }
@@ -497,15 +513,6 @@ module.exports = function() {
         }
       }
 
-      function setChordIndex() {
-        if (chordIndex >= synchedSoundsChords.length - 1 - numExtraChords) {
-          chordIndex = 0;
-        } else {
-          chordIndex++;
-        }
-        return chordIndex;
-      }
-
       function padCallBack() {
         if (isPlaying) {
           padIndexCount++;
@@ -514,36 +521,6 @@ module.exports = function() {
             playSynchedSounds(true);
             padIndexCount = 0;
           }
-        }
-      }
-
-      function updateNoteLength() {
-        //If the lower chords are playing halve the time
-        currNoteLength = extraSeqPlaying ? sketch.random(noteLengths) * 2 :
-          sketch.random(noteLengths);
-        //Start the call of the updateNoteLength fn again
-        padReady = true;
-      }
-
-      //Set amount of time each lead note
-      //plays using fibonacci sequence
-      function updateLeadSoundLength() {
-        currLeadLength = leadNoteLengths[fibIndex];
-        if (fibIndex === leadNoteLengths.length - 1) {
-          fibIndex = 0;
-        } else {
-          fibIndex++;
-        }
-        leadSoundReady = true;
-      }
-
-      function updateLeadSoundIndex() {
-        if (leadSoundIndex === numPadNotes - 1) {
-          leadSoundIndex = 0;
-          leadBarComplete = true;
-        } else {
-          leadSoundIndex++;
-          leadBarComplete = false;
         }
       }
 
@@ -626,9 +603,8 @@ module.exports = function() {
       /**
        * playSounds Handles playback logic
        * Though some of this is delegated
-       * @param  {Array} synchedSoundsChords    sets of notes to play
-       * @param  {Array} precipArpScaleArray a set of notes fot the sequencer to play
-       * @param  {Array} humidArpScaleArray a set of notes fot the sequencer to play
+       * @param  {Array} pArpScalesNoRests a set of notes fot the sequencer to play
+       * @param  {Array} hScalesNoRests a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
       function playSounds(pArpScalesNoRests, hScalesNoRests) {
@@ -681,15 +657,11 @@ module.exports = function() {
 
       /**
        * Critical function - creates a set of octaves
-       * if the correct number of octaves are not produced the app fails
-       * @param  {Number}  largestPosNumber  [highest positive number]
-       * @param  {Number}  largestNegNumber [highest negative number]
-       * @param  {Number}  rootAndOffset  [root note plus the chord offset]
-       * @param  {Number} semisInOct      [Number of semitones in octave]
-       * @return {Object}                 [The scale and the total number of octaves]
+       * if the correct number of octaves is not produced the app fails
+       * @param  {Object}  anConfig  [Includes all the necessary properties]
+       * @return {Object} [The scale, the centre note index & the total number of octaves]
        */
       function getAllNotesScale(anConfig) {
-        //largestPosNumber, largestNegNumber, rootAndOffset, semisInOct
         var _highestNoteIndex = anConfig.largestPosNumber + Math.abs(anConfig.rootAndOffset);
         var _lowestNoteIndex = Math.abs(anConfig.largestNegNumber) + Math.abs(anConfig.rootAndOffset);
         var _highestFraction = _highestNoteIndex / anConfig.numSemisPerOctave;
@@ -874,16 +846,6 @@ module.exports = function() {
         return _chordSeq;
       }
 
-      function setFilter() {
-        soundFilter.freq(masterFilterFreq);
-        soundFilter.res(20);
-      }
-
-      function setReverb() {
-        reverb.set(reverbLength, reverbDecay);
-        reverb.amp(1);
-      }
-
       function createHumidArpScales() {
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = 0;
@@ -1016,8 +978,6 @@ module.exports = function() {
         });
       }
 
-      //TODO Should all the app vars
-      //be in an object?
       function getDisplayDataVals() {
         return {
           numChords: numChords,
@@ -1372,7 +1332,7 @@ module.exports = function() {
 
   function clearAndStopWhenDone(autoStart) {
     cdContainer.innerHTML = '';
-    killCurrentSounds(autoStart);
+    fadeOutAllSounds(autoStart);
   }
 
   channel.subscribe('stop', function(autoStart) {

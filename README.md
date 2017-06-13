@@ -151,9 +151,37 @@ May need to Upgrade to google maps 3 : https://developers.google.com/maps/docume
 
 ###Bugs
 
-After stop fade out is louder than normal playback, firefox only - caused by the filter not being applied. 
+After stop fade out is louder than normal playback, firefox only - caused by the filter not being applied.
 
 Night time should also manage the filter frequency as it affects visibility.
 Only works with daily endpoint :[
 
 No longer relevant - Sequencer onStep only counts the steps in one single pass rather than the loop
+
+##p5 usage
+
+Filters
+ * P5.LowPass
+ * P5.HighPass
+
+ Reverb
+ * P5.Reverb
+
+ Maths
+ * sketch.TWO_PI
+ * sketch.sin
+ * sketch.cos
+ * sketch.random (number)
+ * sketch.random (index in array)
+
+ Draw loop
+ * sketch.draw
+ * sketch.noLoop
+ * sketch.setup
+ * sketch.frameRate
+ * sketch.frameCount
+
+ Audio
+ * sketch.preload
+ * sketch.loadSound
+ * sketch.masterVolume
