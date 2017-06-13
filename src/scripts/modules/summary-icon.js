@@ -35,14 +35,14 @@ module.exports = function(lwData) {
   // To use with this apps icons
   function approximateIcons() {
     return iconStrs.filter(function(icon) {
-      console.log('dayRe.test(icon)', dayRe.test(icon));
-      console.log('nightRe.test(icon)', nightRe.test(icon));
+      //console.log('dayRe.test(icon)', dayRe.test(icon));
+      //console.log('nightRe.test(icon)', nightRe.test(icon));
       if (!dayRe.test(icon) || !nightRe.test(icon)) {
         return icon;
       }
     });
   }
 
-  console.log(extractTime());
-  console.log(approximateIcons());
+  console.log('extractTime', extractTime());
+  console.log('approximateIcons', approximateIcons());
 };

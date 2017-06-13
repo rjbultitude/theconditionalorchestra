@@ -12,7 +12,8 @@ module.exports = (function() {
     //Add stops
     for (var i = 0; i < _randomStopCount; i++) {
       _randomIndex = sketch.random(0, _newNotesArray.length);
-      _newNotesArray.splice(_randomIndex, 0, 0);
+      // splice pos, deleteCount, item
+      _newNotesArray.splice(_randomIndex, 0, 0.05);
     }
     return _newNotesArray;
   }
