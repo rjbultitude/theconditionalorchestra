@@ -25,13 +25,17 @@ var __PROD__ = process.env.NODE_ENV !== 'test';
   // Constants
   var CHROMATIC_SCALE = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
+  function reallyIsNaN(x) {
+    return x !== x;
+  }
+
   function checkAugmentNumArrayConfigTypes(augArrConfig) {
     if (Array.isArray(augArrConfig.originalArray !== true)) {
       throw TypeError('originalArray is not an array');
     } else {
       for (var i = 0; i < augArrConfig.originalArray.length; i++) {
-        if (typeof augArrConfig.originalArray[i] !== 'number' || isNaN(augArrConfig.originalArray[i])) {
-          throw TypeError('originalArray contains values that aren\'t numbers');
+        if (reallyIsNaN(augArrConfig.originalArray[i])) {
+          throw TypeError('originalArray contains values that are NaN');
         }
       }
     }
@@ -237,7 +241,7 @@ var __PROD__ = process.env.NODE_ENV !== 'test';
   */
 
   function getSpecificNote(eTNoteConfig) {
-    //startFreq, numSemitones, interval, upwardsScale
+    console.log('eTNoteConfig', eTNoteConfig);
     try {
       checkSpecificNoteConfigDataTypes(eTNoteConfig);
     } catch (e) {

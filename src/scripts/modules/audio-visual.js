@@ -17,7 +17,6 @@ var coDisplayData = require('./co-display-data');
 var weatherCheck = require('./weather-checker-fns');
 var microU = require('../utilities/micro-utilities');
 var intervals = require('../utilities/intervals');
-//var getFreqScales = require('../utilities/create-freq-scales');
 var avSettings = require('../settings/av-settings');
 var makeFibSequence = require('../utilities/fib-sequence');
 var coFns = require('./co-display-fns');
@@ -658,14 +657,15 @@ module.exports = function() {
         var _chordOffsetArr = [];
         var _diff;
         _chordOffsetArr = intervals[chordSeqKey];
+        console.log('_chordOffsetArr', _chordOffsetArr);
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
           _chordOffsetArr = musicalscales.augmentNumArray({
             originalArray: _chordOffsetArr,
             difference: _diff,
-            repeatMultiple: null,
-            amountToAdd: null
+            repeatMultiple: 0,
+            amountToAdd: 0
           });
         }
         return _chordOffsetArr;
@@ -673,14 +673,15 @@ module.exports = function() {
 
       function getInversionOffsetArr(numChords) {
         var _chordInversionOffSetArr = intervals[inversionOffsetType];
+        console.log('_chordInversionOffSetArr', _chordInversionOffSetArr);
         var _diff;
         if (numChords > _chordInversionOffSetArr.length) {
           _diff = numChords - _chordInversionOffSetArr.length;
           _chordInversionOffSetArr = musicalscales.augmentNumArray({
             originalArray: _chordInversionOffSetArr,
             difference: _diff,
-            repeatMultiple: null,
-            amountToAdd: null
+            repeatMultiple: 0,
+            amountToAdd: 0
           });
         }
         return _chordInversionOffSetArr;
@@ -705,34 +706,15 @@ module.exports = function() {
         var _chordSeqOffsetArr = getChordSeqOffsetArr(chordNumGreatest);
         // Chord inversion shift
         var _inversionOffsetArr = getInversionOffsetArr(chordNumGreatest);
-        console.log('_inversionOffsetArr.length', _inversionOffsetArr.length);
-        console.log('numChords', numChords);
-        console.log('chordNumGreatest', chordNumGreatest);
-        // Handle array lengths
-        // if there's not enough chords (offset indices) in the array
-        if (chordNumGreatest > _chordSeqOffsetArr.length) {
-          _chordSeqOffsetArr = musicalscales.augmentNumArray({
-            originalArray: _chordSeqOffsetArr,
-            difference: chordNumGreatest - _chordSeqOffsetArr.length,
-            repeatMultiple: null,
-            amountToAdd: null
-          });
-        }
-        if (chordNumGreatest > _inversionOffsetArr.length) {
-          _chordSeqOffsetArr = musicalscales.augmentNumArray({
-            originalArray: _inversionOffsetArr,
-            difference: chordNumGreatest - _inversionOffsetArr.length,
-            repeatMultiple: null,
-            amountToAdd: null
-          });
-        }
         console.log('_chordSeqOffsetArr', _chordSeqOffsetArr);
         // Create primary chords
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(musicalscales.getSpecificScale({
+            startFreq: 1,
+            numSemitones: numSemisPerOctave,
             numNotes: numPadNotes,
-            startNote: _chordSeqOffsetArr[i].index,
-            chordKey: getValidChordType(_chordSeqOffsetArr[i].key),
+            rootNote: _chordSeqOffsetArr[i].index,
+            intervals: intervals[getValidChordType(_chordSeqOffsetArr[i].key)],
             inversionStartNote: _inversionOffsetArr[i],
             amountToAdd: numSemisPerOctave,
             repeatMultiple: 0,
@@ -742,9 +724,11 @@ module.exports = function() {
         // Create extra sequence chord(s)
         for (var j = 0; j < numExtraChords; j++) {
           _chordSeq.push(musicalscales.getSpecificScale({
+            startFreq: 1,
+            numSemitones: numSemisPerOctave,
             numNotes: numPadNotes,
-            startNote: _chordSeqOffsetArr[j].index - extraSeqOffset,
-            chordKey: getValidChordType(_chordSeqOffsetArr[j].key),
+            rootNote: _chordSeqOffsetArr[j].index - extraSeqOffset,
+            intervals: intervals[getValidChordType(_chordSeqOffsetArr[j].key)],
             inversionStartNote: _inversionOffsetArr[j],
             amountToAdd: numSemisPerOctave,
             repeatMultiple: 0,
@@ -761,18 +745,22 @@ module.exports = function() {
         //var _numHumidArpNotes = avSettings.numHumidArpNotes;
         var _numHumidArpNotes = intervals[humidArpIntervalsKey].length;
         var _mainHArpScale = musicalscales.getSpecificScale({
+          startFreq: 1,
+          numSemitones: numSemisPerOctave,
           numNotes: _numHumidArpNotes,
-          startNote: _hArpCNoteOffset,
-          chordKey: humidArpIntervalsKey,
+          rootNote: _hArpCNoteOffset,
+          intervals: intervals[humidArpIntervalsKey],
           inversionStartNote: _intervalIndexOffset,
           amountToAdd: 0,
           repeatMultiple: 0,
           type: 'humid arp'
         });
         var _extraHArpScale = musicalscales.getSpecificScale({
+          startFreq: 1,
+          numSemitones: numSemisPerOctave,
           numNotes: _numHumidArpNotes,
-          startNote: _hArpCNoteOffset + invExtraSeqOffset,
-          chordKey: humidArpIntervalsKey,
+          rootNote: _hArpCNoteOffset + invExtraSeqOffset,
+          intervals: intervals[humidArpIntervalsKey],
           inversionStartNote: _intervalIndexOffset,
           amountToAdd: 0,
           repeatMultiple: 0,
@@ -790,18 +778,22 @@ module.exports = function() {
         var _intervalIndexOffset = 0;
         var _pArpScalesNoRests = [];
         var _mainPArpScale = musicalscales.getSpecificScale({
+          startFreq: 1,
+          numSemitones: numSemisPerOctave,
           numNotes: avSettings.numPrecipArpNotes,
-          startNote: _pArpCNoteOffset,
-          chordKey: precipArpIntervalType,
+          rootNote: _pArpCNoteOffset,
+          intervals: intervals[precipArpIntervalType],
           inversionStartNote: _intervalIndexOffset,
           amountToAdd: numSemisPerOctave,
           repeatMultiple: _repeatMultiple,
           type: 'precip arp'
         });
         var _extraPArpScale = musicalscales.getSpecificScale({
+          startFreq: 1,
+          numSemitones: numSemisPerOctave,
           numNotes: avSettings.numPrecipArpNotes,
-          startNote: _pArpCNoteOffset + invExtraSeqOffset,
-          chordKey: precipArpIntervalType,
+          rootNote: _pArpCNoteOffset + invExtraSeqOffset,
+          intervals: intervals[precipArpIntervalType],
           inversionStartNote: _intervalIndexOffset,
           amountToAdd: numSemisPerOctave,
           repeatMultiple: _repeatMultiple,
