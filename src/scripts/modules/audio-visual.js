@@ -7,6 +7,7 @@
 //3rd party
 var P5 = require('../libs/p5');
 require('../libs/p5.sound');
+var musicalscales = require('../libs/musicalscales');
 var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/index').codisplay;
@@ -16,10 +17,7 @@ var coDisplayData = require('./co-display-data');
 var weatherCheck = require('./weather-checker-fns');
 var microU = require('../utilities/micro-utilities');
 var intervals = require('../utilities/intervals');
-var getFreqScales = require('../utilities/create-freq-scales');
-var getLargestPosNumInArr = require('../utilities/largest-pos-num-in-array');
-var getLargestNegNumInArr = require('../utilities/largest-neg-num-in-array');
-var addMissingArrayItems = require('../utilities/add-missing-array-items');
+//var getFreqScales = require('../utilities/create-freq-scales');
 var avSettings = require('../settings/av-settings');
 var makeFibSequence = require('../utilities/fib-sequence');
 var coFns = require('./co-display-fns');
@@ -277,7 +275,8 @@ module.exports = function() {
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
     var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, chordType);
     var harpVolArr = audioGets.getHarpVolArr(wCheck, sCheck);
-    //Root note
+    // Root note
+    // Is an index rather than a frequency
     var rootNoteRange = audioGets.getRootNoteRange(numSemisPerOctave);
     var rootNote = audioGets.getRootNote(lwData, rootNoteRange);
     var rootNoteHigh = audioGets.isRootNoteHigh(rootNote);
@@ -655,124 +654,6 @@ module.exports = function() {
        * ------------------------
        */
 
-      /**
-       * Critical function - creates a set of octaves
-       * if the correct number of octaves is not produced the app fails
-       * @param  {Object}  anConfig  [Includes all the necessary properties]
-       * @return {Object} [The scale, the centre note index & the total number of octaves]
-       */
-      function getAllNotesScale(anConfig) {
-        var _highestNoteIndex = anConfig.largestPosNumber + Math.abs(anConfig.rootAndOffset);
-        var _lowestNoteIndex = Math.abs(anConfig.largestNegNumber) + Math.abs(anConfig.rootAndOffset);
-        var _highestFraction = _highestNoteIndex / anConfig.numSemisPerOctave;
-        var _lowestFraction = _lowestNoteIndex / anConfig.numSemisPerOctave;
-        var _numUpperOctaves = Math.ceil(_highestFraction);
-        var _numLowerOctaves = Math.ceil(_lowestFraction);
-        var _totalOctaves = _numUpperOctaves + _numLowerOctaves;
-        var _downFirst = false;
-        if (_lowestNoteIndex > _highestNoteIndex) {
-          _downFirst = true;
-        }
-        // TODO use latest version of createEqTempMusicalScale
-        // which only accepts a config object
-        var _allNotesScaleCentreNoteObj = getFreqScales.createEqTempMusicalScale(1, _totalOctaves, anConfig.numSemisPerOctave, _downFirst);
-        return {
-          allNotesArr: _allNotesScaleCentreNoteObj.scale,
-          centreNoteIndex: _allNotesScaleCentreNoteObj.centreFreqIndex,
-          numOctaves: _totalOctaves
-        };
-      }
-
-      // Adds new items to the intervals array
-      // should it not have enough notes
-      function addMissingNotesFromInterval(pConfig) {
-        var _scaleIntervals = [];
-        var _highestIndex = pConfig.intervalIndexOffset + pConfig.numNotes;
-        var _scaleIntervalsLength = pConfig.scaleIntervals.length;
-        if (_highestIndex > _scaleIntervalsLength) {
-          var _diff = _highestIndex - _scaleIntervalsLength;
-          _scaleIntervals = addMissingArrayItems(pConfig.scaleIntervals, _diff, pConfig.amountToAdd, pConfig.repeatMultiple);
-          console.log('added missing items to ' + pConfig.type, _scaleIntervals);
-        } else {
-          _scaleIntervals = pConfig.scaleIntervals;
-        }
-        return _scaleIntervals;
-      }
-
-      function getPitchesFromIntervals(pConfig) {
-        var _scaleArray = [];
-        var _intervalIndexOffset = pConfig.intervalIndexOffset;
-        var _newNote;
-        for (var i = 0; i < pConfig.numNotes; i++) {
-          //console.log('note ' + i + ' ' + pConfig.type + ' scaleInterval', pConfig.scaleIntervals[_intervalIndexOffset]);
-          //console.log('intervaloffset ' + _intervalIndexOffset + ' centreNoteI ' + pConfig.centreNoteIndex + ' Final index ', pConfig.scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex);
-          _newNote = pConfig.allNotesArr[pConfig.scaleIntervals[_intervalIndexOffset] + pConfig.centreNoteIndex];
-          //error check
-          if (_newNote !== undefined || isNaN(_newNote) === false) {
-            _scaleArray.push(_newNote);
-          } else {
-            console.error('undefined or NaN note');
-          }
-          _intervalIndexOffset++;
-        }
-        return _scaleArray;
-      }
-
-      //Accepts only an object
-      function createMusicalScale(msConfig) {
-        //Error check
-        if (typeof msConfig !== 'object') {
-          console.error('Musical Scale Config must be an object');
-          return;
-        }
-        //Set vars
-        var _allNotesArr = [];
-        var _centreFreqIndex;
-        var _scaleArray = [];
-        var _rootAndOffset = rootNote + msConfig.startNote;
-        var _scaleIntervals = intervals[msConfig.chordKey];
-        // add missing scale intervals
-        var _scaleIntervalsFull = addMissingNotesFromInterval({
-          amountToAdd: msConfig.amountToAdd,
-          intervalIndexOffset: msConfig.inversionStartNote,
-          numNotes: msConfig.numNotes,
-          repeatMultiple: msConfig.repeatMultiple,
-          scaleIntervals: _scaleIntervals,
-          type: msConfig.type
-        });
-        // Inlcude amountToAdd to get true upper number
-        var _largestPosNumber = getLargestPosNumInArr(_scaleIntervalsFull) + msConfig.amountToAdd;
-        var _largestNegNumber = getLargestNegNumInArr(_scaleIntervalsFull);
-        // Once we know the total range required
-        // get all the notes/frequencies
-        var _allNotesNumOctsCentreFreq = getAllNotesScale({
-            largestPosNumber: _largestPosNumber,
-            largestNegNumber: _largestNegNumber,
-            rootAndOffset: _rootAndOffset,
-            numSemisPerOctave: numSemisPerOctave
-          });
-        _allNotesArr = _allNotesNumOctsCentreFreq.allNotesArr;
-        _centreFreqIndex = _allNotesNumOctsCentreFreq.centreNoteIndex;
-        // Start at the centre note
-        // Then find the root note
-        // Then the offset (used by chord seq)
-        // After all notes scale has been created
-        var _centreNoteIndex = _centreFreqIndex + _rootAndOffset;
-        // Inversions are acheived by
-        // selecting an index from within the intervals themselves
-        _scaleArray = getPitchesFromIntervals({
-            allNotesArr: _allNotesArr,
-            scaleIntervals: _scaleIntervalsFull,
-            centreNoteIndex: _centreNoteIndex,
-            numNotes: msConfig.numNotes,
-            intervalIndexOffset: msConfig.inversionStartNote,
-            amountToAdd: msConfig.amountToAdd,
-            repeatMultiple: msConfig.repeatMultiple,
-            type: msConfig.type
-          });
-        return _scaleArray;
-      }
-
       function getChordSeqOffsetArr(numChords) {
         var _chordOffsetArr = [];
         var _diff;
@@ -780,7 +661,12 @@ module.exports = function() {
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
-          _chordOffsetArr = addMissingArrayItems(_chordOffsetArr, _diff, null, null);
+          _chordOffsetArr = musicalscales.augmentNumArray({
+            originalArray: _chordOffsetArr,
+            difference: _diff,
+            repeatMultiple: null,
+            amountToAdd: null
+          });
         }
         return _chordOffsetArr;
       }
@@ -790,7 +676,12 @@ module.exports = function() {
         var _diff;
         if (numChords > _chordInversionOffSetArr.length) {
           _diff = numChords - _chordInversionOffSetArr.length;
-          _chordInversionOffSetArr = addMissingArrayItems(_chordInversionOffSetArr, _diff, null, null);
+          _chordInversionOffSetArr = musicalscales.augmentNumArray({
+            originalArray: _chordInversionOffSetArr,
+            difference: _diff,
+            repeatMultiple: null,
+            amountToAdd: null
+          });
         }
         return _chordInversionOffSetArr;
       }
@@ -820,14 +711,25 @@ module.exports = function() {
         // Handle array lengths
         // if there's not enough chords (offset indices) in the array
         if (chordNumGreatest > _chordSeqOffsetArr.length) {
-          _chordSeqOffsetArr = addMissingArrayItems(_chordSeqOffsetArr, chordNumGreatest - _chordSeqOffsetArr.length, null, null);
+          _chordSeqOffsetArr = musicalscales.augmentNumArray({
+            originalArray: _chordSeqOffsetArr,
+            difference: chordNumGreatest - _chordSeqOffsetArr.length,
+            repeatMultiple: null,
+            amountToAdd: null
+          });
         }
         if (chordNumGreatest > _inversionOffsetArr.length) {
-          _chordSeqOffsetArr = addMissingArrayItems(_inversionOffsetArr, chordNumGreatest - _inversionOffsetArr.length, null, null);
+          _chordSeqOffsetArr = musicalscales.augmentNumArray({
+            originalArray: _inversionOffsetArr,
+            difference: chordNumGreatest - _inversionOffsetArr.length,
+            repeatMultiple: null,
+            amountToAdd: null
+          });
         }
+        console.log('_chordSeqOffsetArr', _chordSeqOffsetArr);
         // Create primary chords
         for (var i = 0; i < numChords; i++) {
-          _chordSeq.push(createMusicalScale({
+          _chordSeq.push(musicalscales.getSpecificScale({
             numNotes: numPadNotes,
             startNote: _chordSeqOffsetArr[i].index,
             chordKey: getValidChordType(_chordSeqOffsetArr[i].key),
@@ -839,7 +741,7 @@ module.exports = function() {
         }
         // Create extra sequence chord(s)
         for (var j = 0; j < numExtraChords; j++) {
-          _chordSeq.push(createMusicalScale({
+          _chordSeq.push(musicalscales.getSpecificScale({
             numNotes: numPadNotes,
             startNote: _chordSeqOffsetArr[j].index - extraSeqOffset,
             chordKey: getValidChordType(_chordSeqOffsetArr[j].key),
@@ -858,7 +760,7 @@ module.exports = function() {
         var _hArpScalesNoRests = [];
         //var _numHumidArpNotes = avSettings.numHumidArpNotes;
         var _numHumidArpNotes = intervals[humidArpIntervalsKey].length;
-        var _mainHArpScale = createMusicalScale({
+        var _mainHArpScale = musicalscales.getSpecificScale({
           numNotes: _numHumidArpNotes,
           startNote: _hArpCNoteOffset,
           chordKey: humidArpIntervalsKey,
@@ -867,7 +769,7 @@ module.exports = function() {
           repeatMultiple: 0,
           type: 'humid arp'
         });
-        var _extraHArpScale = createMusicalScale({
+        var _extraHArpScale = musicalscales.getSpecificScale({
           numNotes: _numHumidArpNotes,
           startNote: _hArpCNoteOffset + invExtraSeqOffset,
           chordKey: humidArpIntervalsKey,
@@ -887,7 +789,7 @@ module.exports = function() {
         var _repeatMultiple = 2;
         var _intervalIndexOffset = 0;
         var _pArpScalesNoRests = [];
-        var _mainPArpScale = createMusicalScale({
+        var _mainPArpScale = musicalscales.getSpecificScale({
           numNotes: avSettings.numPrecipArpNotes,
           startNote: _pArpCNoteOffset,
           chordKey: precipArpIntervalType,
@@ -896,7 +798,7 @@ module.exports = function() {
           repeatMultiple: _repeatMultiple,
           type: 'precip arp'
         });
-        var _extraPArpScale = createMusicalScale({
+        var _extraPArpScale = musicalscales.getSpecificScale({
           numNotes: avSettings.numPrecipArpNotes,
           startNote: _pArpCNoteOffset + invExtraSeqOffset,
           chordKey: precipArpIntervalType,
