@@ -1,10 +1,10 @@
 'use strict';
 
 var he = require('he');
+var freqi = require('freqi');
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 var microU = require('../utilities/micro-utilities');
 var avSettings = require('../settings/av-settings');
-var getFreqScales = require('../utilities/create-freq-scales');
 
 /**
  * Methods for setting display data
@@ -32,9 +32,9 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
       _rootNoteLetter = microU.getOrdinal(_rootNoteNumber) + ' note in a non western scale';
     } else {
       if (rootNote < 0) {
-        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[getFreqScales.CHROMATIC_SCALE.length + rootNote] + '2';
+        _rootNoteLetter = freqi.CHROMATIC_SCALE[freqi.CHROMATIC_SCALE.length + rootNote] + '2';
       } else {
-        _rootNoteLetter = getFreqScales.CHROMATIC_SCALE[rootNote] + '3';
+        _rootNoteLetter = freqi.CHROMATIC_SCALE[rootNote] + '3';
       }
     }
     return _rootNoteLetter;

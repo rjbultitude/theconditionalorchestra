@@ -7,7 +7,7 @@
 //3rd party
 var P5 = require('../libs/p5');
 require('../libs/p5.sound');
-var musicalscales = require('../libs/musicalscales');
+var freqi = require('freqi');
 var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/index').codisplay;
@@ -661,7 +661,7 @@ module.exports = function() {
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
-          _chordOffsetArr = musicalscales.augmentNumArray({
+          _chordOffsetArr = freqi.augmentNumArray({
             originalArray: _chordOffsetArr,
             difference: _diff,
             repeatMultiple: 0,
@@ -677,7 +677,7 @@ module.exports = function() {
         var _diff;
         if (numChords > _chordInversionOffSetArr.length) {
           _diff = numChords - _chordInversionOffSetArr.length;
-          _chordInversionOffSetArr = musicalscales.augmentNumArray({
+          _chordInversionOffSetArr = freqi.augmentNumArray({
             originalArray: _chordInversionOffSetArr,
             difference: _diff,
             repeatMultiple: 0,
@@ -709,7 +709,7 @@ module.exports = function() {
         console.log('_chordSeqOffsetArr', _chordSeqOffsetArr);
         // Create primary chords
         for (var i = 0; i < numChords; i++) {
-          _chordSeq.push(musicalscales.getSpecificScale({
+          _chordSeq.push(freqi.getFreqs({
             startFreq: 1,
             numSemitones: numSemisPerOctave,
             numNotes: numPadNotes,
@@ -723,7 +723,7 @@ module.exports = function() {
         }
         // Create extra sequence chord(s)
         for (var j = 0; j < numExtraChords; j++) {
-          _chordSeq.push(musicalscales.getSpecificScale({
+          _chordSeq.push(freqi.getFreqs({
             startFreq: 1,
             numSemitones: numSemisPerOctave,
             numNotes: numPadNotes,
@@ -744,7 +744,7 @@ module.exports = function() {
         var _hArpScalesNoRests = [];
         //var _numHumidArpNotes = avSettings.numHumidArpNotes;
         var _numHumidArpNotes = intervals[humidArpIntervalsKey].length;
-        var _mainHArpScale = musicalscales.getSpecificScale({
+        var _mainHArpScale = freqi.getFreqs({
           startFreq: 1,
           numSemitones: numSemisPerOctave,
           numNotes: _numHumidArpNotes,
@@ -755,7 +755,7 @@ module.exports = function() {
           repeatMultiple: 0,
           type: 'humid arp'
         });
-        var _extraHArpScale = musicalscales.getSpecificScale({
+        var _extraHArpScale = freqi.getFreqs({
           startFreq: 1,
           numSemitones: numSemisPerOctave,
           numNotes: _numHumidArpNotes,
@@ -777,7 +777,7 @@ module.exports = function() {
         var _repeatMultiple = 2;
         var _intervalIndexOffset = 0;
         var _pArpScalesNoRests = [];
-        var _mainPArpScale = musicalscales.getSpecificScale({
+        var _mainPArpScale = freqi.getFreqs({
           startFreq: 1,
           numSemitones: numSemisPerOctave,
           numNotes: avSettings.numPrecipArpNotes,
@@ -788,7 +788,7 @@ module.exports = function() {
           repeatMultiple: _repeatMultiple,
           type: 'precip arp'
         });
-        var _extraPArpScale = musicalscales.getSpecificScale({
+        var _extraPArpScale = freqi.getFreqs({
           startFreq: 1,
           numSemitones: numSemisPerOctave,
           numNotes: avSettings.numPrecipArpNotes,
