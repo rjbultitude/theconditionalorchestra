@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "darkskyjs": "^0.0.5",
-    "freqi": "^0.0.3",
+    "freqi": "^1.0.1",
     "google-maps": "^3.2.1",
     "he": "^1.1.0",
     "postal": "^1.0.8"

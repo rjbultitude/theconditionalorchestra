@@ -715,7 +715,7 @@ module.exports = function() {
             numNotes: numPadNotes,
             rootNote: _chordSeqOffsetArr[i].index,
             intervals: intervals[getValidChordType(_chordSeqOffsetArr[i].key)],
-            inversionStartNote: _inversionOffsetArr[i],
+            intervalStartIndex: _inversionOffsetArr[i],
             amountToAdd: numSemisPerOctave,
             repeatMultiple: 0,
             type: 'pad'
@@ -729,7 +729,7 @@ module.exports = function() {
             numNotes: numPadNotes,
             rootNote: _chordSeqOffsetArr[j].index - extraSeqOffset,
             intervals: intervals[getValidChordType(_chordSeqOffsetArr[j].key)],
-            inversionStartNote: _inversionOffsetArr[j],
+            intervalStartIndex: _inversionOffsetArr[j],
             amountToAdd: numSemisPerOctave,
             repeatMultiple: 0,
             type: 'pad extra'
@@ -750,7 +750,7 @@ module.exports = function() {
           numNotes: _numHumidArpNotes,
           rootNote: _hArpCNoteOffset,
           intervals: intervals[humidArpIntervalsKey],
-          inversionStartNote: _intervalIndexOffset,
+          intervalStartIndex: _intervalIndexOffset,
           amountToAdd: 0,
           repeatMultiple: 0,
           type: 'humid arp'
@@ -761,7 +761,7 @@ module.exports = function() {
           numNotes: _numHumidArpNotes,
           rootNote: _hArpCNoteOffset + invExtraSeqOffset,
           intervals: intervals[humidArpIntervalsKey],
-          inversionStartNote: _intervalIndexOffset,
+          intervalStartIndex: _intervalIndexOffset,
           amountToAdd: 0,
           repeatMultiple: 0,
           type: 'humid arp'
@@ -783,7 +783,7 @@ module.exports = function() {
           numNotes: avSettings.numPrecipArpNotes,
           rootNote: _pArpCNoteOffset,
           intervals: intervals[precipArpIntervalType],
-          inversionStartNote: _intervalIndexOffset,
+          intervalStartIndex: _intervalIndexOffset,
           amountToAdd: numSemisPerOctave,
           repeatMultiple: _repeatMultiple,
           type: 'precip arp'
@@ -794,7 +794,7 @@ module.exports = function() {
           numNotes: avSettings.numPrecipArpNotes,
           rootNote: _pArpCNoteOffset + invExtraSeqOffset,
           intervals: intervals[precipArpIntervalType],
-          inversionStartNote: _intervalIndexOffset,
+          intervalStartIndex: _intervalIndexOffset,
           amountToAdd: numSemisPerOctave,
           repeatMultiple: _repeatMultiple,
           type: 'precip arp'
