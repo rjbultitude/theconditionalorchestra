@@ -31,5 +31,6 @@ module.exports = {
     playing: 'You are listening to the weather of ',
     start: 'Ready',
     stringError: 'Please enter text',
+    stringLengthError: 'Please enter at least one character',
     weather: 'Fetching weather data'
 };

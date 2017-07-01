@@ -1,5 +1,4 @@
 'use strict';
-
 var Tabs = require('./modules/tabs');
 var jsLoad = require('./utilities/js-load');
 var updateStatus = require('./modules/update-status');

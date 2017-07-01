@@ -454,11 +454,18 @@ module.exports = function() {
   }
 
   function useCustomLocation() {
-    var placeInput = document.getElementById('place').value;
-    if (typeof placeInput !== 'string') {
+    var _placeInput = document.getElementById('place');
+    var _placeInputVal = _placeInput.value;
+    if (typeof _placeInputVal !== 'string') {
       updateStatus('stringError');
+    } else if (_placeInputVal.length === 0) {
+      updateStatus('stringLengthError');
     } else {
-      startApp('customLocation', placeInput);
+      var _isValid = _placeInput.checkValidity();
+      console.log('_isValid', _isValid);
+      if (_isValid) {
+        startApp('customLocation', _placeInputVal);
+      }
     }
   }
 
