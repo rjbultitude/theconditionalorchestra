@@ -279,8 +279,10 @@ module.exports = function() {
     var rootNoteRange = audioGets.getRootNoteRange(numSemisPerOctave);
     var rootNote = audioGets.getRootNote(lwData, rootNoteRange);
     var rootNoteHigh = audioGets.isRootNoteHigh(rootNote);
+    var rootNoteGrtrMedian = audioGets.isRootNoteGrtrMedian(rootNote, rootNoteRange);
+    console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
     var longNoteIndex = audioGets.getLongNoteIndex(lwData, numPadNotes);
-    var longNoteHigh = audioGets.isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
+    var longNoteHigh = audioGets.isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes);
     console.log('longNoteHigh', longNoteHigh);
     var longNoteVolArr = audioGets.getLongNoteVolArr(wCheck);
     console.log('longNoteVolArr', longNoteVolArr);
@@ -289,8 +291,6 @@ module.exports = function() {
     console.log('reverbDecay', reverbDecay);
     var longNoteType = audioGets.getLongNoteType(wCheck);
     var masterFilterFreq = audioGets.getMasterFilterFreq(lwData, avSettings);
-    var rootNoteGrtrMedian = audioGets.isRootNoteGrtrMedian(rootNote, rootNoteRange);
-    console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
     var extraSeqOffset = audioGets.getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
     console.log('extraSeqOffset', extraSeqOffset);
     var invExtraSeqOffset = numSemisPerOctave - extraSeqOffset;
@@ -470,15 +470,15 @@ module.exports = function() {
         }
         // Lower by one octave
         // if the lower chords are playing
-        if (extraSeqPlaying || longNoteHigh) {
+        if (extraSeqPlaying || longNoteHigh || longNoteType === 'shiney') {
           _longNoteRate = _longNoteRate / 2;
         }
         // Play the wet signal alone
         // if visibility is less than 8 miles /
         // if the reverb is long
-        if (wCheck.isVisbilityPoor) {
-          longNote.disconnect();
-        }
+        // if (wCheck.isVisbilityPoor) {
+        //   longNote.disconnect();
+        // }
         longNote.connect(reverb);
         if (!wCheck.isVisbilityPoor) {
           longNote.playMode('restart');

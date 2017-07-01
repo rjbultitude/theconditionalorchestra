@@ -263,8 +263,9 @@ module.exports = (function() {
     return _longNoteIndex;
   }
 
-  function isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes) {
+  function isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes) {
     return rootNoteHigh && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
+    //return rootNoteGrtrMedian && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
   }
 
   function getLongNoteVolArr(wCheck) {
