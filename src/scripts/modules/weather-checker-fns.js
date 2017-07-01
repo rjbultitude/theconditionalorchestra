@@ -91,15 +91,21 @@ module.exports = {
   // @param temperatureInFrnht floating point
   // @param windSpeed floating point
   isMild: function isMild(temperatureInFrnht, windSpeed) {
+
     return frnhtToCelcius(temperatureInFrnht) >= 14 && windSpeed < 12;
   },
 
-  isMildAndHumid: function isMild(temperatureInFrnht, windSpeed, humidity) {
+  isMildAndBreezy: function isMildAndBreezy(temperatureInFrnht, windSpeed) {
+    return frnhtToCelcius(temperatureInFrnht) >= 14 && windSpeed > 12;
+  },
+
+  isMildAndHumid: function isMildAndHumid(temperatureInFrnht, windSpeed, humidity) {
     return frnhtToCelcius(temperatureInFrnht) >= 14 && windSpeed < 12 && humidity > 0.57;
   },
 
   // @param temperatureInFrnht floating point
   isFine: function isFine(cloudCover, windSpeed, temperatureInFrnht) {
+
    return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.3;
   },
 

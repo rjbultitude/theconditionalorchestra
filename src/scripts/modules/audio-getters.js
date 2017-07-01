@@ -107,6 +107,8 @@ module.exports = (function() {
       padType = 'zither';
     } else if (wCheck.isFine) {
       padType = 'aeroflute';
+    } else if (wCheck.isMildAndBreezy) {
+      padType = 'synth';
     } else if (wCheck.isMild) {
       padType = 'vocal';
     } else if (wCheck.isCold) {
@@ -139,12 +141,17 @@ module.exports = (function() {
 
   // Quieten the pad when the harp plays
   function getPadVolume(wCheck, sCheck, padType, avSettings) {
-    if(wCheck.isFoggy) {
-      return avSettings[padType].volume / 6;
-    } else if (sCheck.harpCanPlay && wCheck.isMild) {
-      return avSettings[padType].volume / 2;
+    // error check
+    if (avSettings.hasOwnProperty(padType)) {
+      if(wCheck.isFoggy) {
+        return avSettings[padType].volume / 6;
+      } else if (sCheck.harpCanPlay && wCheck.isMild) {
+        return avSettings[padType].volume / 2;
+      } else {
+        return avSettings[padType].volume;
+      }
     } else {
-      return avSettings[padType].volume;
+      console.warn('padType is falsy: ', avSettings[padType]);
     }
   }
 

@@ -16,6 +16,7 @@ module.exports = {
   guitar: {volume : 0.65},
   harmonium: {volume : 0.55},
   zither: {volume : 0.7},
+  synth: {volume : 0.7},
   organ: {volume : 0.8},
   saxophone: {volume : 0.8},
   vocal: {volume : 0.8},

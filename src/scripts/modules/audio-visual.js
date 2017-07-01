@@ -226,6 +226,7 @@ module.exports = function() {
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
       //broad conditions
       isMild: weatherCheck.isMild(lwData.temperature.value, lwData.windSpeed.value),
+      isMildAndBreezy: weatherCheck.isMildAndBreezy(lwData.temperature.value, lwData.windSpeed.value),
       isMildAndHumid: weatherCheck.isMildAndHumid(lwData.temperature.value, lwData.windSpeed.value, lwData.humidity.value),
       isFine: weatherCheck.isFine(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
       isSublime: weatherCheck.isSublime(lwData.cloudCover.value, lwData.windSpeed.value, lwData.temperature.value),
@@ -264,7 +265,6 @@ module.exports = function() {
     var leadVolume = audioGets.getLeadSoundVolume(wCheck);
     var padType = audioGets.getPadType(wCheck);
     var padVolume = audioGets.getPadVolume(wCheck, sCheck, padType, avSettings);
-    console.log('padVolume', padVolume);
     var inversionOffsetType = audioGets.getInversionOffsetKey(wCheck);
     // Humidity
     // TODO Group these into object
