@@ -70,6 +70,7 @@ module.exports = function() {
   // Sound objects
   var padSounds = [];
   var choralSounds = [];
+  var choralScales = [];
   var synchedSoundsChords = [];
   // Lead
   var leadBarComplete = false;
@@ -315,6 +316,8 @@ module.exports = function() {
     var noteLengths = audioGets.getNoteLengths(appFrameRate, noteLengthMult);
     var leadNoteLengthStart = audioGets.getLeadNoteLengthStart(appFrameRate, lwData);
     var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
+    // Choral
+    var choralSoundDenominator = wCheck.isFreezing ? 2 : 1;
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
@@ -420,10 +423,19 @@ module.exports = function() {
       }
 
       /**
-       * ------------------------
-       * Music playback functions
-       * ------------------------
-       */
+      * ------------------------
+      * Music playback functions
+      * ------------------------
+      */
+
+      // Used with the two mechanisms
+      // for pad playback
+      function moveToNextChord() {
+        // increment indices
+        setChordIndex();
+        // Start the lead over
+        leadBarComplete = false;
+      }
 
       function playBrassBaritone(scale) {
         brassBaritone.play();
@@ -516,6 +528,7 @@ module.exports = function() {
           padIndexCount++;
           // When all the sounds have played once, loop
           if (padIndexCount === padSounds.length) {
+            moveToNextChord();
             playSynchedSounds(true);
             padIndexCount = 0;
           }
@@ -570,31 +583,21 @@ module.exports = function() {
           playBass();
         }
         playLongNote();
-        // increment indices
-        setChordIndex();
-        // Start the lead over
-        leadBarComplete = false;
       }
 
-      function playChoralSound(scaleArray) {
-        // playlogic
+      function playChoralSound() {
         // TODO consider for loop for speed
         choralSounds.forEach(function(choralSound, i) {
-          // must loop before rate is set
-          // issue in Chrome only
+          // playlogic
           if (wCheck.isFreezing) {
             choralSound.disconnect();
             choralSound.connect(freezingFilter);
           }
+          // must loop before rate is set
+          // issue in Chrome only
           choralSound.loop();
-          //playlogic
-          if (wCheck.isFreezing) {
-            choralSound.rate(scaleArray[i] / 2);
-            choralSound.setVolume(0.23, rampTime, timeFromNow, startVol);
-          } else {
-            choralSound.rate(scaleArray[i]);
-            choralSound.setVolume(0.1, rampTime, timeFromNow, startVol);
-          }
+          choralSound.rate(choralScales[0][i] / choralSoundDenominator);
+          choralSound.setVolume(0.23, rampTime, timeFromNow, startVol);
         });
       }
 
@@ -609,7 +612,7 @@ module.exports = function() {
         // playlogic
         // Only the first chord is passed in
         if (sCheck.choralCanPlay) {
-          playChoralSound(synchedSoundsChords[0]);
+          playChoralSound();
         }
         // Play the lead if the weather is fine
         // but not raining so as to avoid clash
@@ -725,7 +728,7 @@ module.exports = function() {
             startFreq: 1,
             numSemitones: numSemisPerOctave,
             numNotes: numPadNotes,
-            rootNote: _chordSeqOffsetArr[j].index - extraSeqOffset,
+            rootNote: _chordSeqOffsetArr[j].index - extraSeqOffset + rootNote,
             intervals: intervals[getValidChordType(_chordSeqOffsetArr[j].key)],
             intervalStartIndex: _inversionOffsetArr[j],
             amountToAdd: numSemisPerOctave,
@@ -736,9 +739,37 @@ module.exports = function() {
         return _chordSeq;
       }
 
+      function createChoralScales() {
+        var _choralScales = [];
+        var _mainChoralScale = freqi.getFreqs({
+          startFreq: 1,
+          numSemitones: numSemisPerOctave,
+          numNotes: choralSounds.length,
+          rootNote: rootNote,
+          intervals: intervals.heptatonicMajorIntervals,
+          intervalStartIndex: 0,
+          amountToAdd: 0,
+          repeatMultiple: 0,
+          type: 'choral'
+        });
+        var _extraChoralScale = freqi.getFreqs({
+          startFreq: 1,
+          numSemitones: numSemisPerOctave,
+          numNotes: choralSounds.length,
+          rootNote: rootNote + extraSeqOffset,
+          intervals: intervals.heptatonicMajorIntervals,
+          intervalStartIndex: 0,
+          amountToAdd: 0,
+          repeatMultiple: 0,
+          type: 'choral extra'
+        });
+        _choralScales.push(_mainChoralScale, _extraChoralScale);
+        return _choralScales;
+      }
+
       function createHumidArpScales() {
         var _intervalIndexOffset = 0;
-        var _hArpCNoteOffset = 0;
+        var _hArpCNoteOffset = rootNote;
         var _hArpScalesNoRests = [];
         //var _numHumidArpNotes = avSettings.numHumidArpNotes;
         var _numHumidArpNotes = intervals[humidArpIntervalsKey].length;
@@ -762,7 +793,7 @@ module.exports = function() {
           intervalStartIndex: _intervalIndexOffset,
           amountToAdd: 0,
           repeatMultiple: 0,
-          type: 'humid arp'
+          type: 'humid arp extra'
         });
         _hArpScalesNoRests.push(_mainHArpScale, _extraHArpScale);
         return _hArpScalesNoRests;
@@ -773,7 +804,7 @@ module.exports = function() {
         // When adding missing values
         // go up two octaves
         var _repeatMultiple = 2;
-        var _intervalIndexOffset = 0;
+        var _intervalIndexOffset = rootNote;
         var _pArpScalesNoRests = [];
         var _mainPArpScale = freqi.getFreqs({
           startFreq: 1,
@@ -795,7 +826,7 @@ module.exports = function() {
           intervalStartIndex: _intervalIndexOffset,
           amountToAdd: numSemisPerOctave,
           repeatMultiple: _repeatMultiple,
-          type: 'precip arp'
+          type: 'precip arp extra'
         });
         _pArpScalesNoRests.push(_mainPArpScale, _extraPArpScale);
         return _pArpScalesNoRests;
@@ -823,6 +854,9 @@ module.exports = function() {
         //other lead sounds are playing
         if (sCheck.harpCanPlay) {
           _hArpScalesNoRests = createHumidArpScales();
+        }
+        if (sCheck.choralCanPlay) {
+          choralScales = createChoralScales();
         }
         //Explicitly passing these arrays as args
         //For clarity
@@ -1003,21 +1037,19 @@ module.exports = function() {
 
       function updateSynchedSounds() {
         if (sketch.frameCount === 1 || sketch.frameCount % currNoteLength === 0) {
+          moveToNextChord();
           playSynchedSounds(false);
-          //Temporarily stop the call of this fn
-          //while we set a new note length
+          // Temporarily stop the call of this fn
+          // while we set a new note length
           padReady = false;
           updateNoteLength();
         }
       }
 
       function updateLeadSound() {
-        if (sketch.frameCount === 1 || sketch.frameCount % currLeadLength ===
-          0) {
+        if (sketch.frameCount === 1 || sketch.frameCount % currLeadLength === 0) {
           //get the note
-          var _leadSoundRate = synchedSoundsChords[chordIndex][
-            leadSoundIndex
-          ];
+          var _leadSoundRate = synchedSoundsChords[chordIndex][leadSoundIndex];
           leadSoundReady = false;
           //If we want to stop the lead
           //after each play of the notes in chord
@@ -1161,6 +1193,18 @@ module.exports = function() {
         }
       }
 
+      function updateChoralSound() {
+        if (extraSeqPlaying) {
+          choralSounds.forEach(function(choralSound, i) {
+            choralSound.rate(choralScales[1][i] / choralSoundDenominator);
+          });
+        } else {
+          choralSounds.forEach(function(choralSound, i) {
+            choralSound.rate(choralScales[0][i] / choralSoundDenominator);
+          });
+        }
+      }
+
       //P5 DRAW LOOP - 3
       sketch.draw = function draw() {
         if (!sequenceStart) {
@@ -1204,6 +1248,9 @@ module.exports = function() {
         }
         if (wCheck.isFoggy) {
           updateFoggyFilter();
+        }
+        if (sCheck.choralCanPlay) {
+          updateChoralSound();
         }
         //sequencer counter
         if (sketch.frameCount % sequenceLength === 0 && sequenceStart === false) {
