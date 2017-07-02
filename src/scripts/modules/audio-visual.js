@@ -756,7 +756,7 @@ module.exports = function() {
           startFreq: 1,
           numSemitones: numSemisPerOctave,
           numNotes: choralSounds.length,
-          rootNote: rootNote + extraSeqOffset,
+          rootNote: rootNote - extraSeqOffset,
           intervals: intervals.heptatonicMajorIntervals,
           intervalStartIndex: 0,
           amountToAdd: 0,
