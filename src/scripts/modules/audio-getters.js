@@ -163,16 +163,19 @@ module.exports = (function() {
 
   function getChordSeqKey(wCheck, rootNoteGrtrMedian) {
     var _key;
-    //playlogic
-    if (wCheck.isFine || wCheck.isFreezing || wCheck.isWindy) {
+    // playlogic
+    // fine or freezing plays choralSound
+    if (wCheck.isFreezing || wCheck.isWindy) {
       //Inversions
       _key = 'noChordOffset';
-    } else if (wCheck.isClement) {
+    } else if (wCheck.isFine) {
       if (rootNoteGrtrMedian) {
         _key = 'blissfulDownward';
       } else {
         _key = 'blissfulUpward';
       }
+    } else if (wCheck.isClement) {
+      _key = 'mellowUpward';
     } else if (wCheck.isPrecip || wCheck.isCloudy) {
       if (rootNoteGrtrMedian) {
         _key = 'melancholyDownward';
@@ -180,8 +183,13 @@ module.exports = (function() {
         _key = 'melancholyUpward';
       }
     } else {
-      _key = 'purposefulUpAndDown';
+      if (rootNoteGrtrMedian) {
+        _key = 'purposefulDownward';
+      } else {
+        _key = 'purposefulUpward';
+      }
     }
+    console.log('chord seq key ', _key);
     return _key;
   }
 
@@ -190,9 +198,7 @@ module.exports = (function() {
     var _key;
     // playlogic
     // important!
-    if (wCheck.isFine) {
-      _key = 'inversionsDownward';
-    } else if (wCheck.isWindy) {
+    if (wCheck.isWindy) {
       _key = 'inversionsMixed';
     } else if (wCheck.isFreezing) {
       _key = 'inversionsUpward';
@@ -200,6 +206,10 @@ module.exports = (function() {
       //No inversions
       _key = 'inversionsNoOffset';
     }
+    // TODO use this
+    // if (wCheck.isFine) {
+    //   _key = 'inversionsDownward';
+    // }
     return _key;
   }
 

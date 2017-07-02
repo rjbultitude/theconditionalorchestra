@@ -278,6 +278,7 @@ module.exports = function() {
     // Is an index rather than a frequency
     var rootNoteRange = audioGets.getRootNoteRange(numSemisPerOctave);
     var rootNote = audioGets.getRootNote(lwData, rootNoteRange);
+    console.log('rootNote', rootNote);
     var rootNoteHigh = audioGets.isRootNoteHigh(rootNote);
     var rootNoteGrtrMedian = audioGets.isRootNoteGrtrMedian(rootNote, rootNoteRange);
     console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
@@ -288,7 +289,6 @@ module.exports = function() {
     console.log('longNoteVolArr', longNoteVolArr);
     var reverbLength = audioGets.getReverbLength(lwData);
     var reverbDecay = audioGets.getReverbDecay(lwData);
-    console.log('reverbDecay', reverbDecay);
     var longNoteType = audioGets.getLongNoteType(wCheck);
     var masterFilterFreq = audioGets.getMasterFilterFreq(lwData, avSettings);
     var extraSeqOffset = audioGets.getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
@@ -657,7 +657,6 @@ module.exports = function() {
         var _chordOffsetArr = [];
         var _diff;
         _chordOffsetArr = intervals[chordSeqKey];
-        console.log('_chordOffsetArr', _chordOffsetArr);
         // error check
         if (numChords > _chordOffsetArr.length) {
           _diff = numChords - _chordOffsetArr.length;
@@ -706,14 +705,13 @@ module.exports = function() {
         var _chordSeqOffsetArr = getChordSeqOffsetArr(chordNumGreatest);
         // Chord inversion shift
         var _inversionOffsetArr = getInversionOffsetArr(chordNumGreatest);
-        console.log('_chordSeqOffsetArr', _chordSeqOffsetArr);
         // Create primary chords
         for (var i = 0; i < numChords; i++) {
           _chordSeq.push(freqi.getFreqs({
             startFreq: 1,
             numSemitones: numSemisPerOctave,
             numNotes: numPadNotes,
-            rootNote: _chordSeqOffsetArr[i].index,
+            rootNote: _chordSeqOffsetArr[i].index + rootNote,
             intervals: intervals[getValidChordType(_chordSeqOffsetArr[i].key)],
             intervalStartIndex: _inversionOffsetArr[i],
             amountToAdd: numSemisPerOctave,
