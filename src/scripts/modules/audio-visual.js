@@ -768,10 +768,9 @@ module.exports = function() {
       }
 
       function createHumidArpScales() {
+        var _hArpScalesNoRests = [];
         var _intervalIndexOffset = 0;
         var _hArpCNoteOffset = rootNote;
-        var _hArpScalesNoRests = [];
-        //var _numHumidArpNotes = avSettings.numHumidArpNotes;
         var _numHumidArpNotes = intervals[humidArpIntervalsKey].length;
         var _mainHArpScale = freqi.getFreqs({
           startFreq: 1,
@@ -800,12 +799,12 @@ module.exports = function() {
       }
 
       function createPrecipArpScales() {
+        var _pArpScalesNoRests = [];
         var _pArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
         // When adding missing values
         // go up two octaves
         var _repeatMultiple = 2;
         var _intervalIndexOffset = rootNote;
-        var _pArpScalesNoRests = [];
         var _mainPArpScale = freqi.getFreqs({
           startFreq: 1,
           numSemitones: numSemisPerOctave,
@@ -836,30 +835,28 @@ module.exports = function() {
       	Create necessary scales
        */
       function configureSounds() {
-        var _pArpScalesNoRests = [];
-        var _hArpScalesNoRests = [];
-        //Make arrays of frequencies for playback
+        // Make arrays of frequencies for playback
         synchedSoundsChords = makeChordSequence();
         // Set filter for pad sounds
         setFilter();
         setReverb();
-        //Set the root note rate
-        //for use elsewhere in program
+        // Set the root note rate
+        // for use elsewhere in program
         rootNoteRate = synchedSoundsChords[chordIndex][0];
-        //playlogic
+        // playlogic
         if (wCheck.isPrecip) {
-          _pArpScalesNoRests = createPrecipArpScales();
+          var _pArpScalesNoRests = createPrecipArpScales();
         }
-        //Humid arpeggio will not play if
-        //other lead sounds are playing
+        // Humid arpeggio will not play if
+        // other lead sounds are playing
         if (sCheck.harpCanPlay) {
-          _hArpScalesNoRests = createHumidArpScales();
+          var _hArpScalesNoRests = createHumidArpScales();
         }
         if (sCheck.choralCanPlay) {
           choralScales = createChoralScales();
         }
-        //Explicitly passing these arrays as args
-        //For clarity
+        // Explicitly passing these arrays as args
+        // as they require extra preparation
         playSounds(_pArpScalesNoRests, _hArpScalesNoRests);
       }
 
