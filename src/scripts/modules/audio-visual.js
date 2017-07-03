@@ -317,7 +317,8 @@ module.exports = function() {
     var leadNoteLengthStart = audioGets.getLeadNoteLengthStart(appFrameRate, lwData);
     var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
     // Choral
-    var choralSoundDenominator = wCheck.isFreezing ? 2 : 1;
+    var choralDenominator = wCheck.isFreezing ? 2 : 1;
+    var choralExtraDenominator = rootNoteGrtrMedian ? 2 : 1;
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
@@ -596,7 +597,7 @@ module.exports = function() {
           // must loop before rate is set
           // issue in Chrome only
           choralSound.loop();
-          choralSound.rate(choralScales[0][i] / choralSoundDenominator);
+          choralSound.rate(choralScales[0][i] / choralDenominator);
           choralSound.setVolume(0.23, rampTime, timeFromNow, startVol);
         });
       }
@@ -1193,11 +1194,13 @@ module.exports = function() {
       function updateChoralSound() {
         if (extraSeqPlaying) {
           choralSounds.forEach(function(choralSound, i) {
-            choralSound.rate(choralScales[1][i] / choralSoundDenominator);
+            choralSound.rate(choralScales[1][i] / choralExtraDenominator);
           });
         } else {
           choralSounds.forEach(function(choralSound, i) {
-            choralSound.rate(choralScales[0][i] / choralSoundDenominator);
+            // pitch down via choralDenominator
+            // if conditions are freezing
+            choralSound.rate(choralScales[0][i] / choralDenominator);
           });
         }
       }

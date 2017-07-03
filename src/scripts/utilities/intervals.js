@@ -78,7 +78,7 @@ module.exports = {
       },
       {
         index: -5,
-        key: 'heptatonicMinorIntervals'
+        key: 'majorIntervals'
       },
       {
         index: 3,
@@ -189,22 +189,30 @@ module.exports = {
         key: 'seventhIntervals'
       }
     ],
-    mellowUpward: [
+    mellowDownward: [
       {
         index: 0,
         key: 'sus4Intervals'
       },
       {
         index: 0,
-        key: 'heptatonicMajorIntervals'
-      },
-      {
-        index: 5,
-        key: 'majorSeventhIntervals'
+        key: 'majorIntervals'
       },
       {
         index: 8,
         key: 'majorSixthIntervals'
+      },
+      {
+        index: 8,
+        key: 'majorSeventhIntervals'
+      },
+      {
+        index: 5,
+        key: 'majorIntervals'
+      },
+      {
+        index: 5,
+        key: 'sus4Intervals'
       }
     ],
     noChordOffset: [

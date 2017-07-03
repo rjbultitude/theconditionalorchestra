@@ -175,7 +175,7 @@ module.exports = (function() {
         _key = 'blissfulUpward';
       }
     } else if (wCheck.isClement) {
-      _key = 'mellowUpward';
+      _key = 'mellowDownward';
     } else if (wCheck.isPrecip || wCheck.isCloudy) {
       if (rootNoteGrtrMedian) {
         _key = 'melancholyDownward';

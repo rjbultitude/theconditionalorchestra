@@ -22,7 +22,7 @@ module.exports = {
   vocal: {volume : 0.8},
   numPadNotes: 5,
   numChords: 3,
-  numChordsMin: 2,
+  numChordsMin: 3,
   numChordsMax: 6,
   mainSeqRepeat: 2,
   mainSeqRepeatMin: 1,
