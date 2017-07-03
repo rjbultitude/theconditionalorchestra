@@ -836,6 +836,8 @@ module.exports = function() {
       	Create necessary scales
        */
       function configureSounds() {
+        var _pArpScalesNoRests = [];
+        var _hArpScalesNoRests = [];
         // Make arrays of frequencies for playback
         synchedSoundsChords = makeChordSequence();
         // Set filter for pad sounds
@@ -846,12 +848,12 @@ module.exports = function() {
         rootNoteRate = synchedSoundsChords[chordIndex][0];
         // playlogic
         if (wCheck.isPrecip) {
-          var _pArpScalesNoRests = createPrecipArpScales();
+          _pArpScalesNoRests = createPrecipArpScales();
         }
         // Humid arpeggio will not play if
         // other lead sounds are playing
         if (sCheck.harpCanPlay) {
-          var _hArpScalesNoRests = createHumidArpScales();
+          _hArpScalesNoRests = createHumidArpScales();
         }
         if (sCheck.choralCanPlay) {
           choralScales = createChoralScales();
