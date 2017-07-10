@@ -260,7 +260,7 @@ module.exports = function() {
     // and only create it if it's raining
     var precipCategory = audioGets.getPrecipCategory(lwData);
     var precipArpBpm = audioGets.getPrecipArpBpm(lwData);
-    var precipArpBps = audioGets.precipArpBpm / 60;
+    var precipArpBps = precipArpBpm / 60;
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var precipArpIntervalType = audioGets.getPrecipArpIntervalType(chordType);
     var leadVolume = audioGets.getLeadSoundVolume(wCheck);
@@ -1176,6 +1176,7 @@ module.exports = function() {
 
       function updatePrecipArp() {
         if (sketch.frameCount % precipArpStepTime === 0) {
+
           // Handle extra seq
           if (extraSeqPlaying) {
             console.log('extraSeqPlaying', extraSeqPlaying);
