@@ -261,9 +261,9 @@ module.exports = (function() {
     return _rootNote;
   }
 
-  function getLongNoteIndex(lwData, numPadNotes) {
+  function getLongNoteIndex(lwData, numNotes) {
     var _longNoteIndex = 0;
-    var _timesToDivide = numPadNotes;
+    var _timesToDivide = numNotes;
     var _bearingSlice = 360 / _timesToDivide;
     // playlogic
     // bearing decides which note in scale to play

@@ -137,6 +137,10 @@ Add analytics
 Consider using windyTV map rather than text input
 
 Consider dropping reverb (for performance purposes)
+
+Consider reducing the max number of pad notes (for performance and sonic overcrowding purposes)
+
+If implementing the above, consider making a second longNote that uses a note from within the scale but beyond the highest index of the numPadNotes
 ---
 Harp could be something other than humidity - humidity should be evoked by noise
 
