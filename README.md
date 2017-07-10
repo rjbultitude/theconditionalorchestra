@@ -125,32 +125,26 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
+Enable routing so that #placename url triggers search
+
 Rewrite p5 draw loop to use setTimeout/setInterval for inactive table
 [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API) will help with this
 
 Only output chordType if using inversions
 
-Consider creating more chord sequences
+Consider using windyTV map rather than text input
 
 Consider dropping reverb (for performance purposes)
-
-Ensure that form doesn't submit unless valid or min number of characters are used
 ---
 Harp could be something other than humidity - humidity should be evoked by noise
 
 Consider using a state manager and one master sound object
 
-Enable routing so that #placename url triggers search
-
 Create 'Add to home screen' button
-
-Consider using windyTV map rather than text input
 
 Update logic App Logic and spreadsheet
 
 Refactor the display fns so that they're chained
-
-May need to Upgrade to google maps 3 : https://developers.google.com/maps/documentation/javascript/v2tov3
 
 ###Bugs
 

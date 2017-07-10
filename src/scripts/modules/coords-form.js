@@ -13,7 +13,7 @@ var classListChain = require('../utilities/class-list-chain');
 var getMeanVal = require('../utilities/get-mean-val');
 var summaryIcon = require('./summary-icon');
 
-module.exports = function() {
+module.exports = function(query) {
   //Vars
   var userLocBtnEl = document.getElementById('use-location-btn');
   var linkLocationSelectEl = document.getElementById('link-location-select');
@@ -27,6 +27,10 @@ module.exports = function() {
   // module state vars
   var isPlaying = false;
   var usingStaticData = false;
+  // run search if there's a query string
+  if (query) {
+    getLatLong(query);
+  }
 
   function resetModState() {
     isPlaying = false;

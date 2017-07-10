@@ -9,10 +9,13 @@ if (!window.AudioContext && !window.webkitAudioContext) {
   console.log('No Audio Context');
   return false;
 } else {
+  // Get url
+  var splitUrl = location.href.split('?');
+  var query = splitUrl[1];
   // start app
   var coordsForm = require('./modules/coords-form');
   var audioVisual = require('./modules/audio-visual');
-  coordsForm();
+  coordsForm(query);
   audioVisual();
   jsLoad();
   new Tabs( document.querySelector('[data-directive=tabs]') );
