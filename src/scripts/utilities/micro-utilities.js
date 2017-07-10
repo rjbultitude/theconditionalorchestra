@@ -20,6 +20,16 @@ module.exports = {
   addSpacesToString: function addSpacesToString(string) {
     return string.replace(/([A-Z][a-z]+)/g, ' ' + '$&');
   },
+  removeSpacesFromString: function removeSpacesFromString(string) {
+    return string.replace(/\s/g, '');
+  },
+  replaceCommasForHyphens: function replaceCommasForHyphens(string) {
+    return string.replace(/(,+)/g, '-', '$&');
+  },
+  containsWord: function containsWord(string, word) {
+    return new RegExp('(?:[^.\w]|^|^\\W+)' + word +
+      '(?:[^.\w]|\\W(?=\\W+|$)|$)').test(string);
+  },
   strToLowerCase: function strToLowerCase(string) {
     return string.replace(/[A-Z]/g, function(match) {
       return match.toLowerCase();

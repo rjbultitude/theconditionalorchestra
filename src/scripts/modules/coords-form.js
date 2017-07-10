@@ -28,8 +28,23 @@ module.exports = function(query) {
   var isPlaying = false;
   var usingStaticData = false;
   // run search if there's a query string
-  if (query) {
+  if (typeof query === 'string' && query.length >= 1) {
     getLatLong(query);
+  }
+
+  function formatQueryString(queryString) {
+    var queryNoSpaces = microU.removeSpacesFromString(queryString);
+    // replace commas with hyphens
+    return microU.replaceCommasForHyphens(queryNoSpaces);
+  }
+
+  function updateURL(queryString) {
+    var validQuery = '/?' + formatQueryString(queryString);
+    console.log('validQuery', validQuery);
+    if (history.pushState) {
+      var newurl = window.location.protocol + "//" + window.location.host + validQuery;
+      window.history.pushState({path:newurl},'',newurl);
+    }
   }
 
   function resetModState() {
@@ -212,6 +227,8 @@ module.exports = function(query) {
       // in case user should be offline
       var locationDataString = JSON.stringify(locationData);
       localStorage.setItem('locationData', locationDataString);
+      // update the url
+      updateURL(locationData.name);
       // Post the data to rest of app
       channel.publish('userUpdate', locationData);
       if (conditions.length > 1) {
@@ -402,11 +419,6 @@ module.exports = function(query) {
     coordsFormSubmitBtnEl.tabIndex = -1;
   }
 
-  function containsWord(string, word) {
-    return new RegExp('(?:[^.\w]|^|^\\W+)' + word +
-      '(?:[^.\w]|\\W(?=\\W+|$)|$)').test(string);
-  }
-
   function getGeo() {
     updateStatus('location');
 
@@ -424,11 +436,11 @@ module.exports = function(query) {
     function failure(failure) {
       // User/browser permission issue
       var statusString;
-      if (containsWord(failure.message, 'permission')) {
+      if (microU.containsWord(failure.message, 'permission')) {
         statusString = 'noGeoAccess';
       }
       // Server/https issue
-      else if (containsWord(failure.message, 'secure')) {
+      else if (microU.containsWord(failure.message, 'secure')) {
         statusString = 'noGeoAccess';
       }
       // Possible internet connection issue
