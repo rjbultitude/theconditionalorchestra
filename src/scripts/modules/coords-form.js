@@ -552,6 +552,7 @@ module.exports = function(query) {
   function loadLocFromURL(queryString) {
     // run search if there's a queryString string
     if (typeof queryString === 'string' && queryString.length >= 1) {
+      updateStatus('location');
       getLatLong(queryString);
     }
   }

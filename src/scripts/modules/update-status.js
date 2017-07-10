@@ -58,13 +58,13 @@ module.exports = function updateStatus(status, locationAddress, noAudioSupport, 
 
   function getIconUrl(status, iconUrls) {
     if (status === 'start' || status === 'obtainedLocation') {
+      return iconUrls.weather.url;
+    } else if (status === 'weather') {
       return iconUrls.sun.url;
     } else if (status === 'location') {
       return iconUrls.location.url;
     } else if (status === 'playing') {
       return iconUrls.playing.url;
-    } else if (status === 'weather') {
-      return iconUrls.weather.url;
     } else {
       return iconUrls.error.url;
     }
