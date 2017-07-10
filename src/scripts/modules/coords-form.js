@@ -544,7 +544,6 @@ module.exports = function(query) {
 
   window.addEventListener('popstate', function (e) {
     var state = e.state;
-    console.log('state', state);
     if (state !== null) {
       loadLocFromURL(state.path);
     }

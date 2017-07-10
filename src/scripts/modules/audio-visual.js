@@ -770,16 +770,14 @@ module.exports = function() {
 
       function createHumidArpScales() {
         var _hArpScalesNoRests = [];
-        var _intervalIndexOffset = 0;
-        var _hArpCNoteOffset = rootNote;
         var _numHumidArpNotes = intervals[humidArpIntervalsKey].length;
         var _mainHArpScale = freqi.getFreqs({
           startFreq: 1,
           numSemitones: numSemisPerOctave,
           numNotes: _numHumidArpNotes,
-          rootNote: _hArpCNoteOffset,
+          rootNote: rootNote,
           intervals: intervals[humidArpIntervalsKey],
-          intervalStartIndex: _intervalIndexOffset,
+          intervalStartIndex: 0,
           amountToAdd: 0,
           repeatMultiple: 0,
           type: 'humid arp'
@@ -788,9 +786,9 @@ module.exports = function() {
           startFreq: 1,
           numSemitones: numSemisPerOctave,
           numNotes: _numHumidArpNotes,
-          rootNote: _hArpCNoteOffset + invExtraSeqOffset,
+          rootNote: rootNote + invExtraSeqOffset,
           intervals: intervals[humidArpIntervalsKey],
-          intervalStartIndex: _intervalIndexOffset,
+          intervalStartIndex: 0,
           amountToAdd: 0,
           repeatMultiple: 0,
           type: 'humid arp extra'
@@ -801,18 +799,17 @@ module.exports = function() {
 
       function createPrecipArpScales() {
         var _pArpScalesNoRests = [];
-        var _pArpCNoteOffset = -Math.abs(numSemisPerOctave * 2);
+        var _pArpCNoteOffset = -Math.abs(numSemisPerOctave * 2) + rootNote;
         // When adding missing values
         // go up two octaves
         var _repeatMultiple = 2;
-        var _intervalIndexOffset = rootNote;
         var _mainPArpScale = freqi.getFreqs({
           startFreq: 1,
           numSemitones: numSemisPerOctave,
           numNotes: avSettings.numPrecipArpNotes,
           rootNote: _pArpCNoteOffset,
           intervals: intervals[precipArpIntervalType],
-          intervalStartIndex: _intervalIndexOffset,
+          intervalStartIndex: 0,
           amountToAdd: numSemisPerOctave,
           repeatMultiple: _repeatMultiple,
           type: 'precip arp'
@@ -823,7 +820,7 @@ module.exports = function() {
           numNotes: avSettings.numPrecipArpNotes,
           rootNote: _pArpCNoteOffset + invExtraSeqOffset,
           intervals: intervals[precipArpIntervalType],
-          intervalStartIndex: _intervalIndexOffset,
+          intervalStartIndex: 0,
           amountToAdd: numSemisPerOctave,
           repeatMultiple: _repeatMultiple,
           type: 'precip arp extra'
