@@ -27,10 +27,6 @@ module.exports = function(query) {
   // module state vars
   var isPlaying = false;
   var usingStaticData = false;
-  // run search if there's a query string
-  if (typeof query === 'string' && query.length >= 1) {
-    getLatLong(query);
-  }
 
   function formatQueryString(queryString) {
     var queryNoSpaces = microU.removeSpacesFromString(queryString);
@@ -42,7 +38,7 @@ module.exports = function(query) {
     var validQuery = '/?' + formatQueryString(queryString);
     console.log('validQuery', validQuery);
     if (history.pushState) {
-      var newurl = window.location.protocol + "//" + window.location.host + validQuery;
+      var newurl = window.location.protocol + '//' + window.location.host + validQuery;
       window.history.pushState({path:newurl},'',newurl);
     }
   }
@@ -546,10 +542,26 @@ module.exports = function(query) {
     }
   });
 
-  //Init
+  window.addEventListener('popstate', function (e) {
+    var state = e.state;
+    console.log('state', state);
+    if (state !== null) {
+      loadLocFromURL(state.path);
+    }
+  });
+
+  function loadLocFromURL(queryString) {
+    // run search if there's a queryString string
+    if (typeof queryString === 'string' && queryString.length >= 1) {
+      getLatLong(queryString);
+    }
+  }
+
+  // Init
   updateStatus('start');
   hideForm();
   enableControls();
   resetModState();
   localStorage.clear();
+  loadLocFromURL(query);
 };

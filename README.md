@@ -125,12 +125,14 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Enable routing so that #placename url triggers search
-
 Rewrite p5 draw loop to use setTimeout/setInterval for inactive table
-[Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API) will help with this
+[Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API) will help with this. Could use setInterval than only runs when draw is ready.
 
 Only output chordType if using inversions
+
+Write unit tests
+
+Add analytics
 
 Consider using windyTV map rather than text input
 
