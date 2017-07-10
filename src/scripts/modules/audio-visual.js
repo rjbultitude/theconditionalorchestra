@@ -493,7 +493,11 @@ module.exports = function() {
         //   longNote.disconnect();
         // }
         longNote.connect(reverb);
-        if (!wCheck.isVisbilityPoor) {
+        // playlogic
+        // play full note if visibility is poor
+        // and the weather is inclement
+        // Clement weather is full pad notes
+        if (!wCheck.isVisbilityPoor || !wCheck.isClement) {
           longNote.playMode('restart');
         }
         longNote.play();
@@ -627,9 +631,9 @@ module.exports = function() {
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
           playBrassBaritoneTwo(synchedSoundsChords[chordIndex]);
         });
-        //Pads, long note and bass
-        //playlogic
-        //Play full length of notes
+        // Pads, long note and bass
+        // playlogic
+        // Play full length of notes
         if (wCheck.isClement) {
           playSynchedSounds(true);
           padReady = false;
@@ -1186,6 +1190,7 @@ module.exports = function() {
           dropSound.play();
           dropSound.setVolume(avSettings.dropSoundVol[precipCategory]);
           dropSound.rate(precipArpScales[pArpSeqIndex][precipArpScaleIndex]);
+          console.log('precip arp playing');
           precipArpScaleIndex++;
         }
       }
