@@ -130,6 +130,8 @@ Rewrite p5 draw loop to use setTimeout/setInterval for inactive table
 
 Handle no (satellite) map situation
 
+Create icons for night time
+
 Only output chordType if using inversions
 
 Write unit tests
