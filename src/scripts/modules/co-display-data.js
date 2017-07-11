@@ -20,7 +20,7 @@ module.exports = (function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/cloudy-icon.svg',
             music: 'Bass note playing',
             musicValue: '',
             negativeKey: 'isWindy',
@@ -43,7 +43,7 @@ module.exports = (function() {
             value: '',
             constrain: true,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/cloudy-icon.svg',
             music: 'Master filter frequency ',
             musicValue: '',
             musicAppendage: ' Hz'
@@ -146,7 +146,7 @@ module.exports = (function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/windy-icon.svg',
+            iconPath: '/img/wind-icon.svg',
             music: 'Brass baritones playing',
             musicValue: ''
           },
@@ -355,7 +355,7 @@ module.exports = (function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/windy-icon.svg',
+            iconPath: '/img/wind-icon.svg',
             music: 'Chord sequence type is ',
             musicValue: ''
           },
@@ -375,7 +375,7 @@ module.exports = (function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/cloudy-icon.svg',
             music: 'Chord sequence type is ',
             musicValue: ''
           },
@@ -417,7 +417,7 @@ module.exports = (function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/cloud-cover-icon.svg',
+            iconPath: '/img/cloudy-icon.svg',
             music: 'Pad instrument is ',
             musicValue: ''
           },
@@ -531,7 +531,7 @@ module.exports = (function() {
             value: '',
             constrain: false,
             unit: '',
-            iconPath: '/img/windy-icon.svg',
+            iconPath: '/img/wind-icon.svg',
             music: 'Inversion types are ',
             musicValue: ''
           },

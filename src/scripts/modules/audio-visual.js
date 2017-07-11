@@ -330,6 +330,7 @@ module.exports = function() {
       var inc = sketch.TWO_PI / 150;
 
       channel.subscribe('allStopped', function() {
+        console.log('sketch', sketch);
         sketch.noLoop();
       });
 
@@ -1092,7 +1093,6 @@ module.exports = function() {
           rideCymbal.play();
           rideCymbal.setVolume(_rideVol, rampTime, timeFromNow, startVol);
           rideCymbal.rate(rideCymbalRate);
-          djembe.pan(-0.35);
         }
       }
 
@@ -1102,6 +1102,7 @@ module.exports = function() {
           djembe.play();
           djembe.setVolume(_djembeVol, rampTime, timeFromNow, startVol);
           djembe.rate(1);
+          // TODO alternate pan?
           djembe.pan(0.35);
         }
       }

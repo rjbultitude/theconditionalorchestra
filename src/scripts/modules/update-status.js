@@ -40,7 +40,7 @@ module.exports = function updateStatus(status, locationAddress, noAudioSupport, 
       url: 'img/error-icon.svg'
     },
     cloud: {
-      url: 'img/cloud-cover-icon.svg'
+      url: 'img/cloudy-icon.svg'
     },
     location: {
       url: 'img/location-icon.svg'

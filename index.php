@@ -66,6 +66,14 @@
                     </section>
                     <!-- End message & icon block -->
 
+                    <!-- Begin summary -->
+                    <section class="section">
+                      <h2>Summary</h2>
+                      <p id="summary-word"></p>
+                      <p id="summary-icon"></p>
+                    </section>
+                    <!-- End summary -->
+
                     <!-- Begin conditions display -->
                     <section class="conditions-display section">
                       <div id="map"></div>

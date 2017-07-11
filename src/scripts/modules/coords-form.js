@@ -161,6 +161,12 @@ module.exports = function(query) {
     }
   }
 
+  function updateUISuccess(lwData) {
+    channel.publish('userUpdate', lwData);
+    enableControls();
+    summaryIcon(lwData);
+  }
+
   function getAndLoadConditions(lat, long, name) {
     //Get API wrapper
     var forecast = new Darksky({
@@ -226,12 +232,10 @@ module.exports = function(query) {
       // update the url
       updateURL(locationData.name);
       // Post the data to rest of app
-      channel.publish('userUpdate', locationData);
       if (conditions.length > 1) {
         console.log('There seems to be more than one location: ', conditions.length);
       }
-      enableControls();
-      summaryIcon(locationData);
+      updateUISuccess(locationData);
     });
   }
 
@@ -259,9 +263,8 @@ module.exports = function(query) {
         if(checkLocationDataKeys(staticDataJSON)) {
           var _fixedStaticData = fixlwDataRanges(staticDataJSON);
           handleNoGeoData(statusString, _fixedStaticData);
-          enableControls();
           console.log('using static data');
-          channel.publish('userUpdate', _fixedStaticData);
+          updateUISuccess(_fixedStaticData);
         } else {
           updateStatus('error');
           console.log('incorrect static data');
@@ -282,8 +285,7 @@ module.exports = function(query) {
       var restoredData = localStorage.getItem('locationData');
       var restoredDataJSON = JSON.parse(restoredData);
       handleNoGeoData(statusString + lastKnownSuffix, restoredDataJSON);
-      channel.publish('userUpdate', restoredDataJSON);
-      enableControls();
+      updateUISuccess(restoredDataJSON);
     }
     //Else use static location data
     else {
@@ -537,6 +539,7 @@ module.exports = function(query) {
     userLocBtnEl.innerHTML = 'Play my weather';
     coordsFormSubmitBtnEl.innerHTML = 'Play';
     mapEl.classList.remove('active');
+    summaryIcon(null, true);
     if (autoStart) {
       useCustomLocation();
     }
