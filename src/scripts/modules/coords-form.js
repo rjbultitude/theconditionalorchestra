@@ -136,16 +136,17 @@ module.exports = function(query) {
       GoogleMapsLoader.load(function(google) {
         console.log('google.maps.version', google.maps.version);
         mapEl.classList.add('active');
-        new google.maps.Map(mapEl, {
+        var map = new google.maps.Map(mapEl, {
           center: {lat: lat, lng: long},
           // Set mapTypeId to SATELLITE in order
           // to activate satellite imagery.
           mapTypeId: 'satellite',
           scrollwheel: false,
-          zoom: 12,
+          zoom: 10,
           disableDefaultUI: true,
           draggable: false
         });
+        map.setTilt(45);
       });
     }, function failure(rejectObj) {
         console.log(rejectObj.status);
@@ -164,7 +165,7 @@ module.exports = function(query) {
   function updateUISuccess(lwData) {
     channel.publish('userUpdate', lwData);
     enableControls();
-    summaryIcon(lwData);
+    summaryIcon.outputSummary(lwData);
   }
 
   function getAndLoadConditions(lat, long, name) {
@@ -539,7 +540,7 @@ module.exports = function(query) {
     userLocBtnEl.innerHTML = 'Play my weather';
     coordsFormSubmitBtnEl.innerHTML = 'Play';
     mapEl.classList.remove('active');
-    summaryIcon(null, true);
+    summaryIcon.hideSummary();
     if (autoStart) {
       useCustomLocation();
     }

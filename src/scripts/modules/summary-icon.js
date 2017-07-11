@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(lwData, hide) {
+module.exports = (function() {
   var iconStrs = [
     'clear-day',
     'clear-night',
@@ -25,12 +25,12 @@ module.exports = function(lwData, hide) {
 
   // To use with themes
   function extractTime(currIcon) {
-    if (currIcon.match(dayRe)) {
+    if (currIcon.match(dayRegex)) {
       return day;
-    } else if (currIcon.match(nightRe)) {
+    } else if (currIcon.match(nightRegex)) {
       return night;
     } else {
-      return '';
+      return 'null';
     }
   }
 
@@ -52,7 +52,7 @@ module.exports = function(lwData, hide) {
     }
   }
 
-  function outputSummary() {
+  function outputSummary(lwData) {
     summaryWordCont.innerHTML = lwData.summary;
     summaryIconCont.innerHTML = '<img src="/img/' + approximateIcons(lwData.icon) + '-icon.svg" />';
   }
@@ -62,9 +62,9 @@ module.exports = function(lwData, hide) {
     summaryIconCont.innerHTML = '';
   }
 
-  if (hide) {
-    hideSummary();
-  } else {
-    outputSummary();
-  }
-};
+  return {
+    extractTime: extractTime,
+    outputSummary: outputSummary,
+    hideSummary: hideSummary
+  };
+})();

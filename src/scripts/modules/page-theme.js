@@ -1,6 +1,7 @@
 'use strict';
 
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
+var summaryIcon = require('./summary-icon');
 
 module.exports = function(lwData, wCheck) {
 
@@ -33,6 +34,10 @@ module.exports = function(lwData, wCheck) {
     }
   }
 
+  function getThemeTimeName() {
+    return summaryIcon.extractTime(lwData.icon);
+  }
+
   function removeThemeType() {
     for (var className in curThemeTypeList) {
       if (curThemeTypeList.hasOwnProperty(className)) {
@@ -49,6 +54,9 @@ module.exports = function(lwData, wCheck) {
   removeThemeType();
   var newThemeName = getThemeTempName();
   var newThemeType = getThemeTypeName();
+  var newThemeTime = getThemeTimeName();
+  console.log('newThemeTime', newThemeTime);
   document.body.classList.add(newThemeName);
+  document.body.classList.add(newThemeTime);
   wrapper.classList.add(newThemeType);
 };
