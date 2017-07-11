@@ -67,10 +67,10 @@
                     <!-- End message & icon block -->
 
                     <!-- Begin summary -->
-                    <section class="section">
-                      <h2>Summary</h2>
-                      <p id="summary-word"></p>
-                      <p id="summary-icon"></p>
+                    <section class="summary-section section">
+                      <h2 class="summary-heading">Summary</h2>
+                      <p id="summary-desc" class="summary-desc"></p>
+                      <div id="summary-icon" class="summary-icon"></div>
                     </section>
                     <!-- End summary -->
 

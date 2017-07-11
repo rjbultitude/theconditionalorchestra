@@ -20,7 +20,7 @@ module.exports = function(lwData, hide) {
   var dayRegex = /dayRe$/;
   var nightRegex = /nightRe$/;
   // DOM
-  var summaryWordCont = document.getElementById('summary-word');
+  var summaryWordCont = document.getElementById('summary-desc');
   var summaryIconCont = document.getElementById('summary-icon');
 
   // To use with themes
