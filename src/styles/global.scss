@@ -1,22 +1,20 @@
 //Basics
 @import "base.scss";
-@import "mixins.scss";
-@import "animations.scss";
-@import "reset.scss";
-@import "helpers.scss";
-@import "typography.scss";
-@import "forms.scss";
-//Furniture
-@import "layout.scss";
-@import "footer.scss";
-//Features
-@import "article.scss";
-@import "canvas.scss";
-@import "controls.scss";
-@import "cta.scss";
-@import "status-bar.scss";
-@import "conditions-display.scss";
-@import "dialog.scss";
+@import "utilities/mixins.scss";
+@import "utilities/animations.scss";
+@import "utilities/reset.scss";
+@import "utilities/helpers.scss";
+@import "generic/typography.scss";
+@import "generic/forms.scss";
+@import "generic/layout.scss";
+@import "generic/controls.scss";
+@import "generic/cta.scss";
+@import "modules/footer.scss";
+@import "modules/article.scss";
+@import "modules/canvas.scss";
+@import "modules/status-bar.scss";
+@import "modules/conditions-display.scss";
+@import "modules/dialog.scss";
 
 /* P5 hack */
 #p5_loading {

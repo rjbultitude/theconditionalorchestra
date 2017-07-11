@@ -128,6 +128,8 @@ The pan and volume are randomly selected from two arrays.
 Rewrite p5 draw loop to use setTimeout/setInterval for inactive table
 [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API) will help with this. Could use setInterval than only runs when draw is ready.
 
+Handle no (satellite) map situation
+
 Only output chordType if using inversions
 
 Write unit tests
