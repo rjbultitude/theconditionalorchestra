@@ -129,24 +129,43 @@ module.exports = function(query) {
     }
   }
 
+  function loadSatelliteMap(google, zoomLevel, latLongLiteral) {
+    mapEl.classList.add('active');
+    var map = new google.maps.Map(mapEl, {
+      center: latLongLiteral,
+      // Set mapTypeId to SATELLITE in order
+      // to activate satellite imagery.
+      mapTypeId: 'satellite',
+      scrollwheel: false,
+      zoom: zoomLevel,
+      disableDefaultUI: true,
+      draggable: false
+    });
+    map.setTilt(45);
+  }
+
   function getStaticMap(lat, long) {
     var gpKey = makeRequest('GET', '/gm-key.php');
+    var latLongLiteral = {lat: lat, lng: long};
     gpKey.then(function success(key) {
       GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.load(function(google) {
         console.log('google.maps.version', google.maps.version);
-        mapEl.classList.add('active');
-        var map = new google.maps.Map(mapEl, {
-          center: {lat: lat, lng: long},
-          // Set mapTypeId to SATELLITE in order
-          // to activate satellite imagery.
-          mapTypeId: 'satellite',
-          scrollwheel: false,
-          zoom: 10,
-          disableDefaultUI: true,
-          draggable: false
+        // Get max zoom level
+        var maxZoomObj = new google.maps.MaxZoomService();
+        maxZoomObj.getMaxZoomAtLatLng(latLongLiteral, function(MaxZoomResult) {
+          var _zoomLevel;
+          if (MaxZoomResult.status === 'OK') {
+            if (MaxZoomResult.zoom > 10) {
+              _zoomLevel = 10;
+            } else {
+              _zoomLevel = MaxZoomResult.zoom;
+            }
+            loadSatelliteMap(google, _zoomLevel, latLongLiteral);
+          } else {
+            console.warn('Error retrieving satellite image');
+          }
         });
-        map.setTilt(45);
       });
     }, function failure(rejectObj) {
         console.log(rejectObj.status);

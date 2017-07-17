@@ -144,7 +144,7 @@ module.exports = (function() {
     // error check
     if (avSettings.hasOwnProperty(padType)) {
       if(wCheck.isFoggy) {
-        return avSettings[padType].volume / 6;
+        return avSettings[padType].volume / 3;
       } else if (sCheck.harpCanPlay && wCheck.isMild) {
         return avSettings[padType].volume / 2;
       } else {
