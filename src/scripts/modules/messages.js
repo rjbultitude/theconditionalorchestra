@@ -21,7 +21,7 @@ module.exports = {
     badConnectionLastKnown: 'Unable to retrieve your location. Are you offline? Using last known location ',
     badConnectionStatic: 'Unable to retrieve your location. Are you offline? Using default location ',
     badGMapsConnection: 'Unable to retrieve that location. Are you offline?',
-    badGMapsConnectionLastKnown: 'Unable to retrieve that location. Are you offline?  Using last known location ',
+    badGMapsConnectionLastKnown: 'Unable to retrieve that location. Are you offline? Using last known location ',
     badGMapsConnectionStatic: 'Unable to retrieve that location. Are you offline? Using default location ',
     location: 'Looking up name',
     noAddress: 'Could not find that place...perhaps it\'s just the ocean',

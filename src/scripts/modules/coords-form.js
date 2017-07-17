@@ -280,18 +280,25 @@ module.exports = function(query) {
 
   //Use previous state to run app
   function useLocalStorageData(statusString) {
+    // error check
+    var _statusString;
+    if (statusString) {
+      _statusString = statusString;
+    } else {
+      _statusString = '';
+    }
     // Set var for use with isPlaying subscriber
     usingStaticData = true;
     if (Object.keys(window.localStorage).length > 0) {
       var restoredData = localStorage.getItem('locationData');
       var restoredDataJSON = JSON.parse(restoredData);
-      handleNoGeoData(statusString + lastKnownSuffix, restoredDataJSON);
+      handleNoGeoData(_statusString + lastKnownSuffix, restoredDataJSON);
       updateUISuccess(restoredDataJSON);
     }
     //Else use static location data
     else {
       console.log('no data in localStorage');
-      useStaticData(statusString + staticSuffix);
+      useStaticData(_statusString + staticSuffix);
     }
   }
 
@@ -300,8 +307,12 @@ module.exports = function(query) {
    * @param  {String} placeString A custom user location
    * @return {Boolean}
    */
-  function getLatLong(placeString) {
-    if (!navigator.onLine) {
+  function getLatLong(placeString, urlSearch) {
+    if (!navigator.onLine && urlSearch) {
+      updateStatus('badConnectionLastKnown');
+      useLocalStorageData('badConnection');
+      return;
+    } else if (!navigator.onLine) {
       console.log('offline');
       updateStatus('errorNoConnLocSearch');
       enableControls();
@@ -399,7 +410,6 @@ module.exports = function(query) {
       updateApp(lat, long, 'unknown');
     });
   }
-
 
   function showForm() {
     classListChain(coordsFormEl).remove('inactive').add('active');
@@ -554,10 +564,10 @@ module.exports = function(query) {
   });
 
   function loadLocFromURL(queryString) {
-    // run search if there's a queryString string
+    // run search if there's a query string
     if (typeof queryString === 'string' && queryString.length >= 1) {
       updateStatus('location');
-      getLatLong(queryString);
+      getLatLong(queryString, true);
     }
   }
 

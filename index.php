@@ -97,7 +97,7 @@
                 <p>If it can't find your location ensure you've clicked "allow" when the browser asks to use your location.</p>
                 <p>Alternatively click "choose another location" where you can enter any place you like.</p>
                 <p>Tip: try picking extreme places such as Nordvik, Dubai, Jakarta or Cape Farewell.</p>
-                <p>To see a weather map of the world try <a href="https://www.windy.com/" target="_blank">Windy.com</a></p>
+                <p>To see a weather map of the world try <a href="https://www.windy.tv/" target="_blank">Windy.tv</a></p>
                 <button class="button-close" data-ref="tab-close">
                   <span class="text">
                     Close
