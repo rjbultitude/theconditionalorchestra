@@ -1,15 +1,26 @@
 <!doctype html>
 <html class="no-js" lang="">
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>The Conditional Orchestra</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
-        <link rel="stylesheet" href="dist/styles/global.css">
+      <!-- Google Tag Manager -->
+      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-5NC4KTH');</script>
+      <!-- End Google Tag Manager -->
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title>The Conditional Orchestra</title>
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="apple-touch-icon" href="apple-touch-icon.png">
+      <link rel="stylesheet" href="dist/styles/global.css">
     </head>
     <body>
+      <!-- Google Tag Manager (noscript) -->
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5NC4KTH"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager (noscript) -->
       <div class="outerwrapper">
         <div class="innerwrapper">
           <!-- begin main -->
@@ -98,6 +109,7 @@
                 <p>Alternatively click "choose another location" where you can enter any place you like.</p>
                 <p>Tip: try picking extreme places such as Nordvik, Dubai, Jakarta or Cape Farewell.</p>
                 <p>To see a weather map of the world try <a href="https://www.windy.tv/" target="_blank">Windy.tv</a></p>
+                <p>If the music playback is glitchy please try it on a more powerful device.</p>
                 <button class="button-close" data-ref="tab-close">
                   <span class="text">
                     Close

@@ -128,19 +128,15 @@ The pan and volume are randomly selected from two arrays.
 Rewrite p5 draw loop to use setTimeout/setInterval for inactive table
 [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API) will help with this. Could use setInterval than only runs when draw is ready.
 
-Handle no (satellite) map situation
-
 Create icons for night time
+
+Consider dropping reverb (for performance purposes)
 
 Only output chordType if using inversions
 
 Write unit tests
 
-Add analytics
-
 Consider using windyTV map rather than text input
-
-Consider dropping reverb (for performance purposes)
 
 Consider reducing the max number of pad notes (for performance and sonic overcrowding purposes)
 
