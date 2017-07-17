@@ -75,7 +75,7 @@ module.exports = (function() {
             constrain: false,
             unit: '',
             iconPath: '/img/sun-icon.svg',
-            music: 'Upper choral sound',
+            music: 'Upper choral sound playing',
             musicValue: ''
           },
           {
@@ -85,7 +85,7 @@ module.exports = (function() {
             constrain: false,
             unit: '',
             iconPath: '/img/freezing-icon.svg',
-            music: 'Filtered lower choral sound',
+            music: 'Filtered lower choral sound playing',
             musicValue: ''
           },
           {

@@ -575,13 +575,6 @@ module.exports = function(query) {
     }
   });
 
-  window.addEventListener('popstate', function (e) {
-    var state = e.state;
-    if (state !== null) {
-      loadLocFromURL(state.path);
-    }
-  });
-
   function loadLocFromURL(queryString) {
     // run search if there's a query string
     if (typeof queryString === 'string' && queryString.length >= 1) {
@@ -589,6 +582,13 @@ module.exports = function(query) {
       getLatLong(queryString, true);
     }
   }
+
+  window.addEventListener('popstate', function (e) {
+    var state = e.state;
+    if (state !== null) {
+      loadLocFromURL(state.path);
+    }
+  });
 
   // Init
   updateStatus('start');

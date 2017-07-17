@@ -871,7 +871,7 @@ module.exports = function() {
        * ------------------------
        */
 
-      function formatCoStrings(displayData) {
+      function formatMusicalValStrings(displayData) {
         return displayData.map(function(displayProp) {
           var _musicValueLowerCase;
           var _musicValue;
@@ -889,11 +889,22 @@ module.exports = function() {
         });
       }
 
+      function formatWCheckBools(displayData) {
+        return displayData.map(function(displayProp) {
+          // Remove boolean values
+          if (displayProp.value === true) {
+            displayProp.value = '';
+          }
+          return displayProp;
+        });
+      }
+
       function buildDisplay(coDisplayData) {
-        //Format strings and numbers
-        var _formattedCoData = formatCoStrings(coDisplayData);
-        //TODO perf - should use for loop for speed?
-        _formattedCoData.forEach(function(coDisplayObj) {
+        // Format strings and numbers
+        var _formattedMusicValData = formatMusicalValStrings(coDisplayData);
+        var _formattedWCheckBools = formatWCheckBools(_formattedMusicValData);
+        // TODO perf - should use for loop for speed?
+        _formattedWCheckBools.forEach(function(coDisplayObj) {
           //Only show true or valid values
           //Zero is valid for most conditions
           if (coDisplayObj.value !== undefined && coDisplayObj.value !==
@@ -939,10 +950,10 @@ module.exports = function() {
         };
       }
 
-      //Only used if web worker is not available
+      // Only used if web worker is not available
       function configureDisplay(musicDisplayVals) {
-        //Set the data vals using
-        //module scoped data
+        // Set the data vals using
+        // module scoped data
         var _setCoDisplayGroupVals = coFns(
           coDisplayData,
           lwData,
