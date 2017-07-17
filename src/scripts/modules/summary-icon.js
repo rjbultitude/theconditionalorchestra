@@ -54,7 +54,7 @@ module.exports = (function() {
 
   function outputSummary(lwData) {
     summaryWordCont.innerHTML = lwData.summary;
-    summaryIconCont.innerHTML = '<img src="/img/' + approximateIcons(lwData.icon) + '-icon.svg" />';
+    summaryIconCont.innerHTML = '<img src="/img/' + approximateIcons(lwData.icon) + '-icon.svg" alt="' + lwData.summary +'" />';
   }
 
   function hideSummary() {
