@@ -199,7 +199,7 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
             coProp.musicValue = getMainMelodyTempoType(mDVals.noteLengthMult, avSettings);
             break;
           case 'cloudCover':
-            coProp.musicValue = Math.round(mDVals.masterFilterFreq);
+            coProp.musicValue = Math.round(mDVals.padFilterFreq);
             break;
           case 'apparentTemperature':
             coProp.musicValue = Math.round(mDVals.seqRepeatNum / mDVals.numChords);
@@ -208,7 +208,7 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
             coProp.musicValue = microU.getOrdinal(mDVals.longNoteIndex + 1);
             break;
           case 'visibility':
-            coProp.musicValue = mDVals.reverbLength;
+            coProp.musicValue = mDVals.longNoteFilterFreq;
             break;
           case 'precipIntensity':
             coProp.musicValue = mDVals.precipArpBpm;

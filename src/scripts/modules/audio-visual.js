@@ -57,10 +57,10 @@ module.exports = function() {
   // Lead sounds
   var rhodes;
   // Globals
-  var soundFilter;
+  var padFilter;
   var freezingFilter;
   var foggyFilter;
-  var reverb;
+  var longNoteFilter;
   // pan
   var angle = 180;
   var sinVal = 0;
@@ -171,10 +171,10 @@ module.exports = function() {
   }
 
   function createP5SoundObjs() {
-    soundFilter = new P5.LowPass();
+    padFilter = new P5.LowPass();
+    longNoteFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
     foggyFilter = new P5.HighPass();
-    reverb = new P5.Reverb();
   }
 
   // main app init
@@ -288,10 +288,9 @@ module.exports = function() {
     console.log('longNoteHigh', longNoteHigh);
     var longNoteVolArr = audioGets.getLongNoteVolArr(wCheck);
     console.log('longNoteVolArr', longNoteVolArr);
-    var reverbLength = audioGets.getReverbLength(lwData);
-    var reverbDecay = audioGets.getReverbDecay(lwData);
     var longNoteType = audioGets.getLongNoteType(wCheck);
-    var masterFilterFreq = audioGets.getMasterFilterFreq(lwData, avSettings);
+    var longNoteFilterFreq = audioGets.getLongNoteFilterFreq(lwData, avSettings);
+    var padFilterFreq = audioGets.getPadFilterFreq(lwData, avSettings);
     var extraSeqOffset = audioGets.getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
     console.log('extraSeqOffset', extraSeqOffset);
     var invExtraSeqOffset = numSemisPerOctave - extraSeqOffset;
@@ -317,6 +316,7 @@ module.exports = function() {
     var leadNoteLengthStart = audioGets.getLeadNoteLengthStart(appFrameRate, lwData);
     var leadNoteLengths = makeFibSequence(leadNoteLengthStart, numPadNotes * 2);
     // Choral
+    var choralSoundVol = audioGets.getChoralSoundVol(wCheck);
     var choralDenominator = wCheck.isFreezing ? 2 : 1;
     var choralExtraDenominator = rootNoteGrtrMedian ? 2 : 1;
     //Set initial note lengths for use in draw
@@ -339,14 +339,14 @@ module.exports = function() {
        * Set base effects
        * ------------------------
        */
-      function setFilter() {
-        soundFilter.freq(masterFilterFreq);
-        soundFilter.res(20);
+      function setPadFilter() {
+        padFilter.freq(padFilterFreq);
+        padFilter.res(20);
       }
 
-      function setReverb() {
-        reverb.set(reverbLength, reverbDecay);
-        reverb.amp(1);
+      function setLongNoteFilter() {
+        longNoteFilter.freq(longNoteFilterFreq);
+        longNoteFilter.res(10);
       }
 
       /**
@@ -487,13 +487,6 @@ module.exports = function() {
         if (extraSeqPlaying || longNoteHigh || longNoteType === 'shiney') {
           _longNoteRate = _longNoteRate / 2;
         }
-        // Play the wet signal alone
-        // if visibility is less than 8 miles /
-        // if the reverb is long
-        // if (wCheck.isVisbilityPoor) {
-        //   longNote.disconnect();
-        // }
-        longNote.connect(reverb);
         // playlogic
         // play full note if visibility is poor
         // and the weather is inclement
@@ -501,6 +494,8 @@ module.exports = function() {
         if (!wCheck.isVisbilityPoor || !wCheck.isClement) {
           longNote.playMode('restart');
         }
+        longNote.disconnect();
+        longNote.connect(longNoteFilter);
         longNote.play();
         longNote.pan(sketch.random(longNotePanArr));
         longNote.setVolume(_longNoteVol, rampTime, timeFromNow, startVol);
@@ -543,8 +538,9 @@ module.exports = function() {
 
       function playPad(playFullNotes) {
         for (var i = 0, length = padSounds.length; i < length; i++) {
+          // TODO can we connect in setup?
           padSounds[i].disconnect();
-          padSounds[i].connect(soundFilter);
+          padSounds[i].connect(padFilter);
           padSounds[i].pan(panArr[panIndex]);
           padSounds[i].playMode('restart');
           padSounds[i].play();
@@ -603,7 +599,7 @@ module.exports = function() {
           // issue in Chrome only
           choralSound.loop();
           choralSound.rate(choralScales[0][i] / choralDenominator);
-          choralSound.setVolume(0.23, rampTime, timeFromNow, startVol);
+          choralSound.setVolume(choralSoundVol, rampTime, timeFromNow, startVol);
         });
       }
 
@@ -843,8 +839,8 @@ module.exports = function() {
         // Make arrays of frequencies for playback
         synchedSoundsChords = makeChordSequence();
         // Set filter for pad sounds
-        setFilter();
-        setReverb();
+        setPadFilter();
+        setLongNoteFilter();
         // Set the root note rate
         // for use elsewhere in program
         rootNoteRate = synchedSoundsChords[chordIndex][0];
@@ -930,10 +926,10 @@ module.exports = function() {
           numSemisPerOctave: numSemisPerOctave,
           rootNote: rootNote,
           noteLengthMult: noteLengthMult,
-          masterFilterFreq: masterFilterFreq,
+          padFilterFreq: padFilterFreq,
           seqRepeatNum: seqRepeatNum,
           longNoteIndex: longNoteIndex,
-          reverbLength: reverbLength,
+          longNoteFilterFreq: longNoteFilterFreq,
           precipArpBpm: precipArpBpm,
           precipCategory: precipCategory,
           rideCymbalBpm: rideCymbalBpm,

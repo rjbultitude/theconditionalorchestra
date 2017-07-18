@@ -33,9 +33,9 @@ module.exports = (function() {
             constrain: true,
             unit: 'miles',
             iconPath: '/img/visibility-icon.svg',
-            music: 'Long note reverb length ',
+            music: 'Long note filter frequency ',
             musicValue: '',
-            musicAppendage: ' seconds'
+            musicAppendage: ' Hz'
           },
           {
             key: 'cloudCover',

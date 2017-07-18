@@ -144,9 +144,9 @@ module.exports = (function() {
     // error check
     if (avSettings.hasOwnProperty(padType)) {
       if(wCheck.isFoggy) {
-        return avSettings[padType].volume / 3;
+        return avSettings[padType].volume / 2.5;
       } else if (sCheck.harpCanPlay && wCheck.isMild) {
-        return avSettings[padType].volume / 2;
+        return avSettings[padType].volume / 1.5;
       } else {
         return avSettings[padType].volume;
       }
@@ -286,10 +286,18 @@ module.exports = (function() {
   }
 
   function getLongNoteVolArr(wCheck) {
-    if (wCheck.isVisbilityPoor) {
+    if (wCheck.isVisbilityPoor && !wCheck.isFreezing) {
       return [0.75, 0.875, 1];
     } else {
       return [0.225, 0.375, 0.7125];
+    }
+  }
+
+  function getChoralSoundVol(wCheck) {
+    if (wCheck.isFreezing) {
+      return 0.43;
+    } else {
+      return 0.23;
     }
   }
 
@@ -301,25 +309,13 @@ module.exports = (function() {
     }
   }
 
-  function getReverbLength(lwData) {
-    // Max length 10 seconds
+  function getLongNoteFilterFreq(lwData, avSettings) {
     return Math.round(microU.mapRange(
       lwData.visibility.value,
       lwData.visibility.min,
       lwData.visibility.max,
-      10,
-      2
-    ));
-  }
-
-  function getReverbDecay(lwData) {
-    // Max decay 100
-    return Math.round(microU.mapRange(
-      lwData.visibility.value,
-      lwData.visibility.min,
-      lwData.visibility.max,
-      100,
-      30
+      avSettings.longNoteFilter.min,
+      avSettings.longNoteFilter.max
     ));
   }
 
@@ -412,13 +408,13 @@ module.exports = (function() {
     }
   }
 
-  function getMasterFilterFreq(lwData, avSettings) {
+  function getPadFilterFreq(lwData, avSettings) {
     return microU.mapRange(
       lwData.cloudCover.value,
       lwData.cloudCover.max,
       lwData.cloudCover.min,
-      avSettings.masterFilter.min,
-      avSettings.masterFilter.max
+      avSettings.padFilter.min,
+      avSettings.padFilter.max
     );
   }
 
@@ -523,7 +519,6 @@ module.exports = (function() {
   }
 
   return {
-    getLongNoteType: getLongNoteType,
     getNumPadNotes: getNumPadNotes,
     getNumChords: getNumChords,
     getNumSemisPerOctave: getNumSemisPerOctave,
@@ -537,12 +532,13 @@ module.exports = (function() {
     getMainSeqRepeatNum: getMainSeqRepeatNum,
     getRootNoteRange: getRootNoteRange,
     getRootNote: getRootNote,
+    getChoralSoundVol: getChoralSoundVol,
     getLongNoteIndex: getLongNoteIndex,
+    getLongNoteType: getLongNoteType,
+    getLongNoteFilterFreq: getLongNoteFilterFreq,
     isLongNoteHigh: isLongNoteHigh,
     getLongNoteVolArr: getLongNoteVolArr,
     getExtraChordsOffset: getExtraChordsOffset,
-    getReverbLength: getReverbLength,
-    getReverbDecay: getReverbDecay,
     getBrassVolume: getBrassVolume,
     getBrassBpm: getBrassBpm,
     getLeadSoundVolume: getLeadSoundVolume,
@@ -551,7 +547,7 @@ module.exports = (function() {
     getHumidArpBpm: getHumidArpBpm,
     getHumidArpIntervals: getHumidArpIntervals,
     getPrecipArpIntervalType: getPrecipArpIntervalType,
-    getMasterFilterFreq: getMasterFilterFreq,
+    getPadFilterFreq: getPadFilterFreq,
     isRootNoteHigh: isRootNoteHigh,
     getRideCymbalRate: getRideCymbalRate,
     getRideCymbalsBpm: getRideCymbalsBpm,

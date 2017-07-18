@@ -47,17 +47,17 @@ module.exports = {
     },
     //dew point in farenheit
     dewPoint: {
-      min: -55,
+      min: -65,
       max: 72
     },
     //temperature in farenheit
     temperature: {
-      min: -52,
+      min: -58,
       max: 120
     },
     //apparent temperature in farenheit
     apparentTemperature: {
-      min: -100,
+      min: -110,
       max: 120
     },
     // violent rain is in excess of 2 inches per hour

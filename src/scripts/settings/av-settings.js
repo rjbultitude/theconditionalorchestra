@@ -23,12 +23,13 @@ module.exports = {
   numPadNotes: 5,
   numChords: 3,
   numChordsMin: 3,
+  // TODO could be 8
   numChordsMax: 6,
   mainSeqRepeat: 2,
   mainSeqRepeatMin: 1,
   mainSeqRepeatMax: 6,
-  noteLengthMultMin: 1,
-  noteLengthMultMax: 5,
+  noteLengthMultMin: 2,
+  noteLengthMultMax: 6,
   numPrecipArpNotes: 12,
   numHumidArpNotes: 6, //should match closeIntervals
   numOctaves: 2,
@@ -38,9 +39,13 @@ module.exports = {
   fadeTime: 1,
   //Frequency
   //Lowest (10 Hz) to highest (22,050 Hz)
-  masterFilter: {
+  padFilter: {
     min: 1000,
     max: 6000
+  },
+  longNoteFilter: {
+    min: 1000,
+    max: 3000
   },
 	//DOM
 	cContainerName: 'canvas-container'
