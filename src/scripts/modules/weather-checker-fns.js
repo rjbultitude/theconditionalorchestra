@@ -26,6 +26,10 @@ module.exports = {
     return humidity > 0.57;
   },
 
+  isFreezingAndHumid: function isFreezingAndHumid(humidity, temperatureInFrnht) {
+    return frnhtToCelcius(temperatureInFrnht) < -1 && humidity > 0.57;
+  },
+
   isMuggy: function isMuggy(humidity, temperatureInFrnht) {
     return humidity > 0.48 && frnhtToCelcius(temperatureInFrnht) > 16;
   },

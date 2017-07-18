@@ -217,6 +217,7 @@ module.exports = function() {
       isFoggy: weatherCheck.isFoggy(lwData.visibility.value, lwData.temperature.value, lwData.dewPoint.value),
       //Humidity
       isHumid: weatherCheck.isHumid(lwData.humidity.value),
+      isFreezingAndHumid: weatherCheck.isFreezingAndHumid(lwData.humidity.value, lwData.temperature.value),
       isMuggy: weatherCheck.isMuggy(lwData.humidity.value, lwData.temperature.value),
       isSmoggy: weatherCheck.isSmoggy(lwData.humidity.value, lwData.apparentTemperature.value, lwData.visibility.value),
       isArid: weatherCheck.isArid(lwData.humidity.value, lwData.temperature.value, lwData.precipIntensity.value),
@@ -484,7 +485,8 @@ module.exports = function() {
         }
         // Lower by one octave
         // if the lower chords are playing
-        if (extraSeqPlaying || longNoteHigh || longNoteType === 'shiney') {
+        // TODO add wCheck.isFreezing? So flute isnt so ugly
+        if (extraSeqPlaying || longNoteHigh || wCheck.isFreezingAndHumid || longNoteType === 'shiney') {
           _longNoteRate = _longNoteRate / 2;
         }
         // playlogic
