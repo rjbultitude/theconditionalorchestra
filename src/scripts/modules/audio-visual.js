@@ -331,7 +331,6 @@ module.exports = function() {
       var inc = sketch.TWO_PI / 150;
 
       channel.subscribe('allStopped', function() {
-        console.log('sketch', sketch);
         sketch.noLoop();
       });
 
@@ -1135,7 +1134,6 @@ module.exports = function() {
         if (sketch.frameCount % brassBaritone2StepTime === 0) {
           channel.publish('triggerBrassTwo');
         }
-        //angle += 0.03;
         angle += inc;
       }
 
@@ -1220,8 +1218,7 @@ module.exports = function() {
         }
       }
 
-      //P5 DRAW LOOP - 3
-      sketch.draw = function draw() {
+      function updateAllSounds() {
         if (!sequenceStart) {
           updateRideCymbal();
         }
@@ -1275,11 +1272,16 @@ module.exports = function() {
           sequenceStart = false;
           console.log('sequenceStart', sequenceStart);
         }
-        //Master volume
-        //Fade in on play
+        // Master volume
+        // Fade in on play
         if (!maxMasterVolSet) {
           updateMasterVol();
         }
+      }
+
+      // DRAW LOOP - 3
+      sketch.draw = function draw() {
+        updateAllSounds();
       };
     });
     return myP5;

@@ -23,6 +23,7 @@ button {
 .page-heading {
   font-size: 32px;
   margin-bottom: $padding/2;
+  position: relative;
 }
 
 .section-heading {
@@ -47,4 +48,10 @@ a {
 ::selection {
     background: #b3d4fc;
     text-shadow: none;
+}
+
+.minor-word {
+  font-size: 12px;
+  position: absolute;
+  bottom: 94%;
 }
