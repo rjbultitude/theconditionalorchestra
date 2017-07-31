@@ -31,10 +31,6 @@ The `/src` folder contains all JavaScript and Sass. Gulp will process these file
 
 [JSCS](http://jscs.info/rules.html) and [JS Hint](http://jshint.com/docs/options/) are used to highlights stylisitic and syntactical JS issues. Rules used are listed in `.jscsrc` and `.jshintrc` respectively.
 
-Keep the `humans.txt` updated and ensure the site has a `favicon.ico`.
-
-Note: Please view the README.md files within each folder for more info.
-
 ## Installation
 
 *Run (in this directory):*
@@ -45,23 +41,18 @@ This ensures the all the node packages are installed. Follow the [NPM guide](htt
 
 ## Build
 
-[Gulp](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md) is a task based build tool. It has been configured to run in two modes, development and production. Gulp will create, clean and manage the `dist` folder.
+Before running any of the standard tasks be sure to run `gulp templates` which will precompile the handlebars template ready for use in the app.
 
-### Development
+[Gulp](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md) is used to bundle the app. It runs in two modes: `development` and `production`. To run in development mode run 
 
+`gulp`
+
+to run in production mode simply add the production flag
+
+`gulp --production`
+
+Gulp will create, clean and manage the `dist` folder.
 Styles and scripts will be processed and watched for changes. Scripts will be linted.
-
-*Run (in this directory):*
-
-  `npm run gulp`
-
-### Production
-
-Styles and scripts will be processed and minified.
-
-*Run (in this directory):*
-
-  `npm run gulp --production`
 
 ## References
 
@@ -76,6 +67,7 @@ Map and reduce are used in the JS but are supported by IE11+.
 Web Audio is not supported in IE11 so the JS _should_ stop running before any non-supported JS is.
 
 ##App logic
+_Please note this is out of date_
 1 master lwData (location weather) object is composed from the weather data.
 1 wCheck object is used to contain all the various booleans needed to handle the app logic
 
