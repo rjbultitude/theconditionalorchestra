@@ -331,7 +331,11 @@ module.exports = function() {
       var inc = sketch.TWO_PI / 150;
 
       channel.subscribe('allStopped', function() {
-        sketch.noLoop();
+        if (window.Worker) {
+          drawWorker.postMessage({draw: false});
+        } else {
+          sketch.noLoop();
+        }
       });
 
       /**
@@ -993,43 +997,6 @@ module.exports = function() {
         pageTheme(lwData, wCheck);
       }
 
-      //P5 PRELOAD FN - 1
-      sketch.preload = function() {
-        //loadSound called during preload
-        //will be ready to play in time for setup
-        //Pad sounds for various weather types
-        for (var i = 0; i < numPadNotes; i++) {
-          padSounds.push(sketch.loadSound('/audio/' + padType + '-C2.mp3'));
-        }
-        //Long note accompanies pad
-        longNote = sketch.loadSound('/audio/' + longNoteType + '-C3.mp3');
-        dropSound = sketch.loadSound('/audio/drop-' + precipCategory + '.mp3');
-        //choral sounds for fine/freezing weather
-        for (var j = 0; j < 2; j++) {
-          choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
-        }
-        //TODO only load these if conditions are so
-        bass = sketch.loadSound('/audio/bass.mp3');
-        bass2 = sketch.loadSound('/audio/bass.mp3');
-        brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
-        brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
-        harpSound = sketch.loadSound('/audio/harp-C3.mp3');
-        chineseCymbal = sketch.loadSound('/audio/chinese-cymbal.mp3');
-        timpani = sketch.loadSound('/audio/timpani.mp3');
-        djembe = sketch.loadSound('/audio/djembe.mp3');
-        rhodes = sketch.loadSound('/audio/rhodes.mp3');
-        rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
-      };
-
-      //P5 SETUP FN - 2
-      sketch.setup = function setup() {
-        sketch.frameRate(appFrameRate);
-        //--------------------------
-        // Handle sounds / Start app
-        // -------------------------
-        configureAudioVisual();
-      };
-
       /**
        * ------------------------
        * Music update functions
@@ -1279,10 +1246,58 @@ module.exports = function() {
         }
       }
 
-      // DRAW LOOP - 3
-      sketch.draw = function draw() {
-        updateAllSounds();
+      // P5 PRELOAD - 1
+      sketch.preload = function() {
+        //loadSound called during preload
+        //will be ready to play in time for setup
+        //Pad sounds for various weather types
+        for (var i = 0; i < numPadNotes; i++) {
+          padSounds.push(sketch.loadSound('/audio/' + padType + '-C2.mp3'));
+        }
+        //Long note accompanies pad
+        longNote = sketch.loadSound('/audio/' + longNoteType + '-C3.mp3');
+        dropSound = sketch.loadSound('/audio/drop-' + precipCategory + '.mp3');
+        //choral sounds for fine/freezing weather
+        for (var j = 0; j < 2; j++) {
+          choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
+        }
+        //TODO only load these if conditions are so
+        bass = sketch.loadSound('/audio/bass.mp3');
+        bass2 = sketch.loadSound('/audio/bass.mp3');
+        brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');
+        brassBaritone2 = sketch.loadSound('/audio/brass-baritone.mp3');
+        harpSound = sketch.loadSound('/audio/harp-C3.mp3');
+        chineseCymbal = sketch.loadSound('/audio/chinese-cymbal.mp3');
+        timpani = sketch.loadSound('/audio/timpani.mp3');
+        djembe = sketch.loadSound('/audio/djembe.mp3');
+        rhodes = sketch.loadSound('/audio/rhodes.mp3');
+        rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
       };
+
+      // P5 SETUP - 2
+      sketch.setup = function setup() {
+        sketch.frameRate(appFrameRate);
+        //--------------------------
+        // Handle sounds / Start app
+        // -------------------------
+        configureAudioVisual();
+        startDraw();
+      };
+
+      // P5 DRAW / Worker - 3
+      function startDraw() {
+        if (window.Worker) {
+          var drawWorker = work(require('./display-worker.js'));
+          drawWorker.addEventListener('tick', function() {
+            updateAllSounds();
+          });
+          drawWorker.postMessage({draw: true, rate: appFrameRate});
+        } else {
+          sketch.draw = function draw() {
+            updateAllSounds();
+          };
+        }
+      }
     });
     return myP5;
   }
