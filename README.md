@@ -121,7 +121,7 @@ Install latest version of darkskyjs
 
 Consider using `uvIndex` as data point
 
-Create icons for night time
+Create styles (and icons) for night time - not sure how reliable the icon names are
 
 Only output chordType if using inversions
 
