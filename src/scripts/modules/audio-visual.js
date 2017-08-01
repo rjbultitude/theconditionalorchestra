@@ -1160,7 +1160,6 @@ module.exports = function() {
           var _harpVol = sketch.random(harpVolArr);
           // Handle extra seq
           if (extraSeqPlaying) {
-            console.log('extraSeqPlaying', extraSeqPlaying);
             hArpSeqIndex = 1;
           } else {
             hArpSeqIndex = 0;
@@ -1199,7 +1198,6 @@ module.exports = function() {
           dropSound.play();
           dropSound.setVolume(avSettings.dropSoundVol[precipCategory]);
           dropSound.rate(precipArpScales[pArpSeqIndex][precipArpScaleIndex]);
-          console.log('precip arp playing');
           precipArpScaleIndex++;
         }
       }

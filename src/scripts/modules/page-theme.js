@@ -26,7 +26,7 @@ module.exports = function(lwData, wCheck) {
     if (wCheck.isStormy) {
       return 'storm';
     } else if (wCheck.isPrecip) {
-      return lwData.precipType;
+      return lwData.precipType || 'rain';
     } else if (wCheck.isFoggy) {
       return 'fog';
     } else {
@@ -56,6 +56,7 @@ module.exports = function(lwData, wCheck) {
   var newThemeType = getThemeTypeName();
   var newThemeTime = getThemeTimeName();
   console.log('newThemeTime', newThemeTime);
+  console.log('newThemeTime', typeof newThemeTime);
   document.body.classList.add(newThemeName);
   document.body.classList.add(newThemeTime);
   wrapper.classList.add(newThemeType);

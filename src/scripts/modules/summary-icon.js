@@ -13,22 +13,20 @@ module.exports = (function() {
     'partly-cloudy-day',
     'partly-cloudy-night'
   ];
-  var day = 'day';
-  var night = 'night';
-  var dayRe = new RegExp(day, 'g');
-  var nightRe = new RegExp(night, 'g');
-  var dayRegex = /dayRe$/;
-  var nightRegex = /nightRe$/;
+
   // DOM
   var summaryWordCont = document.getElementById('summary-desc');
   var summaryIconCont = document.getElementById('summary-icon');
 
   // To use with themes
   function extractTime(currIcon) {
-    if (currIcon.match(dayRegex)) {
-      return day;
-    } else if (currIcon.match(nightRegex)) {
-      return night;
+    console.log(currIcon);
+    var isDay = /day$/.test(currIcon);
+    var isNight = /night$/.test(currIcon);
+    if (isDay) {
+      return 'day';
+    } else if (isNight) {
+      return 'night';
     } else {
       return 'null';
     }

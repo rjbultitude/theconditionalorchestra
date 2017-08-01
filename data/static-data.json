@@ -1,7 +1,7 @@
 {
   "name": "London, UK",
   "summary": "Foggy",
-  "icon": "fog",
+  "icon": "partly-cloudy-day",
   "cloudCover":{
     "value":0.4,
     "min":0,
@@ -18,12 +18,12 @@
     "max":10
   },
   "pressure":{
-    "value":1016,
+    "value":1026,
     "min":980,
     "max":1050
   },
   "precipIntensity":{
-    "value":0,
+    "value":0.2,
     "min":0,
     "max":0.5
   },
