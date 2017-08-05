@@ -18,14 +18,19 @@ module.exports = (function() {
   var summaryWordCont = document.getElementById('summary-desc');
   var summaryIconCont = document.getElementById('summary-icon');
 
+  function isDay(currIcon) {
+    return /day$/.test(currIcon);
+  }
+
+  function isNight(currIcon) {
+    return /night$/.test(currIcon);
+  }
+
   // To use with themes
   function extractTime(currIcon) {
-    console.log(currIcon);
-    var isDay = /day$/.test(currIcon);
-    var isNight = /night$/.test(currIcon);
-    if (isDay) {
+    if (isDay(currIcon)) {
       return 'day';
-    } else if (isNight) {
+    } else if (isNight(currIcon)) {
       return 'night';
     } else {
       return 'null';
@@ -38,7 +43,7 @@ module.exports = (function() {
       return 'sun';
     } else if (currIcon === 'fog') {
       return 'visibility';
-    } else if (dayRe.test(currIcon) || nightRe.test(currIcon)) {
+    } else if (isDay(currIcon) || isNight(currIcon)) {
       return 'weather';
     }
     for (var icon in iconStrs) {

@@ -117,9 +117,9 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Install latest version of darkskyjs
-
 Consider using `uvIndex` as data point
+
+Fix "0th note" text
 
 Create styles (and icons) for night time - not sure how reliable the icon names are
 

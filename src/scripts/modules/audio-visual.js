@@ -550,9 +550,7 @@ module.exports = function() {
           // If we want to play the play full note length
           // use the onended callback
           if (playFullNotes) {
-            padSounds[i].onended(function() {
-              padCallBack();
-            });
+            padSounds[i].onended(padCallBack);
           }
           updatePanIndex();
         }
