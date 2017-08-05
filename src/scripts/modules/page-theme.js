@@ -8,6 +8,7 @@ module.exports = function(lwData, wCheck) {
   var innerwrapperStr = 'innerwrapper';
   var wrapper = document.querySelector('.' + innerwrapperStr);
   var curThemeTempName = document.body.classList['0'];
+  console.log('curThemeTempName', curThemeTempName);
   var curThemeTypeList = wrapper.classList;
 
   function getThemeTempName() {
@@ -48,9 +49,7 @@ module.exports = function(lwData, wCheck) {
     }
   }
 
-  if (curThemeTempName) {
-    document.body.classList.remove(curThemeTempName);
-  }
+  document.body.classList = '';
   removeThemeType();
   var newThemeName = getThemeTempName();
   var newThemeType = getThemeTypeName();
