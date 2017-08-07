@@ -39,6 +39,8 @@ module.exports = function(lwData, wCheck) {
     return summaryIcon.extractTime(lwData.icon);
   }
 
+  // Removes any class names
+  // except the selector for the element
   function removeThemeType() {
     for (var className in curThemeTypeList) {
       if (curThemeTypeList.hasOwnProperty(className)) {
@@ -49,13 +51,16 @@ module.exports = function(lwData, wCheck) {
     }
   }
 
+  // remove class names
   document.body.classList = '';
   removeThemeType();
+  // get class names
   var newThemeName = getThemeTempName();
   var newThemeType = getThemeTypeName();
   var newThemeTime = getThemeTimeName();
   console.log('newThemeTime', newThemeTime);
   console.log('newThemeTime', typeof newThemeTime);
+  // apply class names
   document.body.classList.add(newThemeName);
   document.body.classList.add(newThemeTime);
   wrapper.classList.add(newThemeType);
