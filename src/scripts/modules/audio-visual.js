@@ -1283,8 +1283,13 @@ module.exports = function() {
       // P5 DRAW / Worker - 3
       function startDraw() {
         if (window.Worker) {
+          var count = 0;
+          var test = document.getElementById('test');
           drawWorker = work(require('./draw-worker.js'));
           drawWorker.addEventListener('message', function(e) {
+            count++;
+            test.innerHTML = count + '';
+            console.log('main thread count', count);
             if (e.data.msg === 'tick') {
               updateAllSounds();
             }
@@ -1330,7 +1335,5 @@ module.exports = function() {
     }
   });
 
-  return {
-    updateAllSounds: updateAllSounds
-  };
+  return true;
 };

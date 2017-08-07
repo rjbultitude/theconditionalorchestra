@@ -8,9 +8,8 @@ module.exports = function (self) {
         if (e.data.draw) {
             interval = setInterval(function() {
                 count++;
-                console.log('count', count);
+                console.log('worker thread count', count);
                 self.postMessage({msg: 'tick'});
-                e.data.updateAllSounds();
             }, 1000 / e.data.rate);
         } else {
             clearInterval(interval);

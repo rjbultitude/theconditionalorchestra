@@ -25,6 +25,7 @@
         <div class="innerwrapper">
           <!-- begin main -->
           <main id="main" aria-label="Content">
+            <p id="test"></p>
             <!-- begin article -->
             <article>
                 <!-- begin header -->
@@ -110,6 +111,7 @@
                 <p>Tip: try picking extreme places such as Nordvik, Dubai, Jakarta or Cape Farewell.</p>
                 <p>To see a weather map of the world try <a href="https://www.windy.tv/" target="_blank">Windy.tv</a></p>
                 <p>If the music playback is glitchy please try it on a more powerful device.</p>
+                <p>The audio may stop if it's not the active tab in your browser, so be sure to open in a new window for continuous playback.</p>
                 <button class="button-close" data-ref="tab-close">
                   <span class="text">
                     Close
