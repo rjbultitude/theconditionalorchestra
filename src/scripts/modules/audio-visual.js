@@ -84,6 +84,8 @@ module.exports = function() {
   var startVol = 0.001;
   // DOM
   var cdContainer = document.querySelector('.conditions-display__list');
+  // Workers
+  var drawWorker;
 
   function fadeInDisplayItem(thisDisplayItem) {
     var _opacity = 0;
@@ -1242,6 +1244,14 @@ module.exports = function() {
         }
       }
 
+      // Draw using p5
+      // if worker fails
+      function startSketchDraw() {
+        sketch.draw = function draw() {
+          updateAllSounds();
+        };
+      }
+
       // P5 PRELOAD - 1
       sketch.preload = function() {
         //loadSound called during preload
@@ -1270,6 +1280,25 @@ module.exports = function() {
         rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
       };
 
+      // P5 DRAW / Worker - 3
+      function startDraw() {
+        if (window.Worker) {
+          drawWorker = work(require('./draw-worker.js'));
+          drawWorker.addEventListener('message', function(e) {
+            if (e.data.msg === 'tick') {
+              updateAllSounds();
+            }
+          });
+          drawWorker.postMessage({draw: true, rate: appFrameRate});
+          drawWorker.onerror = function(e) {
+            console.log('Error with web worker on ' + 'Line #' + e.lineno +' - ' + e.message + ' in ' + e.filename);
+            startSketchDraw();
+          };
+        } else {
+          startSketchDraw();
+        }
+      }
+
       // P5 SETUP - 2
       sketch.setup = function setup() {
         sketch.frameRate(appFrameRate);
@@ -1280,20 +1309,6 @@ module.exports = function() {
         startDraw();
       };
 
-      // P5 DRAW / Worker - 3
-      function startDraw() {
-        if (window.Worker) {
-          var drawWorker = work(require('./display-worker.js'));
-          drawWorker.addEventListener('tick', function() {
-            updateAllSounds();
-          });
-          drawWorker.postMessage({draw: true, rate: appFrameRate});
-        } else {
-          sketch.draw = function draw() {
-            updateAllSounds();
-          };
-        }
-      }
     });
     return myP5;
   }
@@ -1315,5 +1330,7 @@ module.exports = function() {
     }
   });
 
-  return true;
+  return {
+    updateAllSounds: updateAllSounds
+  };
 };
