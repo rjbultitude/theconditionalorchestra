@@ -61,6 +61,7 @@ module.exports = function() {
   var freezingFilter;
   var foggyFilter;
   var longNoteFilter;
+  var pinkNoiseOsc;
   // pan
   var angle = 180;
   var sinVal = 0;
@@ -148,6 +149,7 @@ module.exports = function() {
     rhodes.fade(0, avSettings.fadeTime);
     rideCymbal.fade(0, avSettings.fadeTime);
     timpani.fade(0, avSettings.fadeTime);
+    pinkNoiseOsc.fade(0, avSettings.fadeTime);
     //Stop after fades
     setTimeout(function() {
       brassBaritone.stop();
@@ -162,6 +164,7 @@ module.exports = function() {
       rhodes.stop();
       rideCymbal.stop();
       timpani.stop();
+      pinkNoiseOsc.stop();
     }, avSettings.fadeTime * 1000);
     //Unsubs
     publishBrassOne.unsubscribe();
@@ -175,6 +178,7 @@ module.exports = function() {
     longNoteFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
     foggyFilter = new P5.HighPass();
+    pinkNoiseOsc = new P5.Noise('pink');
   }
 
   // main app init
@@ -320,6 +324,9 @@ module.exports = function() {
     var choralSoundVol = audioGets.getChoralSoundVol(wCheck);
     var choralDenominator = wCheck.isFreezing ? 2 : 1;
     var choralExtraDenominator = rootNoteGrtrMedian ? 2 : 1;
+    // noise
+    var pinkNoiseVol = audioGets.getPinkNoiseVol(lwData);
+    console.log('pinkNoiseVol', pinkNoiseVol);
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
@@ -646,6 +653,8 @@ module.exports = function() {
         if (pArpScalesNoRests.length > 0) {
           preparePrecipArp(pArpScalesNoRests);
         }
+        pinkNoiseOsc.amp(pinkNoiseVol);
+        pinkNoiseOsc.start();
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', lwData.name);

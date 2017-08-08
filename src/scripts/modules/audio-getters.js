@@ -522,6 +522,18 @@ module.exports = (function() {
     return wCheck.isFine || wCheck.isFreezing;
   }
 
+  function getPinkNoiseVol(lwData) {
+    return microU.mapRange(
+      lwData.uvIndex.value,
+      lwData.uvIndex.min,
+      lwData.uvIndex.max,
+      0,
+      0.6
+    );
+  }
+
+  // TODO 
+  // Use an object for the module
   return {
     getNumPadNotes: getNumPadNotes,
     getNumChords: getNumChords,
@@ -563,6 +575,7 @@ module.exports = (function() {
     getHarpVolArr: getHarpVolArr,
     getHarpCanPlay: getHarpCanPlay,
     getTimpaniCanPlay: getTimpaniCanPlay,
-    getChoralCanPlay: getChoralCanPlay
+    getChoralCanPlay: getChoralCanPlay,
+    getPinkNoiseVol: getPinkNoiseVol
   };
 })();
