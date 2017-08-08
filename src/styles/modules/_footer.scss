@@ -12,6 +12,13 @@
     padding: 12px;
     background-color: $color-purple-darkest;
     @include outputThemeBg(true);
+
+  }
+
+  .night & {
+    .wrapper {
+      @include outputThemeBg(true, 30%);
+    }
   }
 
   .tab__heading {

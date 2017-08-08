@@ -5,11 +5,14 @@ var summaryIcon = require('./summary-icon');
 
 module.exports = function(lwData, wCheck) {
 
-  var innerwrapperStr = 'innerwrapper';
-  var wrapper = document.querySelector('.' + innerwrapperStr);
+  var innerWrapperStr = 'innerwrapper';
+  var outerWrapperStr = 'outerwrapper';
+  var innerWrapper = document.querySelector('.' + innerWrapperStr);
+  var outerWrapper = document.querySelector('.' + outerWrapperStr);
   var curThemeTempName = document.body.classList['0'];
   console.log('curThemeTempName', curThemeTempName);
-  var curThemeTypeList = wrapper.classList;
+  var curThemeTypeList = innerWrapper.classList;
+  var curThemeTimeList = outerWrapper.classList;
 
   function getThemeTempName() {
     if (frnhtToCelcius(lwData.temperature.value) > 26) {
@@ -41,11 +44,11 @@ module.exports = function(lwData, wCheck) {
 
   // Removes any class names
   // except the selector for the element
-  function removeThemeType() {
-    for (var className in curThemeTypeList) {
-      if (curThemeTypeList.hasOwnProperty(className)) {
-        if (curThemeTypeList[className] !== innerwrapperStr) {
-          wrapper.classList.remove(curThemeTypeList[className]);
+  function removeClassNames(nodeClassList, domNode, classToKeep) {
+    for (var className in nodeClassList) {
+      if (nodeClassList.hasOwnProperty(className)) {
+        if (nodeClassList[className] !== classToKeep) {
+          domNode.classList.remove(nodeClassList[className]);
         }
       }
     }
@@ -53,7 +56,8 @@ module.exports = function(lwData, wCheck) {
 
   // remove class names
   document.body.classList = '';
-  removeThemeType();
+  removeClassNames(curThemeTypeList, innerWrapper, innerWrapperStr);
+  removeClassNames(curThemeTimeList, outerWrapper, outerWrapperStr);
   // get class names
   var newThemeName = getThemeTempName();
   var newThemeType = getThemeTypeName();
@@ -62,6 +66,6 @@ module.exports = function(lwData, wCheck) {
   console.log('newThemeTime', typeof newThemeTime);
   // apply class names
   document.body.classList.add(newThemeName);
-  document.body.classList.add(newThemeTime);
-  wrapper.classList.add(newThemeType);
+  outerWrapper.classList.add(newThemeTime);
+  innerWrapper.classList.add(newThemeType);
 };

@@ -119,8 +119,6 @@ The pan and volume are randomly selected from two arrays.
 
 Consider using `uvIndex` as data point
 
-Fix "0th note" text
-
 Create styles (and icons) for night time - not sure how reliable the icon names are
 
 Only output chordType if using inversions
@@ -146,9 +144,6 @@ Refactor the display fns so that they're chained
 ###Bugs
 
 After stop fade out is louder than normal playback, firefox only - caused by the filter not being applied.
-
-Night time should also manage the filter frequency as it affects visibility.
-Only works with daily endpoint :[
 
 No longer relevant - Sequencer onStep only counts the steps in one single pass rather than the loop
 
