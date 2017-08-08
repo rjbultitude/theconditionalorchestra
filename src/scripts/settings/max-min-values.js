@@ -76,6 +76,10 @@ module.exports = {
     nearestStormDistance: {
       min: 0,
       max: 200
+    },
+    uvIndex: {
+      min: 0,
+      max: 12
     }
   }
 };

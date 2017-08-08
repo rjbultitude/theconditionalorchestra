@@ -79,6 +79,7 @@ module.exports = function(query) {
     this.apparentTemperature = null;
     this.nearestStormBearing = null;
     this.nearestStormDistance = null;
+    this.uvIndex = null;
   }
 
   function checkLocationDataKeys(altData) {

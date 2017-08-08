@@ -479,8 +479,8 @@ module.exports = (function() {
     ));
   }
 
-  //The higher the temperature
-  //the bigger the gaps
+  // The higher the temperature
+  // the bigger the gaps
   function getNoteLengths(appFrameRate, minMultiplier) {
     var _noteLengths = [];
     for (var i = 0; i < 3; i++) {
@@ -490,8 +490,8 @@ module.exports = (function() {
     return _noteLengths;
   }
 
-  //The higher the temperature
-  //the bigger the gaps
+  // The higher the temperature
+  // the bigger the gaps
   function getLeadNoteLengthStart(appFrameRate, lwData) {
     return Math.round(microU.mapRange(
       lwData.temperature.value,

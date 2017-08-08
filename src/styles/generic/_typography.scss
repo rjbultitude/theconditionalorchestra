@@ -27,6 +27,9 @@ button {
 }
 
 .section-heading {
+  font-size: 32px;
+  margin: 12px auto;
+
   @extend %hidden;
 }
 

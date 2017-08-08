@@ -1,6 +1,11 @@
 .conditions-display {
   text-align: center;
 
+  .section-heading {
+    position: static;
+    left: auto;
+  }
+
   #map {
     display: none;
   }
@@ -19,6 +24,8 @@
 }
 
 .conditions-display__list {
+  padding-top: 24px;
+
   @media all and (max-width: $bp-mobile) {
     padding-bottom: 60px;
   }

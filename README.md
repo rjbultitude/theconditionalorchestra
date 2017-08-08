@@ -117,9 +117,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Consider using `uvIndex` as data point
-
-Create styles (and icons) for night time - not sure how reliable the icon names are
+Use `uvIndex` as data point
 
 Only output chordType if using inversions
 
