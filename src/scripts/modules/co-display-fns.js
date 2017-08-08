@@ -109,8 +109,8 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
     var _lwDataArr = Object.keys(lwData);
     var _wCheckArr = Object.keys(wCheck);
     var _coDisplayDataLw = setLwDataVals(coDisplayDataGroup, _lwDataArr);
-    //TODO not sure this does anthing
-    //because negativeValues can only apply to booleans
+    // TODO not sure this does anthing
+    // because negativeValues can only apply to booleans
     var _coDisplayDataLwNeg = setCoDisplayDataNegVals(_coDisplayDataLw, lwData);
     var _coDisplayDataWCheck = setWcheckDataVals(_coDisplayDataLwNeg, _wCheckArr);
     var _coDisplayDataWCheckNeg = setCoDisplayDataNegVals(_coDisplayDataWCheck, wCheck);
@@ -239,20 +239,19 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
 
   function whichConditionTrue(displayDataGroup) {
     var _anyValidPropTrue = false;
-    //TODO why is this not a for in?
     for (var i = 0, length = displayDataGroup.length; i < length; i++) {
       if (displayDataGroup[i].key !== 'isOther' && displayDataGroup[i].value) {
         _anyValidPropTrue = true;
-        //Return early
+        // Return early
         return displayDataGroup[i].key;
       }
     }
-    //or return isOther
+    // or return isOther
     return 'isOther';
   }
 
   function setStandardDisplayVals(displayDataGroup, musicVal) {
-    //Store only one true condition key
+    // Store only one true condition key
     //to avoid repetitive display items
     var _trueCondition = whichConditionTrue(displayDataGroup);
     return displayDataGroup.map(function(displayProp) {

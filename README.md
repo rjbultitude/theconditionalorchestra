@@ -117,7 +117,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Use `uvIndex` as data point
+Use `uvIndex` as data point - map to a noise oscillator perhaps
 
 Only output chordType if using inversions
 
