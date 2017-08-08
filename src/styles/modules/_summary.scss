@@ -6,6 +6,11 @@
   right: 8px;
   padding: 0;
 
+  .summary-icon {
+    width: 78px;
+    display: inline-block;
+  }
+
   @media all and (max-width: 474px) {
     display: none;
   }

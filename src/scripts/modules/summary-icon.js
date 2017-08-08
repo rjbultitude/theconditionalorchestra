@@ -39,25 +39,27 @@ module.exports = (function() {
 
   // To use with this apps icons
   function approximateIcons(currIcon) {
+    console.log('currIcon', currIcon);
     if (currIcon === 'clear-day') {
       return 'sun';
     } else if (currIcon === 'fog') {
       return 'visibility';
-    } else if (isDay(currIcon) || isNight(currIcon)) {
+    } else if (isDay(currIcon)) {
       return 'weather';
     }
-    for (var icon in iconStrs) {
-      if (icon === currIcon) {
-        return icon;
-      } else {
-        return 'weather';
+    for (var i = 0, length = iconStrs.length; i < length; i++) {
+      if (iconStrs[i] === currIcon) {
+        return currIcon;
       }
     }
+    return 'weather';
   }
 
   function outputSummary(lwData) {
+    var _pathString = '/img/' + approximateIcons(lwData.icon) + '-icon.svg';
+    console.log('_pathString', _pathString);
     summaryWordCont.innerHTML = lwData.summary;
-    summaryIconCont.innerHTML = '<img src="/img/' + approximateIcons(lwData.icon) + '-icon.svg" alt="' + lwData.summary +'" />';
+    summaryIconCont.innerHTML = '<img src="' + _pathString + '" alt="' + lwData.summary +'" />';
   }
 
   function hideSummary() {
