@@ -84,8 +84,6 @@ module.exports = function() {
   var startVol = 0.001;
   // DOM
   var cdContainer = document.querySelector('.conditions-display__list');
-  // Workers
-  var drawWorker;
 
   function fadeInDisplayItem(thisDisplayItem) {
     var _opacity = 0;
@@ -333,11 +331,7 @@ module.exports = function() {
       var inc = sketch.TWO_PI / 150;
 
       channel.subscribe('allStopped', function() {
-        if (window.Worker) {
-          drawWorker.postMessage({draw: false});
-        } else {
-          sketch.noLoop();
-        }
+        sketch.noLoop();
       });
 
       /**
@@ -1244,14 +1238,6 @@ module.exports = function() {
         }
       }
 
-      // Draw using p5
-      // if worker fails
-      function startSketchDraw() {
-        sketch.draw = function draw() {
-          updateAllSounds();
-        };
-      }
-
       // P5 PRELOAD - 1
       sketch.preload = function() {
         //loadSound called during preload
@@ -1280,30 +1266,6 @@ module.exports = function() {
         rideCymbal = sketch.loadSound('/audio/ride-cymbal.mp3');
       };
 
-      // P5 DRAW / Worker - 3
-      function startDraw() {
-        if (window.Worker) {
-          var count = 0;
-          var test = document.getElementById('test');
-          drawWorker = work(require('./draw-worker.js'));
-          drawWorker.addEventListener('message', function(e) {
-            count++;
-            test.innerHTML = count + '';
-            console.log('main thread count', count);
-            if (e.data.msg === 'tick') {
-              updateAllSounds();
-            }
-          });
-          drawWorker.postMessage({draw: true, rate: appFrameRate});
-          drawWorker.onerror = function(e) {
-            console.log('Error with web worker on ' + 'Line #' + e.lineno +' - ' + e.message + ' in ' + e.filename);
-            startSketchDraw();
-          };
-        } else {
-          startSketchDraw();
-        }
-      }
-
       // P5 SETUP - 2
       sketch.setup = function setup() {
         sketch.frameRate(appFrameRate);
@@ -1311,7 +1273,10 @@ module.exports = function() {
         // Handle sounds / Start app
         // -------------------------
         configureAudioVisual();
-        startDraw();
+      };
+
+      sketch.draw = function draw() {
+        updateAllSounds();
       };
 
     });

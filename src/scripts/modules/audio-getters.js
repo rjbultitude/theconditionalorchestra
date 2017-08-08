@@ -30,7 +30,7 @@ module.exports = (function() {
 
   function getNumPadNotes(wCheck, avSettings) {
     var _numPadNotes;
-    //playlogic
+    // playlogic
     // We use a non western scale
     // and the guitar sound for stormy
     // so only use 3 notes in a chord
@@ -276,6 +276,10 @@ module.exports = (function() {
       } else {
         _longNoteIndex = _timesToDivide - 1;
       }
+    }
+    if (_longNoteIndex < 0) {
+      console.log('bad long note index value');
+      return 0;
     }
     return _longNoteIndex;
   }
