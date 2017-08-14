@@ -14,7 +14,7 @@ module.exports =  {
 
   getLongNoteType: function getLongNoteType(wCheck) {
     var _longNoteType;
-    //playlogic
+    // playlogic
     // TODO This errs towards the flute
     if (wCheck.isMuggy || wCheck.isOminous) {
       _longNoteType = 'harmonica';
@@ -73,10 +73,8 @@ module.exports =  {
   },
 
   getNumSemisPerOctave: function getNumSemisPerOctave(avSettings, wCheck) {
-    //  Use equal temperament scale for cold & warm
-    //  use arbitrary scale for freezing
     var _numSemitones;
-    //playlogic
+    // playlogic
     // non western eq temp scale
     if (wCheck.isBitter) { //organ
       _numSemitones = avSettings.numSemitones * 2; //24
@@ -88,83 +86,6 @@ module.exports =  {
       _numSemitones = avSettings.numSemitones; //12
     }
     return Math.round(_numSemitones);
-  },
-
-  getPadType: function getPadType(wCheck) {
-    var padType = '';
-    // playlogic
-    // Start with harshest conditions
-    // and work our way up
-
-    // isBitter generates a non western scale
-    // organ is used so as not to use a sound
-    // that might clash with the brass barritone
-    // when conditions are windy
-    if (wCheck.isBitter) {
-      padType = 'organ';
-    } else if (wCheck.isStormy) {
-      padType = 'guitar';
-    } else if (wCheck.isSmoggy) {
-      padType = 'zither';
-    } else if (wCheck.isFine) {
-      padType = 'aeroflute';
-    } else if (wCheck.isMildAndBreezy) {
-      padType = 'synth';
-    } else if (wCheck.isMild) {
-      padType = 'vocal';
-    } else if (wCheck.isCold) {
-      padType = 'saxophone';
-    } else {
-      padType = 'harmonium';
-    }
-    console.log('padType', padType);
-    return padType;
-  },
-
-  // Only applies to inversions
-  getChordType: function getChordType(wCheck, chordSeqKey) {
-    // If we're using a sequence
-    // we don't need an inversion type
-    if (chordSeqKey !== 'noChordOffset') {
-      return 'noChordType';
-    }
-    // Inversions are Fine | freezing | windy
-    var _chordType;
-    // playlogic
-    if (wCheck.isClement && wCheck.isCold) {
-      _chordType = 'heptatonicMinorIntervals';
-    } else if (wCheck.isFine) {
-      _chordType = 'heptatonicMajorIntervals';
-    } else if (wCheck.isCold) {
-      _chordType = 'minorSeventhIntervals';
-    } else if (wCheck.isStormy) {
-      _chordType = 'octatonicMinorIntervals';
-    } else {
-      _chordType = 'majorSeventhIntervals';
-    }
-    return _chordType;
-  },
-
-  // Quieten the pad when the harp plays
-  getPadVolume: function getPadVolume(wCheck, sCheck, padType, avSettings) {
-    // error check
-    if (avSettings.hasOwnProperty(padType)) {
-      if(wCheck.isFoggy) {
-        return avSettings[padType].volume / 2.5;
-      } else if (sCheck.harpCanPlay && wCheck.isMild) {
-        return avSettings[padType].volume / 1.5;
-      } else {
-        return avSettings[padType].volume;
-      }
-    } else {
-      console.warn('padType is falsy: ', avSettings[padType]);
-    }
-  },
-
-  isRootNoteGrtrMedian: function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
-    var _totalRange = Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus;
-    var _rootNoteMedian = Math.round(_totalRange / 2);
-    return rootNote + _rootNoteMedian >= _rootNoteMedian;
   },
 
   getChordSeqKey: function getChordSeqKey(wCheck, rootNoteGrtrMedian) {
@@ -210,6 +131,83 @@ module.exports =  {
       return 'inversionsUpward';
     }
     return 'inversionsNoOffset';
+  },
+
+  getPadType: function getPadType(wCheck) {
+    var padType = '';
+    // playlogic
+    // Start with harshest conditions
+    // and work our way up
+
+    // isBitter generates a non western scale
+    // organ is used so as not to use a sound
+    // that might clash with the brass barritone
+    // when conditions are windy
+    if (wCheck.isBitter) {
+      padType = 'organ';
+    } else if (wCheck.isStormy) {
+      padType = 'guitar';
+    } else if (wCheck.isSmoggy) {
+      padType = 'zither';
+    } else if (wCheck.isFine) {
+      padType = 'aeroflute';
+    } else if (wCheck.isMildAndBreezy) {
+      padType = 'synth';
+    } else if (wCheck.isMild) {
+      padType = 'vocal';
+    } else if (wCheck.isCold) {
+      padType = 'saxophone';
+    } else {
+      padType = 'harmonium';
+    }
+    console.log('padType', padType);
+    return padType;
+  },
+
+  // Only applies to inversions
+  getChordType: function getChordType(wCheck, chordSeqKey) {
+    // If we're using a sequence
+    // we don't need an inversion type
+    // freezing or windy
+    if (chordSeqKey !== 'noChordOffset') {
+      return 'noChordType';
+    }
+    var _chordType;
+    // playlogic
+    if (wCheck.isClement && wCheck.isCold) {
+      _chordType = 'heptatonicMinorIntervals';
+    } else if (wCheck.isFine) {
+      _chordType = 'heptatonicMajorIntervals';
+    } else if (wCheck.isCold) {
+      _chordType = 'minorSeventhIntervals';
+    } else if (wCheck.isStormy) {
+      _chordType = 'octatonicMinorIntervals';
+    } else {
+      _chordType = 'majorSeventhIntervals';
+    }
+    return _chordType;
+  },
+
+  // Quieten the pad when the harp plays
+  getPadVolume: function getPadVolume(wCheck, sCheck, padType, avSettings) {
+    // error check
+    if (avSettings.hasOwnProperty(padType)) {
+      if(wCheck.isFoggy) {
+        return avSettings[padType].volume / 2.5;
+      } else if (sCheck.harpCanPlay && wCheck.isMild) {
+        return avSettings[padType].volume / 1.5;
+      } else {
+        return avSettings[padType].volume;
+      }
+    } else {
+      console.warn('padType is falsy: ', avSettings[padType]);
+    }
+  },
+
+  isRootNoteGrtrMedian: function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
+    var _totalRange = Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus;
+    var _rootNoteMedian = Math.round(_totalRange / 2);
+    return rootNote + _rootNoteMedian >= _rootNoteMedian;
   },
 
   getSeqRepeatMaxMult: function getSeqRepeatMaxMult(numChords, avSettings) {
@@ -521,7 +519,7 @@ module.exports =  {
     return wCheck.isFine || wCheck.isFreezing;
   },
 
-  getPinkNoiseVol: function getPinkNoiseVol(lwData) {
+  getUvNoiseMaxVol: function getUvNoiseMaxVol(lwData) {
     return microU.mapRange(
       lwData.uvIndex.value,
       lwData.uvIndex.min,

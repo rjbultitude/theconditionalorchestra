@@ -117,10 +117,6 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-change names of chord sequence types
-
-Use double time when djembe plays
-
 Output uvLevel instrument
 
 Write unit tests

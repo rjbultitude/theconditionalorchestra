@@ -141,6 +141,16 @@ module.exports = (function() {
             musicAppendage: ' bpm'
           },
           {
+            key: 'uvIndex',
+            title: 'UV index',
+            value: '',
+            constrain: true,
+            unit: '',
+            iconPath: '/img/uv-icon.svg',
+            music: 'Maximum noise level ',
+            musicValue: ''
+          },
+          {
             key: 'isWindy',
             title: 'High winds',
             value: '',

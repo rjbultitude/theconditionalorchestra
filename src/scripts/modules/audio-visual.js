@@ -61,13 +61,17 @@ module.exports = function() {
   var freezingFilter;
   var foggyFilter;
   var longNoteFilter;
-  var uvLevelNoise;
+  var uvNoise;
+  // brass
+  var brassPanAngle = 180;
+  var brassSinVal = 0;
+  var brassCosVal = 0;
   // pan
-  var angle = 180;
-  var sinVal = 0;
-  var cosVal = 0;
   var panArr = [-0.8, 0, 0.8];
   var longNotePanArr = [-0.2, 0, 0.2];
+  // noise
+  var uvNoiseAngle = 0;
+  var uvNoiseSinVal = 0;
   // Sound objects
   var padSounds = [];
   var choralSounds = [];
@@ -149,7 +153,7 @@ module.exports = function() {
     rhodes.fade(0, avSettings.fadeTime);
     rideCymbal.fade(0, avSettings.fadeTime);
     timpani.fade(0, avSettings.fadeTime);
-    uvLevelNoise.fade(0, avSettings.fadeTime);
+    uvNoise.fade(0, avSettings.fadeTime);
     //Stop after fades
     setTimeout(function() {
       brassBaritone.stop();
@@ -164,7 +168,7 @@ module.exports = function() {
       rhodes.stop();
       rideCymbal.stop();
       timpani.stop();
-      uvLevelNoise.stop();
+      uvNoise.stop();
     }, avSettings.fadeTime * 1000);
     //Unsubs
     publishBrassOne.unsubscribe();
@@ -178,7 +182,7 @@ module.exports = function() {
     longNoteFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
     foggyFilter = new P5.HighPass();
-    uvLevelNoise = new P5.Noise('pink');
+    uvNoise = new P5.Noise('pink');
   }
 
   // main app init
@@ -328,8 +332,8 @@ module.exports = function() {
     var choralDenominator = wCheck.isFreezing ? 2 : 1;
     var choralExtraDenominator = rootNoteGrtrMedian ? 2 : 1;
     // noise
-    var pinkNoiseVol = audioGets.getPinkNoiseVol(lwData);
-    console.log('pinkNoiseVol', pinkNoiseVol);
+    var uvNoiseMaxVol = audioGets.getUvNoiseMaxVol(lwData);
+    console.log('uvNoiseMaxVol', uvNoiseMaxVol);
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
@@ -338,7 +342,9 @@ module.exports = function() {
     var myP5 = new P5(function(sketch) {
 
       // used for Brass pan
-      var inc = sketch.TWO_PI / 150;
+      // and uv noise
+      var brassAngleInc = sketch.TWO_PI / 150;
+      var noiseAngleInc = sketch.TWO_PI / 200;
 
       channel.subscribe('allStopped', function() {
         sketch.noLoop();
@@ -656,8 +662,8 @@ module.exports = function() {
         if (pArpScalesNoRests.length > 0) {
           preparePrecipArp(pArpScalesNoRests);
         }
-        uvLevelNoise.amp(pinkNoiseVol);
-        uvLevelNoise.start();
+        uvNoise.amp(0);
+        uvNoise.start();
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', lwData.name);
@@ -1091,26 +1097,35 @@ module.exports = function() {
         }
       }
 
+      function updateUvNoise() {
+        if (uvNoiseAngle > 360) {
+          uvNoiseAngle = 0;
+        }
+        uvNoiseSinVal = sketch.sin(uvNoiseAngle) * uvNoiseMaxVol;
+        uvNoise.amp(uvNoiseSinVal);
+        uvNoiseAngle += noiseAngleInc;
+      }
+
       function stopBrass() {
         brassBaritone.setVolume(0, rampTime, timeFromNow, startVol);
         brassBaritone2.setVolume(0, rampTime, timeFromNow, startVol);
       }
 
       function updateBrass() {
-        if (angle > 360) {
-          angle = 0;
+        if (brassPanAngle > 360) {
+          brassPanAngle = 0;
         }
-        sinVal = sketch.sin(angle);
-        cosVal = sketch.cos(angle + 90);
-        brassBaritone.pan(sinVal);
-        brassBaritone2.pan(cosVal);
+        brassSinVal = sketch.sin(brassPanAngle);
+        brassCosVal = sketch.cos(brassPanAngle + 90);
+        brassBaritone.pan(brassSinVal);
+        brassBaritone2.pan(brassCosVal);
         if (sketch.frameCount % brassBaritoneStepTime === 0) {
           channel.publish('triggerBrassOne');
         }
         if (sketch.frameCount % brassBaritone2StepTime === 0) {
           channel.publish('triggerBrassTwo');
         }
-        angle += inc;
+        brassPanAngle += brassAngleInc;
       }
 
       function updateFreezingFilter() {
@@ -1238,7 +1253,9 @@ module.exports = function() {
         if (sCheck.choralCanPlay) {
           updateChoralSound();
         }
-        //sequencer counter
+        updateUvNoise();
+
+        // sequencer counter
         if (sketch.frameCount % sequenceLength === 0 && sequenceStart === false) {
           sequenceStart = true;
           console.log('sequenceStart', sequenceStart);
