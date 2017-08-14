@@ -33,7 +33,7 @@ module.exports = {
     farMinorIntervals: [12, 3, 0, 3, 0, -9, 0, -9, -12],
     // Chord sequences
     // max number of chords is 6
-    melancholyUpward: [
+    nostalgia: [
       {
         index: 0,
         key: 'heptatonicMinorIntervals'
@@ -59,7 +59,7 @@ module.exports = {
         key: 'heptatonicMajorIntervals'
       }
     ],
-    melancholyDownward: [
+    melancholyDays: [
       {
         index: 0,
         key: 'majorSeventhIntervals'
@@ -85,7 +85,7 @@ module.exports = {
         key: 'majorSeventhIntervals'
       }
     ],
-    purposefulUpward: [
+    slowMotion: [
       {
         index: 0,
         key: 'heptatonicMinorIntervals'
@@ -111,7 +111,7 @@ module.exports = {
         key: 'heptatonicMinorIntervals'
       }
     ],
-    purposefulDownward: [
+    familiarPlace: [
       {
         index: 0,
         key: 'majorSixthIntervals'
@@ -137,7 +137,7 @@ module.exports = {
         key: 'heptatonicMajorIntervals'
       }
     ],
-    blissfulUpward: [
+    skyLark: [
       {
         index: 0,
         key: 'majorSeventhIntervals'
@@ -163,7 +163,7 @@ module.exports = {
         key: 'majorSeventhIntervals'
       }
     ],
-    blissfulDownward: [
+    highTime: [
       {
         index: 0,
         key: 'heptatonicMajorIntervals'
@@ -189,7 +189,7 @@ module.exports = {
         key: 'seventhIntervals'
       }
     ],
-    mellowDownward: [
+    oldMellow: [
       {
         index: 0,
         key: 'sus4Intervals'

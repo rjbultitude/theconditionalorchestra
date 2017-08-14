@@ -3,12 +3,12 @@
   "summary": "Foggy",
   "icon": "partly-cloudy-day",
   "cloudCover":{
-    "value":0.4,
+    "value":0.2,
     "min":0,
     "max":1
   },
   "windSpeed":{
-    "value":5,
+    "value":13,
     "min":0,
     "max":75
   },
@@ -23,7 +23,7 @@
     "max":1050
   },
   "precipIntensity":{
-    "value":0.2,
+    "value":0,
     "min":0,
     "max":0.5
   },
@@ -34,7 +34,7 @@
   },
   "precipType": "",
   "temperature":{
-    "value":52.2,
+    "value":32.2,
     "min":-35,
     "max":120
   },
@@ -59,7 +59,7 @@
     "max":72
   },
   "apparentTemperature":{
-    "value":52.2,
+    "value":32.2,
     "min":-35,
     "max":120
   },

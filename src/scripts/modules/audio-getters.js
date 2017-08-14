@@ -176,23 +176,24 @@ module.exports =  {
       _key = 'noChordOffset';
     } else if (wCheck.isFine) {
       if (rootNoteGrtrMedian) {
-        _key = 'blissfulDownward';
+        _key = 'highTime';
       } else {
-        _key = 'blissfulUpward';
+        _key = 'skyLark';
+      }
+    } 
+    else if (wCheck.isPrecip || wCheck.isCloudy) {
+      if (rootNoteGrtrMedian) {
+        _key = 'melancholyDays';
+      } else {
+        _key = 'nostalgia';
       }
     } else if (wCheck.isClement) {
-      _key = 'mellowDownward';
-    } else if (wCheck.isPrecip || wCheck.isCloudy) {
-      if (rootNoteGrtrMedian) {
-        _key = 'melancholyDownward';
-      } else {
-        _key = 'melancholyUpward';
-      }
+      _key = 'oldMellow';
     } else {
       if (rootNoteGrtrMedian) {
-        _key = 'purposefulDownward';
+        _key = 'familiarPlace';
       } else {
-        _key = 'purposefulUpward';
+        _key = 'slowMotion';
       }
     }
     console.log('chord seq key ', _key);
