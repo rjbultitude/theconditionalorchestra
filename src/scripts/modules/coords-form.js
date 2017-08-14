@@ -19,7 +19,7 @@ module.exports = function(query) {
   var linkLocationSelectEl = document.getElementById('link-location-select');
   var coordsFormEl = document.querySelector('[data-ref="form-coords"]');
   var coordsFormInputEl = coordsFormEl.querySelector('[data-ref="place-field"]');
-  var coordsFormSubmitBtnEl = coordsFormEl.querySelector('[data-ref="submit"]');
+  var customLocSubmitBtnEl = coordsFormEl.querySelector('[data-ref="submit"]');
   var coordsFormCloseBtnEl = coordsFormEl.querySelector('[data-ref="close"]');
   var mapEl = document.getElementById('map');
   var lastKnownSuffix = 'LastKnown';
@@ -50,12 +50,12 @@ module.exports = function(query) {
 
   function enableControls() {
     userLocBtnEl.disabled = false;
-    coordsFormSubmitBtnEl.disabled = false;
+    customLocSubmitBtnEl.disabled = false;
   }
 
   function disableControls() {
     userLocBtnEl.disabled = true;
-    coordsFormSubmitBtnEl.disabled = true;
+    customLocSubmitBtnEl.disabled = true;
   }
 
   function NumericCondition(value, min, max) {
@@ -437,7 +437,7 @@ module.exports = function(query) {
     coordsFormEl.tabIndex = 0;
     coordsFormInputEl.tabIndex = 0;
     coordsFormCloseBtnEl.tabIndex = 0;
-    coordsFormSubmitBtnEl.tabIndex = 0;
+    customLocSubmitBtnEl.tabIndex = 0;
   }
 
   function hideForm() {
@@ -445,7 +445,7 @@ module.exports = function(query) {
     coordsFormEl.tabIndex = -1;
     coordsFormInputEl.tabIndex = -1;
     coordsFormCloseBtnEl.tabIndex = -1;
-    coordsFormSubmitBtnEl.tabIndex = -1;
+    customLocSubmitBtnEl.tabIndex = -1;
   }
 
   function getGeo() {
@@ -525,6 +525,7 @@ module.exports = function(query) {
 
   function customLocationSubmit(e) {
     e.preventDefault();
+    // Stop if playing
     if (isPlaying) {
       setStartState(true);
     } else {
@@ -534,6 +535,7 @@ module.exports = function(query) {
 
   function userLocationSubmit(e) {
     e.preventDefault();
+    // Stop if playing
     if (isPlaying) {
       setStartState();
     } else {
@@ -552,7 +554,7 @@ module.exports = function(query) {
     showForm();
   }, false);
 
-  coordsFormSubmitBtnEl.addEventListener('click', customLocationSubmit, false);
+  customLocSubmitBtnEl.addEventListener('click', customLocationSubmit, false);
 
   userLocBtnEl.addEventListener('click', userLocationSubmit, false);
 
@@ -568,7 +570,7 @@ module.exports = function(query) {
     resetModState();
     updateStatus('start');
     userLocBtnEl.innerHTML = 'Play my weather';
-    coordsFormSubmitBtnEl.innerHTML = 'Play';
+    customLocSubmitBtnEl.innerHTML = 'Play';
     mapEl.classList.remove('active');
     summaryIcon.hideSummary();
     if (autoStart) {
@@ -579,6 +581,7 @@ module.exports = function(query) {
   function loadLocFromURL(queryString) {
     // run search if there's a query string
     if (typeof queryString === 'string' && queryString.length >= 1) {
+      disableControls();
       updateStatus('location');
       getLatLong(queryString, true);
     }

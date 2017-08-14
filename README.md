@@ -117,7 +117,7 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Output uvLevel instrument
+Write a failsafe for the play button
 
 Write unit tests
 
