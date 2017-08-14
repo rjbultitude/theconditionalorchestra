@@ -611,7 +611,7 @@ module.exports = (function() {
         semiTonesMap: [
           {
             key: 'isBitter',
-            title: 'Bitter',
+            title: 'Bitter conditions',
             value: '',
             constrain: false,
             unit: '',

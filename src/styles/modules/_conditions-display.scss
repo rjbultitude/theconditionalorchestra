@@ -75,10 +75,14 @@
     }
   }
 
+  .conditions-display__heading {
+    margin-bottom: 4px;
+  }
+
   .conditions-display__value {
     color: $color-blue-pale;
     @include outputThemeTextColour;
-    font-size: 24px;
+    font-size: 18px;
   }
 
   .conditions-display__icon {
