@@ -952,6 +952,7 @@ module.exports = function() {
           longNoteFilterFreq: longNoteFilterFreq,
           precipArpBpm: precipArpBpm,
           precipCategory: precipCategory,
+          uvNoiseMaxVol: uvNoiseMaxVol,
           rideCymbalBpm: rideCymbalBpm,
           rideCymbalRate: rideCymbalRate,
           rideCymbalMaxVolume: rideCymbalMaxVolume * 10,

@@ -9,8 +9,7 @@ module.exports = function(lwData, wCheck) {
   var outerWrapperStr = 'outerwrapper';
   var innerWrapper = document.querySelector('.' + innerWrapperStr);
   var outerWrapper = document.querySelector('.' + outerWrapperStr);
-  var curThemeTempName = document.body.classList['0'];
-  console.log('curThemeTempName', curThemeTempName);
+  var curThemeTempName = document.body.classList[0];
   var curThemeTypeList = innerWrapper.classList;
   var curThemeTimeList = outerWrapper.classList;
 
