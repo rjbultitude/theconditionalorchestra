@@ -75,10 +75,15 @@
     }
   }
 
+  .conditions-display__heading {
+    margin-bottom: 4px;
+    font-weight: bold;
+  }
+
   .conditions-display__value {
     color: $color-blue-pale;
     @include outputThemeTextColour;
-    font-size: 24px;
+    font-size: 18px;
   }
 
   .conditions-display__icon {
@@ -88,6 +93,7 @@
 
     @media all and (max-width: $bp-mobile) {
       min-height: 0;
+      margin: 6px auto;
     }
 
     svg {

@@ -220,6 +220,9 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
           case 'precipProbability':
             coProp.musicValue = mDVals.rideCymbalBpm;
             break;
+          case 'uvIndex':
+            coProp.musicValue = mDVals.uvNoiseMaxVol.toFixed(2);
+            break;
           case 'nearestStormBearing':
             coProp.musicValue = mDVals.rideCymbalRate.toFixed(2);
             break;
