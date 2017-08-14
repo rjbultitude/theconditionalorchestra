@@ -525,7 +525,7 @@ module.exports =  {
       lwData.uvIndex.min,
       lwData.uvIndex.max,
       0,
-      0.6
+      0.5
     );
   }
 };
