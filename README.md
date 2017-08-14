@@ -117,8 +117,6 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Write a failsafe for the play button
-
 Write unit tests
 
 Consider using windyTV map rather than text input
