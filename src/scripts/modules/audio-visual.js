@@ -344,7 +344,7 @@ module.exports = function() {
       // used for Brass pan
       // and uv noise
       var brassAngleInc = sketch.TWO_PI / 150;
-      var noiseAngleInc = sketch.TWO_PI / 200;
+      var noiseAngleInc = sketch.TWO_PI / 340;
 
       channel.subscribe('allStopped', function() {
         sketch.noLoop();
