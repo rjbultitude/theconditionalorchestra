@@ -56,66 +56,25 @@ Styles and scripts will be processed and watched for changes. Scripts will be li
 
 ## References
 
+* [Freqi](https://www.npmjs.com/package/freqi)
 * [p5.js](http://p5js.org/)
-* [Forecast.io JS API](https://github.com/iantearle/forecast.io-javascript-api)
+* [DarkSkyJS](https://www.npmjs.com/package/darkskyjs)
 * [Moment.js](http://momentjs.com/)
 * [JS Promises Polyfill](https://www.npmjs.com/package/es6-promise-polyfill)
 
 ##Browser support
 
 Map and reduce are used in the JS but are supported by IE11+.
-Web Audio is not supported in IE11 so the JS _should_ stop running before any non-supported JS is.
+Web Audio is not supported in IE11 so the app will stop running before any non-supported JS is.
 
 ##App logic
-_Please note this is out of date_
-1 master lwData (location weather) object is composed from the weather data.
-1 wCheck object is used to contain all the various booleans needed to handle the app logic
-
-Important values:
-* Visibility - Filter freq  
-* Pressure - pitch root
-
-The comment `playlogic` is used to denote the points at which the sounds are configured using weather data.
-
-If the weather _isHumid_ the chords played use only the intervals within the chosen interval type. This leads to a more harmonious sequence. No chord offset is applied.
-If the root note is higher than `0` (range is `-12` to `+12`) the chords move down the scale; if equal to or lower than `0` they move higher.
-
-Notes in the brass sound and arpeggio are defined as follows:
-If weather is _clement_ a scale using major intervals is produced
-Else a minor scale is produced
-
-Each note is assigned a different _pan_ position from an array of 3 (Left, Center, Right)
-
-###Pad
-The number of organ notes is _3_ if the weather is _stormy_
-or the default _4_ for all other conditions TBC
-An extra chord (which is currently pitched down an octave) is played a given number of times
-
-###Choral
-Two choral notes are played when the weather is _fine_ or _freezing_
-When _freezing_ a high pass filter is applied whose freq moves up on each iteration of _draw_
-
-###Bass
-One bass note is played when the weather _isCloudy_ but *not* _isWindy_
-The note is the first note of each chord in the chord sequence
-
-###Rain Arpeggio
-Precipitation plays an arpeggiated sequence
-A precipType of `rain` with high precipIntensity - Fast and forwards dropSound
-A precipType of `sleet` - with high precipIntensity - Slower and reverse dropSound
-A precipType of `snow` - plays slowest - Slower and reverse dropSound
-
-###Clement Arpeggio
-Applied to all clement conditions. Plays one type of sequence (pitches and stops) when
-weather _ishumid_ and another when it's not.
-A randomly selected note from the sequence array is played when the sequence has played twice.
-
-###Long Notes
-Plays for any type of weather. The note in each chord it plays depends on the _windBearing_.
-The bearing angle determines which item in the array to playback in the `scale`.
-The pan and volume are randomly selected from two arrays.
+See the module audio-getters.js for most of the app logic
 
 ##Plans
+
+Consider using a callback (loop) for all sounds so as to circumnavigate the inactive tab issue. Or...
+
+Consider using the [page visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API) to prevent sounds form playing when tab is not active.
 
 Write unit tests
 
