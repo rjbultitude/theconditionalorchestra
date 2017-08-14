@@ -61,7 +61,7 @@ module.exports = function() {
   var freezingFilter;
   var foggyFilter;
   var longNoteFilter;
-  var pinkNoiseOsc;
+  var uvLevelNoise;
   // pan
   var angle = 180;
   var sinVal = 0;
@@ -149,7 +149,7 @@ module.exports = function() {
     rhodes.fade(0, avSettings.fadeTime);
     rideCymbal.fade(0, avSettings.fadeTime);
     timpani.fade(0, avSettings.fadeTime);
-    pinkNoiseOsc.fade(0, avSettings.fadeTime);
+    uvLevelNoise.fade(0, avSettings.fadeTime);
     //Stop after fades
     setTimeout(function() {
       brassBaritone.stop();
@@ -164,7 +164,7 @@ module.exports = function() {
       rhodes.stop();
       rideCymbal.stop();
       timpani.stop();
-      pinkNoiseOsc.stop();
+      uvLevelNoise.stop();
     }, avSettings.fadeTime * 1000);
     //Unsubs
     publishBrassOne.unsubscribe();
@@ -178,7 +178,7 @@ module.exports = function() {
     longNoteFilter = new P5.LowPass();
     freezingFilter = new P5.HighPass();
     foggyFilter = new P5.HighPass();
-    pinkNoiseOsc = new P5.Noise('pink');
+    uvLevelNoise = new P5.Noise('pink');
   }
 
   // main app init
@@ -251,35 +251,12 @@ module.exports = function() {
       timpaniCanPlay : audioGets.getTimpaniCanPlay(wCheck),
       choralCanPlay : audioGets.getChoralCanPlay(wCheck)
     };
-    //Get and set core values
+    // Get and set core values
     var numPadNotes = audioGets.getNumPadNotes(wCheck, avSettings);
     var numChords = audioGets.getNumChords(lwData, avSettings).numChords;
     var numExtraChords = audioGets.getNumChords(lwData, avSettings).numExtraChords;
     var chordNumGreatest = numChords > numExtraChords ? numChords : numExtraChords;
     var numSemisPerOctave = audioGets.getNumSemisPerOctave(avSettings, wCheck);
-    var chordType = audioGets.getChordType(wCheck);
-    var upperMult = audioGets.getSeqRepeatMaxMult(numChords, avSettings);
-    var seqRepeatNum = audioGets.getMainSeqRepeatNum(lwData, numChords, upperMult);
-    //Precipitation
-    // TODO Group these into object
-    // and only create it if it's raining
-    var precipCategory = audioGets.getPrecipCategory(lwData);
-    var precipArpBpm = audioGets.getPrecipArpBpm(lwData);
-    var precipArpBps = precipArpBpm / 60;
-    var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
-    var precipArpIntervalType = audioGets.getPrecipArpIntervalType(chordType);
-    var leadVolume = audioGets.getLeadSoundVolume(wCheck);
-    var padType = audioGets.getPadType(wCheck);
-    var padVolume = audioGets.getPadVolume(wCheck, sCheck, padType, avSettings);
-    var inversionOffsetType = audioGets.getInversionOffsetKey(wCheck);
-    // Humidity
-    // TODO Group these into object
-    // and only create it if it's humid
-    var humidArpBpm = audioGets.getHumidArpBpm(lwData);
-    var humidArpBps = humidArpBpm / 60;
-    var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
-    var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, chordType);
-    var harpVolArr = audioGets.getHarpVolArr(wCheck, sCheck);
     // Root note
     // Is an index rather than a frequency
     var rootNoteRange = audioGets.getRootNoteRange(numSemisPerOctave);
@@ -288,6 +265,33 @@ module.exports = function() {
     var rootNoteHigh = audioGets.isRootNoteHigh(rootNote);
     var rootNoteGrtrMedian = audioGets.isRootNoteGrtrMedian(rootNote, rootNoteRange);
     console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
+    // Chord seq or inversion types
+    var chordSeqKey = audioGets.getChordSeqKey(wCheck, rootNoteGrtrMedian);
+    var chordType = audioGets.getChordType(wCheck, chordSeqKey);
+    var isMelodyMajor = audioGets.isMelodyMajor(chordSeqKey, chordType);
+    var upperMult = audioGets.getSeqRepeatMaxMult(numChords, avSettings);
+    var seqRepeatNum = audioGets.getMainSeqRepeatNum(lwData, numChords, upperMult);
+    // Precipitation
+    // TODO Group these into object
+    // and only create it if it's raining
+    var precipCategory = audioGets.getPrecipCategory(lwData);
+    var precipArpBpm = audioGets.getPrecipArpBpm(lwData);
+    var precipArpBps = precipArpBpm / 60;
+    var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
+    var precipArpIntervalType = audioGets.getPrecipArpIntervalType(isMelodyMajor);
+    var leadVolume = audioGets.getLeadSoundVolume(wCheck);
+    var padType = audioGets.getPadType(wCheck);
+    var padVolume = audioGets.getPadVolume(wCheck, sCheck, padType, avSettings);
+    var inversionOffsetType = audioGets.getInversionOffsetKey(wCheck, chordSeqKey);
+    // Humidity
+    // TODO Group these into object
+    // and only create it if it's humid
+    var humidArpBpm = audioGets.getHumidArpBpm(lwData);
+    var humidArpBps = humidArpBpm / 60;
+    var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
+    var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, chordSeqKey, isMelodyMajor);
+    var harpVolArr = audioGets.getHarpVolArr(wCheck, sCheck);
+    // Long note
     var longNoteIndex = audioGets.getLongNoteIndex(lwData, numPadNotes);
     var longNoteHigh = audioGets.isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes);
     console.log('longNoteHigh', longNoteHigh);
@@ -300,7 +304,6 @@ module.exports = function() {
     console.log('extraSeqOffset', extraSeqOffset);
     var invExtraSeqOffset = numSemisPerOctave - extraSeqOffset;
     console.log('invExtraSeqOffset', invExtraSeqOffset);
-    var chordSeqKey = audioGets.getChordSeqKey(wCheck, rootNoteGrtrMedian);
     // TODO Group these into object
     // and only create it if it's windy
     var brassBaritoneVol = audioGets.getBrassVolume(lwData);
@@ -653,8 +656,8 @@ module.exports = function() {
         if (pArpScalesNoRests.length > 0) {
           preparePrecipArp(pArpScalesNoRests);
         }
-        pinkNoiseOsc.amp(pinkNoiseVol);
-        pinkNoiseOsc.start();
+        uvLevelNoise.amp(pinkNoiseVol);
+        uvLevelNoise.start();
         //Tell rest of app we're playing
         isPlaying = true;
         channel.publish('playing', lwData.name);
@@ -704,6 +707,9 @@ module.exports = function() {
       // then get the generic chord type
       function getValidChordType(key) {
         var _chordType;
+        // If there's a property called key
+        // i.e. we're using the chord seqs
+        // use it
         if (key) {
           _chordType = key;
         } else {
@@ -1249,16 +1255,16 @@ module.exports = function() {
 
       // P5 PRELOAD - 1
       sketch.preload = function() {
-        //loadSound called during preload
-        //will be ready to play in time for setup
-        //Pad sounds for various weather types
+        // loadSound called during preload
+        // will be ready to play in time for setup
+        // Pad sounds for various weather types
         for (var i = 0; i < numPadNotes; i++) {
           padSounds.push(sketch.loadSound('/audio/' + padType + '-C2.mp3'));
         }
-        //Long note accompanies pad
+        // Long note accompanies pad
         longNote = sketch.loadSound('/audio/' + longNoteType + '-C3.mp3');
         dropSound = sketch.loadSound('/audio/drop-' + precipCategory + '.mp3');
-        //choral sounds for fine/freezing weather
+        // choral sounds for fine/freezing weather
         for (var j = 0; j < 2; j++) {
           choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
         }

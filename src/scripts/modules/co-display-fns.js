@@ -250,13 +250,20 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
     return 'isOther';
   }
 
+  function setAllToFalse(displayDataGroup) {
+    return displayDataGroup.map(function(displayProp) {
+      displayProp.value = false;
+      return displayProp;
+    });
+  }
+
   function setStandardDisplayVals(displayDataGroup, musicVal) {
     // Store only one true condition key
-    //to avoid repetitive display items
+    // to avoid repetitive display items
     var _trueCondition = whichConditionTrue(displayDataGroup);
     return displayDataGroup.map(function(displayProp) {
-      //Set all values to false
-      //except the first object we found that's true
+      // Set all values to false
+      // except the first object we found that's true
       if (displayProp.key !== _trueCondition) {
         displayProp.value = false;
       }
@@ -288,56 +295,68 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
     var _finalCoData = [];
     var _currArr;
     for (var coDataGroup in coDisplayData) {
-      if (coDisplayData.hasOwnProperty(coDataGroup)) {
-        //Assign condition values, images and units
-        //TODO refactor so these fns can be chained
-        var _mappedDisplayGroup = mapConditionsToDisplayData(coDisplayData[coDataGroup]);
-        var _unitisedDisplayGroup = unitiseData(_mappedDisplayGroup);
-        var _percentageCalcData = convertPercentages(_unitisedDisplayGroup);
-        var _exceptionCheckedGroup = exceptionCheckData(_percentageCalcData);
-        var _iconisedGroup = setIconPath(_exceptionCheckedGroup);
-        var _constrainedDisplayGroup = constrainDecimals(_iconisedGroup);
-        //Assgin music values
-        //Important - must include every group
-        //else it creates duplicates
-        switch (coDataGroup) {
-          case 'primaryMap':
-            _currArr = addPrimaryMusicVals(_constrainedDisplayGroup);
-            break;
-          case 'chordTypeMap':
+      // Assign condition values, images and units
+      // TODO refactor so these fns can be chained
+      var _mappedDisplayGroup = mapConditionsToDisplayData(coDisplayData[coDataGroup]);
+      var _unitisedDisplayGroup = unitiseData(_mappedDisplayGroup);
+      var _percentageCalcData = convertPercentages(_unitisedDisplayGroup);
+      var _exceptionCheckedGroup = exceptionCheckData(_percentageCalcData);
+      var _iconisedGroup = setIconPath(_exceptionCheckedGroup);
+      var _constrainedDisplayGroup = constrainDecimals(_iconisedGroup);
+      // Assign music values
+      // Important - must include every group
+      // else it creates duplicates
+      switch (coDataGroup) {
+        case 'primaryMap':
+          _currArr = addPrimaryMusicVals(_constrainedDisplayGroup);
+          break;
+        case 'chordTypeMap':
+          // Don't display chord type 
+          // if a chord sequence is being used
+          if (mDVals.chordType === 'noChordType') {
+            _currArr = setAllToFalse(_constrainedDisplayGroup);
+          } else {
             _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.chordType);
-            break;
-          case 'chordSeqTypeMap':
+          }
+          break;
+        case 'chordSeqTypeMap':
+          if (mDVals.chordSeqKey === 'noChordOffset') {
+            _currArr = setAllToFalse(_constrainedDisplayGroup);
+          } else {
             _currArr = setStandardDisplayVals(_constrainedDisplayGroup, outputChordSeqType(mDVals.chordSeqKey));
-            break;
-          case 'padTypeMap':
-            _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.padType);
-            break;
-          case 'longNoteTypeMap':
-            _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.longNoteType);
-            break;
-          case 'inversionMap':
+          }
+          break;
+        case 'padTypeMap':
+          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.padType);
+          break;
+        case 'longNoteTypeMap':
+          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.longNoteType);
+          break;
+        case 'inversionMap':
+          if (mDVals.inversionOffsetType === 'inversionsNoOffset') {
+            _currArr = setAllToFalse(_constrainedDisplayGroup);
+          } else {
             _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.inversionOffsetType);
-            break;
-          case 'numNotesMap':
-            _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.numPadNotes);
-            break;
-          case 'semiTonesMap':
-            _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.numSemisPerOctave);
-            break;
-          case 'padLengthMap':
-            _currArr = setStandardDisplayVals(_constrainedDisplayGroup);
-            break;
-          case 'leadMap':
-            _currArr = _constrainedDisplayGroup;
-            break;
-          case 'humidArpMap':
-            _currArr = setHumidMapVals(_constrainedDisplayGroup);
-            break;
-        }
-        //Convert sets to one single array
-        _finalCoData.push.apply(_finalCoData, _currArr);
+          }
+          break;
+        case 'numNotesMap':
+          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.numPadNotes);
+          break;
+        case 'semiTonesMap':
+          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.numSemisPerOctave);
+          break;
+        case 'padLengthMap':
+          _currArr = setStandardDisplayVals(_constrainedDisplayGroup);
+          break;
+        case 'leadMap':
+          _currArr = _constrainedDisplayGroup;
+          break;
+        case 'humidArpMap':
+          _currArr = setHumidMapVals(_constrainedDisplayGroup);
+          break;
       }
+      // Convert sets to one single array
+      _finalCoData.push.apply(_finalCoData, _currArr);
     }
     return _finalCoData;
   }

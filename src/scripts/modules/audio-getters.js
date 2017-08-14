@@ -2,16 +2,17 @@
 
 var microU = require('../utilities/micro-utilities');
 
-module.exports = (function() {
+module.exports =  {
 
-  // utilities
-  // doesn't need exporting
-  function hasMajor(intervalString) {
-    var _hasMajor = /Major/;
-    return _hasMajor.test(intervalString);
-  }
+  isMelodyMajor: function isMelodyMajor(chordSeqKey, chordType) {
+    if (chordSeqKey === 'noChordOffset') {
+      return microU.containsWord(chordType, 'major');
+    } else {
+      return microU.containsWord(chordType, 'blissful') || microU.containsWord(chordType, 'mellow');
+    }
+  },
 
-  function getLongNoteType(wCheck) {
+  getLongNoteType: function getLongNoteType(wCheck) {
     var _longNoteType;
     //playlogic
     // TODO This errs towards the flute
@@ -26,9 +27,9 @@ module.exports = (function() {
       _longNoteType = 'flute';
     }
     return _longNoteType;
-  }
+  },
 
-  function getNumPadNotes(wCheck, avSettings) {
+  getNumPadNotes: function getNumPadNotes(wCheck, avSettings) {
     var _numPadNotes;
     // playlogic
     // We use a non western scale
@@ -42,9 +43,9 @@ module.exports = (function() {
       _numPadNotes = avSettings.numPadNotes; //5
     }
     return _numPadNotes;
-  }
+  },
 
-  function getNumChords(lwData, avSettings) {
+  getNumChords: function getNumChords(lwData, avSettings) {
     var _numChords;
     var _numExtraChords;
     //TODO needs to be tested for realism
@@ -69,9 +70,9 @@ module.exports = (function() {
       numChords: _numChords,
       numExtraChords: _numExtraChords
     };
-  }
+  },
 
-  function getNumSemisPerOctave(avSettings, wCheck) {
+  getNumSemisPerOctave: function getNumSemisPerOctave(avSettings, wCheck) {
     //  Use equal temperament scale for cold & warm
     //  use arbitrary scale for freezing
     var _numSemitones;
@@ -87,9 +88,9 @@ module.exports = (function() {
       _numSemitones = avSettings.numSemitones; //12
     }
     return Math.round(_numSemitones);
-  }
+  },
 
-  function getPadType(wCheck) {
+  getPadType: function getPadType(wCheck) {
     var padType = '';
     // playlogic
     // Start with harshest conditions
@@ -118,13 +119,18 @@ module.exports = (function() {
     }
     console.log('padType', padType);
     return padType;
-  }
+  },
 
   // Only applies to inversions
-  function getChordType(wCheck) {
+  getChordType: function getChordType(wCheck, chordSeqKey) {
+    // If we're using a sequence
+    // we don't need an inversion type
+    if (chordSeqKey !== 'noChordOffset') {
+      return 'noChordType';
+    }
     // Inversions are Fine | freezing | windy
     var _chordType;
-    //playlogic
+    // playlogic
     if (wCheck.isClement && wCheck.isCold) {
       _chordType = 'heptatonicMinorIntervals';
     } else if (wCheck.isFine) {
@@ -137,10 +143,10 @@ module.exports = (function() {
       _chordType = 'majorSeventhIntervals';
     }
     return _chordType;
-  }
+  },
 
   // Quieten the pad when the harp plays
-  function getPadVolume(wCheck, sCheck, padType, avSettings) {
+  getPadVolume: function getPadVolume(wCheck, sCheck, padType, avSettings) {
     // error check
     if (avSettings.hasOwnProperty(padType)) {
       if(wCheck.isFoggy) {
@@ -153,15 +159,15 @@ module.exports = (function() {
     } else {
       console.warn('padType is falsy: ', avSettings[padType]);
     }
-  }
+  },
 
-  function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
+  isRootNoteGrtrMedian: function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
     var _totalRange = Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus;
     var _rootNoteMedian = Math.round(_totalRange / 2);
     return rootNote + _rootNoteMedian >= _rootNoteMedian;
-  }
+  },
 
-  function getChordSeqKey(wCheck, rootNoteGrtrMedian) {
+  getChordSeqKey: function getChordSeqKey(wCheck, rootNoteGrtrMedian) {
     var _key;
     // playlogic
     // fine or freezing plays choralSound
@@ -191,29 +197,21 @@ module.exports = (function() {
     }
     console.log('chord seq key ', _key);
     return _key;
-  }
+  },
 
   //Inversions manager
-  function getInversionOffsetKey(wCheck) {
-    var _key;
-    // playlogic
-    // important!
-    if (wCheck.isWindy) {
-      _key = 'inversionsMixed';
+  getInversionOffsetKey: function getInversionOffsetKey(wCheck, chordSeqKey) {
+    if (chordSeqKey !== 'noChordOffset') {
+      return 'inversionsNoOffset';
+    } else if (wCheck.isWindy) {
+      return 'inversionsMixed';
     } else if (wCheck.isFreezing) {
-      _key = 'inversionsUpward';
-    } else {
-      //No inversions
-      _key = 'inversionsNoOffset';
+      return 'inversionsUpward';
     }
-    // TODO use this
-    // if (wCheck.isFine) {
-    //   _key = 'inversionsDownward';
-    // }
-    return _key;
-  }
+    return 'inversionsNoOffset';
+  },
 
-  function getSeqRepeatMaxMult(numChords, avSettings) {
+  getSeqRepeatMaxMult: function getSeqRepeatMaxMult(numChords, avSettings) {
     //If the number of chords is high
     //lower the multiplier
     var _mean = Math.round((avSettings.numChordsMin + avSettings.numChordsMax) /
@@ -224,9 +222,9 @@ module.exports = (function() {
     } else {
       return avSettings.mainSeqRepeatMax;
     }
-  }
+  },
 
-  function getMainSeqRepeatNum(lwData, numChords, upperMult) {
+  getMainSeqRepeatNum: function getMainSeqRepeatNum(lwData, numChords, upperMult) {
     //playlogic
     return Math.round(microU.mapRange(
       lwData.apparentTemperature.value,
@@ -235,17 +233,17 @@ module.exports = (function() {
       numChords * upperMult,
       numChords * 1
     ));
-  }
+  },
 
-  function getRootNoteRange(numSemisPerOctave) {
+  getRootNoteRange: function getRootNoteRange(numSemisPerOctave) {
     //In western scale it will be between + 6 or - 12
     return {
       rangePlus: Math.round(numSemisPerOctave / 2),
       rangeMinus: -Math.abs(numSemisPerOctave)
     };
-  }
+  },
 
-  function getRootNote(lwData, rootNoteRange) {
+  getRootNote: function getRootNote(lwData, rootNoteRange) {
     //Pressure determines root note
     //playlogic
     var _rootNote = Math.round(microU.mapRange(
@@ -259,9 +257,9 @@ module.exports = (function() {
       _rootNote = 0;
     }
     return _rootNote;
-  }
+  },
 
-  function getLongNoteIndex(lwData, numNotes) {
+  getLongNoteIndex: function getLongNoteIndex(lwData, numNotes) {
     var _longNoteIndex = 0;
     var _timesToDivide = numNotes;
     var _bearingSlice = 360 / _timesToDivide;
@@ -282,38 +280,38 @@ module.exports = (function() {
       return 0;
     }
     return _longNoteIndex;
-  }
+  },
 
-  function isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes) {
+  isLongNoteHigh: function isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes) {
     return rootNoteHigh && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
     //return rootNoteGrtrMedian && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
-  }
+  },
 
-  function getLongNoteVolArr(wCheck) {
+  getLongNoteVolArr: function getLongNoteVolArr(wCheck) {
     if (wCheck.isVisbilityPoor && !wCheck.isFreezing) {
       return [0.75, 0.875, 1];
     } else {
       return [0.225, 0.375, 0.7125];
     }
-  }
+  },
 
-  function getChoralSoundVol(wCheck) {
+  getChoralSoundVol: function getChoralSoundVol(wCheck) {
     if (wCheck.isFreezing) {
       return 0.43;
     } else {
       return 0.23;
     }
-  }
+  },
 
-  function getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave) {
+  getExtraChordsOffset: function getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave) {
     if (rootNoteGrtrMedian) {
       return numSemisPerOctave;
     } else {
       return 5;
     }
-  }
+  },
 
-  function getLongNoteFilterFreq(lwData, avSettings) {
+  getLongNoteFilterFreq: function getLongNoteFilterFreq(lwData, avSettings) {
     return Math.round(microU.mapRange(
       lwData.visibility.value,
       lwData.visibility.min,
@@ -321,9 +319,9 @@ module.exports = (function() {
       avSettings.longNoteFilter.min,
       avSettings.longNoteFilter.max
     ));
-  }
+  },
 
-  function getBrassVolume(lwData) {
+  getBrassVolume: function getBrassVolume(lwData) {
     return microU.mapRange(
       lwData.windSpeed.value,
       lwData.windSpeed.min,
@@ -331,9 +329,9 @@ module.exports = (function() {
       0.6,
       1
     );
-  }
+  },
 
-  function getBrassBpm(lwData) {
+  getBrassBpm: function getBrassBpm(lwData) {
     return Math.round(microU.mapRange(
       lwData.windSpeed.value,
       lwData.windSpeed.min,
@@ -341,9 +339,9 @@ module.exports = (function() {
       6,
       12
     ));
-  }
+  },
 
-  function getLeadSoundVolume(wCheck) {
+  getLeadSoundVolume: function getLeadSoundVolume(wCheck) {
     var _leadVolume;
     if (wCheck.isSublime) {
       _leadVolume = 0.8;
@@ -351,9 +349,9 @@ module.exports = (function() {
       _leadVolume = 0.55;
     }
     return _leadVolume;
-  }
+  },
 
-  function getPrecipCategory(lwData) {
+  getPrecipCategory: function getPrecipCategory(lwData) {
     if (lwData.precipType === 'rain') {
       return 'hard';
     } else if (lwData.precipType === 'sleet') {
@@ -361,9 +359,9 @@ module.exports = (function() {
     } else {
       return 'light'; //'snow' or undefined
     }
-  }
+  },
 
-  function getPrecipArpBpm(lwData) {
+  getPrecipArpBpm: function getPrecipArpBpm(lwData) {
     // playlogic
     return Math.round(microU.mapRange(
       lwData.precipIntensity.value,
@@ -372,9 +370,9 @@ module.exports = (function() {
       60,
       150
     ));
-  }
+  },
 
-  function getHumidArpBpm(lwData) {
+  getHumidArpBpm: function getHumidArpBpm(lwData) {
     return Math.round(microU.mapRange(
       lwData.humidity.value,
       lwData.humidity.min,
@@ -382,19 +380,19 @@ module.exports = (function() {
       60,
       120
     ));
-  }
+  },
 
-  function getHumidArpIntervals(lwData, chordType) {
+  getHumidArpIntervals: function getHumidArpIntervals(lwData, isMelodyMajor) {
     var _hIntervals;
-    //playlogic
+    // playlogic
     if (lwData.pressure.value > 1000) {
-      if (hasMajor(chordType)) {
+      if (isMelodyMajor) {
         _hIntervals = 'closeMajorIntervals';
       } else {
         _hIntervals = 'closeMinorIntervals';
       }
     } else {
-      if (hasMajor(chordType)) {
+      if (isMelodyMajor) {
         _hIntervals = 'farMajorIntervals';
       } else {
         _hIntervals = 'farMinorIntervals';
@@ -402,17 +400,17 @@ module.exports = (function() {
     }
     console.log('_hIntervals', _hIntervals);
     return _hIntervals;
-  }
+  },
 
-  function getPrecipArpIntervalType(chordType) {
-    if (hasMajor(chordType)) {
+  getPrecipArpIntervalType: function getPrecipArpIntervalType(isMelodyMajor) {
+    if (isMelodyMajor) {
       return 'safeNthMajorIntervals';
     } else {
       return 'safeNthMinorIntervals';
     }
-  }
+  },
 
-  function getPadFilterFreq(lwData, avSettings) {
+  getPadFilterFreq: function getPadFilterFreq(lwData, avSettings) {
     return microU.mapRange(
       lwData.cloudCover.value,
       lwData.cloudCover.max,
@@ -420,17 +418,17 @@ module.exports = (function() {
       avSettings.padFilter.min,
       avSettings.padFilter.max
     );
-  }
+  },
 
-  function isRootNoteHigh(rootNote) {
+  isRootNoteHigh: function isRootNoteHigh(rootNote) {
     if (rootNote > 0) {
       return true;
     } else {
       return false;
     }
-  }
+  },
 
-  function getRideCymbalRate(lwData) {
+  getRideCymbalRate: function getRideCymbalRate(lwData) {
     return microU.mapRange(
       Math.round(lwData.nearestStormBearing.value),
       lwData.nearestStormBearing.min,
@@ -438,9 +436,9 @@ module.exports = (function() {
       0.5,
       1.2
     );
-  }
+  },
 
-  function getRideCymbalsBpm(lwData) {
+  getRideCymbalsBpm: function getRideCymbalsBpm(lwData) {
     return microU.mapRange(
       Math.round(lwData.precipProbability.value),
       lwData.precipProbability.min,
@@ -448,9 +446,9 @@ module.exports = (function() {
       40,
       78
     );
-  }
+  },
 
-  function getRideCymbalMaxVolume(lwData) {
+  getRideCymbalMaxVolume: function getRideCymbalMaxVolume(lwData) {
     return microU.mapRange(
       Math.round(lwData.nearestStormDistance.value),
       lwData.nearestStormDistance.min,
@@ -458,18 +456,18 @@ module.exports = (function() {
       0.9,
       0.3
     );
-  }
+  },
 
-  function getRideCymbalVolumeArr(rideCymbalMaxVolume) {
+  getRideCymbalVolumeArr: function getRideCymbalVolumeArr(rideCymbalMaxVolume) {
     var _rideCymbalVolumeArr = [];
     var _min = 0.1;
     for (var i = 0; i < 6; i++) {
       _rideCymbalVolumeArr.push(Math.random() * (rideCymbalMaxVolume - _min) + _min);
     }
     return _rideCymbalVolumeArr;
-  }
+  },
 
-  function getNoteLengthMult(lwData, avSettings) {
+  getNoteLengthMult: function getNoteLengthMult(lwData, avSettings) {
     return Math.round(microU.mapRange(
       lwData.temperature.value,
       lwData.temperature.min,
@@ -477,22 +475,22 @@ module.exports = (function() {
       avSettings.noteLengthMultMin,
       avSettings.noteLengthMultMax
     ));
-  }
+  },
 
   // The higher the temperature
   // the bigger the gaps
-  function getNoteLengths(appFrameRate, minMultiplier) {
+  getNoteLengths: function getNoteLengths(appFrameRate, minMultiplier) {
     var _noteLengths = [];
     for (var i = 0; i < 3; i++) {
       var _multiplierAmt = minMultiplier + i;
       _noteLengths.push(_multiplierAmt * appFrameRate);
     }
     return _noteLengths;
-  }
+  },
 
   // The higher the temperature
   // the bigger the gaps
-  function getLeadNoteLengthStart(appFrameRate, lwData) {
+  getLeadNoteLengthStart: function getLeadNoteLengthStart(appFrameRate, lwData) {
     return Math.round(microU.mapRange(
       lwData.temperature.value,
       lwData.temperature.min,
@@ -500,29 +498,29 @@ module.exports = (function() {
       appFrameRate / 3,
       appFrameRate / 9
     ));
-  }
+  },
 
-  function getHarpVolArr(wCheck, sCheck) {
+  getHarpVolArr: function getHarpVolArr(wCheck, sCheck) {
     if (sCheck.harpCanPlay && wCheck.isMild) {
       return [0.6, 0.8, 1];
     } else {
       return [0.45, 0.625, 0.8];
     }
-  }
+  },
 
-  function getHarpCanPlay(wCheck) {
+  getHarpCanPlay: function getHarpCanPlay(wCheck) {
     return wCheck.isHumid && !wCheck.isPrecip && !wCheck.isFine && !wCheck.isWindy;
-  }
+  },
 
-  function getTimpaniCanPlay(wCheck) {
+  getTimpaniCanPlay: function getTimpaniCanPlay(wCheck) {
     return wCheck.isArid || wCheck.isCrisp;
-  }
+  },
 
-  function getChoralCanPlay(wCheck) {
+  getChoralCanPlay: function getChoralCanPlay(wCheck) {
     return wCheck.isFine || wCheck.isFreezing;
-  }
+  },
 
-  function getPinkNoiseVol(lwData) {
+  getPinkNoiseVol: function getPinkNoiseVol(lwData) {
     return microU.mapRange(
       lwData.uvIndex.value,
       lwData.uvIndex.min,
@@ -531,51 +529,4 @@ module.exports = (function() {
       0.6
     );
   }
-
-  // TODO 
-  // Use an object for the module
-  return {
-    getNumPadNotes: getNumPadNotes,
-    getNumChords: getNumChords,
-    getNumSemisPerOctave: getNumSemisPerOctave,
-    getPadType: getPadType,
-    getChordType: getChordType,
-    getPadVolume: getPadVolume,
-    isRootNoteGrtrMedian: isRootNoteGrtrMedian,
-    getChordSeqKey: getChordSeqKey,
-    getInversionOffsetKey: getInversionOffsetKey,
-    getSeqRepeatMaxMult: getSeqRepeatMaxMult,
-    getMainSeqRepeatNum: getMainSeqRepeatNum,
-    getRootNoteRange: getRootNoteRange,
-    getRootNote: getRootNote,
-    getChoralSoundVol: getChoralSoundVol,
-    getLongNoteIndex: getLongNoteIndex,
-    getLongNoteType: getLongNoteType,
-    getLongNoteFilterFreq: getLongNoteFilterFreq,
-    isLongNoteHigh: isLongNoteHigh,
-    getLongNoteVolArr: getLongNoteVolArr,
-    getExtraChordsOffset: getExtraChordsOffset,
-    getBrassVolume: getBrassVolume,
-    getBrassBpm: getBrassBpm,
-    getLeadSoundVolume: getLeadSoundVolume,
-    getPrecipCategory: getPrecipCategory,
-    getPrecipArpBpm: getPrecipArpBpm,
-    getHumidArpBpm: getHumidArpBpm,
-    getHumidArpIntervals: getHumidArpIntervals,
-    getPrecipArpIntervalType: getPrecipArpIntervalType,
-    getPadFilterFreq: getPadFilterFreq,
-    isRootNoteHigh: isRootNoteHigh,
-    getRideCymbalRate: getRideCymbalRate,
-    getRideCymbalsBpm: getRideCymbalsBpm,
-    getRideCymbalMaxVolume: getRideCymbalMaxVolume,
-    getRideCymbalVolumeArr: getRideCymbalVolumeArr,
-    getNoteLengthMult: getNoteLengthMult,
-    getNoteLengths: getNoteLengths,
-    getLeadNoteLengthStart: getLeadNoteLengthStart,
-    getHarpVolArr: getHarpVolArr,
-    getHarpCanPlay: getHarpCanPlay,
-    getTimpaniCanPlay: getTimpaniCanPlay,
-    getChoralCanPlay: getChoralCanPlay,
-    getPinkNoiseVol: getPinkNoiseVol
-  };
-})();
+};

@@ -117,17 +117,17 @@ The pan and volume are randomly selected from two arrays.
 
 ##Plans
 
-Use `uvIndex` as data point - map to a noise oscillator perhaps
+change names of chord sequence types
 
-Only output chordType if using inversions
+Use double time when djembe plays
+
+Output uvLevel instrument
 
 Write unit tests
 
 Consider using windyTV map rather than text input
 
-Consider reducing the max number of pad notes (for performance and sonic overcrowding purposes)
-
-If implementing the above, consider making a second longNote that uses a note from within the scale but beyond the highest index of the numPadNotes
+Consider reducing the max number of pad notes (for performance and sonic overcrowding purposes). If implementing thisx, consider making a second longNote that uses a note from within the scale but beyond the highest index of the numPadNotes
 ---
 Harp could be something other than humidity - humidity should be evoked by noise
 
