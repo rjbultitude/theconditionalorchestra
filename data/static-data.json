@@ -3,7 +3,7 @@
   "summary": "Foggy",
   "icon": "partly-cloudy-day",
   "cloudCover":{
-    "value":0.2,
+    "value":0.9,
     "min":0,
     "max":1
   },
