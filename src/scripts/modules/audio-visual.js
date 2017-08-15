@@ -4,7 +4,7 @@
  */
 
 'use strict';
-//3rd party
+// 3rd party
 var P5 = require('../libs/p5');
 require('../libs/p5.sound');
 var freqi = require('freqi');
@@ -12,7 +12,7 @@ var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/index').codisplay;
 var work = require('webworkify');
-//custom
+// custom
 var coDisplayData = require('./co-display-data');
 var weatherCheck = require('./weather-checker-fns');
 var microU = require('../utilities/micro-utilities');
@@ -137,8 +137,8 @@ module.exports = function() {
     }, avSettings.fadeTime * 1000);
   }
 
-  function fadeOutAllSounds(autoStart) {
-    //Fades
+  function fadeOutAllSounds(config) {
+    // Fades
     brassBaritone.fade(0, avSettings.fadeTime);
     brassBaritone2.fade(0, avSettings.fadeTime);
     bass.fade(0, avSettings.fadeTime);
@@ -154,7 +154,7 @@ module.exports = function() {
     rideCymbal.fade(0, avSettings.fadeTime);
     timpani.fade(0, avSettings.fadeTime);
     uvNoise.fade(0, avSettings.fadeTime);
-    //Stop after fades
+    // Stop after fades
     setTimeout(function() {
       brassBaritone.stop();
       brassBaritone2.stop();
@@ -170,11 +170,13 @@ module.exports = function() {
       timpani.stop();
       uvNoise.stop();
     }, avSettings.fadeTime * 1000);
-    //Unsubs
+    // Unsubs
     publishBrassOne.unsubscribe();
     publishBrassTwo.unsubscribe();
     isPlaying = false;
-    channel.publish('allStopped', autoStart);
+    if (!config.invisible) {
+      channel.publish('allStopped', config.autoStart);
+    }
   }
 
   function createP5SoundObjs() {
@@ -424,20 +426,18 @@ module.exports = function() {
        * ------------------------
        */
       function prepareHumidArp(hScalesNoRests) {
-        //Overwrite empty array with sequences
-        //that include rests
+        // Overwrite empty array with sequences
+        // that include rests
         humidArpScales = hScalesNoRests.map(function(hArpScale) {
           return audioHlpr.getAllegrettoRhythmType(wCheck, hArpScale);
         });
-        humidArpReady = true;
       }
 
       function preparePrecipArp(precipArpScaleNoRests) {
-        //Overwrite sequence with new notes
+        // Overwrite sequence with new notes
         precipArpScales = precipArpScaleNoRests.map(function(pArpScale) {
           return audioHlpr.addRandomStops(pArpScale, sketch).reverse();
         });
-        precipArpReady = true;
       }
 
       /**
@@ -625,7 +625,7 @@ module.exports = function() {
        * @param  {Array} hScalesNoRests a set of notes fot the sequencer to play
        * @return {boolean}               default value
        */
-      function playSounds(pArpScalesNoRests, hScalesNoRests) {
+      function playSounds(invisible) {
         // playlogic
         // Only the first chord is passed in
         if (sCheck.choralCanPlay) {
@@ -650,23 +650,26 @@ module.exports = function() {
           playSynchedSounds(true);
           padReady = false;
         } else {
-          //Play the pad sounds
-          //using the draw loop
+          // Play the pad sounds
+          // using the draw loop
           padReady = true;
         }
-        //Humid arpeggio
-        if (hScalesNoRests.length > 0) {
-          prepareHumidArp(hScalesNoRests);
+        // Humid arpeggio
+        if (humidArpScales.length > 0) {
+          humidArpReady = true;
         }
-        //Precipitation arpeggio
-        if (pArpScalesNoRests.length > 0) {
-          preparePrecipArp(pArpScalesNoRests);
+        // Precipitation arpeggio
+        if (precipArpScales.length > 0) {
+          precipArpReady = true;
         }
         uvNoise.amp(0);
         uvNoise.start();
-        //Tell rest of app we're playing
+        // Tell rest of app we're playing
         isPlaying = true;
-        channel.publish('playing', lwData.name);
+        // If inactive tab stopped playback
+        if (!invisible) {
+          channel.publish('playing', lwData.name);
+        }
       }
 
       /**
@@ -867,18 +870,18 @@ module.exports = function() {
         // playlogic
         if (wCheck.isPrecip) {
           _pArpScalesNoRests = createPrecipArpScales();
+          preparePrecipArp(_pArpScalesNoRests);
         }
         // Humid arpeggio will not play if
         // other lead sounds are playing
         if (sCheck.harpCanPlay) {
           _hArpScalesNoRests = createHumidArpScales();
+          prepareHumidArp(_hArpScalesNoRests);
         }
         if (sCheck.choralCanPlay) {
           choralScales = createChoralScales();
         }
-        // Explicitly passing these arrays as args
-        // as they require extra preparation
-        playSounds(_pArpScalesNoRests, _hArpScalesNoRests);
+        playSounds();
       }
 
       /**
@@ -1102,7 +1105,7 @@ module.exports = function() {
         if (uvNoiseAngle > 360) {
           uvNoiseAngle = 0;
         }
-        uvNoiseSinVal = sketch.sin(uvNoiseAngle) * uvNoiseMaxVol;
+        uvNoiseSinVal = Math.abs(sketch.sin(uvNoiseAngle) * uvNoiseMaxVol);
         uvNoise.amp(uvNoiseSinVal);
         uvNoiseAngle += noiseAngleInc;
       }
@@ -1308,9 +1311,21 @@ module.exports = function() {
         configureAudioVisual();
       };
 
+      // P5 DRAW - 3
       sketch.draw = function draw() {
         updateAllSounds();
       };
+
+      // Silence app when tab is inactive
+      channel.subscribe('tabHidden', function() {
+        console.log('tabHidden');
+        if (isPlaying) {
+          console.log('tabHidden on load fadeOutAllSounds');
+          masterGain = 0;
+          sketch.masterVolume(masterGain);
+          maxMasterVolSet = false;
+        }
+      });
 
     });
     return myP5;
@@ -1323,7 +1338,7 @@ module.exports = function() {
 
   function clearAndStopWhenDone(autoStart) {
     cdContainer.innerHTML = '';
-    fadeOutAllSounds(autoStart);
+    fadeOutAllSounds({autoStart: autoStart, invisible: false});
   }
 
   channel.subscribe('stop', function(autoStart) {

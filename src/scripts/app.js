@@ -2,6 +2,7 @@
 var Tabs = require('./modules/tabs');
 var jsLoad = require('./utilities/js-load');
 var updateStatus = require('./modules/update-status');
+require('./utilities/browser-tab-visibility');
 
 // Web audio support?
 if (!window.AudioContext && !window.webkitAudioContext) {
