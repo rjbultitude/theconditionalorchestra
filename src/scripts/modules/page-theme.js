@@ -9,7 +9,7 @@ module.exports = function(lwData, wCheck) {
   var outerWrapperStr = 'outerwrapper';
   var innerWrapper = document.querySelector('.' + innerWrapperStr);
   var outerWrapper = document.querySelector('.' + outerWrapperStr);
-  var curThemeTempName = document.body.classList[0];
+  var curThemeNameList = document.body.classList;
   var curThemeTypeList = innerWrapper.classList;
   var curThemeTimeList = outerWrapper.classList;
 
@@ -54,15 +54,16 @@ module.exports = function(lwData, wCheck) {
   }
 
   // remove class names
-  document.body.classList = '';
+  removeClassNames(curThemeNameList, document.body, '');
   removeClassNames(curThemeTypeList, innerWrapper, innerWrapperStr);
   removeClassNames(curThemeTimeList, outerWrapper, outerWrapperStr);
   // get class names
   var newThemeName = getThemeTempName();
   var newThemeType = getThemeTypeName();
   var newThemeTime = getThemeTimeName();
+  console.log('newThemeName', newThemeName);
+  console.log('newThemeType', newThemeType);
   console.log('newThemeTime', newThemeTime);
-  console.log('newThemeTime', typeof newThemeTime);
   // apply class names
   document.body.classList.add(newThemeName);
   outerWrapper.classList.add(newThemeTime);
