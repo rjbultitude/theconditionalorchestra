@@ -3,15 +3,18 @@
   //min-height: 164px;
 
   .icons-block {
-    min-height: 88px;
+    min-height: 108px;
     display: inline-block;
-    width: 92px;
+    width: 114px;
     text-align: center;
 
     svg {
       display: inline-block;
-      width: 86%;
-      height: 86%;
+    }
+
+    svg:not(.co-logo-icon) {
+      width: 75%;
+      height: 75%;
     }
 
     #playing-icon {

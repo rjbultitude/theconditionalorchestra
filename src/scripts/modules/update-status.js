@@ -52,7 +52,7 @@ module.exports = function updateStatus(status, locationAddress, noAudioSupport, 
       url: 'img/playing-icon.svg'
     },
     weather: {
-      url: 'img/weather-icon.svg'
+      url: 'img/co-logo-icon.svg'
     }
   };
 
