@@ -59,7 +59,7 @@ Write unit tests for coords-form, audio-visual, audio-getters and audio-helpers
 Consider using [windy.com](https://www.windy.com/) map rather than text input
 
 Consider reducing the max number of pad notes (for performance and sonic overcrowding purposes). If implementing thisx, consider making a second longNote that uses a note from within the scale but beyond the highest index of the numPadNotes
----
+
 Harp could be something other than humidity - humidity should be evoked by noise
 
 Consider using a state manager and one master sound object
@@ -74,7 +74,7 @@ Refactor the display fns so that they're chained
 
 After stop fade out is louder than normal playback, firefox only - caused by the filter not being applied.
 
- Sequencer onStep only counts the steps in one single pass rather than the loop. _No longer relevant_
+Sequencer onStep only counts the steps in one single pass rather than the loop. _No longer relevant_
 
 ##p5 usage
 
