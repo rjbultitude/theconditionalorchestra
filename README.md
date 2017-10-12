@@ -46,11 +46,10 @@ Styles and scripts will be processed and watched for changes. Scripts will be li
 
 ## Browser support
 
-Map and reduce are used in the JS but are supported by IE11+.
-Web Audio is not supported in IE11 so the app will stop running before any non-supported JS is.
+The appliction is expected to work in all modern browsers. In browsers that don't support Web Audio, such as IE11 (and below) the app will not run and present an error message. On some devices the audio playback may glitch. In most cases this is due to the device processor not being fast enough to handle the real-time calculations. It is recommended that the app be used on the most powerful device possible.
 
 ## App logic
-See the module audio-getters.js for most of the app logic
+See the modules audio-getters.js, coords-form.js and audio-visual.js for most of the app logic
 
 ## Plans
 
