@@ -44,15 +44,15 @@ Styles and scripts will be processed and watched for changes. Scripts will be li
 * [Moment.js](http://momentjs.com/)
 * [JS Promises Polyfill](https://www.npmjs.com/package/es6-promise-polyfill)
 
-##Browser support
+## Browser support
 
 Map and reduce are used in the JS but are supported by IE11+.
 Web Audio is not supported in IE11 so the app will stop running before any non-supported JS is.
 
-##App logic
+## App logic
 See the module audio-getters.js for most of the app logic
 
-##Plans
+## Plans
 
 Write unit tests for coords-form, audio-visual, audio-getters and audio-helpers
 
@@ -70,13 +70,13 @@ Update logic App Logic and spreadsheet
 
 Refactor the display fns so that they're chained
 
-###Bugs
+### Bugs
 
 After stop fade out is louder than normal playback, firefox only - caused by the filter not being applied.
 
 Sequencer onStep only counts the steps in one single pass rather than the loop. _No longer relevant_
 
-##p5 usage
+## p5 usage
 
 Filters
  * P5.LowPass
