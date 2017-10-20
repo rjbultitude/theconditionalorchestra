@@ -3,7 +3,6 @@
 //Get display Data setter fns
 var coFns = require('./co-display-fns');
 
-//TODO handle errors
 module.exports = function (self) {
     self.addEventListener('message', function (workerData) {
       console.log('Data objects received ', workerData.data);
