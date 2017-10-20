@@ -1,0 +1,16 @@
+{
+  "name": "The Conditional Orchestra",
+  "description": "A web app that converts weather data into music",
+  "icons": [
+    {
+      "src": "img/launcher-icon-1x.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#312775",
+  "background_color": "#312775",
+  "start_url": "index.php",
+  "display": "standalone",
+  "orientation": "any"
+}

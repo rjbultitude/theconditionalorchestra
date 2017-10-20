@@ -1,13 +1,14 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang="en">
     <head>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <title>The Conditional Orchestra</title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="apple-touch-icon" href="apple-touch-icon.png">
+      <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
       <link rel="stylesheet" href="dist/styles/global.css">
+      <link rel="manifest" href="manifest.json">
 
       <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -110,7 +111,7 @@
                 Alternatively click &ldquo;choose a location&rdquo; where you can enter any place you like.</p>
                 <p>If the music playback is glitchy please try it on a more powerful device.</p>
                 <p>The audio may stop if it's not the active tab in your browser, so be sure to open in a new window for continuous playback.</p>
-                <p>Tip: try picking extreme places such as Nordvik, Dubai, Jakarta or Cape Farewell. To see a weather map of the world try <a href="https://www.windy.tv/" target="_blank">Windy.tv</a></p>
+                <p>Tip: try picking extreme places such as Nordvik, Dubai, Jakarta or Cape Farewell. To see a weather map of the world try <a href="https://www.windy.com/" target="_blank" rel="noopener">Windy.com</a></p>
                 <button class="button-close" data-ref="tab-close">
                   <span class="text">
                     Close
@@ -122,12 +123,12 @@
               </div>
               <div class="tab__panel" id="credits" data-ref="tab-panel">
                 <h2 class="tab__heading">Credits</h2>
-                <p>This project uses <a href="https://darksky.net" target="_blank">DarkSky.net</a> to obtain the weather data. 
-                The library used to retrieve the data can be found on <a href="https://www.npmjs.com/package/darkskyjs" target="_blank">NPM here</a></p>
-                <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html" target="_blank">Google maps</a> is used to reverse Geocode the location information</p>
-                <p><a href="http://p5js.org/" target="_blank">P5.js</a> is used to load and control the audio.</p>
+                <p>This project uses <a href="https://darksky.net" target="_blank" rel="noopener">DarkSky.net</a> to obtain the weather data. 
+                The library used to retrieve the data can be found on <a href="https://www.npmjs.com/package/darkskyjs" target="_blank" rel="noopener">NPM here</a></p>
+                <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html" target="_blank" rel="noopener">Google maps</a> is used to reverse Geocode the location information</p>
+                <p><a href="http://p5js.org/" target="_blank" rel="noopener">P5.js</a> is used to load and control the audio.</p>
                 <p><a href="https://www.npmjs.com/package/freqi">Freqi</a> is a small module I wrote to generate the frequencies for playback.</p>
-                <p>The Conditional Orchestra is an open <a href="https://github.com/rjbultitude/theconditionalorchestra" target="_blank">source project</a>, 
+                <p>The Conditional Orchestra is an open <a href="https://github.com/rjbultitude/theconditionalorchestra" target="_blank" rel="noopener">source project</a>, 
                 written and maintained by me, <a href="https://github.com/rjbultitude">Rich Bultitude</a>.</p>
                 <p>Read about why and how I created this project <a href="https://medium.com/@pointbmusic/making-the-conditional-orchestra-df3149b17d23">here.</a></p>
                 <button class="button-close" data-ref="tab-close">
@@ -141,8 +142,8 @@
               </div>
               <div class="tab__panel" id="source" data-ref="tab-panel">
                 <h2 class="tab__heading">Share</h2>
-                <p>Any location you listen to can be shared, just copy and paste the URL e.g. <a href="https://theconditionalorchestra.com/?London-UK" target="_blank">theconditionalorchestra.com/?London-UK</a></p>
-                <p>If you have any comments, suggestions or want to know more <a href="https://twitter.com/pointbmusic" target="_blank">DM on Twitter</a></p>
+                <p>Any location you listen to can be shared, just copy and paste the URL e.g. <a href="https://theconditionalorchestra.com/?London-UK" target="_blank" rel="noopener">theconditionalorchestra.com/?London-UK</a></p>
+                <p>If you have any comments, suggestions or want to know more <a href="https://twitter.com/pointbmusic" target="_blank" rel="noopener">DM on Twitter</a></p>
                 <button class="button-close" data-ref="tab-close">
                   <span class="text">
                     Close
