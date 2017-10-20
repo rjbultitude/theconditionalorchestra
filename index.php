@@ -123,12 +123,13 @@
               <div class="tab__panel" id="credits" data-ref="tab-panel">
                 <h2 class="tab__heading">Credits</h2>
                 <p>This project uses <a href="https://darksky.net" target="_blank">DarkSky.net</a> to obtain the weather data. 
-                The library used to retrieve the weather data can be found on <a href="https://www.npmjs.com/package/darkskyjs" target="_blank">NPM here</a></p>
+                The library used to retrieve the data can be found on <a href="https://www.npmjs.com/package/darkskyjs" target="_blank">NPM here</a></p>
                 <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html" target="_blank">Google maps</a> is used to reverse Geocode the location information</p>
                 <p><a href="http://p5js.org/" target="_blank">P5.js</a> is used to load and control the audio.</p>
                 <p><a href="https://www.npmjs.com/package/freqi">Freqi</a> is a small module I wrote to generate the frequencies for playback.</p>
                 <p>The Conditional Orchestra is an open <a href="https://github.com/rjbultitude/theconditionalorchestra" target="_blank">source project</a>, 
-                written and maintained by me, <a href="https://github.com/rjbultitude">Rich Bultitude</a>. Read about why and how I created this project <a href="http://medium.com">here.</a></p>
+                written and maintained by me, <a href="https://github.com/rjbultitude">Rich Bultitude</a>.</p>
+                <p>Read about why and how I created this project <a href="https://medium.com/@pointbmusic/making-the-conditional-orchestra-df3149b17d23">here.</a></p>
                 <button class="button-close" data-ref="tab-close">
                   <span class="text">
                     Close
@@ -140,7 +141,8 @@
               </div>
               <div class="tab__panel" id="source" data-ref="tab-panel">
                 <h2 class="tab__heading">Share</h2>
-                <p>Any location you listen to can be shared, just copy and paste the URL</p>
+                <p>Any location you listen to can be shared, just copy and paste the URL e.g. <a href="https://theconditionalorchestra.com/?London-UK" target="_blank">theconditionalorchestra.com/?London-UK</a></p>
+                <p>If you have any comments, suggestions or want to know more <a href="https://twitter.com/pointbmusic" target="_blank">DM on Twitter</a></p>
                 <button class="button-close" data-ref="tab-close">
                   <span class="text">
                     Close
