@@ -6,6 +6,17 @@
       <title>The Conditional Orchestra</title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="Content-Security-Policy-Report-Only"
+        report-uri="/csp-violation-report-endpoint/"
+        content="default-src 'none'; img-src 'self';
+          script-src 'self' 
+          https://api.darksky.net/forecast/ 
+          https://maps.googleapis.com/maps/api/js
+          https://fonts.googleapis.com/;
+          script-src 'self' 'unsafe-inline' www.google-analytics.com;
+          style-src 'self'"
+      >
+
       <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
       <link rel="stylesheet" href="dist/styles/global.css">
       <link rel="manifest" href="manifest.json">
