@@ -65,7 +65,7 @@ Consider using a state manager and one master sound object
 
 Create 'Add to home screen' button
 
-Update logic App Logic and spreadsheet
+Implement [CSP](https://hacks.mozilla.org/2016/02/implementing-content-security-policy/)
 
 Refactor the display fns so that they're chained
 
@@ -80,9 +80,6 @@ Sequencer onStep only counts the steps in one single pass rather than the loop. 
 Filters
  * P5.LowPass
  * P5.HighPass
-
- Reverb
- * P5.Reverb
 
  Maths
  * sketch.TWO_PI
