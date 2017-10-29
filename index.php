@@ -35,7 +35,6 @@
                     <h1 class="page-heading"><span class="minor-word">The</span> Conditional Orchestra</h1>
                     <p class="intro">Using current weather conditions The Conditional Orchestra generates unique compositions for your listening pleasure.</p>
                   </div>
-                  <div class="version-sash">Beta</div>
                 </header>
                 <!-- end header -->
                 <!-- begin body -->
