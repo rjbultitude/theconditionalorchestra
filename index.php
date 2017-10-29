@@ -6,13 +6,13 @@
       <title>The Conditional Orchestra</title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta http-equiv="Content-Security-Policy" report-uri="/csp-violation-report-endpoint/" content="img-src 'self' https://www.google-analytics.com https://maps.gstatic.com https://csi.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ https://maps.googleapis.com/ https://khms.googleapis.com/ https://fonts.googleapis.com/ https://fonts.gstatic.com/ 'unsafe-inline' https://www.google-analytics.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/">
+      <meta http-equiv="Content-Security-Policy" report-uri="/csp-violation-report-endpoint/" content="img-src 'self' https://www.google-analytics.com https://maps.gstatic.com https://csi.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ https://maps.googleapis.com/ https://khms.googleapis.com/ https://fonts.googleapis.com/ https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/">
 
       <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
       <link rel="stylesheet" href="dist/styles/global.css">
       <link rel="manifest" href="manifest.json">
 
-      <script>
+      <script nonce="2109b8a76z">
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
