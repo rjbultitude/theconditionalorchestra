@@ -8,12 +8,19 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta http-equiv="Content-Security-Policy-Report-Only"
         report-uri="/csp-violation-report-endpoint/"
-        content="default-src 'none'; img-src 'self';
+        content="
+          default-src 'none';
+          img-src 'self'
+            https://www.google-analytics.com
+            https://maps.gstatic.com
+            https://csi.gstatic.com;
           script-src 'self' 
-          https://api.darksky.net/forecast/ 
-          https://maps.googleapis.com/maps/api/js
-          https://fonts.googleapis.com/;
-          script-src 'self' 'unsafe-inline' www.google-analytics.com;
+            https://api.darksky.net/forecast/ 
+            https://maps.googleapis.com/
+            https://khms.googleapis.com/
+            https://fonts.googleapis.com/;
+            https://fonts.gstatic.com/;
+          script-src 'self' 'unsafe-inline' https://www.google-analytics.com;
           style-src 'self'"
       >
 
