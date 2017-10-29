@@ -6,7 +6,11 @@
       <title>The Conditional Orchestra</title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta http-equiv="Content-Security-Policy" report-uri="/csp-violation-report-endpoint/" content="img-src 'self' https://www.google-analytics.com https://maps.gstatic.com https://csi.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ https://maps.googleapis.com/ https://khms.googleapis.com/ https://fonts.googleapis.com/ https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/">
+      <meta 
+        http-equiv="Content-Security-Policy" 
+        report-uri="/csp-violation-report-endpoint/" 
+        content="img-src 'self' https://www.google-analytics.com *.googleapis.com https://maps.gstatic.com https://csi.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ *.googleapis.com https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/; object-src 'self' blob:; media-src 'self' blob:; worker-src 'self' blob:"
+      >
 
       <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
       <link rel="stylesheet" href="dist/styles/global.css">
