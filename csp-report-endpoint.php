@@ -3,7 +3,7 @@
 // Start configure
 $log_file = dirname(__FILE__) . '/csp-violations.log';
 $log_file_size_limit = 1000000; // bytes - once exceeded no further entries are added
-$email_address = 'richard.bultitudee@gmail.com';
+$email_address = 'richard.bultitude@gmail.com';
 $email_subject = 'Content-Security-Policy violation';
 // End configuration
 
