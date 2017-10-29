@@ -993,6 +993,7 @@ module.exports = function() {
           displayWorker.addEventListener('message', function(result) {
             buildDisplay(result.data);
             displayWorker.terminate();
+            console.log('worker result.data', result.data);
           });
           displayWorker.onerror = function(e) {
             console.log('Error with web worker on ' + 'Line #' + e.lineno +' - ' + e.message + ' in ' + e.filename);
