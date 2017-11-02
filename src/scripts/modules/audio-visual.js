@@ -11,7 +11,7 @@ var freqi = require('freqi');
 var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/index').codisplay;
-var work = require('webworkify');
+var work = require('../libs/webworkify');
 // custom
 var coDisplayData = require('./co-display-data');
 var weatherCheck = require('./weather-checker-fns');
