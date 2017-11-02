@@ -9,7 +9,7 @@
       <meta 
         http-equiv="Content-Security-Policy" 
         report-uri="/csp-violation-report-endpoint/" 
-        content="img-src 'self' https://www.google-analytics.com *.googleapis.com https://maps.gstatic.com https://csi.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ *.googleapis.com https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/; object-src 'self' blob:; media-src 'self' blob:; worker-src 'self' blob:"
+        content="img-src 'self' https://www.google-analytics.com *.googleapis.com https://maps.gstatic.com https://csi.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ *.googleapis.com https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/; object-src 'self' blob:; media-src 'self';"
       >
 
       <link rel="apple-touch-icon" href="img/apple-touch-icon.png">

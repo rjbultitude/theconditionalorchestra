@@ -986,6 +986,7 @@ module.exports = function() {
 
       function configureAudioVisual() {
         var _musicDisplayVals = getDisplayDataVals();
+        var _firstLoad = true;
         //Create a thread to set
         //values for display
         if (window.Worker) {
@@ -993,6 +994,12 @@ module.exports = function() {
           displayWorker.addEventListener('message', function(result) {
             buildDisplay(result.data);
             displayWorker.terminate();
+            if (_firstLoad) {
+              // revoke the Object URL that was used to create this worker, so as
+              // not to leak it
+              URL.revokeObjectURL(displayWorker.objectURL);
+              _firstLoad = false;
+            }
           });
           displayWorker.onerror = function(e) {
             console.log('Error with web worker on ' + 'Line #' + e.lineno +' - ' + e.message + ' in ' + e.filename);
