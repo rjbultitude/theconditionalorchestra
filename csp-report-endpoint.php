@@ -11,7 +11,7 @@
   // Only continue if it’s valid JSON that is not just `null`, `0`, `false` or an// empty string, i.e. if it could be a CSP violation report.
   if ($data = json_decode($data)) {	
     // Prettify the JSON-formatted data.
-    $data = json_encode(		$data,		JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES	);
+    $data = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     // Mail the CSP violation report.	
     mail(EMAIL, SUBJECT, $data, 'Content-Type: text/plain;charset=utf-8');
   }
