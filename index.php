@@ -6,9 +6,13 @@
       <title>The Conditional Orchestra</title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
-      <link rel="stylesheet" href="dist/styles/global.css">
+      <meta name="theme-color" content="#314187">
       <link rel="manifest" href="manifest.json">
+      <link rel="stylesheet" href="dist/styles/global.css">
+      <link rel="apple-touch-icon" sizes="180x180" href="img/app-icons/apple-touch-icon.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="img/app-icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="img/app-icons/favicon-32x32.png">
+      <link rel="mask-icon" href="img/app-icons/safari-pinned-tab.svg" color="#314187">
 
       <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
