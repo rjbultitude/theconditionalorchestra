@@ -1,7 +1,7 @@
 {
   "name": "The Conditional Orchestra",
   "short_name": "The Conditional Orchestra",
-  "description": "A web app that converts weather data into music",
+  "description": "Using current weather conditions The Conditional Orchestra generates unique compositions for your listening pleasure.",
   "icons": [
     {
       "src": "img/app-icons/icon-72x72.png",
