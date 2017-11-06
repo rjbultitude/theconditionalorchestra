@@ -51,6 +51,11 @@ canvas {
   display: none;
 }
 
+.innerwrapper,
+.outerwrapper {
+  display: flex;
+}
+
 .outerwrapper {
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 20%, transparent 100%);
   min-height: 100%;
@@ -71,6 +76,12 @@ canvas {
   position: relative;
   overflow: hidden;
   background-attachment: fixed;
+  flex: 1;
+
+  > main {
+    width: 100%;
+  }
+
   &.storm {
       background-image: repeating-linear-gradient(135deg, rgba(0,0,0,.3), rgba(0,0,0,.3) 1px, transparent 2px, transparent 2px, rgba(0,0,0,.3) 4px);
       background-size: 14px 12px;

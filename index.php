@@ -11,10 +11,14 @@
         report-uri="/csp-violation-report-endpoint/" 
         content="img-src 'self' https://www.google-analytics.com *.googleapis.com https://maps.gstatic.com https://csi.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ *.googleapis.com https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/; object-src 'self' blob:; media-src 'self' blob:; worker-src 'self'"
       >
-
-      <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+      <meta name="theme-color" content="#314187">
       <link rel="stylesheet" href="dist/styles/global.css">
       <link rel="manifest" href="manifest.json">
+      <link rel="stylesheet" href="dist/styles/global.css">
+      <link rel="apple-touch-icon" sizes="180x180" href="img/app-icons/apple-touch-icon.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="img/app-icons/favicon-16x16.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="img/app-icons/favicon-32x32.png">
+      <link rel="mask-icon" href="img/app-icons/safari-pinned-tab.svg" color="#314187">
 
       <script nonce="2109b8a76z">
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -41,7 +45,6 @@
                     <h1 class="page-heading"><span class="minor-word">The</span> Conditional Orchestra</h1>
                     <p class="intro">Using current weather conditions The Conditional Orchestra generates unique compositions for your listening pleasure.</p>
                   </div>
-                  <div class="version-sash">Beta</div>
                 </header>
                 <!-- end header -->
                 <!-- begin body -->
