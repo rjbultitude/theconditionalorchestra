@@ -994,16 +994,12 @@ module.exports = function() {
           displayWorker.addEventListener('message', function(result) {
             buildDisplay(result.data);
             displayWorker.terminate();
-<<<<<<< HEAD
             if (_firstLoad) {
               // revoke the Object URL that was used to create this worker, so as
               // not to leak it
               URL.revokeObjectURL(displayWorker.objectURL);
               _firstLoad = false;
             }
-=======
-            console.log('worker result.data', result.data);
->>>>>>> develop
           });
           displayWorker.onerror = function(e) {
             console.log('Error with web worker on ' + 'Line #' + e.lineno +' - ' + e.message + ' in ' + e.filename);
