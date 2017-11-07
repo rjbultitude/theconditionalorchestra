@@ -12,7 +12,7 @@
         content="img-src 'self' https://www.google-analytics.com *.googleapis.com *.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ *.googleapis.com https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/; worker-src 'self' blob:;"
       >
       <meta name="theme-color" content="#314187">
-      <link rel="stylesheet" href="dist/styles/global.css">
+      <meta name="msvalidate.01" content="5BFBF81355466C31B5BA268EE970EB42" />
       <link rel="manifest" href="manifest.json">
       <link rel="stylesheet" href="dist/styles/global.css">
       <link rel="apple-touch-icon" sizes="180x180" href="img/app-icons/apple-touch-icon.png">
