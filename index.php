@@ -9,7 +9,7 @@
       <meta 
         http-equiv="Content-Security-Policy" 
         report-uri="/csp-violation-report-endpoint/" 
-        content="img-src 'self' https://www.google-analytics.com *.googleapis.com *.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ *.googleapis.com https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/; worker-src 'self' blob:;"
+        content="img-src 'self' https://www.google-analytics.com *.googleapis.com *.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ *.googleapis.com https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z' 'nonce-3210c9c87a'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/; worker-src 'self' blob:;"
       >
       <meta name="theme-color" content="#314187">
       <meta name="msvalidate.01" content="5BFBF81355466C31B5BA268EE970EB42" />
@@ -178,5 +178,19 @@
         </div>
       </div>
       <script src="dist/scripts/app.js"></script>
+      <script nonce="3210c9c87a">
+        //This is the "Offline copy of pages" service worker
+        //Add this below content to your HTML page, or add the js file to your page at the very top to register sercie worker
+        if (navigator.serviceWorker.controller) {
+          console.log('[PWA Builder] active service worker found, no need to register')
+        } else {
+          //Register the ServiceWorker
+          navigator.serviceWorker.register('pwabuilder-sw.js', {
+            scope: './'
+          }).then(function(reg) {
+            console.log('Service worker has been registered for scope:'+ reg.scope);
+          });
+        }
+      </script>
     </body>
 </html>
