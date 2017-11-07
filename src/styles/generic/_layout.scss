@@ -89,7 +89,7 @@ canvas {
   &.rain {
     //background-image: repeating-linear-gradient(98deg, rgba(255,255,255,.5), rgba(255,255,255,.5) 1px, transparent 1px, transparent 100%, rgba(0,0,0,.3) 4px);
     background-image: linear-gradient(135deg,
-		transparent calc(50% - .015em), rgba(255,255,255,.1) 0,
+		transparent calc(50% - .015em), rgba(255,255,255,.2) 0,
 		rgba(255,255,255,.2) calc(50% + .015em), transparent 0);
     background-size: 10px 14px;
   }
