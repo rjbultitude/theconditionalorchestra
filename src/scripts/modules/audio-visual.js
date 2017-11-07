@@ -995,8 +995,8 @@ module.exports = function() {
             buildDisplay(result.data);
             displayWorker.terminate();
             if (_firstLoad) {
-              // revoke the Object URL that was used to create this worker, so as
-              // not to leak it
+              // revoke the Object URL that was used to create this worker,
+              // so as not to leak it
               URL.revokeObjectURL(displayWorker.objectURL);
               _firstLoad = false;
             }
