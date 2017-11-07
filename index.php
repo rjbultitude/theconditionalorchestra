@@ -7,6 +7,7 @@
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="theme-color" content="#314187">
+      <meta name="msvalidate.01" content="5BFBF81355466C31B5BA268EE970EB42" />
       <link rel="manifest" href="manifest.json">
       <link rel="stylesheet" href="dist/styles/global.css">
       <link rel="apple-touch-icon" sizes="180x180" href="img/app-icons/apple-touch-icon.png">
