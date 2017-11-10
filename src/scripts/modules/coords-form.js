@@ -11,6 +11,7 @@ var microU = require('../utilities/micro-utilities');
 var makeRequest = require('../utilities/make-request');
 var classListChain = require('../utilities/class-list-chain');
 var getMeanVal = require('../utilities/get-mean-val');
+var storageShim = require('../utilities/storage-shim');
 var summaryIcon = require('./summary-icon');
 
 module.exports = function(query) {
@@ -249,6 +250,7 @@ module.exports = function(query) {
       // Keep last state for next time
       // in case user should be offline
       var locationDataString = JSON.stringify(locationData);
+      storageShim();
       localStorage.setItem('locationData', locationDataString);
       // update the url
       updateURL(locationData.name);
