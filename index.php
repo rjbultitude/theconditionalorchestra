@@ -13,6 +13,11 @@
       >
       <meta name="theme-color" content="#314187">
       <meta name="msvalidate.01" content="5BFBF81355466C31B5BA268EE970EB42" />
+      <link rel="dns-prefetch" href="https://www.google-analytics.com">
+      <link rel="dns-prefetch" href="https://maps.googleapis.com">
+      <link rel="dns-prefetch" href="https://api.darksky.net/">
+      <link rel="dns-prefetch" href="https://fonts.gstatic.com/">
+      <!-- <link rel="prefetch" href="image.png"> -->
       <link rel="manifest" href="manifest.json">
       <link rel="stylesheet" href="dist/styles/global.css">
       <link rel="apple-touch-icon" sizes="180x180" href="img/app-icons/apple-touch-icon.png">
