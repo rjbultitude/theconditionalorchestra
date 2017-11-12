@@ -36,6 +36,9 @@ Styles and scripts will be processed and watched for changes. Scripts will be li
 
 [JSCS](http://jscs.info/rules.html) and [JS Hint](http://jshint.com/docs/options/) are used to highlights stylisitic and syntactical JS issues. Rules used are listed in `.jscsrc` and `.jshintrc` respectively.
 
+### Service worker
+This is registered in an inline script on the index page and refers to a file that is minfied and copied to the root when the Gulp task `script` is run.
+
 ## References
 
 * [Freqi](https://www.npmjs.com/package/freqi)
