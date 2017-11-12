@@ -1,5 +1,5 @@
 self.addEventListener('install', function(event) {
-  var indexPage = new Request('index.php');
+  var indexPage = new Request('../../index.php');
   event.waitUntil(
     fetch(indexPage).then(function(response) {
       return caches.open('pwabuilder-offline').then(function(cache) {
