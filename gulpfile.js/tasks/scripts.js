@@ -54,4 +54,4 @@ if (!config.production) {
     });
 }
 
-gulp.task('scripts', ['copy-script'], bundle);
+gulp.task('scripts', bundle);
