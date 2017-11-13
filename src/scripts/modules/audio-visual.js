@@ -102,8 +102,7 @@ module.exports = function() {
     }, 50);
   }
 
-  function fadeOutDisplayItems(thisDisplayItem, index, totalItems, doneFn,
-    autoStart) {
+  function fadeOutDisplayItems(thisDisplayItem, index, totalItems, doneFn, autoStart) {
     var _opacity = 1;
     var _aniLoop = setInterval(function() {
       if (_opacity > 0) {

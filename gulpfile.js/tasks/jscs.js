@@ -12,6 +12,7 @@ gulp.task('jscs', function() {
             path.join(config.scripts.src, '**', '*.js'),
             '!' + path.join(config.scripts.src, 'libs', '*.js'),
             '!' + path.join(config.scripts.src, 'plugins', '*.js'),
+            '!' + path.join(config.scripts.src, 'sw', '*.js'),
             '!' + path.join(config.scripts.src, '*.min.js')
         ])
         .pipe(jscs('.jscsrc'));

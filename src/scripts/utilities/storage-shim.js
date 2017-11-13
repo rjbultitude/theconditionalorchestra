@@ -14,4 +14,4 @@ module.exports = function() {
             alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode". Some settings may not save or some features may not work properly for you.');
         }
     }
-}
+};

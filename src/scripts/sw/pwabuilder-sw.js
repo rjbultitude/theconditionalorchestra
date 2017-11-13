@@ -13,7 +13,7 @@ self.addEventListener('fetch', function(event) {
   var updateCache = function(request){
     return caches.open('pwabuilder-offline').then(function (cache) {
       return fetch(request).then(function (response) {
-        console.log('[PWA Builder] add page to offline'+response.url)
+        console.log('[PWA Builder] add page to offline'+response.url);
         return cache.put(request, response);
       });
     });
@@ -26,10 +26,10 @@ self.addEventListener('fetch', function(event) {
       console.log( '[PWA Builder] Network request Failed. Serving content from cache: ' + error );
       return caches.open('pwabuilder-offline').then(function (cache) {
         return cache.match(event.request).then(function (matching) {
-          var report =  !matching || matching.status == 404?Promise.reject('no-match'): matching;
-          return report
+          var report =  !matching || matching.status === 404 ? Promise.reject('no-match') : matching;
+          return report;
         });
       });
     })
   );
-})
+});

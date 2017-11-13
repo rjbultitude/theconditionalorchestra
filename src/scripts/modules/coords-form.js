@@ -44,6 +44,13 @@ module.exports = function(query) {
     }
   }
 
+  function clearURLQuery() {
+    if (history.pushState) {
+      var newurl = window.location.protocol + '//' + window.location.host;
+      window.history.pushState({},'',newurl);
+    }
+  }
+
   function resetModState() {
     isPlaying = false;
     usingStaticData = false;
@@ -57,6 +64,15 @@ module.exports = function(query) {
   function disableControls() {
     userLocBtnEl.disabled = true;
     customLocSubmitBtnEl.disabled = true;
+  }
+
+  function resetAppState() {
+    resetModState();
+    updateStatus('start');
+    userLocBtnEl.innerHTML = 'Play my weather';
+    customLocSubmitBtnEl.innerHTML = 'Play';
+    mapEl.classList.remove('active');
+    summaryIcon.hideSummary();
   }
 
   function NumericCondition(value, min, max) {
@@ -552,7 +568,6 @@ module.exports = function(query) {
 
   linkLocationSelectEl.addEventListener('click', function(e) {
     e.preventDefault();
-    //hideOptions();
     showForm();
   }, false);
 
@@ -569,12 +584,8 @@ module.exports = function(query) {
   });
 
   channel.subscribe('allStopped', function(autoStart) {
-    resetModState();
-    updateStatus('start');
-    userLocBtnEl.innerHTML = 'Play my weather';
-    customLocSubmitBtnEl.innerHTML = 'Play';
-    mapEl.classList.remove('active');
-    summaryIcon.hideSummary();
+    resetAppState();
+    clearURLQuery();
     if (autoStart) {
       useCustomLocation();
     }
@@ -588,13 +599,6 @@ module.exports = function(query) {
       getLatLong(queryString, true);
     }
   }
-
-  window.addEventListener('popstate', function (e) {
-    var state = e.state;
-    if (state !== null) {
-      loadLocFromURL(state.path);
-    }
-  });
 
   // Init
   updateStatus('start');
