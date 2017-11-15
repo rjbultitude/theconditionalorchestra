@@ -1,3 +1,7 @@
+RewriteEngine On
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://theconditionalorchestra.com/$1 [R=301,L]
+
 ## DEFLATE ##
 <IfModule mod_headers.c>
   <FilesMatch "\.(js|css|xml|gz)$">
