@@ -14,7 +14,6 @@
     padding: 12px;
     background-color: $color-purple-darkest;
     @include outputThemeBg(true);
-
   }
 
   .night & {
@@ -64,7 +63,7 @@
   .tab__panel {
     position: relative;
     display: none;
-    padding: $padding/4 $padding*2 $padding/4 $padding/2;
+    padding: $padding/4 $padding/4 $padding/4 $padding/2;
     text-align: left;
 
     .no-js & {
