@@ -40,6 +40,9 @@
     display: block;
   }
 
+  &:hover {
+    cursor: pointer;
+  }
 
   &:hover,
   &:active,
