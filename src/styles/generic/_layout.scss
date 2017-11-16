@@ -48,7 +48,9 @@ body {
 }
 
 canvas {
-  display: none;
+  position: absolute;
+  left: -999em;
+  top: -999em;
 }
 
 .innerwrapper,

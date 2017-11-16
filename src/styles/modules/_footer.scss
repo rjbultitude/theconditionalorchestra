@@ -66,6 +66,7 @@
     padding: $padding/4 $padding/4 $padding/4 $padding/2;
     text-align: left;
     overflow-y: auto;
+    overflow-x: hidden;
 
     .no-js & {
       display: none;
