@@ -1310,6 +1310,7 @@ module.exports = function() {
 
       // P5 SETUP - 2
       sketch.setup = function setup() {
+        noCanvas();
         sketch.frameRate(appFrameRate);
         //--------------------------
         // Handle sounds / Start app
