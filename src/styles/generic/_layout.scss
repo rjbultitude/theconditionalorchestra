@@ -41,16 +41,9 @@ body {
 
   @each $key, $value in $themeColors {
     &.#{$key} {
-      //background-image: linear-gradient(to bottom, $value 20%, lighten($value,15%) 100%);
       background-color: $value;
     }
   }
-}
-
-canvas {
-  position: absolute;
-  left: -999em;
-  top: -999em;
 }
 
 .innerwrapper,
