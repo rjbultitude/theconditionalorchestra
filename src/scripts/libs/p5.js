@@ -16484,6 +16484,15 @@ function getMousePos(canvas, w, h, evt) {
   var rect = canvas.getBoundingClientRect();
   var sx = canvas.scrollWidth / w;
   var sy = canvas.scrollHeight / h;
+  if (!evt) {
+    return {
+        x: 0,
+        y: 0,
+        winX: 0,
+        winY: 0,
+        id: 'evt.identifier'
+      };
+  }
   return {
     x: (evt.clientX - rect.left) / sx,
     y: (evt.clientY - rect.top) / sy,
