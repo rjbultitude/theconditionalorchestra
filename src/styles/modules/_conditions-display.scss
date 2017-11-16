@@ -83,7 +83,7 @@
   .conditions-display__value {
     color: $color-blue-pale;
     @include outputThemeTextColour;
-    font-size: 18px;
+    font-size: rem(18px);
   }
 
   .conditions-display__icon {
