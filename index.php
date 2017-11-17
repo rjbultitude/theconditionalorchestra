@@ -45,7 +45,7 @@
             <article>
                 <!-- begin header -->
                 <header class="article-header" role="banner">
-                  <div class="wrapper">
+                  <div class="wrapper wrapper-article-header">
                     <h1 class="page-heading"><span class="minor-word">The</span> Conditional Orchestra</h1>
                     <p class="intro">Using current weather conditions The Conditional Orchestra generates unique compositions for your listening pleasure.</p>
                   </div>
@@ -53,7 +53,7 @@
                 <!-- end header -->
                 <!-- begin body -->
                 <div class="article-body" role="article">
-                  <div class="wrapper">
+                  <div class="wrapper wrapper-article-body">
                     <!-- begin forms -->
                     <section class="form-section section">
                       <h2 class="section-heading">Generate music from the weather</h2>
@@ -119,7 +119,7 @@
       </div>
       <!-- begin footer -->
       <footer class="footer" role="contentinfo">
-        <div class="wrapper">
+        <div class="wrapper wrapper-footer">
           <div class="tab__panel" id="help" data-ref="tab-panel">
             <h2 class="tab__heading">Help</h2>
             <p>If it can't find your location ensure you've clicked &ldquo;allow&rdquo; when the browser asks to use your location. 

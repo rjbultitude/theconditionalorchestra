@@ -661,7 +661,7 @@ module.exports = (function() {
             constrain: false,
             unit: 'Mbs',
             iconPath: '/img/pressure-icon.svg',
-            music: 'Harp arpeggio intervals are ',
+            music: 'Harp arpeggio playing ',
             musicValue: '',
             negativeKey: ['isPrecip', 'isFine', 'isWindy'],
             negativeValue: false
