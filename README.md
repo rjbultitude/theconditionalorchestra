@@ -55,6 +55,8 @@ See the modules audio-getters.js, coords-form.js and audio-visual.js for most of
 
 ## Plans
 
+Merge `develop` into `master`. Develop's updates include installation of darkskyjs-lite
+
 Write unit tests for coords-form, audio-visual, audio-getters and audio-helpers
 
 Consider using [windy.com](https://www.windy.com/) map rather than text input
