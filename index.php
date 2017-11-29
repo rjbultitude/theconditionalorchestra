@@ -45,7 +45,7 @@
             <article>
                 <!-- begin header -->
                 <header class="article-header" role="banner">
-                  <div class="wrapper">
+                  <div class="wrapper wrapper-article-header">
                     <h1 class="page-heading"><span class="minor-word">The</span> Conditional Orchestra</h1>
                     <p class="intro">Using current weather conditions The Conditional Orchestra generates unique compositions for your listening pleasure.</p>
                   </div>
@@ -53,7 +53,7 @@
                 <!-- end header -->
                 <!-- begin body -->
                 <div class="article-body" role="article">
-                  <div class="wrapper">
+                  <div class="wrapper wrapper-article-body">
                     <!-- begin forms -->
                     <section class="form-section section">
                       <h2 class="section-heading">Generate music from the weather</h2>
@@ -115,73 +115,72 @@
             <!-- end article -->
           </main>
           <!-- end main -->
-          <!-- begin footer -->
-          <footer class="footer" role="contentinfo">
-            <div class="wrapper">
-              <div class="tab__panel" id="help" data-ref="tab-panel">
-                <h2 class="tab__heading">Help</h2>
-                <p>If it can't find your location ensure you've clicked &ldquo;allow&rdquo; when the browser asks to use your location. 
-                Alternatively click &ldquo;choose a location&rdquo; where you can enter any place you like.</p>
-                <p>If the music playback is glitchy please try it on a more powerful device.</p>
-                <p>The audio may stop if it's not the active tab in your browser, so be sure to open in a new window for continuous playback.</p>
-                <p>Tip: try picking extreme places such as Nordvik, Dubai, Jakarta or Cape Farewell. To see a weather map of the world try <a href="https://www.windy.com/" target="_blank" rel="noopener">Windy.com</a></p>
-                <button class="button-close" data-ref="tab-close">
-                  <span class="text">
-                    Close
-                  </span>
-                  <span class="icon">
-                    <?php echo file_get_contents("img/close-icon.svg"); ?>
-                  </span>
-                </button>
-              </div>
-              <div class="tab__panel" id="credits" data-ref="tab-panel">
-                <h2 class="tab__heading">Credits</h2>
-                <p>This project uses <a href="https://darksky.net" target="_blank" rel="noopener">DarkSky.net</a> to obtain the weather data. 
-                The library used to retrieve the data can be found on <a href="https://www.npmjs.com/package/darkskyjs" target="_blank" rel="noopener">NPM here</a></p>
-                <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html" target="_blank" rel="noopener">Google maps</a> is used to reverse Geocode the location information</p>
-                <p><a href="http://p5js.org/" target="_blank" rel="noopener">P5.js</a> is used to load and control the audio.</p>
-                <p><a href="https://www.npmjs.com/package/freqi">Freqi</a> is a small module I wrote to generate the frequencies for playback.</p>
-                <p>The Conditional Orchestra is an open <a href="https://github.com/rjbultitude/theconditionalorchestra" target="_blank" rel="noopener">source project</a>, 
-                written and maintained by me, <a href="https://github.com/rjbultitude">Rich Bultitude</a>.</p>
-                <p>Read about why and how I created this project <a href="https://medium.com/@pointbmusic/making-the-conditional-orchestra-df3149b17d23">here.</a></p>
-                <button class="button-close" data-ref="tab-close">
-                  <span class="text">
-                    Close
-                  </span>
-                  <span class="icon">
-                    <?php echo file_get_contents("img/close-icon.svg"); ?>
-                  </span>
-                </button>
-              </div>
-              <div class="tab__panel" id="source" data-ref="tab-panel">
-                <h2 class="tab__heading">Share</h2>
-                <p>Any location you listen to can be shared, just copy and paste the URL e.g. <a href="https://theconditionalorchestra.com/?London-UK" target="_blank" rel="noopener">theconditionalorchestra.com/?London-UK</a></p>
-                <p>If you have any comments, suggestions or want to know more <a href="https://twitter.com/pointbmusic" target="_blank" rel="noopener">DM on Twitter</a></p>
-                <button class="button-close" data-ref="tab-close">
-                  <span class="text">
-                    Close
-                  </span>
-                  <span class="icon">
-                    <?php echo file_get_contents("img/close-icon.svg"); ?>
-                  </span>
-                </button>
-              </div>
-              <ul class="tabs" data-directive="tabs">
-                <li class="tabs__item">
-                  <a href="#help" data-behaviour="tab">Help</a>
-                </li>
-                <li class="tabs__item">
-                  <a href="#credits" data-behaviour="tab">Credits</a>
-                </li>
-                <li class="tabs__item">
-                  <a href="#source" data-behaviour="tab">Share</a>
-                </li>
-              </ul>
-            </div>
-          </footer>
-          <!-- end footer -->
         </div>
       </div>
+      <!-- begin footer -->
+      <footer class="footer" role="contentinfo">
+        <div class="wrapper wrapper-footer">
+          <div class="tab__panel" id="help" data-ref="tab-panel">
+            <h2 class="tab__heading">Help</h2>
+            <p>If it can't find your location ensure you've clicked &ldquo;allow&rdquo; when the browser asks to use your location. 
+            Alternatively, click &ldquo;choose a location&rdquo; and enter any place you like.</p>
+            <p>If the music playback is glitchy please try it on a more powerful device.</p>
+            <p>The audio may stop if it's not the active tab in your browser. For continuous playback be open in a new window.</p>
+            <p>Tip: try picking extreme places such as Nordvik, Jakarta or Cape Farewell. To see a weather map of the world try <a href="https://www.windy.com/" target="_blank" rel="noopener">Windy.com</a></p>
+            <button class="button-close" data-ref="tab-close">
+              <span class="text">
+                Close
+              </span>
+              <span class="icon">
+                <?php echo file_get_contents("img/close-icon.svg"); ?>
+              </span>
+            </button>
+          </div>
+          <div class="tab__panel" id="credits" data-ref="tab-panel">
+            <h2 class="tab__heading">Credits</h2>
+            <p><a href="https://darksky.net" target="_blank" rel="noopener">DarkSky.net</a> is the source of weather data and <a href="https://www.npmjs.com/package/darkskyjs" target="_blank" rel="noopener">this library</a> is used to retrieve it.</p>
+            <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html" target="_blank" rel="noopener">Google maps</a> is used to reverse Geocode the location information</p>
+            <p><a href="http://p5js.org/" target="_blank" rel="noopener">P5.js</a> is used to load and control the audio.</p>
+            <p><a href="https://www.npmjs.com/package/freqi">Freqi</a> is a small module I wrote to generate the frequencies for playback.</p>
+            <p>The Conditional Orchestra is an <a href="https://github.com/rjbultitude/theconditionalorchestra" target="_blank" rel="noopener">open source project</a>, 
+            written and maintained by me, <a href="https://github.com/rjbultitude">Rich Bultitude</a>.</p>
+            <p><a href="https://medium.com/@pointbmusic/making-the-conditional-orchestra-df3149b17d23">Read about why and how I created this project here.</a></p>
+            <button class="button-close" data-ref="tab-close">
+              <span class="text">
+                Close
+              </span>
+              <span class="icon">
+                <?php echo file_get_contents("img/close-icon.svg"); ?>
+              </span>
+            </button>
+          </div>
+          <div class="tab__panel" id="source" data-ref="tab-panel">
+            <h2 class="tab__heading">Share</h2>
+            <p>Any location you listen to can be shared, just copy and paste the URL e.g. <a href="https://theconditionalorchestra.com/?London-UK" target="_blank" rel="noopener">theconditionalorchestra.com/?London-UK</a></p>
+            <p>If you have any comments, suggestions or want to know more <a href="https://twitter.com/pointbmusic" target="_blank" rel="noopener">DM on Twitter</a></p>
+            <button class="button-close" data-ref="tab-close">
+              <span class="text">
+                Close
+              </span>
+              <span class="icon">
+                <?php echo file_get_contents("img/close-icon.svg"); ?>
+              </span>
+            </button>
+          </div>
+          <ul class="tabs" data-directive="tabs">
+            <li class="tabs__item">
+              <a href="#help" data-behaviour="tab">Help</a>
+            </li>
+            <li class="tabs__item">
+              <a href="#credits" data-behaviour="tab">Credits</a>
+            </li>
+            <li class="tabs__item">
+              <a href="#source" data-behaviour="tab">Share</a>
+            </li>
+          </ul>
+        </div>
+      </footer>
+      <!-- end footer -->
       <script src="dist/scripts/app.js"></script>
       <script nonce="3210c9c87a">
         if (navigator.serviceWorker) {

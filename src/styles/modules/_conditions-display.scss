@@ -65,6 +65,11 @@
     margin-left: 12%;
   }
 
+  @media screen and (min-width: $large-bp) {
+    width: 180px;
+    margin: 16px;
+  }
+
   .conditions-display__header {
     padding-bottom: $padding/4;
     min-height: 86px;
@@ -83,7 +88,7 @@
   .conditions-display__value {
     color: $color-blue-pale;
     @include outputThemeTextColour;
-    font-size: 18px;
+    font-size: rem(18px);
   }
 
   .conditions-display__icon {

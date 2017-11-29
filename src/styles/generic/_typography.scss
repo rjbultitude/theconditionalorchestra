@@ -1,9 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Libre+Baskerville|Lora');
 
+html {
+  font-size: $baseFontSize;
+  line-height: 1.4;
+}
+
 body {
   text-rendering: optimizeLegibility;
-  font-size: 17px;
-  line-height: 1.4;
   font-family: 'Lora', serif;
 }
 
@@ -20,14 +23,14 @@ button {
 }
 
 .page-heading {
-  font-size: 32px;
+  font-size: rem(32px);
   line-height: 2.4rem;
   margin-bottom: $padding/2;
   position: relative;
 }
 
 .section-heading {
-  font-size: 32px;
+  font-size: rem(32px);
   margin: 12px auto;
 
   @extend %hidden;
@@ -54,7 +57,7 @@ a {
 }
 
 .minor-word {
-  font-size: 12px;
+  font-size: rem(12px);
   line-height: 1.3rem;
   position: absolute;
   bottom: 94%;

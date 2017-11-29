@@ -26,6 +26,13 @@ section {
     position: relative;
 }
 
+.wrapper:not(.wrapper-footer) {
+  @media screen and (min-width: $large-bp) {
+    max-width: 1366px;
+    padding: 0 16px;
+  }
+}
+
 html {
   height: 100%;
   color: white;
@@ -41,14 +48,9 @@ body {
 
   @each $key, $value in $themeColors {
     &.#{$key} {
-      //background-image: linear-gradient(to bottom, $value 20%, lighten($value,15%) 100%);
       background-color: $value;
     }
   }
-}
-
-canvas {
-  display: none;
 }
 
 .innerwrapper,

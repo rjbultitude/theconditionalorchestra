@@ -4,6 +4,7 @@
   bottom: 0;
   width: 100%;
   text-align: center;
+  text-size-adjust: 100%;
 
   .no-js & {
     position: static;
@@ -14,7 +15,6 @@
     padding: 12px;
     background-color: $color-purple-darkest;
     @include outputThemeBg(true);
-
   }
 
   .night & {
@@ -24,7 +24,7 @@
   }
 
   .tab__heading {
-    font-size: 24px;
+    font-size: rem(24px);
     padding-bottom: $padding/3;
   }
 
@@ -64,17 +64,23 @@
   .tab__panel {
     position: relative;
     display: none;
-    padding: $padding/4 $padding*2 $padding/4 $padding/2;
+    padding: $padding/4 $padding/4 $padding/4 $padding/2;
     text-align: left;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     .no-js & {
       display: none;
+    }
+
+    @media screen and (max-height: 375px) {
+      height: 260px;
     }
   }
 
   p {
     margin: 0.1rem 0 16px;
-    font-size: 15px;
+    font-size: rem(15px);
   }
 
 }

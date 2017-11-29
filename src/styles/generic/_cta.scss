@@ -1,7 +1,7 @@
 .cta {
     @extend %cta-base;
     padding: 22px;
-    font-size: 20px;
+    font-size: rem(20px);
     @include outputThemeBg(true, 10%);
 
     &:hover,
