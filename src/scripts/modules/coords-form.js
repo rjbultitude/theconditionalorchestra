@@ -1,6 +1,6 @@
 'use strict';
 
-var Darksky = require('darkskyjs');
+var Darksky = require('darkskyjs-lite');
 var GoogleMapsLoader = require('google-maps');
 var postal = require('postal');
 var channel = postal.channel();

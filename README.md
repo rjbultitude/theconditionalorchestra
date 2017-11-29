@@ -44,7 +44,6 @@ This is registered in an inline script on the index page and refers to a file th
 * [Freqi](https://www.npmjs.com/package/freqi)
 * [p5.js](http://p5js.org/)
 * [DarkSkyJS](https://www.npmjs.com/package/darkskyjs)
-* [Moment.js](http://momentjs.com/)
 * [JS Promises Polyfill](https://www.npmjs.com/package/es6-promise-polyfill)
 
 ## Browser support
