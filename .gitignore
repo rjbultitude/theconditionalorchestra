@@ -27,7 +27,7 @@
 .sass-cache/
 node_modules/
 src/scripts/templates/index.js
-/pwabuilder-sw.js
+pwabuilder-sw.js
 
 # CSS
 src/styles/css/
