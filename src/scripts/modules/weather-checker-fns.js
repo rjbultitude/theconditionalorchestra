@@ -82,6 +82,11 @@ module.exports = {
     return frnhtToCelcius(temperatureInFrnht) < -1;
   },
 
+  // @param temperatureInFrnht floating point
+  isWayBelowFreezing: function isWayBelowFreezing(temperatureInFrnht) {
+    return frnhtToCelcius(temperatureInFrnht) < -10;
+  },
+
   /**
    * Broader concept conditions
    */
@@ -118,7 +123,7 @@ module.exports = {
   // @param temperatureInFrnht floating point
   // @param windSpeed floating point
   isBitter: function isBitter(temperatureInFrnht, windSpeed) {
-    return frnhtToCelcius(temperatureInFrnht) < 3 && windSpeed > 23;
+    return frnhtToCelcius(temperatureInFrnht) < 3 && windSpeed > 22;
   },
 
   // @param cloudCover floating point

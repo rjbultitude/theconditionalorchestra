@@ -21,7 +21,7 @@ module.exports =  {
     } else if (wCheck.isSirocco) {
       //Very rare
       _longNoteType = 'shiney';
-    } else if (wCheck.isCrisp) {
+    } else if (wCheck.isCrisp || wCheck.isWayBelowFreezing) {
       _longNoteType = 'string';
     } else {
       _longNoteType = 'flute';
@@ -78,6 +78,9 @@ module.exports =  {
     // non western eq temp scale
     if (wCheck.isBitter) { //organ
       _numSemitones = avSettings.numSemitones * 2; //24
+      console.log('non western: ', _numSemitones);
+    } else if (wCheck.isWayBelowFreezing) { //organ
+      _numSemitones = avSettings.numSemitones + 2; //18
       console.log('non western: ', _numSemitones);
     } else if (wCheck.isViolentStorm) { //guitar
       _numSemitones = avSettings.numSemitones * 1.5; //18
@@ -143,7 +146,7 @@ module.exports =  {
     // organ is used so as not to use a sound
     // that might clash with the brass barritone
     // when conditions are windy
-    if (wCheck.isBitter) {
+    if (wCheck.isBitter || wCheck.isWayBelowFreezing) {
       padType = 'organ';
     } else if (wCheck.isStormy) {
       padType = 'guitar';

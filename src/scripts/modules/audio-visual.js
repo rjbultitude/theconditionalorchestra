@@ -235,6 +235,7 @@ module.exports = function() {
       //temperature
       isCold: weatherCheck.isCold(lwData.temperature.value),
       isFreezing: weatherCheck.isFreezing(lwData.temperature.value),
+      isWayBelowFreezing: weatherCheck.isWayBelowFreezing(lwData.temperature.value),
       //broad conditions
       isMild: weatherCheck.isMild(lwData.temperature.value, lwData.windSpeed.value),
       isMildAndBreezy: weatherCheck.isMildAndBreezy(lwData.temperature.value, lwData.windSpeed.value),
