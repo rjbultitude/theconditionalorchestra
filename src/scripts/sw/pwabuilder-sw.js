@@ -1,6 +1,8 @@
 self.addEventListener('install', function(event) {
-  if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') {
-    return;
+  if (event.request !== undefined) {
+    if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') {
+      return;
+    }
   }
   var indexPage = new Request('index.php');
   event.waitUntil(
