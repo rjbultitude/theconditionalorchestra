@@ -1,8 +1,14 @@
-self.addEventListener('install', function(event) {
+self.isOnlyIfCached = function isOnlyIfCached(event) {
   if (event.request !== undefined) {
     if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') {
-      return;
+      return true;
     }
+  }
+}
+
+self.addEventListener('install', function(event) {
+  if (self.isOnlyIfCached(event)) {
+      return;
   }
   var indexPage = new Request('index.php');
   event.waitUntil(
@@ -15,6 +21,9 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
+  if (self.isOnlyIfCached(event)) {
+    return;
+  }
   var updateCache = function(request){
     return caches.open('pwabuilder-offline').then(function (cache) {
       return fetch(request).then(function (response) {
