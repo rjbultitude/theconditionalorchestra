@@ -412,6 +412,16 @@ module.exports = (function() {
             musicValue: ''
           },
           {
+            key: 'isWayBelowFreezing',
+            title: 'Is way below freezing',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/freezing-icon.svg',
+            music: 'Pad instrument is ',
+            musicValue: ''
+          },
+          {
             key: 'isStormy',
             title: 'Stormy weather',
             value: '',
@@ -514,6 +524,16 @@ module.exports = (function() {
             musicValue: ''
           },
           {
+            key: 'isWayBelowFreezing',
+            title: 'Is way below freezing',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/freezing-icon.svg',
+            music: 'Long note is a ',
+            musicValue: ''
+          },
+          {
             key: 'isOther',
             title: 'Neither muggy, arid, clement nor crisp',
             value: true,
@@ -612,6 +632,16 @@ module.exports = (function() {
           {
             key: 'isBitter',
             title: 'Bitter conditions',
+            value: '',
+            constrain: false,
+            unit: '',
+            iconPath: '/img/freezing-icon.svg',
+            music: 'Number of semitones in octave: ',
+            musicValue: ''
+          },
+          {
+            key: 'isWayBelowFreezing',
+            title: 'Is way below freezing',
             value: '',
             constrain: false,
             unit: '',
