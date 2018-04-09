@@ -20,3 +20,32 @@
   position: absolute;
   left: -999em;
 }
+
+/* Webby nominee vote */
+.webby-banner {
+  position: absolute;
+  display: inline-block;
+  width: 160px;
+  top: 16px;
+  right: 16px;
+
+  img {
+    max-width: 100%;
+  }
+
+  @media all and (max-width: 924px) {
+    width: 100px;
+  }
+
+  @media all and (max-width: 800px) {
+    top: 120px;
+  }
+
+  @media all and (max-width: 600px) {
+    top: 140px;
+  }
+
+  @media all and (max-width: 422px) {
+    display: none;
+  }
+}

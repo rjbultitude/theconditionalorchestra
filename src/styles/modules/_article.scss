@@ -12,6 +12,10 @@ article {
     @include outputThemeBg(true, 30%);
   }
 
+  .wrapper {
+    max-width: 600px;
+  }
+
   .page-heading,
   .intro {
     color: black;

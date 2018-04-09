@@ -181,18 +181,19 @@
         </div>
       </footer>
       <!-- end footer -->
+      <a href="https://vote.webbyawards.com/PublicVoting#/2018/websites/general/netart" target="_blank" rel="noopener" class="webby-banner">
+        <img src="img/Yellow_Vote.png" alt="Webby Awards Nominee, vote for me">
+      </a>
       <script src="dist/scripts/app.js"></script>
       <script nonce="3210c9c87a">
         if (navigator.serviceWorker) {
-          if (navigator.serviceWorker.controller) {
-            console.log('[PWA Builder] active service worker found, no need to register')
-          } else {
-            navigator.serviceWorker.register('pwabuilder-sw.js', {
-              scope: './'
-            }).then(function(reg) {
-              console.log('Service worker has been registered for scope:'+ reg.scope);
-            });
-          }
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            if (registrations.length) {
+              for (var i = 0; i < registrations.length; i++) {
+                registrations[i].unregister();
+              }
+            }
+          });
         }
       </script>
     </body>

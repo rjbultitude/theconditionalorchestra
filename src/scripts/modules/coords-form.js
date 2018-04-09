@@ -316,7 +316,7 @@ module.exports = function(query) {
       });
   }
 
-  //Use previous state to run app
+  // Use previous state to run app
   function useLocalStorageData(statusString) {
     // error check
     var _statusString;
@@ -333,7 +333,7 @@ module.exports = function(query) {
       handleNoGeoData(_statusString + lastKnownSuffix, restoredDataJSON);
       updateUISuccess(restoredDataJSON);
     }
-    //Else use static location data
+    // Else use static location data
     else {
       console.log('no data in localStorage');
       useStaticData(_statusString + staticSuffix);
