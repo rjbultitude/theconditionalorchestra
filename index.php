@@ -195,6 +195,9 @@
             }
           });
         }
+        caches.delete('pwabuilder-offline').then(function(isCacheGone) {
+          console.log('isCacheGone', isCacheGone);
+        });
       </script>
     </body>
 </html>
