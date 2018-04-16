@@ -19,7 +19,7 @@
     "audio"
   ],
   "scripts": {
-    "gulp": "gulp",
+    "build": "gulp --production",
     "start": "gulp",
     "tmpl": "gulp templates"
   },
@@ -34,7 +34,7 @@
     "gulp-concat": "^2.6.1",
     "gulp-connect-php": "^1.0.3",
     "gulp-declare": "^0.3.0",
-    "gulp-handlebars": "^5.0.2",
+    "gulp-handlebars": "^4.0.0",
     "gulp-jscs": "^4.0.0",
     "gulp-jshint": "^2.0.4",
     "gulp-minify-css": "^1.1.6",
@@ -55,6 +55,7 @@
     "es6-promise": "^4.1.1",
     "freqi": "^1.0.3",
     "google-maps": "^3.2.1",
+    "handlebars": "^4.0.11",
     "he": "^1.1.0",
     "postal": "^1.0.8",
     "webworkify": "^1.5.0"

@@ -19,7 +19,7 @@
       <link rel="dns-prefetch" href="https://fonts.gstatic.com/">
       <!-- <link rel="prefetch" href="image.png"> -->
       <link rel="manifest" href="manifest.json">
-      <link rel="stylesheet" href="dist/styles/global_1.css">
+      <link rel="stylesheet" href="dist/styles/global.css">
       <link rel="apple-touch-icon" sizes="180x180" href="img/app-icons/apple-touch-icon.png">
       <link rel="icon" type="image/png" sizes="16x16" href="img/app-icons/favicon-16x16.png">
       <link rel="icon" type="image/png" sizes="32x32" href="img/app-icons/favicon-32x32.png">
@@ -183,7 +183,7 @@
       <a href="https://vote.webbyawards.com/PublicVoting#/2018/websites/general/netart" target="_blank" rel="noopener" class="webby-banner">
         <img src="img/Yellow_Vote.png" alt="Webby Awards Nominee, vote for me">
       </a>
-      <script src="dist/scripts/app_1.js"></script>
+      <script src="dist/scripts/app.js"></script>
       <script nonce="3210c9c87a">
         if (navigator.serviceWorker) {
           navigator.serviceWorker.getRegistrations().then(function(registrations) {

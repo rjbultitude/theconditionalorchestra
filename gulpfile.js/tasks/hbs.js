@@ -10,7 +10,9 @@ gulp.task('templates', function() {
   // Load templates from the templates/ folder relative to where gulp was executed
   gulp.src('src/scripts/templates/**/*.hbs')
     // Compile each Handlebars template source file to a template function
-    .pipe(handlebars())
+    .pipe(handlebars({
+      handlebars: require('handlebars')
+    }))
     // Wrap each template function in a call to Handlebars.template
     .pipe(wrap('Handlebars.template(<%= contents %>)'))
     // Declare template functions as properties and sub-properties of exports
