@@ -467,13 +467,12 @@ module.exports = function(query) {
   }
 
   function getGeo() {
-    updateStatus('location');
-
-    if (!navigator.geolocation) {
-      updateStatus('noGeo');
-      showForm();
-      return;
-    }
+    var options = {
+      enableHighAccuracy: false,
+      timeout: 8000,
+      maximumAge: 0
+    };
+    var oldCoords = localStorage.getItem('geoCoords');
 
     function success(position) {
       updateStatus('obtainedLocation');
@@ -500,7 +499,25 @@ module.exports = function(query) {
       console.error('failure.message', failure.message);
     }
 
-    navigator.geolocation.getCurrentPosition(success, failure);
+    if (oldCoords) {
+      success(JSON.parse(oldCoords));
+    }
+
+    navigator.geolocation.getCurrentPosition(pos => {
+      const newCoords = JSON.stringify(pos.coords);
+      localStorage.setItem('geoCoords', newCoords);
+      showWeather(newCoords);
+    }, handleError);
+
+    updateStatus('location');
+
+    if (!navigator.geolocation) {
+      updateStatus('noGeo');
+      showForm();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(success, failure, options);
   }
 
   function startApp(inputType, placeInput) {
