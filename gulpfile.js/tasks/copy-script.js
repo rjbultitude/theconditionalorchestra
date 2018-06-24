@@ -9,7 +9,7 @@ var util = require('gulp-util');
 
 gulp.task('copy-script', function() {
   // Load templates from the templates/ folder relative to where gulp was executed
-  gulp.src(path.join(config.scripts.src, 'sw/pwabuilder-sw.js'))
+  gulp.src(path.join(config.scripts.src, 'sw/sw.js'))
   .pipe(config.production ? stripDebug() : util.noop())
   .pipe(config.production ? uglify() : util.noop())
   .pipe(gulp.dest('./'));

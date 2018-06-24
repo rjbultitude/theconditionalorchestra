@@ -4,6 +4,16 @@ var jsLoad = require('./utilities/js-load');
 var updateStatus = require('./modules/update-status');
 require('./utilities/browser-tab-visibility');
 
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwabuilder-sw.js')
+    .then(function() {
+      console.log('Service worker registered!');
+    }).catch(function(err) {
+      console.log(err);
+    });
+}
+
 // Web audio support?
 if (!window.AudioContext && !window.webkitAudioContext) {
   updateStatus('noAudio');

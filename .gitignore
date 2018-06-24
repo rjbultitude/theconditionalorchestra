@@ -28,6 +28,7 @@
 node_modules/
 src/scripts/templates/index.js
 pwabuilder-sw.js
+sw.js
 
 # CSS
 src/styles/css/
