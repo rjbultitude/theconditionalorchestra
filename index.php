@@ -180,9 +180,7 @@
         </div>
       </footer>
       <!-- end footer -->
-      <a href="https://vote.webbyawards.com/PublicVoting#/2018/websites/general/netart" target="_blank" rel="noopener" class="webby-banner">
-        <img src="img/Yellow_Vote.png" alt="Webby Awards Nominee, vote for me">
-      </a>
+      <img src="img/Yellow_Nominee.png" alt="Webby Awards Nominee" class="webby-banner">
       <script src="dist/scripts/app.js"></script>
       <script nonce="3210c9c87a">
         if (navigator.serviceWorker) {

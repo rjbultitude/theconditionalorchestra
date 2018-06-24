@@ -24,14 +24,10 @@
 /* Webby nominee vote */
 .webby-banner {
   position: absolute;
-  display: inline-block;
-  width: 160px;
-  top: 16px;
+  width: 132px;
+  top: 58px;
   right: 16px;
-
-  img {
-    max-width: 100%;
-  }
+  max-width: 100%;
 
   @media all and (max-width: 924px) {
     width: 100px;
