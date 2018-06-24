@@ -19,7 +19,8 @@ module.exports = {
     },
     scripts: {
         dist:  path.join('dist', 'scripts'),
-        src:   path.join('src', 'scripts')
+        src:   path.join('src', 'scripts'),
+        srcSW:   path.join('src', 'sw')
     },
     styles: {
         dist:  path.join('dist', 'styles'),
