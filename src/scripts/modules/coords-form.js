@@ -5,6 +5,7 @@ var GoogleMapsLoader = require('google-maps');
 var postal = require('postal');
 var channel = postal.channel();
 var Nll = require('./nll-cnstrctr');
+var staticData = require('./static-data');
 var maxMin = require('../settings/max-min-values');
 var updateStatus = require('./update-status');
 var microU = require('../utilities/micro-utilities');
@@ -296,24 +297,15 @@ module.exports = function(query) {
   }
 
   function useStaticData(statusString) {
-    var fetchStaticData = makeRequest('GET', 'data/static-data.json');
-    fetchStaticData.then(function success(staticData) {
-        var staticDataJSON = JSON.parse(staticData);
-        if(checkLocationDataKeys(staticDataJSON)) {
-          var _fixedStaticData = fixlwDataRanges(staticDataJSON);
-          handleNoGeoData(statusString, _fixedStaticData);
-          console.log('using static data');
-          updateUISuccess(_fixedStaticData);
-        } else {
-          updateStatus('error');
-          console.log('incorrect static data');
-        }
-      },
-      function failure() {
-        updateStatus('errorData');
-        enableControls();
-        console.error('failed to load static data');
-      });
+      if(checkLocationDataKeys(staticData)) {
+        var _fixedStaticData = fixlwDataRanges(staticData);
+        handleNoGeoData(statusString, _fixedStaticData);
+        console.log('using static data');
+        updateUISuccess(_fixedStaticData);
+      } else {
+        updateStatus('error');
+        console.log('incorrect static data');
+      }
   }
 
   // Use previous state to run app
@@ -475,6 +467,10 @@ module.exports = function(query) {
     var oldCoords = localStorage.getItem('geoCoords');
 
     function success(position) {
+      if (!navigator.onLine) {
+        failure({message: null});
+        return;
+      }
       updateStatus('obtainedLocation');
       getPlaces(position.coords.latitude, position.coords.longitude);
     }
@@ -503,14 +499,9 @@ module.exports = function(query) {
       success(JSON.parse(oldCoords));
     }
 
-    navigator.geolocation.getCurrentPosition(pos => {
-      const newCoords = JSON.stringify(pos.coords);
-      localStorage.setItem('geoCoords', newCoords);
-      showWeather(newCoords);
-    }, handleError);
-
     updateStatus('location');
 
+    // Geolocation not supported
     if (!navigator.geolocation) {
       updateStatus('noGeo');
       showForm();
