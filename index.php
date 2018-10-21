@@ -180,7 +180,7 @@
         </div>
       </footer>
       <!-- end footer -->
-      <img src="img/Yellow_Nominee.png" alt="Webby Awards Nominee" class="webby-banner">
+      <img src="img/W3-SILVER.png" alt="W3 Silver Winner 2018" class="awards-banner">
       <script src="dist/scripts/app.js"></script>
     </body>
 </html>

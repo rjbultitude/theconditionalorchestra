@@ -21,19 +21,16 @@
   left: -999em;
 }
 
-/* Webby nominee vote */
-.webby-banner {
+.awards-banner {
   position: absolute;
-  width: 132px;
+  width: 160px;
+  height: auto;
   top: 58px;
   right: 16px;
   max-width: 100%;
 
-  @media all and (max-width: 924px) {
-    width: 100px;
-  }
-
-  @media all and (max-width: 800px) {
+  @media all and (max-width: 880px) {
+    width: 120px;
     top: 120px;
   }
 
@@ -42,6 +39,9 @@
   }
 
   @media all and (max-width: 422px) {
-    display: none;
+    position: static;
+    display: block;
+    margin: 0 auto;
+    padding-bottom: 100px;
   }
 }
