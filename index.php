@@ -6,9 +6,9 @@
       <title>The Conditional Orchestra</title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta 
-        http-equiv="Content-Security-Policy" 
-        report-uri="/csp-violation-report-endpoint/" 
+      <meta
+        http-equiv="Content-Security-Policy"
+        report-uri="/csp-violation-report-endpoint/"
         content="img-src 'self' data: https://www.google-analytics.com *.googleapis.com *.gstatic.com; script-src 'self' https://api.darksky.net/forecast/ *.googleapis.com https://fonts.gstatic.com/ https://www.google-analytics.com 'nonce-2109b8a76z'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com/; worker-src 'self' blob:;"
       >
       <meta name="theme-color" content="#314187">
@@ -121,7 +121,7 @@
         <div class="wrapper wrapper-footer">
           <div class="tab__panel" id="help" data-ref="tab-panel">
             <h2 class="tab__heading">Help</h2>
-            <p>If it can't find your location ensure you've clicked &ldquo;allow&rdquo; when the browser asks to use your location. 
+            <p>If it can't find your location ensure you've clicked &ldquo;allow&rdquo; when the browser asks to use your location.
             Alternatively, click &ldquo;choose a location&rdquo; and enter any place you like.</p>
             <p>If the music playback is glitchy please try it on a more powerful device.</p>
             <p>The audio may stop if it's not the active tab in your browser. For continuous playback be open in a new window.</p>
@@ -141,7 +141,7 @@
             <p><a href="https://www.google.com/intx/en_uk/work/mapsearth/products/mapsapi.html" target="_blank" rel="noopener">Google maps</a> is used to reverse Geocode the location information</p>
             <p><a href="http://p5js.org/" target="_blank" rel="noopener">P5.js</a> is used to load and control the audio.</p>
             <p><a href="https://www.npmjs.com/package/freqi">Freqi</a> is a small module I wrote to generate the frequencies for playback.</p>
-            <p>The Conditional Orchestra is an <a href="https://github.com/rjbultitude/theconditionalorchestra" target="_blank" rel="noopener">open source project</a>, 
+            <p>The Conditional Orchestra is an <a href="https://github.com/rjbultitude/theconditionalorchestra" target="_blank" rel="noopener">open source project</a>,
             written and maintained by me, <a href="https://github.com/rjbultitude">Rich Bultitude</a>.</p>
             <p><a href="https://medium.com/@pointbmusic/making-the-conditional-orchestra-df3149b17d23">Read about why and how I created this project here.</a></p>
             <button class="button-close" data-ref="tab-close">
