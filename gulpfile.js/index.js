@@ -9,5 +9,6 @@ util.log('Running in', (config.production ? util.colors.red.bold('production') :
 // Load tasks
 var fs = require('fs');
 fs.readdirSync('./gulpfile.js/tasks').forEach(function (task) {
+    console.log('task', task);
     require('./tasks/' + task);
 });
