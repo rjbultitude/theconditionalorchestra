@@ -25,6 +25,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "browser-sync": "^2.26.7",
     "browserify": "^16.2.3",
     "clean-css": "^4.2.1",
     "del": "^4.0.0",
