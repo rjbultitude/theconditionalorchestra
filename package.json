@@ -21,7 +21,9 @@
   "scripts": {
     "build": "gulp --production",
     "start": "gulp",
-    "tmpl": "gulp templates"
+    "tmpl": "gulp templates",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "license": "MIT",
   "devDependencies": {
@@ -58,6 +60,8 @@
     "handlebars": "^4.1.0",
     "he": "^1.1.0",
     "postal": "^2.0.5",
-    "webworkify": "^1.5.0"
-  }
+    "webworkify": "^1.5.0",
+    "snyk": "^1.189.0"
+  },
+  "snyk": true
 }
