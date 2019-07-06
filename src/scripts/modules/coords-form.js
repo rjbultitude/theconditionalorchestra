@@ -168,6 +168,7 @@ module.exports = function(query) {
     var latLongLiteral = {lat: lat, lng: long};
     gpKey.then(function success(key) {
       GoogleMapsLoader.KEY = key;
+      GoogleMapsLoader.VERSION = 'weekly';
       GoogleMapsLoader.load(function(google) {
         console.log('google.maps.version', google.maps.version);
         // Get max zoom level
