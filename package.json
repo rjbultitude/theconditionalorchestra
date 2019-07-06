@@ -21,10 +21,13 @@
   "scripts": {
     "build": "gulp --production",
     "start": "gulp",
-    "tmpl": "gulp templates"
+    "tmpl": "gulp templates",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "license": "MIT",
   "devDependencies": {
+    "browser-sync": "^2.26.7",
     "browserify": "^16.2.3",
     "clean-css": "^4.2.1",
     "del": "^4.0.0",
@@ -57,6 +60,8 @@
     "handlebars": "^4.1.2",
     "he": "^1.1.0",
     "postal": "^2.0.5",
-    "webworkify": "^1.5.0"
-  }
+    "webworkify": "^1.5.0",
+    "snyk": "^1.189.0"
+  },
+  "snyk": true
 }
