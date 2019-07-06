@@ -61,6 +61,5 @@
     "he": "^1.1.0",
     "postal": "^2.0.5",
     "webworkify": "^1.5.0"
-  },
-  "snyk": true
+  }
 }
