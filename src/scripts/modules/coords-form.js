@@ -29,6 +29,8 @@ module.exports = function(query) {
   // module state vars
   var isPlaying = false;
   var usingStaticData = false;
+  // Gmaps
+  var gmapVersion = '3.37';
 
   function formatQueryString(queryString) {
     var queryNoSpaces = microU.removeSpacesFromString(queryString);
@@ -168,7 +170,7 @@ module.exports = function(query) {
     var latLongLiteral = {lat: lat, lng: long};
     gpKey.then(function success(key) {
       GoogleMapsLoader.KEY = key;
-      GoogleMapsLoader.VERSION = 'weekly';
+      GoogleMapsLoader.VERSION = gmapVersion;
       GoogleMapsLoader.load(function(google) {
         console.log('google.maps.version', google.maps.version);
         // Get max zoom level
@@ -352,6 +354,7 @@ module.exports = function(query) {
     var gpKey = makeRequest('GET', '/gm-key.php');
     gpKey.then(function success(key) {
       GoogleMapsLoader.KEY = key;
+      GoogleMapsLoader.VERSION = gmapVersion;
       GoogleMapsLoader.load(function(google) {
         var geocoder = new google.maps.Geocoder();
 
