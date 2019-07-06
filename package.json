@@ -28,11 +28,11 @@
   "license": "MIT",
   "devDependencies": {
     "browser-sync": "^2.26.7",
-    "browserify": "^16.2.3",
+    "browserify": "^16.3.0",
     "clean-css": "^4.2.1",
     "del": "^4.0.0",
-    "gulp": "^4.0.0",
-    "gulp-autoprefixer": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^6.1.0",
     "gulp-concat": "^2.6.1",
     "gulp-connect-php": "^1.0.3",
     "gulp-declare": "^0.3.0",
@@ -45,21 +45,29 @@
     "gulp-strip-debug": "^3.0.0",
     "gulp-uglify": "^3.0.2",
     "gulp-util": "^3.0.2",
-    "gulp-wrap": "^0.14.0",
-    "jshint": "^2.10.1",
+    "gulp-wrap": "^0.15.0",
+    "jshint": "^2.10.2",
     "jshint-stylish": "^2.0.1",
+    "snyk": "^1.192.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^3.11.1"
   },
   "dependencies": {
     "darkskyjs-lite": "0.0.9",
-    "es6-promise": "^4.1.1",
+    "es6-promise": "^4.2.8",
     "freqi": "^1.0.3",
     "google-maps": "^3.3.0",
     "handlebars": "^4.1.2",
     "he": "^1.1.0",
     "postal": "^2.0.5",
     "webworkify": "^1.5.0"
-  }
+  },
+  "browserslist": [
+    "last 2 versions",
+    "Android 4",
+    "IE 8",
+    "IE 9",
+    "iOS >= 6"
+  ]
 }
