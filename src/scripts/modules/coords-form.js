@@ -30,7 +30,7 @@ module.exports = function(query) {
   var isPlaying = false;
   var usingStaticData = false;
   // Gmaps
-  var gmapVersion = '3.37';
+  var gmapVersion = 'weekly';
 
   function formatQueryString(queryString) {
     var queryNoSpaces = microU.removeSpacesFromString(queryString);

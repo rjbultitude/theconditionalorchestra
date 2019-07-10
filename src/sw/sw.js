@@ -1,5 +1,5 @@
-var CACHE_STATIC_NAME = 'static-v9a';
-var CACHE_DYNAMIC_NAME = 'dynamic-v4';
+var CACHE_STATIC_NAME = 'static-v9d';
+var CACHE_DYNAMIC_NAME = 'dynamic-v5a';
 
 self.isOnlyIfCached = function isOnlyIfCached(event) {
   if (event.request !== undefined) {

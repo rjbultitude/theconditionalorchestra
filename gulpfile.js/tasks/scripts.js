@@ -1,4 +1,4 @@
-//stripDebug Strip console, alert, and debugger statements from JavaScript code 
+//stripDebug Strip console, alert, and debugger statements from JavaScript code
 
 'use strict';
 
