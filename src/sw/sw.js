@@ -1,4 +1,4 @@
-var CACHE_STATIC_NAME = 'static-v9d';
+var CACHE_STATIC_NAME = 'static-v9e';
 var CACHE_DYNAMIC_NAME = 'dynamic-v5a';
 
 self.isOnlyIfCached = function isOnlyIfCached(event) {
@@ -21,7 +21,6 @@ self.addEventListener('install', function(event) {
         '/',
         'index.php',
         'dist/styles/global.css',
-        'dist/scripts/app.js',
         'https://fonts.googleapis.com/css?family=Libre+Baskerville|Lora',
       ]);
     }));
