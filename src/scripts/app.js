@@ -1,8 +1,11 @@
 'use strict';
-var Tabs = require('./modules/tabs');
-var jsLoad = require('./utilities/js-load');
-var updateStatus = require('./modules/update-status');
-require('./utilities/browser-tab-visibility');
+
+import css from '../styles/global.scss';
+
+var Tabs = require('./modules/tabs.js');
+var jsLoad = require('./utilities/js-load.js');
+var updateStatus = require('./modules/update-status.js');
+require('./utilities/browser-tab-visibility.js');
 
 // Register service worker
 if ('serviceWorker' in navigator) {
@@ -18,7 +21,6 @@ if ('serviceWorker' in navigator) {
 if (!window.AudioContext && !window.webkitAudioContext) {
   updateStatus('noAudio');
   console.log('No Audio Context');
-  return false;
 } else {
   // Get url
   var splitUrl = location.href.split('?');

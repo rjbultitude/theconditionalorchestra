@@ -19,8 +19,9 @@
     "audio"
   ],
   "scripts": {
-    "build": "gulp --production",
-    "start": "gulp",
+    "start": "npm run build:dev",
+    "build:dev": "webpack-dev-server --env dev --mode none",
+    "build:prod": "webpack --env prod --mode production",
     "tmpl": "gulp templates",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
@@ -30,6 +31,7 @@
     "browser-sync": "^2.26.7",
     "browserify": "^16.3.0",
     "clean-css": "^4.2.1",
+    "clean-webpack-plugin": "^3.0.0",
     "del": "^4.0.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^6.1.0",
@@ -46,12 +48,22 @@
     "gulp-uglify": "^3.0.2",
     "gulp-util": "^3.0.2",
     "gulp-wrap": "^0.15.0",
+    "handlebars-loader": "^1.7.1",
+    "html-webpack-plugin": "^3.2.0",
+    "install": "^0.13.0",
     "jshint": "^2.10.2",
     "jshint-stylish": "^2.0.1",
+    "mini-css-extract-plugin": "^0.8.0",
+    "node-sass": "^4.12.0",
+    "npm": "^6.10.2",
     "snyk": "^1.192.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^2.0.0",
-    "watchify": "^3.11.1"
+    "watchify": "^3.11.1",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2",
+    "webpack-md5-hash": "0.0.6"
   },
   "dependencies": {
     "darkskyjs-lite": "0.0.9",
@@ -60,6 +72,7 @@
     "google-maps": "^3.3.0",
     "handlebars": "^4.1.2",
     "he": "^1.1.0",
+    "p5": "^0.9.0",
     "postal": "^2.0.5",
     "webworkify": "^1.5.0"
   },
