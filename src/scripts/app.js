@@ -1,6 +1,6 @@
 'use strict';
 
-import css from '../styles/global.scss';
+import '../styles/global.scss';
 
 var Tabs = require('./modules/tabs.js');
 var jsLoad = require('./utilities/js-load.js');

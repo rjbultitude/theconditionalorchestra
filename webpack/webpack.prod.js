@@ -8,9 +8,6 @@ const {
   prod_Path,
   src_Path
 } = require('./path');
-const {
-  selectedPreprocessor
-} = require('./loader');
 
 module.exports = {
   entry: {
@@ -45,7 +42,7 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: selectedPreprocessor.fileRegexp,
+        test: /\.(sass|scss|css)$/,
         use: [{
             loader: MiniCssExtractPlugin.loader
           },
@@ -62,7 +59,7 @@ module.exports = {
             },
           },
           {
-            loader: selectedPreprocessor.loaderName
+            loader: 'sass-loader'
           }
         ]
       },
