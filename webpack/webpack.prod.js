@@ -11,7 +11,7 @@ const {
 
 module.exports = {
   entry: {
-    main: './' + src_Path + '/scripts/app.js'
+    main: src_Path + '/scripts/app.js'
   },
   optimization: {
 		splitChunks: {

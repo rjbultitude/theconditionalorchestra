@@ -9,7 +9,7 @@ const {
 
 module.exports = {
   entry: {
-    main: './' + src_Path + '/scripts/app.js'
+    main: src_Path + '/scripts/app.js'
   },
   output: {
     path: path.resolve(__dirname, prod_Path),
