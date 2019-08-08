@@ -1,18 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-const {
-  prod_Path,
-  src_Path
-} = require('./path');
+const CopyPlugin = require('copy-webpack-plugin');
+const {src_Path, distDir} = require('./common.js');
 
 module.exports = {
   entry: {
     main: src_Path + '/scripts/app.js'
   },
   output: {
-    path: path.resolve(__dirname, prod_Path),
+    path: distDir,
     filename: '[name].[chunkhash].js'
   },
   devtool: 'source-map',
@@ -67,6 +64,10 @@ module.exports = {
       hash: false,
       template: './index.ejs',
       filename: 'index.html'
-    })
+    }),
+    new CopyPlugin([
+      { from: './img', to: distDir },
+      { from: './audio', to: distDir },
+    ]),
   ]
 };
