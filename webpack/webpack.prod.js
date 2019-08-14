@@ -4,7 +4,7 @@ const WebpackMd5Hash = require('webpack-md5-hash');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const {src_Path, distDir} = require('./common.js');
+const {src_Path, distDir, copyPluginConfig} = require('./common.js');
 
 module.exports = {
   entry: {
@@ -86,10 +86,7 @@ module.exports = {
       template: './index.ejs',
       filename: 'index.html'
     }),
-    new CopyPlugin([
-      { from: './img', to: `${distDir}/img` },
-      { from: './audio', to: `${distDir}/audio` },
-    ]),
+    new CopyPlugin(copyPluginConfig),
     new WebpackMd5Hash()
   ]
 };

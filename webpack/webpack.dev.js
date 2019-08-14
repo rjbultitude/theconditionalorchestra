@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const {src_Path, distDir} = require('./common.js');
+const {src_Path, distDir, copyPluginConfig} = require('./common.js');
 
 module.exports = {
   entry: {
@@ -65,9 +65,6 @@ module.exports = {
       template: './index.ejs',
       filename: 'index.html'
     }),
-    new CopyPlugin([
-      { from: './img', to: distDir },
-      { from: './audio', to: distDir },
-    ]),
+    new CopyPlugin(copyPluginConfig),
   ]
 };
