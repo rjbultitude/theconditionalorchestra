@@ -1,4 +1,5 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackInlineSVGPlugin = require('html-webpack-inline-svg-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
@@ -93,8 +94,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       hash: true,
       template: './index.ejs',
-      filename: 'index.html'
+      filename: 'index.html',
+      svgoConfig: {removeViewBox: false, cleanupAttrs: false, removeAttrs: false}
     }),
+    new HtmlWebpackInlineSVGPlugin(),
     new CopyPlugin(copyPluginConfig),
     new WebpackMd5Hash()
   ]
