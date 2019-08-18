@@ -13,6 +13,7 @@ var freqi = require('freqi');
 var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/codisplay.hbs');
+// var WebWorker = require('worker-loader!./display.worker.js');
 // custom
 var coDisplayData = require('./co-display-data');
 var weatherCheck = require('./weather-checker-fns');
@@ -990,12 +991,12 @@ module.exports = function() {
         var _firstLoad = true;
         //Create a thread to set
         //values for display
-        if (window.Worker && false) {
-          var Worker = require('./display.worker.js');
-          console.log('Worker', Worker);
-          var displayWorker = new Worker();
+        if (window.Worker) {
+          var WebWorker = require('./display.worker.js');
+          var displayWorker = new WebWorker();
           console.log('displayWorker', displayWorker);
           displayWorker.addEventListener('message', function(result) {
+            console.log('result', result);
             buildDisplay(result.data);
             displayWorker.terminate();
             if (_firstLoad) {
