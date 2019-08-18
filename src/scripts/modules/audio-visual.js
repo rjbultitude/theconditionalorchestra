@@ -990,9 +990,11 @@ module.exports = function() {
         var _firstLoad = true;
         //Create a thread to set
         //values for display
-        if (window.Worker) {
+        if (window.Worker && false) {
           var Worker = require('./display.worker.js');
+          console.log('Worker', Worker);
           var displayWorker = new Worker();
+          console.log('displayWorker', displayWorker);
           displayWorker.addEventListener('message', function(result) {
             buildDisplay(result.data);
             displayWorker.terminate();
