@@ -9,8 +9,8 @@ const copyPluginConfig = [
   { from: './favicon.ico', to: distDir },
   { from: './src/sw/sw.js', to: distDir },
   { from: './manifest.json', to: distDir },
-  { from: './403.js', to: distDir },
-  { from: './404.js', to: distDir }
+  { from: './403.html', to: distDir },
+  { from: './404.html', to: distDir }
 ];
 
 module.exports = {

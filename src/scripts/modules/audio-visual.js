@@ -5,8 +5,10 @@
 
 'use strict';
 // 3rd party
-var P5 = require('p5');
-require('p5/lib/addons/p5.sound');
+var P5 = require('../libs/p5.js');
+require('../libs/addons/p5.sound');
+// var P5 = require('p5');
+// require('p5/lib/addons/p5.sound');
 var freqi = require('freqi');
 var postal = require('postal');
 var channel = postal.channel();

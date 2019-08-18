@@ -1,5 +1,5 @@
 var CACHE_STATIC_NAME = 'static-v9f';
-var CACHE_DYNAMIC_NAME = 'dynamic-v5b';
+var CACHE_DYNAMIC_NAME = 'dynamic-v5g';
 
 self.isOnlyIfCached = function isOnlyIfCached(event) {
   if (event.request !== undefined) {
@@ -25,6 +25,7 @@ self.addEventListener('install', function(event) {
     }));
 });
 
+// Delete old cache on activation
 self.addEventListener('activate', function(event) {
   console.log('[Service Worker] Activating Service Worker ....', event);
   event.waitUntil(
@@ -41,6 +42,7 @@ self.addEventListener('activate', function(event) {
   return self.clients.claim();
 });
 
+// populate dynamic cache
 self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
@@ -52,7 +54,9 @@ self.addEventListener('fetch', function(event) {
             .then(function(res) {
               return caches.open(CACHE_DYNAMIC_NAME)
                 .then(function(cache) {
-                  cache.put(event.request.url, res.clone());
+                  if (event.request.url !== '/gm-key.php') {
+                    cache.put(event.request.url, res.clone());
+                  }
                   return res;
                 })
             })

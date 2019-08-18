@@ -16,7 +16,8 @@ module.exports = {
     chunkFilename: '[name].[chunkhash:8].js',
   },
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.js$/,
         exclude: /node_modules/
       },
@@ -35,7 +36,7 @@ module.exports = {
         use: [
           {
             loader: "html-loader",
-            options: { minimize: false }
+            options: { minimize: true }
           }
         ]
       },
@@ -91,6 +92,6 @@ module.exports = {
     }),
     new HtmlWebpackInlineSVGPlugin(),
     new CopyPlugin(copyPluginConfig),
-    // new WebpackMd5Hash()
+    new WebpackMd5Hash()
   ]
 };
