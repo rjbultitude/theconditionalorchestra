@@ -10,29 +10,10 @@ module.exports = {
   entry: {
     main: src_Path + '/scripts/app.js'
   },
-  optimization: {
-		splitChunks: {
-			cacheGroups: {
-				commons: {
-					chunks: "initial",
-					minChunks: 2,
-					maxInitialRequests: 5, // The default limit is too small to showcase the effect
-					minSize: 0 // This is example is too small to create commons chunks
-				},
-				vendor: {
-					test: /node_modules/,
-					chunks: "initial",
-					name: "vendor",
-					priority: 10,
-					enforce: true
-				}
-			}
-		}
-	},
   output: {
     path: distDir,
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[name].[chunkhash].js',
+    filename: '[name].[chunkhash:8].js',
+    chunkFilename: '[name].[chunkhash:8].js',
   },
   module: {
     rules: [{
@@ -66,7 +47,6 @@ module.exports = {
           },
           {
             loader: 'css-loader',
-
           },
           {
             loader: 'postcss-loader',
@@ -86,6 +66,18 @@ module.exports = {
       }
     ]
   },
+  optimization: {
+		splitChunks: {
+			cacheGroups: {
+				commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+					chunks: 'all',
+				},
+				chunks: 'all'
+			}
+		}
+	},
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
@@ -99,6 +91,6 @@ module.exports = {
     }),
     new HtmlWebpackInlineSVGPlugin(),
     new CopyPlugin(copyPluginConfig),
-    new WebpackMd5Hash()
+    // new WebpackMd5Hash()
   ]
 };
