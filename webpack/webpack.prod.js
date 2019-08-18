@@ -1,9 +1,8 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackMd5Hash = require('webpack-md5-hash');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const WebpackMd5Hash = require('webpack-md5-hash');
+const CopyPlugin = require('copy-webpack-plugin');
 const {src_Path, distDir, copyPluginConfig} = require('./common.js');
 
 module.exports = {
@@ -31,7 +30,8 @@ module.exports = {
 	},
   output: {
     path: distDir,
-    filename: '[name].[chunkhash].js'
+    filename: '[name].[chunkhash].js',
+    chunkFilename: '[name].[chunkhash].js',
   },
   module: {
     rules: [{
@@ -39,7 +39,27 @@ module.exports = {
         exclude: /node_modules/
       },
       {
+        test: /\.(png|jpg|gif|svg)$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'img',
+          },
+        }],
+      },
+      {
+        test: /\.(html|ejs)$/,
+        use: [
+          {
+            loader: "html-loader",
+            options: { minimize: false }
+          }
+        ]
+      },
+      {
         test: /\.(sass|scss|css)$/,
+        exclude: /node_modules/,
         use: [{
             loader: MiniCssExtractPlugin.loader
           },
@@ -61,16 +81,6 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|jpg|gif|svg)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'img',
-          },
-        }],
-      },
-      {
         test: /\.(handlebars|hbs)$/, loader: 'handlebars-loader'
       }
     ]
@@ -81,7 +91,6 @@ module.exports = {
       filename: 'style.[contenthash].css'
     }),
     new HtmlWebpackPlugin({
-      inject: false,
       hash: true,
       template: './index.ejs',
       filename: 'index.html'

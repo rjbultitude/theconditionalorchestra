@@ -19,8 +19,7 @@ self.addEventListener('install', function(event) {
       console.log('[Service Worker] Precaching App Shell');
       cache.addAll([
         '/',
-        'index.php',
-        'dist/styles/global.css',
+        'index.html',
         'https://fonts.googleapis.com/css?family=Libre+Baskerville|Lora',
       ]);
     }));
