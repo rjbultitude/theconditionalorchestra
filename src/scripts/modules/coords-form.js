@@ -169,7 +169,7 @@ module.exports = function(query) {
     var gpKey = makeRequest('GET', '/gm-key.php');
     var latLongLiteral = {lat: lat, lng: long};
     gpKey.then(function success(key) {
-      GoogleMapsLoader.KEY = 'AIzaSyCGOiXHKpCunEGxTDDyZCD9fpk9qCOSC_k';
+      GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.VERSION = gmapVersion;
       GoogleMapsLoader.load(function(google) {
         console.log('google.maps.version', google.maps.version);
@@ -353,7 +353,7 @@ module.exports = function(query) {
     }
     var gpKey = makeRequest('GET', '/gm-key.php');
     gpKey.then(function success(key) {
-      GoogleMapsLoader.KEY = 'AIzaSyCGOiXHKpCunEGxTDDyZCD9fpk9qCOSC_k';
+      GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.VERSION = gmapVersion;
       GoogleMapsLoader.load(function(google) {
         var geocoder = new google.maps.Geocoder();
@@ -393,7 +393,7 @@ module.exports = function(query) {
   function getPlaces(lat, long) {
     var gpKey = makeRequest('GET', '/gm-key.php');
     gpKey.then(function success(key) {
-      GoogleMapsLoader.KEY = 'AIzaSyCGOiXHKpCunEGxTDDyZCD9fpk9qCOSC_k';
+      GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.load(function(google) {
         var geocoder = new google.maps.Geocoder();
         var latlng = new google.maps.LatLng(lat, long);
