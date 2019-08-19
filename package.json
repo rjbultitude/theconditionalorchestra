@@ -21,6 +21,7 @@
   "scripts": {
     "start": "npm run build:dev",
     "build:dev": "webpack --env dev --mode none",
+    "build:devserver": "webpack-dev-server --open --config=webpack/webpack.dev.js",
     "build:prod": "webpack --env prod --mode production",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"

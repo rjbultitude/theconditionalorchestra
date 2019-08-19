@@ -9,6 +9,7 @@ require('./utilities/browser-tab-visibility.js');
 var swReg = false;
 
 // Register service worker
+// If swReg is true
 if ('serviceWorker' in navigator && swReg) {
   navigator.serviceWorker.register('./sw.js')
     .then(function() {

@@ -99,8 +99,7 @@ module.exports = {
       hash: false,
       inject: true,
       template: './index.ejs',
-      filename: 'index.html',
-      svgoConfig: {removeViewBox: false, cleanupAttrs: false, removeAttrs: false}
+      filename: 'index.html'
     }),
     new HtmlWebpackInlineSVGPlugin({
       runPreEmit: true,
