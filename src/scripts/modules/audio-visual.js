@@ -5,15 +5,12 @@
 
 'use strict';
 // 3rd party
-var P5 = require('../libs/p5.js');
-require('../libs/addons/p5.sound');
-// var P5 = require('p5');
-// require('p5/lib/addons/p5.sound');
+var P5 = require('p5');
+require('p5/lib/addons/p5.sound');
 var freqi = require('freqi');
 var postal = require('postal');
 var channel = postal.channel();
 var appTemplate = require('../templates/codisplay.hbs');
-// var WebWorker = require('worker-loader!./display.worker.js');
 // custom
 var coDisplayData = require('./co-display-data');
 var weatherCheck = require('./weather-checker-fns');
@@ -994,7 +991,6 @@ module.exports = function() {
         if (window.Worker) {
           var WebWorker = require('./display.worker.js');
           var displayWorker = new WebWorker();
-          console.log('displayWorker', displayWorker);
           displayWorker.addEventListener('message', function(result) {
             console.log('result', result);
             buildDisplay(result.data);
