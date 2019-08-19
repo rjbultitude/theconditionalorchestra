@@ -1,10 +1,9 @@
-var CACHE_STATIC_NAME = 'static-v9i';
+var CACHE_STATIC_NAME = 'static-v9h';
 var CACHE_DYNAMIC_NAME = 'dynamic-v5i';
 
 var staticCacheAssets = [
   'https://fonts.googleapis.com/css?family=Libre+Baskerville|Lora',
-  'vendor.js',
-  'style.css'
+  'vendor.js'
 ];
 var dynamicCacheAssets = [
   '-icon.svg',
@@ -30,7 +29,9 @@ self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_STATIC_NAME).then(function(cache) {
       console.log('[Service Worker] Precaching App Shell');
-      cache.addAll(staticCacheAssets);
+      cache.addAll(staticCacheAssets).catch(function(e) {
+        console.warn('Error with', e);
+      });
     }));
 });
 
