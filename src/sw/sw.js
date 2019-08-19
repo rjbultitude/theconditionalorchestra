@@ -1,5 +1,17 @@
-var CACHE_STATIC_NAME = 'static-v9f';
-var CACHE_DYNAMIC_NAME = 'dynamic-v5g';
+var CACHE_STATIC_NAME = 'static-v9i';
+var CACHE_DYNAMIC_NAME = 'dynamic-v5i';
+
+var staticCacheAssets = [
+  'https://fonts.googleapis.com/css?family=Libre+Baskerville|Lora',
+  'vendor.js',
+  'style.css'
+];
+var dynamicCacheAssets = [
+  '-icon.svg',
+  '.mp3',
+  'fonts.gstatic.com',
+  'fonts.google.com'
+];
 
 self.isOnlyIfCached = function isOnlyIfCached(event) {
   if (event.request !== undefined) {
@@ -14,14 +26,11 @@ self.addEventListener('install', function(event) {
   if (self.isOnlyIfCached(event)) {
       return;
   }
+  // self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_STATIC_NAME).then(function(cache) {
       console.log('[Service Worker] Precaching App Shell');
-      cache.addAll([
-        '/',
-        'index.html',
-        'https://fonts.googleapis.com/css?family=Libre+Baskerville|Lora',
-      ]);
+      cache.addAll(staticCacheAssets);
     }));
 });
 
@@ -42,29 +51,32 @@ self.addEventListener('activate', function(event) {
   return self.clients.claim();
 });
 
-// populate dynamic cache
+// populate dynamic cache with selected resources
 self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        if (response) {
-          return response;
-        } else {
-          return fetch(event.request)
-            .then(function(res) {
-              return caches.open(CACHE_DYNAMIC_NAME)
-                .then(function(cache) {
-                  if (event.request.url !== '/gm-key.php') {
-                    cache.put(event.request.url, res.clone());
-                  }
-                  return res;
+  var rUrl = event.request.url;
+  return dynamicCacheAssets.map(function (assetPatten) {
+    if (rUrl.indexOf(assetPatten) > -1) {
+      event.respondWith(
+        caches.match(event.request)
+          .then(function(response) {
+            if (response) {
+              return response;
+            } else {
+              return fetch(event.request)
+                .then(function(res) {
+                  return caches.open(CACHE_DYNAMIC_NAME)
+                    .then(function(cache) {
+                      cache.put(event.request.url, res.clone());
+                      return res;
+                    })
                 })
-            })
-            .catch(function(err) {
-              console.log('Error fetching', err);
-            });
-        }
-      })
-  );
+                .catch(function(err) {
+                  console.log('Error fetching', err);
+                });
+            }
+          })
+      );
+    }
+  });
 });
 

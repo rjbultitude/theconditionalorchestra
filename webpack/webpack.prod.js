@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const CopyPlugin = require('copy-webpack-plugin');
-const {src_Path, distDir, copyPluginConfig} = require('./common.js');
+const {src_Path, distDir, copyPluginConfig, splitChunksConfig} = require('./common.js');
 
 module.exports = {
   entry: {
@@ -72,16 +72,8 @@ module.exports = {
     ]
   },
   optimization: {
-		splitChunks: {
-			cacheGroups: {
-				commons: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendor',
-					chunks: 'all',
-				},
-				chunks: 'all'
-			}
-		}
+    runtimeChunk: 'single',
+		splitChunks: splitChunksConfig
 	},
   plugins: [
     new CleanWebpackPlugin(),

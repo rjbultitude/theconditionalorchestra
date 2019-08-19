@@ -6,10 +6,9 @@ var Tabs = require('./modules/tabs.js');
 var jsLoad = require('./utilities/js-load.js');
 var updateStatus = require('./modules/update-status.js');
 require('./utilities/browser-tab-visibility.js');
-var swReg = false;
+var swReg = true;
 
 // Register service worker
-// If swReg is true
 if ('serviceWorker' in navigator && swReg) {
   navigator.serviceWorker.register('./sw.js')
     .then(function() {

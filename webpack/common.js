@@ -12,10 +12,21 @@ const copyPluginConfig = [
   { from: './403.html', to: distDir },
   { from: './404.html', to: distDir }
 ];
+const splitChunksConfig = {
+  cacheGroups: {
+    commons: {
+      test: /[\\/]node_modules[\\/]/,
+      name: 'vendor',
+      chunks: 'all',
+    },
+    chunks: 'all'
+  }
+};
 
 module.exports = {
     prod_Path: prod_Path,
     src_Path: src_Path,
     distDir: distDir,
-    copyPluginConfig: copyPluginConfig
+    copyPluginConfig: copyPluginConfig,
+    splitChunksConfig: splitChunksConfig
 }
