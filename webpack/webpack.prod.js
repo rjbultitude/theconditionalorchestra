@@ -13,7 +13,7 @@ module.exports = {
   output: {
     path: distDir,
     filename: '[name].[chunkhash:8].js',
-    chunkFilename: '[name].[chunkhash:8].js',
+    chunkFilename: '[name].js',
   },
   module: {
     rules: [
