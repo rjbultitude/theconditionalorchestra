@@ -42,8 +42,7 @@ gp-key.php
 gm-key.php
 
 # CI/CD
-.travis.yml
-*.travis.yml
+deploy.sh
 
 # Others
 sql/
