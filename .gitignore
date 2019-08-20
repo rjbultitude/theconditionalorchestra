@@ -41,6 +41,10 @@ proxy.php
 gp-key.php
 gm-key.php
 
+# CI/CD
+.travis.yml
+*.travis.yml
+
 # Others
 sql/
 __MACOSX/
