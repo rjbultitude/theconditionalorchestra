@@ -13,7 +13,6 @@ module.exports = {
   },
   output: {
     filename: (data) => {
-      console.log('data.chunk.name', data.chunk.name);
       return data.chunk.name === 'vendor' ? '[name].js' : '[name].[chunkhash:8].js';
     },
     chunkFilename: '[name].js',

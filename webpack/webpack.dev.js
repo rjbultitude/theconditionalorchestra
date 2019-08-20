@@ -11,9 +11,11 @@ module.exports = {
     main: src_Path + '/scripts/app.js'
   },
   output: {
-    path: distDir,
-    filename: '[name].[chunkhash:8].js',
+    filename: (data) => {
+      return data.chunk.name === 'vendor' ? '[name].js' : '[name].[chunkhash:8].js';
+    },
     chunkFilename: '[name].js',
+    path: distDir,
   },
   devtool: 'source-map',
   module: {
