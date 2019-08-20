@@ -1,6 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackInlineSVGPlugin = require('html-webpack-inline-svg-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -11,9 +12,12 @@ module.exports = {
     main: src_Path + '/scripts/app.js'
   },
   output: {
-    path: distDir,
-    filename: '[name].[chunkhash:8].js',
+    filename: (data) => {
+      console.log('data.chunk.name', data.chunk.name);
+      return data.chunk.name === 'vendor' ? '[name].js' : '[name].[chunkhash:8].js';
+    },
     chunkFilename: '[name].js',
+    path: distDir
   },
   module: {
     rules: [
@@ -73,6 +77,15 @@ module.exports = {
   },
   optimization: {
     runtimeChunk: 'single',
+    minimizer: [new TerserPlugin({
+      extractComments: true,
+      terserOptions: {
+        extractComments: 'all',
+        compress: {
+          drop_console: true,
+        },
+      }
+    })],
 		splitChunks: splitChunksConfig
 	},
   plugins: [
