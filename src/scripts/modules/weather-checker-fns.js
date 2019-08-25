@@ -16,12 +16,14 @@ module.exports = {
    * Air moisture related functions
    */
 
+  humidityThreshold: 0.57,
+
   isHumid: function isHumid(humidity) {
-    return humidity > 0.57;
+    return humidity > this.humidityThreshold;
   },
 
   isFreezingAndHumid: function isFreezingAndHumid(humidity, temperatureInFrnht) {
-    return frnhtToCelcius(temperatureInFrnht) < -1 && humidity > 0.57;
+    return frnhtToCelcius(temperatureInFrnht) < -1 && humidity > this.humidityThreshold;
   },
 
   isMuggy: function isMuggy(humidity, temperatureInFrnht) {
@@ -103,7 +105,7 @@ module.exports = {
   },
 
   isMildAndHumid: function isMildAndHumid(temperatureInFrnht, windSpeed, humidity) {
-    return frnhtToCelcius(temperatureInFrnht) >= 14 && windSpeed < 12 && humidity > 0.57;
+    return frnhtToCelcius(temperatureInFrnht) >= 14 && windSpeed < 12 && humidity > this.humidityThreshold;
   },
 
   // @param temperatureInFrnht floating point
