@@ -6,16 +6,10 @@ module.exports = {
   /**
    * Single concept items
    */
-  // @param precipType String
+
   // @param precipIntensity floating point
-  isPrecip: function isPrecip(precipType, precipIntensity) {
-    //TODO do we need this check?
-    if (precipType !== undefined) {
-      return precipIntensity > 0;
-    } else {
-      console.log('No precipitation type value');
-      return false;
-    }
+  isPrecip: function isPrecip(precipIntensity) {
+    return precipIntensity > 0;
   },
 
   /**
@@ -71,7 +65,8 @@ module.exports = {
 
   /**
    * temperature
-   */
+  **/
+
   // @param temperatureInFrnht floating point
   isCold: function isCold(temperatureInFrnht) {
     return frnhtToCelcius(temperatureInFrnht) <= 12;
