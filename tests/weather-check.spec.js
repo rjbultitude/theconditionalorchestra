@@ -162,3 +162,27 @@ describe('isSirocco', function() {
     expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow , this.tempInFrnht, this.windSpeed)).to.be.false;
   });
 });
+
+describe('isWindy', function() {
+  it('should return true if wind speed is greater than 22', function() {
+    expect(weatherChecker.isWindy(32)).to.be.true;
+  });
+  it('should return false if wind speed is equal to 22', function() {
+    expect(weatherChecker.isWindy(22)).to.be.false;
+  });
+  it('should return false if wind speed is less than 22', function() {
+    expect(weatherChecker.isWindy(12)).to.be.false;
+  });
+});
+
+describe('isCloudy', function() {
+  it('should return true if cloud cover is greater than 0.5', function() {
+    expect(weatherChecker.isCloudy(0.9)).to.be.true;
+  });
+  it('should return false if cloud cover is equal to 0.5', function() {
+    expect(weatherChecker.isCloudy(0.5)).to.be.false;
+  });
+  it('should return false if cloud cover is less than 0.5', function() {
+    expect(weatherChecker.isCloudy(0.1)).to.be.false;
+  });
+});
