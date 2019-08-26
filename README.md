@@ -19,22 +19,21 @@ This ensures the all the node packages are installed. Follow the [NPM guide](htt
 
 Before running any of the standard tasks be sure to run `gulp templates` which will precompile the handlebars template ready for use in the app.
 
-[Gulp](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md) is used to bundle the app. It runs in two modes: `development` and `production`. To run in development mode run 
+[webpack](https://webpack.js.org/) is used to bundle the app. It runs in two modes: `development` and `production`. To run in development mode run 
 
-`gulp`
+`npm run build:dev`
 
-to run in production mode simply add the production flag
+to run in production mode
 
-`gulp --production`
+`npm run build:production`
 
-Gulp will create, clean and manage the `dist` folder.
-Styles and scripts will be processed and watched for changes. Scripts will be linted.
+Webpack will create, clean and manage the `dist` folder.
 
-### Notes on tools
+### Test
 
-[Browserify](http://browserify.org/) is used to manage and bundle JavaScript modules.
+To run the unit tests run
 
-[JSCS](http://jscs.info/rules.html) and [JS Hint](http://jshint.com/docs/options/) are used to highlights stylisitic and syntactical JS issues. Rules used are listed in `.jscsrc` and `.jshintrc` respectively.
+`npm test`
 
 ### Service worker
 This is registered in an inline script on the index page and refers to a file that is minfied and copied to the root when the Gulp task `script` is run.
@@ -55,8 +54,6 @@ See the modules audio-getters.js, coords-form.js and audio-visual.js for most of
 
 ## Plans
 
-Merge `develop` into `master`. Develop's updates include installation of darkskyjs-lite
-
 Write unit tests for coords-form, audio-visual, audio-getters and audio-helpers
 
 Consider using [windy.com](https://www.windy.com/) map rather than text input
@@ -68,8 +65,6 @@ Harp could be something other than humidity - humidity should be evoked by noise
 Consider using a state manager and one master sound object
 
 Create 'Add to home screen' button
-
-Implement [CSP](https://hacks.mozilla.org/2016/02/implementing-content-security-policy/)
 
 Refactor the display fns so that they're chained
 
@@ -103,27 +98,3 @@ Filters
  * sketch.preload
  * sketch.loadSound
  * sketch.masterVolume
-
-## Structure
-	.
-	├── dist               (created and managed by Gulp)
-	├── audio
-	├── fonts
-	├── img
-	├── node_modules       (created and managed by NPM)
-	├── src
-	│   ├── scripts
-	│   └── styles
-	├── .jscsrc
-	├── .jshintrc
-	├── favicon.ico
-	├── gulpfile.js
-	│   ├── tasks
-	│   ├── utilities
-	│   ├── config.js
-	│   └── index.js
-	├── humans.txt
-	├── index.html
-	├── package.json
-	├── README.md
-	└── releasenotes.md
