@@ -43,22 +43,122 @@ describe('isFreezingAndHumid', function() {
 });
 
 describe('isMuggy', function() {
-  it('should return true if humidity is greater than humidity threshold (mid) and temp is greater than 16', function() {
+  it('should return true if humidity is greater than humidity threshold (mid) and temp is greater than 16 (in Celcius)', function() {
     expect(weatherChecker.isMuggy(weatherChecker.humidityThresholdMid + 1, 100)).to.be.true;
   });
-  it('should return false if humidity is equal to humidity threshold (mid) and temp is greater than 16', function() {
+  it('should return false if humidity is equal to humidity threshold (mid) and temp is greater than 16 (in Celcius)', function() {
     expect(weatherChecker.isMuggy(weatherChecker.humidityThresholdMid, 100)).to.be.false;
   });
-  it('should return false if humidity is greater than humidity threshold (mid) and temp in Celcius is equal to 16', function() {
+  it('should return false if humidity is greater than humidity threshold (mid) and temp in Celcius is equal to 16 (in Celcius)', function() {
     expect(weatherChecker.isMuggy(weatherChecker.humidityThresholdMid + 1, 60.8)).to.be.false;
   });
-  it('should return false if humidity is equal than humidity threshold (mid) and temp is equal to 16', function() {
+  it('should return false if humidity is equal than humidity threshold (mid) and temp is equal to 16 (in Celcius)', function() {
     expect(weatherChecker.isMuggy(weatherChecker.humidityThresholdMid, 60.8)).to.be.false;
   });
-  it('should return false if humidity is less than humidity threshold (mid) and temp is equal to 16', function() {
+  it('should return false if humidity is less than humidity threshold (mid) and temp is equal to 16 (in Celcius)', function() {
     expect(weatherChecker.isMuggy(weatherChecker.humidityThresholdMid - 1, 60.8)).to.be.false;
   });
-  it('should return false if humidity is less than humidity threshold (mid) and temp is less than 16', function() {
+  it('should return false if humidity is less than humidity threshold (mid) and temp is less than 16 (in Celcius)', function() {
     expect(weatherChecker.isMuggy(weatherChecker.humidityThresholdMid - 1, 14)).to.be.false;
+  });
+});
+
+describe('isSmoggy', function() {
+  it('should return true if humidity is greater than humidity threshold (mid), temp is greater than 18 (in Celcius) and visibility is less than 8', function() {
+    expect(weatherChecker.isSmoggy(weatherChecker.humidityThresholdMid + 1, 100, 5)).to.be.true;
+  });
+  it('should return false if humidity is greater than humidity threshold (mid), temp is greater than 18 (in Celcius) and visibility is equal to 8', function() {
+    expect(weatherChecker.isSmoggy(weatherChecker.humidityThresholdMid, 100, 8)).to.be.false;
+  });
+  it('should return false if humidity is greater than humidity threshold (mid), temp is greater than 18 (in Celcius) and visibility is greater than 8', function() {
+    expect(weatherChecker.isSmoggy(weatherChecker.humidityThresholdMid + 1, 100, 9)).to.be.false;
+  });
+  it('should return false if humidity is greater than humidity threshold (mid), temp is equal to 18 (in Celcius) and visibility is less than 8', function() {
+    expect(weatherChecker.isSmoggy(weatherChecker.humidityThresholdMid, 64.4, 5)).to.be.false;
+  });
+  it('should return false if humidity is greater than humidity threshold (mid), temp is less than 18 (in Celcius) and visibility is less than 8', function() {
+    expect(weatherChecker.isSmoggy(weatherChecker.humidityThresholdMid - 1, 50, 5)).to.be.false;
+  });
+  it('should return false if humidity is equal to humidity threshold (mid), temp is greater than 18 (in Celcius) and visibility is less than 8', function() {
+    expect(weatherChecker.isSmoggy(weatherChecker.humidityThresholdMid, 100, 5)).to.be.false;
+  });
+  it('should return false if humidity is less than humidity threshold (mid), temp is greater than 18 (in Celcius) and visibility is less than 8', function() {
+    expect(weatherChecker.isSmoggy(weatherChecker.humidityThresholdMid - 1, 100, 5)).to.be.false;
+  });
+});
+
+describe('isArid', function() {
+  it('should return true if humidity is lower than humidity threshold (mid), temp is greater than 20 (in Celcius) and precipitation is zero', function() {
+    expect(weatherChecker.isArid(weatherChecker.humidityThresholdMid - 1, 100, 0)).to.be.true;
+  });
+  it('should return false if humidity is lower than humidity threshold (mid), temp is greater than 20 (in Celcius) and precipitation is greater than zero', function() {
+    expect(weatherChecker.isArid(weatherChecker.humidityThresholdMid - 1, 100, 0.5)).to.be.false;
+  });
+  it('should return false if humidity is lower than humidity threshold (mid), temp is equal to 20 (in Celcius) and precipitation is zero', function() {
+    expect(weatherChecker.isArid(weatherChecker.humidityThresholdMid - 1, 68, 0)).to.be.false;
+  });
+  it('should return false if humidity is lower than humidity threshold (mid), temp is lower than 20 (in Celcius) and precipitation is zero', function() {
+    expect(weatherChecker.isArid(weatherChecker.humidityThresholdMid - 1, 64, 5)).to.be.false;
+  });
+  it('should return false if humidity is equal to humidity threshold (mid), temp is greater than 20 (in Celcius) and precipitation is zero', function() {
+    expect(weatherChecker.isArid(weatherChecker.humidityThresholdMid, 100, 0)).to.be.false;
+  });
+  it('should return false if humidity is greater than humidity threshold (mid), temp is greater than 20 (in Celcius) and precipitation is zero', function() {
+    expect(weatherChecker.isArid(weatherChecker.humidityThresholdMid + 1, 100, 0)).to.be.false;
+  });
+  it('should return false if humidity is equal to humidity threshold (mid), temp is equal to 20 (in Celcius) and precipitation is zero', function() {
+    expect(weatherChecker.isArid(weatherChecker.humidityThresholdMid, 68, 0)).to.be.false;
+  });
+});
+
+describe('isCrisp', function() {
+  this.beforeAll(function() {
+    this.zeroInCelcius = 32;
+  });
+  it('should return true if humidity is lower than humidity threshold (low) and temp is less than zero (in Celcius)', function() {
+    expect(weatherChecker.isCrisp(weatherChecker.humidityThresholdLow - 1, 20)).to.be.true;
+  });
+  it('should return false if humidity is lower than humidity threshold (low), temp is equal to zero (in Celcius)', function() {
+    expect(weatherChecker.isCrisp(weatherChecker.humidityThresholdLow - 1, this.zeroInCelcius)).to.be.false;
+  });
+  it('should return false if humidity is lower than humidity threshold (low), temp is greater than zero (in Celcius)', function() {
+    expect(weatherChecker.isCrisp(weatherChecker.humidityThresholdLow - 1, 68)).to.be.false;
+  });
+  it('should return false if humidity is equal to humidity threshold (low), temp is less than zero (in Celcius)', function() {
+    expect(weatherChecker.isCrisp(weatherChecker.humidityThresholdLow, 20)).to.be.false;
+  });
+  it('should return false if humidity is greater than humidity threshold (mid), temp is equal to zero (in Celcius)', function() {
+    expect(weatherChecker.isCrisp(weatherChecker.humidityThresholdLow + 1, this.zeroInCelcius)).to.be.false;
+  });
+  it('should return false if humidity is greater than humidity threshold (mid), temp is less than zero (in Celcius)', function() {
+    expect(weatherChecker.isCrisp(weatherChecker.humidityThresholdLow + 1, 20)).to.be.false;
+  });
+});
+
+describe('isSirocco', function() {
+  this.beforeAll(function() {
+    this.tempInFrnht = 69.8;
+    this.windSpeed = 20;
+  });
+  it('should return true if humidity is lower than humidity threshold (low) and temp is greater than 21 (in Celcius) and wind speed is greater than 20', function() {
+    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht + 10, this.windSpeed + 1)).to.be.true;
+  });
+  it('should return false if humidity is lower than humidity threshold (low), temp is greater than 21 (in Celcius) and wind speed is equal to 20', function() {
+    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht + 10), this.windSpeed).to.be.false;
+  });
+  it('should return false if humidity is lower than humidity threshold (low), temp is greater than 21 (in Celcius) and wind speed is less than 20', function() {
+    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht + 10, 19)).to.be.false;
+  });
+  it('should return false if humidity is lower humidity threshold (low), temp is equal to 21 (in Celcius) and wind speed is greater than 20', function() {
+    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht, this.windSpeed + 1)).to.be.false;
+  });
+  it('should return false if humidity is lower than humidity threshold (mid), temp is less than 21 (in Celcius) and wind speed is greater than 20', function() {
+    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht - 10, this.windSpeed + 1)).to.be.false;
+  });
+  it('should return false if humidity is equal than humidity threshold (mid), temp is greater than 21 (in Celcius) and wind speed is greater than 20', function() {
+    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow , this.tempInFrnht + 10, this.windSpeed + 1)).to.be.false;
+  });
+  it('should return false if humidity is equal than humidity threshold (mid), temp is equal to 21 (in Celcius) and wind speed is equal to 20', function() {
+    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow , this.tempInFrnht, this.windSpeed)).to.be.false;
   });
 });
