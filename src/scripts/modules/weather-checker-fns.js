@@ -17,6 +17,7 @@ module.exports = {
    */
 
   humidityThreshold: 0.57,
+  humidityThresholdMid: 0.45,
 
   isHumid: function isHumid(humidity) {
     return humidity > this.humidityThreshold;
@@ -27,15 +28,17 @@ module.exports = {
   },
 
   isMuggy: function isMuggy(humidity, temperatureInFrnht) {
-    return humidity > 0.48 && frnhtToCelcius(temperatureInFrnht) > 16;
+    return humidity > this.humidityThresholdMid && frnhtToCelcius(temperatureInFrnht) > 16;
   },
 
+  // TODO visibility needs to be plus 8 surely
   isSmoggy: function isSmoggy(humidity, temperatureInFrnht, visibility) {
-    return humidity > 0.45 && frnhtToCelcius(temperatureInFrnht) > 18 && visibility < 8;
+    return humidity > this.humidityThresholdMid && frnhtToCelcius(temperatureInFrnht) > 18 && visibility < 8;
   },
 
+  // TODO is Arid paired with smoggy? If so add visibility
   isArid: function isArid(humidity, temperatureInFrnht, precipIntensity) {
-    return humidity < 0.45 && frnhtToCelcius(temperatureInFrnht) > 20 && precipIntensity === 0;
+    return humidity < this.humidityThresholdMid && frnhtToCelcius(temperatureInFrnht) > 20 && precipIntensity === 0;
   },
 
   isCrisp: function isCrisp(humidity, temperatureInFrnht) {
