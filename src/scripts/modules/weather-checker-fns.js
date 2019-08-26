@@ -95,7 +95,7 @@ module.exports = {
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function isClement(cloudCover, windSpeed, precipIntensity) {
-   return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0;
+    return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0;
   },
 
   // @param temperatureInFrnht floating point
@@ -114,11 +114,11 @@ module.exports = {
 
   // @param temperatureInFrnht floating point
   isFine: function isFine(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.3;
+    return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.3;
   },
 
   isSublime: function isSublime(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 26 && windSpeed < 8 && cloudCover <= 0.15;
+    return frnhtToCelcius(temperatureInFrnht) > 26 && windSpeed < 8 && cloudCover <= 0.15;
   },
 
   // @param temperatureInFrnht floating point

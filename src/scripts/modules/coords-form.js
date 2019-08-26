@@ -189,9 +189,10 @@ module.exports = function(query) {
           }
         });
       });
-    }, function failure(rejectObj) {
-        console.log(rejectObj.status);
-        console.log(rejectObj.statusText);
+    },
+    function failure(rejectObj) {
+      console.log(rejectObj.status);
+      console.log(rejectObj.statusText);
     });
   }
 
@@ -300,15 +301,15 @@ module.exports = function(query) {
   }
 
   function useStaticData(statusString) {
-      if(checkLocationDataKeys(staticData)) {
-        var _fixedStaticData = fixlwDataRanges(staticData);
-        handleNoGeoData(statusString, _fixedStaticData);
-        console.log('using static data');
-        updateUISuccess(_fixedStaticData);
-      } else {
-        updateStatus('error');
-        console.log('incorrect static data');
-      }
+    if(checkLocationDataKeys(staticData)) {
+      var _fixedStaticData = fixlwDataRanges(staticData);
+      handleNoGeoData(statusString, _fixedStaticData);
+      console.log('using static data');
+      updateUISuccess(_fixedStaticData);
+    } else {
+      updateStatus('error');
+      console.log('incorrect static data');
+    }
   }
 
   // Use previous state to run app
@@ -375,12 +376,13 @@ module.exports = function(query) {
           }
         });
       });
-    }, function failure(rejectObj) {
-        console.log(rejectObj.status);
-        console.log(rejectObj.statusText);
-        var statusString = 'badGMapsConnection';
-        updateStatus('error');
-        useLocalStorageData(statusString);
+    },
+    function failure(rejectObj) {
+      console.log(rejectObj.status);
+      console.log(rejectObj.statusText);
+      var statusString = 'badGMapsConnection';
+      updateStatus('error');
+      useLocalStorageData(statusString);
     });
   }
 

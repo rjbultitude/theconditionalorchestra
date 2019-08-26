@@ -30,12 +30,12 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
     var _rootNoteNumber = rootNote + 1;
     if (numSemisPerOctave !== 12) {
       _rootNoteLetter = microU.getOrdinal(_rootNoteNumber) + ' note in a non western scale';
-    } else {
-      if (rootNote < 0) {
-        _rootNoteLetter = freqi.CHROMATIC_SCALE[freqi.CHROMATIC_SCALE.length + rootNote] + '2';
-      } else {
-        _rootNoteLetter = freqi.CHROMATIC_SCALE[rootNote] + '3';
-      }
+    }
+    else if (rootNote < 0) {
+      _rootNoteLetter = freqi.CHROMATIC_SCALE[freqi.CHROMATIC_SCALE.length + rootNote] + '2';
+    }
+    else {
+      _rootNoteLetter = freqi.CHROMATIC_SCALE[rootNote] + '3';
     }
     return _rootNoteLetter;
   }
@@ -185,57 +185,57 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
 
   function addPrimaryMusicVals(coDisplayDataGroup) {
     return coDisplayDataGroup.map(function(coProp) {
-        switch (coProp.key) {
-          case 'dewPoint':
-            coProp.musicValue = mDVals.numChords;
-            break;
-          case 'ozone':
-            coProp.musicValue = mDVals.numExtraChords;
-            break;
-          case 'pressure':
-            coProp.musicValue = getRootNoteLetter(mDVals.numSemisPerOctave, mDVals.rootNote);
-            break;
-          case 'temperature':
-            coProp.musicValue = getMainMelodyTempoType(mDVals.noteLengthMult, avSettings);
-            break;
-          case 'cloudCover':
-            coProp.musicValue = Math.round(mDVals.padFilterFreq);
-            break;
-          case 'apparentTemperature':
-            coProp.musicValue = Math.round(mDVals.seqRepeatNum / mDVals.numChords);
-            break;
-          case 'windBearing':
-            coProp.musicValue = microU.getOrdinal(mDVals.longNoteIndex + 1);
-            break;
-          case 'visibility':
-            coProp.musicValue = mDVals.longNoteFilterFreq;
-            break;
-          case 'precipIntensity':
-            coProp.musicValue = mDVals.precipArpBpm;
-            break;
-          case 'precipType':
-            coProp.value = !coProp.value ? false : coProp.value;
-            coProp.musicValue = outputPrecipArpType(mDVals.precipCategory);
-            break;
-          case 'precipProbability':
-            coProp.musicValue = mDVals.rideCymbalBpm;
-            break;
-          case 'uvIndex':
-            coProp.musicValue = mDVals.uvNoiseMaxVol.toFixed(2);
-            break;
-          case 'nearestStormBearing':
-            coProp.musicValue = mDVals.rideCymbalRate.toFixed(2);
-            break;
-          case 'nearestStormDistance':
-            coProp.musicValue = mDVals.rideCymbalMaxVolume.toFixed(2);
-            break;
-          case 'windSpeedHigh':
-            coProp.musicValue = mDVals.humidArpBpm;
-            break;
-          case 'isWindyArp':
-            coProp.musicValue = mDVals.humidArpIntervalsKey;
-            break;
-        }
+      switch (coProp.key) {
+      case 'dewPoint':
+        coProp.musicValue = mDVals.numChords;
+        break;
+      case 'ozone':
+        coProp.musicValue = mDVals.numExtraChords;
+        break;
+      case 'pressure':
+        coProp.musicValue = getRootNoteLetter(mDVals.numSemisPerOctave, mDVals.rootNote);
+        break;
+      case 'temperature':
+        coProp.musicValue = getMainMelodyTempoType(mDVals.noteLengthMult, avSettings);
+        break;
+      case 'cloudCover':
+        coProp.musicValue = Math.round(mDVals.padFilterFreq);
+        break;
+      case 'apparentTemperature':
+        coProp.musicValue = Math.round(mDVals.seqRepeatNum / mDVals.numChords);
+        break;
+      case 'windBearing':
+        coProp.musicValue = microU.getOrdinal(mDVals.longNoteIndex + 1);
+        break;
+      case 'visibility':
+        coProp.musicValue = mDVals.longNoteFilterFreq;
+        break;
+      case 'precipIntensity':
+        coProp.musicValue = mDVals.precipArpBpm;
+        break;
+      case 'precipType':
+        coProp.value = !coProp.value ? false : coProp.value;
+        coProp.musicValue = outputPrecipArpType(mDVals.precipCategory);
+        break;
+      case 'precipProbability':
+        coProp.musicValue = mDVals.rideCymbalBpm;
+        break;
+      case 'uvIndex':
+        coProp.musicValue = mDVals.uvNoiseMaxVol.toFixed(2);
+        break;
+      case 'nearestStormBearing':
+        coProp.musicValue = mDVals.rideCymbalRate.toFixed(2);
+        break;
+      case 'nearestStormDistance':
+        coProp.musicValue = mDVals.rideCymbalMaxVolume.toFixed(2);
+        break;
+      case 'windSpeedHigh':
+        coProp.musicValue = mDVals.humidArpBpm;
+        break;
+      case 'isWindyArp':
+        coProp.musicValue = mDVals.humidArpIntervalsKey;
+        break;
+      }
       return coProp;
     });
   }
@@ -310,53 +310,53 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
       // Important - must include every group
       // else it creates duplicates
       switch (coDataGroup) {
-        case 'primaryMap':
-          _currArr = addPrimaryMusicVals(_constrainedDisplayGroup);
-          break;
-        case 'chordTypeMap':
-          // Don't display chord type 
-          // if a chord sequence is being used
-          if (mDVals.chordType === 'noChordType') {
-            _currArr = setAllToFalse(_constrainedDisplayGroup);
-          } else {
-            _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.chordType);
-          }
-          break;
-        case 'chordSeqTypeMap':
-          if (mDVals.chordSeqKey === 'noChordOffset') {
-            _currArr = setAllToFalse(_constrainedDisplayGroup);
-          } else {
-            _currArr = setStandardDisplayVals(_constrainedDisplayGroup, outputChordSeqType(mDVals.chordSeqKey));
-          }
-          break;
-        case 'padTypeMap':
-          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.padType);
-          break;
-        case 'longNoteTypeMap':
-          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.longNoteType);
-          break;
-        case 'inversionMap':
-          if (mDVals.inversionOffsetType === 'inversionsNoOffset') {
-            _currArr = setAllToFalse(_constrainedDisplayGroup);
-          } else {
-            _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.inversionOffsetType);
-          }
-          break;
-        case 'numNotesMap':
-          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.numPadNotes);
-          break;
-        case 'semiTonesMap':
-          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.numSemisPerOctave);
-          break;
-        case 'padLengthMap':
-          _currArr = setStandardDisplayVals(_constrainedDisplayGroup);
-          break;
-        case 'leadMap':
-          _currArr = _constrainedDisplayGroup;
-          break;
-        case 'humidArpMap':
-          _currArr = setHumidMapVals(_constrainedDisplayGroup);
-          break;
+      case 'primaryMap':
+        _currArr = addPrimaryMusicVals(_constrainedDisplayGroup);
+        break;
+      case 'chordTypeMap':
+        // Don't display chord type
+        // if a chord sequence is being used
+        if (mDVals.chordType === 'noChordType') {
+          _currArr = setAllToFalse(_constrainedDisplayGroup);
+        } else {
+          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.chordType);
+        }
+        break;
+      case 'chordSeqTypeMap':
+        if (mDVals.chordSeqKey === 'noChordOffset') {
+          _currArr = setAllToFalse(_constrainedDisplayGroup);
+        } else {
+          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, outputChordSeqType(mDVals.chordSeqKey));
+        }
+        break;
+      case 'padTypeMap':
+        _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.padType);
+        break;
+      case 'longNoteTypeMap':
+        _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.longNoteType);
+        break;
+      case 'inversionMap':
+        if (mDVals.inversionOffsetType === 'inversionsNoOffset') {
+          _currArr = setAllToFalse(_constrainedDisplayGroup);
+        } else {
+          _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.inversionOffsetType);
+        }
+        break;
+      case 'numNotesMap':
+        _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.numPadNotes);
+        break;
+      case 'semiTonesMap':
+        _currArr = setStandardDisplayVals(_constrainedDisplayGroup, mDVals.numSemisPerOctave);
+        break;
+      case 'padLengthMap':
+        _currArr = setStandardDisplayVals(_constrainedDisplayGroup);
+        break;
+      case 'leadMap':
+        _currArr = _constrainedDisplayGroup;
+        break;
+      case 'humidArpMap':
+        _currArr = setHumidMapVals(_constrainedDisplayGroup);
+        break;
       }
       // Convert sets to one single array
       _finalCoData.push.apply(_finalCoData, _currArr);
