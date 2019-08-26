@@ -186,3 +186,78 @@ describe('isCloudy', function() {
     expect(weatherChecker.isCloudy(0.1)).to.be.false;
   });
 });
+
+describe('isVisbilityPoor', function() {
+  it('should return true if visibility is less than 7.5', function() {
+    expect(weatherChecker.isVisbilityPoor(7)).to.be.true;
+  });
+  it('should return false if visibility is equal to 7.5', function() {
+    expect(weatherChecker.isVisbilityPoor(7.5)).to.be.false;
+  });
+  it('should return false if visibility is greater than 7.5', function() {
+    expect(weatherChecker.isVisbilityPoor(8)).to.be.false;
+  });
+});
+
+describe('isFoggy', function() {
+  this.beforeAll(function() {
+    this.tempInFrnht = 50;
+  });
+  it('should return true if visibility is less than 3.5', function() {
+    expect(weatherChecker.isFoggy(3, this.tempInFrnht, this.tempInFrnht - 2)).to.be.true;
+  });
+  it('should return true if visibility is equal to 3.5 but temp (in Fahrenheit) minus dew point is less than to 4', function() {
+    expect(weatherChecker.isFoggy(3.5, this.tempInFrnht, this.tempInFrnht - 2)).to.be.true;
+  });
+  it('should return true if visibility is greater than 3.5 but temp (in Fahrenheit) minus dew point is less than to 4', function() {
+    expect(weatherChecker.isFoggy(4, this.tempInFrnht, this.tempInFrnht - 2)).to.be.true;
+  });
+  it('should return true if visibility is greater than 3.5 but temp (in Fahrenheit) minus dew point is equal to 4', function() {
+    expect(weatherChecker.isFoggy(4, this.tempInFrnht, this.tempInFrnht - 4)).to.be.true;
+  });
+  it('should return false if visibility is greater than 3.5 but temp (in Fahrenheit) minus dew point is greater than 4', function() {
+    expect(weatherChecker.isFoggy(4, this.tempInFrnht, this.tempInFrnht - 10)).to.be.false;
+  });
+});
+
+describe('isCold', function() {
+  this.beforeAll(function() {
+    this.tempInFrnht = 53.6;
+  });
+  it('should return true if temp (in Celcius) is less than 12', function() {
+    expect(weatherChecker.isCold(this.tempInFrnht - 5)).to.be.true;
+  });
+  it('should return true if temp (in Celcius) is equal to 12', function() {
+    expect(weatherChecker.isCold(this.tempInFrnht)).to.be.true;
+  });
+  it('should return false if temp (in Celcius) is greater than 12', function() {
+    expect(weatherChecker.isCold(this.tempInFrnht + 5)).to.be.false;
+  });
+});
+
+describe('isFreezing', function() {
+  this.beforeAll(function() {
+    this.tempInFrnht = 30.2;
+  });
+  it('should return true if temp (in Celcius) is less than -1', function() {
+    expect(weatherChecker.isFreezing(this.tempInFrnht - 5)).to.be.true;
+  });
+  it('should return false if temp (in Celcius) is greater than -1', function() {
+    expect(weatherChecker.isFreezing(this.tempInFrnht + 5)).to.be.false;
+  });
+});
+
+describe('isWayBelowFreezing', function() {
+  this.beforeAll(function() {
+    this.tempInFrnht = 14;
+  });
+  it('should return true if temp (in Celcius) is less than -1', function() {
+    expect(weatherChecker.isWayBelowFreezing(this.tempInFrnht - 5)).to.be.true;
+  });
+  it('should return false if temp (in Celcius) is equal to -1', function() {
+    expect(weatherChecker.isWayBelowFreezing(this.tempInFrnht)).to.be.false;
+  });
+  it('should return false if temp (in Celcius) is greater than -1', function() {
+    expect(weatherChecker.isWayBelowFreezing(this.tempInFrnht + 5)).to.be.false;
+  });
+});
