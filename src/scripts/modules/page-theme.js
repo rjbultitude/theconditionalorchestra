@@ -1,4 +1,4 @@
-'use strict';
+
 
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 var summaryIcon = require('./summary-icon');

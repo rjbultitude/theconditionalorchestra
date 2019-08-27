@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports = function() {
   // Safari, in Private Browsing Mode, looks like it supports localStorage but all calls to setItem

@@ -3,7 +3,7 @@
   sonic and visual output of the app
  */
 
-'use strict';
+
 // 3rd party
 var P5 = require('p5');
 require('p5/lib/addons/p5.sound');

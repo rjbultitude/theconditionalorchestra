@@ -1,5 +1,3 @@
-'use strict';
-
 import '../styles/global.scss';
 
 var Tabs = require('./modules/tabs.js');

@@ -3,7 +3,7 @@
   https://jsfiddle.net/i_like_robots/NxutA/
 */
 
-'use strict';
+
 
 (function (name, context, definition) {
   if (typeof define === 'function' && define.amd) {

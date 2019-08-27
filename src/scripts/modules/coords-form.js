@@ -1,4 +1,4 @@
-'use strict';
+
 
 var Darksky = require('darkskyjs-lite');
 var GoogleMapsLoader = require('google-maps');

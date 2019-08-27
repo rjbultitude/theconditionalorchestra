@@ -1,5 +1,3 @@
-'use strict';
-
 var microU = require('../utilities/micro-utilities');
 
 module.exports =  {
@@ -104,7 +102,7 @@ module.exports =  {
       } else {
         _key = 'skyLark';
       }
-    } 
+    }
     else if (wCheck.isPrecip || wCheck.isCloudy) {
       if (rootNoteGrtrMedian) {
         _key = 'melancholyDays';

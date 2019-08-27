@@ -1,4 +1,4 @@
-'use strict';
+
 
 var he = require('he');
 var freqi = require('freqi');

@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = function makeFibonacciSequence(startNumber, sequenceSize) {
   var _sequence = [startNumber, startNumber];
   //Find start pos

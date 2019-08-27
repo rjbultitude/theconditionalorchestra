@@ -6,7 +6,7 @@
   is available
   */
 
-'use strict';
+
 
 module.exports = {
   wParams: {

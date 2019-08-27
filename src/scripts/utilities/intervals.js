@@ -1,7 +1,5 @@
-'use strict';
-
 module.exports = {
-  //TODO check the names used
+  // TODO check the names used
   // Intervals
   heptatonicMajorIntervals: [0, 2, 4, 5, 7, 9, 11],
   heptatonicMinorIntervals: [0, 2, 3, 5, 7, 9, 10],
@@ -24,8 +22,8 @@ module.exports = {
   minorNinthIntervals: [0, 3, 7, 10, 14],
   // Safe notes for rain arrpeggio
   safeIntervals: [0, 5, 7, 9], //
-  safeNthMajorIntervals: [0, 4, 7], //for rain arrpeggio
-  safeNthMinorIntervals: [0, 3, 7], //for rain arrpeggio
+  safeNthMajorIntervals: [0, 4, 7], // for rain arrpeggio
+  safeNthMinorIntervals: [0, 3, 7], // for rain arrpeggio
   // for humid arrpeggio
   closeMajorIntervals: [-12, -10, 0, -10, 0, 5, 0, 5, 12],
   closeMinorIntervals: [-12, -9, 0, -9, 0, 7, 0, 7, 12],

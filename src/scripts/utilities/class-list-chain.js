@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * [exports chainable methods for toggling, adding and removing classes from an element]

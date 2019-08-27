@@ -23,6 +23,7 @@
     "build:dev": "webpack --env dev --mode none",
     "build:devserver": "webpack-dev-server --open --config=webpack/webpack.dev.js",
     "build:prod": "webpack --env prod --mode production",
+    "lint:js": "eslint .",
     "test": "cross-env NODE_ENV=test mocha --env.dev --opts ./mocha.opts \"./tests/**/*.spec.js\"",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"

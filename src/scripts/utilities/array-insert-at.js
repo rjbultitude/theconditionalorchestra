@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * [exports a function that inserts an array into another at any given index]

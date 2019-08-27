@@ -3,7 +3,7 @@
   the status icons too
 */
 
-'use strict';
+
 
 module.exports = {
   error: 'Error getting your location, please try again',

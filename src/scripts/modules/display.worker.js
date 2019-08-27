@@ -1,4 +1,4 @@
-'use strict';
+
 
 //Get display Data setter fns
 var coFns = require('./co-display-fns');

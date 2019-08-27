@@ -1,3 +1,5 @@
+/* eslint-disable no-undef, no-restricted-globals */
+
 var CACHE_STATIC_NAME = 'static-v9h';
 var CACHE_DYNAMIC_NAME = 'dynamic-v5i';
 
@@ -18,7 +20,7 @@ self.isOnlyIfCached = function isOnlyIfCached(event) {
       return true;
     }
   }
-}
+};
 
 // Install and cache app shell
 self.addEventListener('install', function(event) {
