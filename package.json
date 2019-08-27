@@ -25,7 +25,7 @@
     "build:prod": "webpack --env prod --mode production",
     "lint:js": "eslint .",
     "test": "cross-env NODE_ENV=test mocha --env.dev --opts ./mocha.opts \"./tests/**/*.spec.js\"",
-    "snyk-protect": "snyk protect",
+    "snyk-test": "snyk test",
     "prepare": "npm run snyk-protect"
   },
   "license": "MIT",
