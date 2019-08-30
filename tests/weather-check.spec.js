@@ -261,3 +261,84 @@ describe('isWayBelowFreezing', function() {
     expect(weatherChecker.isWayBelowFreezing(this.tempInFrnht + 5)).to.be.false;
   });
 });
+
+describe('isClement', function() {
+  this.beforeAll(function() {
+    this.cloudCover = 0.5;
+    this.windSpeed = 12;
+    this.precipIntensity = 0;
+  });
+  it('should return true if cloud cover is below 0.5, wind speed is less than 12 and precip intensity is zero', function() {
+    expect(weatherChecker.isClement(this.cloudCover - 0.1, this.windSpeed - 1, this.precipIntensity)).to.be.true;
+  });
+  it('should return false if cloud cover is below 0.5, wind speed is less than 12 and precip intensity is greater than zero', function() {
+    expect(weatherChecker.isClement(this.cloudCover - 0.1, this.windSpeed - 1, this.precipIntensity + 1)).to.be.false;
+  });
+  it('should return false if cloud cover is below, wind speed is equal to 12 and precip intensity is zero', function() {
+    expect(weatherChecker.isClement(this.cloudCover - 0.1, this.windSpeed, this.precipIntensity)).to.be.false;
+  });
+  it('should return false if cloud cover is below, wind speed is greater than 12 and precip intensity is zero', function() {
+    expect(weatherChecker.isClement(this.cloudCover - 0.1, this.windSpeed + 1, this.precipIntensity)).to.be.false;
+  });
+  it('should return false if cloud covet is equal to 0.5, wind speed is less than 12 and precip intensity is zero', function() {
+    expect(weatherChecker.isClement(this.cloudCover, this.windSpeed - 1, this.precipIntensity)).to.be.false;
+  });
+  it('should return false if cloud cover is equal to 0.5, wind speed is equal to 12 and precip intensity is zero', function() {
+    expect(weatherChecker.isClement(this.cloudCover, this.windSpeed, this.precipIntensity)).to.be.false;
+  });
+});
+
+describe('isMild', function() {
+  this.beforeAll(function() {
+    this.temperatureInFrnht = 57.2; //14
+    this.windSpeed = 12;
+  });
+  it('should return true if temperature (in Celcius) is greater than 14 and wind speed is less than 12', function() {
+    expect(weatherChecker.isMild(this.temperatureInFrnht + 1, this.windSpeed - 1)).to.be.true;
+  });
+  it('should return true if temperature (in Celcius) is equal to 14 and wind speed is less than 12', function() {
+    expect(weatherChecker.isMild(this.temperatureInFrnht, this.windSpeed - 1)).to.be.true;
+  });
+  it('should return false if temperature (in Celcius) is greater than 14 and wind speed is greater than 12', function() {
+    expect(weatherChecker.isMild(this.temperatureInFrnht + 1, this.windSpeed + 1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 14 and wind speed is equal to 12', function() {
+    expect(weatherChecker.isMild(this.temperatureInFrnht + 1, this.windSpeed)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is less than 14 and wind speed is less than 12', function() {
+    expect(weatherChecker.isMild(this.temperatureInFrnht - 1, this.windSpeed - 1)).to.be.false;
+  });
+});
+
+describe('isMildAndBreezy', function() {
+  this.beforeAll(function() {
+    this.temperatureInFrnht = 57.2; //14
+    this.windSpeed = 12;
+  });
+  it('should return true if temperature (in Celcius) is greater than 14 and wind speed is greater than 12', function() {
+    expect(weatherChecker.isMildAndBreezy(this.temperatureInFrnht + 1, this.windSpeed + 1)).to.be.true;
+  });
+  it('should return true if temperature (in Celcius) is equal to 14 and wind speed is greater than 12', function() {
+    expect(weatherChecker.isMildAndBreezy(this.temperatureInFrnht, this.windSpeed + 1)).to.be.true;
+  });
+  it('should return false if temperature (in Celcius) is greater than 14 and wind speed is less than 12', function() {
+    expect(weatherChecker.isMildAndBreezy(this.temperatureInFrnht + 1, this.windSpeed - 1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 14 and wind speed is equal to 12', function() {
+    expect(weatherChecker.isMildAndBreezy(this.temperatureInFrnht + 1, this.windSpeed)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is less than 14 and wind speed is greater than 12', function() {
+    expect(weatherChecker.isMildAndBreezy(this.temperatureInFrnht - 1, this.windSpeed + 1)).to.be.false;
+  });
+});
+
+describe('isMildAndHumid', function() {
+  this.beforeAll(function() {
+    this.temperatureInFrnht = 57.2; //14
+    this.windSpeed = 12;
+    this.humidity = weatherChecker.humidityThreshold;
+  });
+  it('should return true if temperature (in Celcius) is greater than 14, wind speed is less than 12 and humidity is greater than humdity threshhold', function() {
+    expect(weatherChecker.isMildAndHumid(this.temperatureInFrnht + 1, this.windSpeed - 1, this.humidity + 1)).to.be.true;
+  });
+});
