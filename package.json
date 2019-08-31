@@ -24,7 +24,7 @@
     "build:devserver": "webpack-dev-server --open --config=webpack/webpack.dev.js",
     "build:prod": "webpack --env prod --mode production",
     "lint:js": "eslint .",
-    "test": "cross-env NODE_ENV=test mocha --env.dev --opts ./mocha.opts \"./tests/**/*.spec.js\"",
+    "test": "cross-env NODE_ENV=test nyc mocha --env.dev --opts ./mocha.opts \"./tests/**/*.spec.js\"",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
   },
@@ -50,6 +50,7 @@
     "mini-css-extract-plugin": "^0.8.0",
     "mocha": "^6.2.0",
     "node-sass": "^4.12.0",
+    "nyc": "^14.1.1",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^7.3.1",
