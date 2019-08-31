@@ -24,7 +24,8 @@
     "build:devserver": "webpack-dev-server --open --config=webpack/webpack.dev.js",
     "build:prod": "webpack --env prod --mode production",
     "lint:js": "eslint .",
-    "test": "cross-env NODE_ENV=test nyc mocha --env.dev --opts ./mocha.opts \"./tests/**/*.spec.js\"",
+    "test:with-coverage": "nyc --reporter=lcov _mocha --report lcovonly --env.dev --opts ./mocha.opts \"./tests/**/*.spec.js\"",
+    "test": "cross-env NODE_ENV=test mocha --env.dev --opts ./mocha.opts \"./tests/**/*.spec.js\"",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
   },
@@ -32,6 +33,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^3.0.0",
+    "codacy-coverage": "^3.4.0",
     "copy-webpack-plugin": "^5.0.4",
     "cross-env": "^5.2.0",
     "css-loader": "^3.2.0",
