@@ -24,7 +24,7 @@
     "build:devserver": "webpack-dev-server --open --config=webpack/webpack.dev.js",
     "build:prod": "webpack --env prod --mode production",
     "lint:js": "eslint .",
-    "test:with-coverage": "nyc --reporter=lcov --reporter=text --all --include \"src/**\" npm run test",
+    "test:with-coverage": "nyc --reporter=lcov --reporter=text --all --include \"src/**\" npm run test -- -R spec && cat ./coverage/lcov.info | codacy-coverage && rm -rf ./coverage",
     "test": "cross-env NODE_ENV=test mocha --env.dev --opts ./mocha.opts \"./tests/**/*.spec.js\"",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
