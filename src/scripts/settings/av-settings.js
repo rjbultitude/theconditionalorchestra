@@ -47,6 +47,6 @@ module.exports = {
     min: 1000,
     max: 3000
   },
-	//DOM
-	cContainerName: 'canvas-container'
+  //DOM
+  cContainerName: 'canvas-container'
 };

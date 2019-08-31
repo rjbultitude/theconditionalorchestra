@@ -1,4 +1,4 @@
-'use strict';
+
 
 var statusMsgs = require('./messages');
 var makeRequest = require('../utilities/make-request');

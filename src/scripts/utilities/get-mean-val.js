@@ -1,4 +1,4 @@
-'use strict';
+
 /**
  * [exports description]
  * @param  {[number]} min          [minimum number in range]

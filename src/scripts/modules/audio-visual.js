@@ -3,7 +3,7 @@
   sonic and visual output of the app
  */
 
-'use strict';
+
 // 3rd party
 var P5 = require('p5');
 require('p5/lib/addons/p5.sound');
@@ -218,7 +218,7 @@ module.exports = function() {
     // grouped weather booleans
     var wCheck = {
       //single concept items
-      isPrecip: weatherCheck.isPrecip(lwData.precipType, lwData.precipIntensity.value),
+      isPrecip: weatherCheck.isPrecip(lwData.precipIntensity.value),
       isWindy: weatherCheck.isWindy(lwData.windSpeed.value),
       isCloudy: weatherCheck.isCloudy(lwData.cloudCover.value),
       isVisbilityPoor: weatherCheck.isVisbilityPoor(lwData.visibility.value),

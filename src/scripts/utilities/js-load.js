@@ -1,4 +1,4 @@
-'use strict';
+
 
 var classListChainable = require('./class-list-chain');
 

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * [exports function that converts farenheit to celcius]
  * @param  {[number]} temperatureInFahrenHeit [temperature in farenheit]

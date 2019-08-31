@@ -1,4 +1,4 @@
-'use strict';
+
 
 var frnhtToCelcius = require('../utilities/frnht-to-celcius');
 
@@ -6,48 +6,48 @@ module.exports = {
   /**
    * Single concept items
    */
-  // @param precipType String
+
   // @param precipIntensity floating point
-  isPrecip: function isPrecip(precipType, precipIntensity) {
-    //TODO do we need this check?
-    if (precipType !== undefined) {
-      return precipIntensity > 0;
-    } else {
-      console.log('No precipitation type value');
-      return false;
-    }
+  isPrecip: function isPrecip(precipIntensity) {
+    return precipIntensity > 0;
   },
 
   /**
    * Air moisture related functions
    */
 
+  humidityThreshold: 0.57,
+  humidityThresholdMid: 0.45,
+  humidityThresholdLow: 0.4,
+
   isHumid: function isHumid(humidity) {
-    return humidity > 0.57;
+    return humidity > this.humidityThreshold;
   },
 
   isFreezingAndHumid: function isFreezingAndHumid(humidity, temperatureInFrnht) {
-    return frnhtToCelcius(temperatureInFrnht) < -1 && humidity > 0.57;
+    return frnhtToCelcius(temperatureInFrnht) < -1 && humidity > this.humidityThreshold;
   },
 
   isMuggy: function isMuggy(humidity, temperatureInFrnht) {
-    return humidity > 0.48 && frnhtToCelcius(temperatureInFrnht) > 16;
+    return humidity > this.humidityThresholdMid && frnhtToCelcius(temperatureInFrnht) > 16;
   },
 
   isSmoggy: function isSmoggy(humidity, temperatureInFrnht, visibility) {
-    return humidity > 0.45 && frnhtToCelcius(temperatureInFrnht) > 18 && visibility < 8;
+    return humidity > this.humidityThresholdMid && frnhtToCelcius(temperatureInFrnht) > 18 && visibility < 8;
   },
 
+  // TODO is Arid paired with smoggy? If so add visibility
+  // Shouldn't humidity be lower
   isArid: function isArid(humidity, temperatureInFrnht, precipIntensity) {
-    return humidity < 0.45 && frnhtToCelcius(temperatureInFrnht) > 20 && precipIntensity === 0;
+    return humidity < this.humidityThresholdMid && frnhtToCelcius(temperatureInFrnht) > 20 && precipIntensity === 0;
   },
 
   isCrisp: function isCrisp(humidity, temperatureInFrnht) {
-    return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) < 0;
+    return humidity < this.humidityThresholdLow && frnhtToCelcius(temperatureInFrnht) < 0;
   },
 
   isSirocco: function isSirocco(humidity, temperatureInFrnht, windSpeed) {
-    return humidity < 0.4 && frnhtToCelcius(temperatureInFrnht) > 21 && windSpeed > 20;
+    return humidity < this.humidityThresholdLow && frnhtToCelcius(temperatureInFrnht) > 21 && windSpeed > 20;
   },
 
   // @param windSpeed floating point
@@ -71,7 +71,8 @@ module.exports = {
 
   /**
    * temperature
-   */
+  **/
+
   // @param temperatureInFrnht floating point
   isCold: function isCold(temperatureInFrnht) {
     return frnhtToCelcius(temperatureInFrnht) <= 12;
@@ -94,7 +95,7 @@ module.exports = {
   // @param cloudCover floating point
   // @param windSpeed floating point
   isClement: function isClement(cloudCover, windSpeed, precipIntensity) {
-   return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0;
+    return cloudCover < 0.5 && windSpeed < 12 && precipIntensity === 0;
   },
 
   // @param temperatureInFrnht floating point
@@ -108,16 +109,16 @@ module.exports = {
   },
 
   isMildAndHumid: function isMildAndHumid(temperatureInFrnht, windSpeed, humidity) {
-    return frnhtToCelcius(temperatureInFrnht) >= 14 && windSpeed < 12 && humidity > 0.57;
+    return frnhtToCelcius(temperatureInFrnht) >= 14 && windSpeed < 12 && humidity > this.humidityThreshold;
   },
 
   // @param temperatureInFrnht floating point
   isFine: function isFine(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.3;
+    return frnhtToCelcius(temperatureInFrnht) > 20 && windSpeed < 10 && cloudCover <= 0.3;
   },
 
   isSublime: function isSublime(cloudCover, windSpeed, temperatureInFrnht) {
-   return frnhtToCelcius(temperatureInFrnht) > 26 && windSpeed < 8 && cloudCover <= 0.15;
+    return frnhtToCelcius(temperatureInFrnht) > 26 && windSpeed < 8 && cloudCover <= 0.15;
   },
 
   // @param temperatureInFrnht floating point
