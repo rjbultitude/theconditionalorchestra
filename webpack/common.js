@@ -11,7 +11,6 @@ const copyPluginConfig = [
   { from: './manifest.json', to: distDir },
   { from: './403.html', to: distDir },
   { from: './404.html', to: distDir },
-  { from: './.htaccess', to: distDir },
   { from: './robots.txt', to: distDir },
   { from: './browserconfig.xml', to: distDir }
 ];
