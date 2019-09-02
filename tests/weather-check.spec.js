@@ -341,4 +341,7 @@ describe('isMildAndHumid', function() {
   it('should return true if temperature (in Celcius) is greater than 14, wind speed is less than 12 and humidity is greater than humdity threshhold', function() {
     expect(weatherChecker.isMildAndHumid(this.temperatureInFrnht + 1, this.windSpeed - 1, this.humidity + 1)).to.be.true;
   });
+  it('should return true if temperature (in Celcius) is equal to 14, wind speed is less than 12 and humidity is greater than humdity threshhold', function() {
+    expect(weatherChecker.isMildAndHumid(this.temperatureInFrnht, this.windSpeed - 1, this.humidity + 1)).to.be.true;
+  });
 });
