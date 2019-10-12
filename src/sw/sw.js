@@ -57,7 +57,7 @@ self.addEventListener('activate', function(event) {
 // populate dynamic cache with selected resources
 self.addEventListener('fetch', function(event) {
   var rUrl = event.request.url;
-  return dynamicCacheAssets.map(function (assetPatten) {
+  return dynamicCacheAssets.map(function(assetPatten) {
     if (rUrl.indexOf(assetPatten) > -1) {
       event.respondWith(
         caches.match(event.request)
