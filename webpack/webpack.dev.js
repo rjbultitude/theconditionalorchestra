@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const CopyPlugin = require('copy-webpack-plugin');
-const {roorDir, src_Path, distDir, copyPluginConfig, splitChunksConfig} = require('./common.js');
+const {rootDir, src_Path, distDir, copyPluginConfig, splitChunksConfig} = require('./common.js');
 
 module.exports = {
   entry: {
