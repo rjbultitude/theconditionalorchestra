@@ -5,6 +5,7 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const CopyPlugin = require('copy-webpack-plugin');
 const {rootDir, src_Path, distDir, copyPluginConfig, splitChunksConfig} = require('./common.js');
+const eslintPath = `${rootDir}.eslintrc`;
 
 module.exports = {
   entry: {
@@ -26,7 +27,7 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'eslint-loader',
         options: {
-          eslintPath: rootDir + '.eslintrc',
+          eslintPath
         },
       },
       {
