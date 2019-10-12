@@ -4,6 +4,10 @@
     "mocha": true,
     "serviceworker": true
   },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
   "rules": {
     "indent": "off",
     "comma-dangle": ["error", "never"],
