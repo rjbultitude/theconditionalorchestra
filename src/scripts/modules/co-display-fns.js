@@ -241,10 +241,8 @@ module.exports = function(coDisplayData, lwData, wCheck, mDVals) {
   }
 
   function whichConditionTrue(displayDataGroup) {
-    var _anyValidPropTrue = false;
     for (var i = 0, length = displayDataGroup.length; i < length; i++) {
       if (displayDataGroup[i].key !== 'isOther' && displayDataGroup[i].value) {
-        _anyValidPropTrue = true;
         // Return early
         return displayDataGroup[i].key;
       }

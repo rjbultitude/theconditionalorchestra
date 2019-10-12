@@ -77,7 +77,6 @@ module.exports = function() {
   var choralScales = [];
   var synchedSoundsChords = [];
   // Lead
-  var leadBarComplete = false;
   var leadSoundIndex = 0;
   // Subscriptions
   var publishBrassOne;
@@ -245,7 +244,7 @@ module.exports = function() {
       isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value,lwData.windSpeed.value, lwData.precipIntensity.value),
-      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value),
+      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value)
     };
     console.log('wCheck', wCheck);
     // grouped sound booleans
@@ -412,10 +411,8 @@ module.exports = function() {
       function updateLeadSoundIndex() {
         if (leadSoundIndex === numPadNotes - 1) {
           leadSoundIndex = 0;
-          leadBarComplete = true;
         } else {
           leadSoundIndex++;
-          leadBarComplete = false;
         }
       }
 
@@ -450,8 +447,6 @@ module.exports = function() {
       function moveToNextChord() {
         // increment indices
         setChordIndex();
-        // Start the lead over
-        leadBarComplete = false;
       }
 
       function playBrassBaritone(scale) {
@@ -1055,9 +1050,6 @@ module.exports = function() {
           //get the note
           var _leadSoundRate = synchedSoundsChords[chordIndex][leadSoundIndex];
           leadSoundReady = false;
-          //If we want to stop the lead
-          //after each play of the notes in chord
-          //if (!leadBarComplete) {
           rhodes.play();
           rhodes.setVolume(leadVolume, rampTime, timeFromNow, startVol);
           rhodes.rate(_leadSoundRate);

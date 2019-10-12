@@ -116,7 +116,7 @@ module.exports = (function() {
             constrain: false,
             unit: '',
             iconPath: '/img/rain-icon.svg',
-            music: 'Bell sound playing ',
+            music: 'Bell sound playing '
           },
           {
             key: 'precipIntensity',
@@ -668,7 +668,7 @@ module.exports = (function() {
             iconPath: '/img/storm-icon.svg',
             music: 'Number of semitones in octave: ',
             musicValue: ''
-          },
+          }
         ],
         humidArpMap: [
           {
