@@ -1,5 +1,8 @@
 
-
+// TODO. Update to latest version
+// When publshed
+// Else error handling for no proxy
+// won't work
 var Darksky = require('darkskyjs-lite');
 var GoogleMapsLoader = require('google-maps');
 var postal = require('postal');
@@ -212,7 +215,6 @@ module.exports = function(query) {
   }
 
   function configureAndUpdate(conditions, newLocation) {
-    console.log('conditions', conditions);
     // Must make new object at this point
     var locationData = new LocationData();
     // Set numerical integer and floating point values
@@ -275,23 +277,20 @@ module.exports = function(query) {
     var forecast = new Darksky({
       PROXY_SCRIPT: '/proxy.php'
     });
-    // Create object as DarkSky requires
+    // Create an array as DarkSky requires
+    // TODO DarkSky can handle no array
     var newLocation = new Nll(lat, long, name);
     var newLocations = [];
-    // Handle server error
-    if (forecast.dataError) {
-      console.log('There was a problem retrieving API key from server');
-      configureAndUpdate(staticData, newLocation);
-    }
     // Must use array for darksky wrapper
     newLocations.push(newLocation);
     forecast.getCurrentConditions(newLocations, function(conditions) {
       console.log('raw conditions', conditions);
       // If there's a problem with the darksky service
-      // load the static weather
+      // load the local (or static) weather data
       if (conditions === false || conditions.length === 0) {
         console.log('There was a problem retrieving data from darksky');
-        conditions = staticData;
+        useLocalStorageData('badConnection');
+        return;
       }
       configureAndUpdate(conditions, newLocation);
     });
