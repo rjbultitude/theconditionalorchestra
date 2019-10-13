@@ -4,6 +4,7 @@ var Darksky = require('darkskyjs-lite');
 var GoogleMapsLoader = require('google-maps');
 var postal = require('postal');
 var channel = postal.channel();
+// var Darksky = require('./darksky');
 var Nll = require('./nll-cnstrctr');
 var staticData = require('./static-data');
 var maxMin = require('../settings/max-min-values');
@@ -210,76 +211,89 @@ module.exports = function(query) {
     summaryIcon.outputSummary(lwData);
   }
 
+  function configureAndUpdate(conditions, newLocation) {
+    console.log('conditions', conditions);
+    // Must make new object at this point
+    var locationData = new LocationData();
+    // Set numerical integer and floating point values
+    for (var key in locationData) {
+      if (locationData.hasOwnProperty(key)) {
+        locationData[key] = new NumericCondition(
+          inferMissingNumValue(conditions, key),
+          maxMin.wParams[key].min,
+          maxMin.wParams[key].max
+        );
+        console.log('locationData keys', locationData[key]);
+      }
+    }
+    // As visibility often returns undefined
+    // infer it from other values
+    locationData.visibility.value = inferVisibility(conditions, locationData);
+    // Error check here
+    locationData = fixlwDataRanges(locationData);
+    // Add the location name
+    Object.defineProperty(locationData, 'name', {
+      value: newLocation.name,
+      writable: true,
+      configurable: true,
+      enumerable: true
+    });
+    // Add string or time values
+    Object.defineProperty(locationData, 'precipType', {
+      writable: true,
+      enumerable: true,
+      value: conditions[0].precipType() || ''
+    });
+    // Add summary
+    Object.defineProperty(locationData, 'summary', {
+      writable: false,
+      enumerable: true,
+      value: conditions[0].summary() || 'no summary'
+    });
+    // Add icon
+    Object.defineProperty(locationData, 'icon', {
+      writable: false,
+      enumerable: true,
+      value: conditions[0].icon() || 'no icon'
+    });
+    // Keep last state for next time
+    // in case user should be offline
+    var locationDataString = JSON.stringify(locationData);
+    storageShim();
+    localStorage.setItem('locationData', locationDataString);
+    // update the url
+    updateURL(locationData.name);
+    // Post the data to rest of app
+    if (conditions.length > 1) {
+      console.log('There seems to be more than one location: ', conditions.length);
+    }
+    updateUISuccess(locationData);
+  }
+
   function getAndLoadConditions(lat, long, name) {
     //Get API wrapper
     var forecast = new Darksky({
       PROXY_SCRIPT: '/proxy.php'
     });
+    // Create object as DarkSky requires
     var newLocation = new Nll(lat, long, name);
     var newLocations = [];
+    // Handle server error
+    if (forecast.dataError) {
+      console.log('There was a problem retrieving API key from server');
+      configureAndUpdate(staticData, newLocation);
+    }
     // Must use array for darksky wrapper
     newLocations.push(newLocation);
     forecast.getCurrentConditions(newLocations, function(conditions) {
+      console.log('raw conditions', conditions);
       // If there's a problem with the darksky service
       // load the static weather
-      if (conditions === false) {
+      if (conditions === false || conditions.length === 0) {
         console.log('There was a problem retrieving data from darksky');
-        conditions = makeRequest('GET', 'data/static-data.json');
+        conditions = staticData;
       }
-      //must make new object at this point
-      var locationData = new LocationData();
-      // Set numerical integer and floating point values
-      for (var key in locationData) {
-        if (locationData.hasOwnProperty(key)) {
-          locationData[key] = new NumericCondition(
-            inferMissingNumValue(conditions, key),
-            maxMin.wParams[key].min,
-            maxMin.wParams[key].max
-          );
-        }
-      }
-      //As visibility often returns undefined
-      //infer it from other values
-      locationData.visibility.value = inferVisibility(conditions, locationData);
-      //Error check here
-      locationData = fixlwDataRanges(locationData);
-      //Add the location name
-      Object.defineProperty(locationData, 'name', {
-        value: newLocation.name,
-        writable: true,
-        configurable: true,
-        enumerable: true
-      });
-      // Add string or time values
-      Object.defineProperty(locationData, 'precipType', {
-        writable: true,
-        enumerable: true,
-        value: conditions[0].precipType() || ''
-      });
-      // Add summary
-      Object.defineProperty(locationData, 'summary', {
-        writable: false,
-        enumerable: true,
-        value: conditions[0].summary() || 'no summary'
-      });
-      // Add icon
-      Object.defineProperty(locationData, 'icon', {
-        writable: false,
-        enumerable: true,
-        value: conditions[0].icon() || 'no icon'
-      });
-      // Keep last state for next time
-      // in case user should be offline
-      var locationDataString = JSON.stringify(locationData);
-      storageShim();
-      localStorage.setItem('locationData', locationDataString);
-      // update the url
-      updateURL(locationData.name);
-      // Post the data to rest of app
-      if (conditions.length > 1) {
-        console.log('There seems to be more than one location: ', conditions.length);
-      }
-      updateUISuccess(locationData);
+      configureAndUpdate(conditions, newLocation);
     });
   }
 
