@@ -323,8 +323,8 @@ module.exports = function(query) {
     }
     // Set var for use with isPlaying subscriber
     usingStaticData = true;
-    if (Object.keys(window.localStorage).length > 0) {
-      var restoredData = localStorage.getItem('locationData');
+    var restoredData = localStorage.getItem('locationData');
+    if (restoredData !== null) {
       var restoredDataJSON = JSON.parse(restoredData);
       handleNoGeoData(_statusString + lastKnownSuffix, restoredDataJSON);
       updateUISuccess(restoredDataJSON);
@@ -394,7 +394,14 @@ module.exports = function(query) {
    */
   function getPlaces(lat, long) {
     var gpKey = makeRequest('GET', '/gm-key.php');
+    function handleError() {
+      updateStatus('error');
+      updateApp(lat, long, 'unknown');
+    }
     gpKey.then(function success(key) {
+      if (key.indexOf('<') >= 0) {
+        throw new Error;
+      }
       GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.load(function(google) {
         var geocoder = new google.maps.Geocoder();
@@ -442,8 +449,10 @@ module.exports = function(query) {
     }, function failure(rejectObj) {
       console.log(rejectObj.status);
       console.log(rejectObj.statusText);
-      updateStatus('error');
-      updateApp(lat, long, 'unknown');
+      handleError();
+    }).catch(function(e) {
+      console.warn(e, 'error retreiving key');
+      handleError();
     });
   }
 
