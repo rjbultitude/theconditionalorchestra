@@ -64,7 +64,7 @@
     "worker-loader": "^2.0.0"
   },
   "dependencies": {
-    "darkskyjs-lite": "0.0.9",
+    "darkskyjs-lite": "^0.1.4",
     "es6-promise": "^4.2.8",
     "freqi": "^1.0.3",
     "google-maps": "^3.3.0",

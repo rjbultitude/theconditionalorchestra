@@ -7,7 +7,6 @@ var Darksky = require('darkskyjs-lite');
 var GoogleMapsLoader = require('google-maps');
 var postal = require('postal');
 var channel = postal.channel();
-// var Darksky = require('./darksky');
 var Nll = require('./nll-cnstrctr');
 var staticData = require('./static-data');
 var maxMin = require('../settings/max-min-values');
