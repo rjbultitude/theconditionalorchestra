@@ -1,4 +1,8 @@
 module.exports = function makeFibonacciSequence(startNumber, sequenceSize) {
+  if (typeof startNumber !== 'number' || typeof sequenceSize !== 'number') {
+    console.warn('makeFibonacciSequence arguments weren\'t numbers');
+    return undefined;
+  }
   var _sequence = [startNumber, startNumber];
   //Find start pos
   var start = _sequence.length - 1;
