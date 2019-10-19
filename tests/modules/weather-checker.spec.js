@@ -480,3 +480,29 @@ describe('isViolentStorm', function() {
     expect(weatherChecker.isViolentStorm(this.cloudCover + 0.1, this.windSpeed - 1, this.precipIntensity + 1)).to.be.false;
   });
 });
+
+describe('isOminous', function() {
+  this.beforeAll(function() {
+    this.precipProbability = 0;
+    this.nearestStormDistance = 15;
+    this.cloudCover = 0.5;
+  });
+  it('should return true if cloudCover is greater than 0.5, nearestStormDistance is less than 15 and precipProbability is greater than 0', function() {
+    expect(weatherChecker.isOminous(this.cloudCover + 0.1, this.nearestStormDistance - 1, this.precipProbability + 0.1)).to.be.true;
+  });
+  it('should return false if cloudCover is equal to 0.5, nearestStormDistance is greater than 15 and precipProbability is equal to 0', function() {
+    expect(weatherChecker.isOminous(this.cloudCover, this.nearestStormDistance + 1, this.precipProbability)).to.be.false;
+  });
+  it('should return false if cloudCover is less than 0.5, nearestStormDistance is greater than 15 and precipProbability is equal to 0', function() {
+    expect(weatherChecker.isOminous(this.cloudCover, this.nearestStormDistance + 1, this.precipProbability - 0.1)).to.be.false;
+  });
+  it('should return false if cloudCover is greater than 0.5, nearestStormDistance is equal to 15 and precipProbability is equal to 0', function() {
+    expect(weatherChecker.isOminous(this.cloudCover, this.nearestStormDistance, this.precipProbability + 0.1)).to.be.false;
+  });
+  it('should return false if cloudCover is greater than 0.5, nearestStormDistance is greater than 15 and precipProbability is equal to 0', function() {
+    expect(weatherChecker.isOminous(this.cloudCover, this.nearestStormDistance, this.precipProbability + 0.1)).to.be.false;
+  });
+  it('should return false if cloudCover is greater than 0.5, nearestStormDistance is less than 15 and precipProbability is less than 0', function() {
+    expect(weatherChecker.isOminous(this.cloudCover + 0.1, this.nearestStormDistance - 1, this.precipProbability - 0.1)).to.be.false;
+  });
+});
