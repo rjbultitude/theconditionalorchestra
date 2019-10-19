@@ -1,6 +1,6 @@
 var mocha = require('mocha');
 var expect = require('chai').expect;
-var weatherChecker = require('../src/scripts/modules/weather-checker-fns.js');
+var weatherChecker = require('../../src/scripts/modules/weather-checker-fns.js');
 
 describe('isPrecip', function() {
   it('should return true if parameter is greater than zero', function() {
@@ -343,5 +343,140 @@ describe('isMildAndHumid', function() {
   });
   it('should return true if temperature (in Celcius) is equal to 14, wind speed is less than 12 and humidity is greater than humdity threshhold', function() {
     expect(weatherChecker.isMildAndHumid(this.temperatureInFrnht, this.windSpeed - 1, this.humidity + 1)).to.be.true;
+  });
+});
+
+describe('isFine', function() {
+  this.beforeAll(function() {
+    this.temperatureInFrnht = 68; //20
+    this.windSpeed = 10;
+    this.cloudCover = 0.3;
+  });
+  it('should return true if temperature (in Celcius) is greater than 20, wind speed is less than 10 and cloudCover is less than 0.3', function() {
+    expect(weatherChecker.isFine(this.cloudCover - 0.1, this.windSpeed - 1, this.temperatureInFrnht + 1)).to.be.true;
+  });
+  it('should return true if temperature (in Celcius) is greater than 20, wind speed is less than 10 and cloudCover is equal to 0.3', function() {
+    expect(weatherChecker.isFine(this.cloudCover, this.windSpeed - 1, this.temperatureInFrnht + 1)).to.be.true;
+  });
+  it('should return false if temperature (in Celcius) is equal to 20, wind speed is less than 10 and cloudCover is equal to 0.3', function() {
+    expect(weatherChecker.isFine(this.cloudCover, this.windSpeed - 1, this.temperatureInFrnht)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is less than 20, wind speed is less than 10 and cloudCover is equal to 0.3', function() {
+    expect(weatherChecker.isFine(this.cloudCover, this.windSpeed - 1, this.temperatureInFrnht -1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 20, wind speed is equal to 10 and cloudCover is equal to 0.3', function() {
+    expect(weatherChecker.isFine(this.cloudCover, this.windSpeed, this.temperatureInFrnht + 1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 20, wind speed is greater than 10 and cloudCover is equal to 0.3', function() {
+    expect(weatherChecker.isFine(this.cloudCover, this.windSpeed, this.temperatureInFrnht + 1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 20, wind speed is less than 10 and cloudCover is greater than 0.3', function() {
+    expect(weatherChecker.isFine(this.cloudCover + 0.1, this.windSpeed - 1, this.temperatureInFrnht + 1)).to.be.false;
+  });
+});
+
+describe('isSublime', function() {
+  this.beforeAll(function() {
+    this.temperatureInFrnht = 78.8; //26
+    this.windSpeed = 8;
+    this.cloudCover = 0.15;
+  });
+  it('should return true if temperature (in Celcius) is greater than 26, wind speed is less than 8 and cloudCover is less than 0.15', function() {
+    expect(weatherChecker.isSublime(this.cloudCover - 0.1, this.windSpeed - 1, this.temperatureInFrnht + 1)).to.be.true;
+  });
+  it('should return true if temperature (in Celcius) is greater than 26, wind speed is less than 8 and cloudCover is equal to 0.15', function() {
+    expect(weatherChecker.isSublime(this.cloudCover, this.windSpeed - 1, this.temperatureInFrnht + 1)).to.be.true;
+  });
+  it('should return false if temperature (in Celcius) is equal to 26, wind speed is less than 8 and cloudCover is equal to 0.15', function() {
+    expect(weatherChecker.isSublime(this.cloudCover, this.windSpeed - 1, this.temperatureInFrnht)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is less than 26, wind speed is less than 8 and cloudCover is equal to 0.15', function() {
+    expect(weatherChecker.isSublime(this.cloudCover, this.windSpeed - 1, this.temperatureInFrnht -1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 26, wind speed is equal to 8 and cloudCover is equal to 0.15', function() {
+    expect(weatherChecker.isSublime(this.cloudCover, this.windSpeed, this.temperatureInFrnht + 1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 26, wind speed is greater than 8 and cloudCover is equal to 0.15', function() {
+    expect(weatherChecker.isSublime(this.cloudCover, this.windSpeed, this.temperatureInFrnht + 1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 26, wind speed is less than 8 and cloudCover is greater than 0.15', function() {
+    expect(weatherChecker.isSublime(this.cloudCover + 0.1, this.windSpeed - 1, this.temperatureInFrnht + 1)).to.be.false;
+  });
+});
+
+describe('isBitter', function() {
+  this.beforeAll(function() {
+    this.temperatureInFrnht = 37.4; //3
+    this.windSpeed = 22;
+  });
+  it('should return true if temperature (in Celcius) is less than 3, wind speed is greater than 22', function() {
+    expect(weatherChecker.isBitter(this.temperatureInFrnht - 1, this.windSpeed + 1)).to.be.true;
+  });
+  it('should return false if temperature (in Celcius) is less than 3, wind speed is equal to 22', function() {
+    expect(weatherChecker.isBitter(this.temperatureInFrnht - 1, this.windSpeed)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is less than 3, wind speed is less than 22', function() {
+    expect(weatherChecker.isBitter(this.temperatureInFrnht - 1, this.windSpeed - 1)).to.be.false;
+  });
+  it('should return false if temperature (in Celcius) is greater than 3, wind speed is greater than 22', function() {
+    expect(weatherChecker.isBitter(this.temperatureInFrnht + 1, this.windSpeed + 1)).to.be.false;
+  });
+  it('should return true if temperature (in Celcius) is equal to 3 (due to rounding issue), wind speed is greater than 22', function() {
+    expect(weatherChecker.isBitter(this.temperatureInFrnht, this.windSpeed + 1)).to.be.true;
+  });
+});
+
+describe('isStormy', function() {
+  this.beforeAll(function() {
+    this.precipIntensity = 0.3;
+    this.windSpeed = 28;
+    this.cloudCover = 0.7;
+  });
+  it('should return true if cloudCover is greater than 0.7 and wind speed is greater than 28', function() {
+    expect(weatherChecker.isStormy(this.cloudCover + 0.1, this.windSpeed + 1, this.precipIntensity)).to.be.true;
+  });
+  it('should return true if cloudCover is less than 0.7, wind speed is greater than 28 but precipIntensity is equal to 0.3', function() {
+    expect(weatherChecker.isStormy(this.cloudCover - 0.1, this.windSpeed + 1, this.precipIntensity)).to.be.true;
+  });
+  it('should return true if cloudCover is less than 0.7, wind speed is less than 28 but precipIntensity is equal to 0.3', function() {
+    expect(weatherChecker.isStormy(this.cloudCover - 0.1, this.windSpeed - 1, this.precipIntensity)).to.be.true;
+  });
+  it('should return false if cloudCover is less than 0.7, wind speed is greater than 28 but precipIntensity is greater than 0.3', function() {
+    expect(weatherChecker.isStormy(this.cloudCover - 0.1, this.windSpeed + 1, this.precipIntensity + 0.1)).to.be.true;
+  });
+  it('should return false if cloudCover is greater than 0.7, wind speed is less than 28 and precipIntensity is less than 0.3', function() {
+    expect(weatherChecker.isStormy(this.cloudCover - 0.1, this.windSpeed + 1, this.precipIntensity - 0.1)).to.be.false;
+  });
+  it('should return true if cloudCover is less than 0.7, wind speed is equal than 28 and precipIntensity is less than 0.3', function() {
+    expect(weatherChecker.isStormy(this.cloudCover, this.windSpeed, this.precipIntensity + 0.1)).to.be.true;
+  });
+  it('should return false if cloudCover is less than 0.7, wind speed is less than 28 and precipIntensity is less than 0.3', function() {
+    expect(weatherChecker.isStormy(this.cloudCover - 0.1, this.windSpeed - 1, this.precipIntensity - 0.1)).to.be.false;
+  });
+});
+
+describe('isViolentStorm', function() {
+  this.beforeAll(function() {
+    this.precipIntensity = 0.4;
+    this.windSpeed = 60;
+    this.cloudCover = 0.8;
+  });
+  it('should return true if cloudCover is greater than 0.8, wind speed is greater than 60 and precipIntensity is less than 0.4', function() {
+    expect(weatherChecker.isViolentStorm(this.cloudCover + 0.1, this.windSpeed + 1, this.precipIntensity + 1)).to.be.true;
+  });
+  it('should return false if cloudCover is equal to 0.8, wind speed is less than 60 and precipIntensity is equal to 0.4', function() {
+    expect(weatherChecker.isViolentStorm(this.cloudCover, this.windSpeed - 1, this.precipIntensity)).to.be.false;
+  });
+  it('should return false if cloudCover is less than 0.8, wind speed is less than 60 and precipIntensity is equal to 0.4', function() {
+    expect(weatherChecker.isViolentStorm(this.cloudCover, this.windSpeed - 1, this.precipIntensity -1)).to.be.false;
+  });
+  it('should return false if cloudCover is greater than 0.8, wind speed is equal to 60 and precipIntensity is equal to 0.4', function() {
+    expect(weatherChecker.isViolentStorm(this.cloudCover, this.windSpeed, this.precipIntensity + 1)).to.be.false;
+  });
+  it('should return false if cloudCover is greater than 0.8, wind speed is greater than 60 and precipIntensity is equal to 0.4', function() {
+    expect(weatherChecker.isViolentStorm(this.cloudCover, this.windSpeed, this.precipIntensity + 1)).to.be.false;
+  });
+  it('should return false if cloudCover is greater than 0.8, wind speed is less than 60 and precipIntensity is greater than 0.4', function() {
+    expect(weatherChecker.isViolentStorm(this.cloudCover + 0.1, this.windSpeed - 1, this.precipIntensity + 1)).to.be.false;
   });
 });

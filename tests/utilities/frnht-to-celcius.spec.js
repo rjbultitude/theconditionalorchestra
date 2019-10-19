@@ -1,6 +1,6 @@
 var mocha = require('mocha');
 var expect = require('chai').expect;
-var frnhtToCelcius = require('../src/scripts/utilities/frnht-to-celcius.js');
+var frnhtToCelcius = require('../../src/scripts/utilities/frnht-to-celcius.js');
 
 describe('fahrenheit to celcius', function() {
   this.beforeAll(function() {

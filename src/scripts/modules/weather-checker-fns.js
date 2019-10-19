@@ -124,6 +124,7 @@ module.exports = {
   // @param temperatureInFrnht floating point
   // @param windSpeed floating point
   isBitter: function isBitter(temperatureInFrnht, windSpeed) {
+    console.log('temp', frnhtToCelcius(37.4));
     return frnhtToCelcius(temperatureInFrnht) < 3 && windSpeed > 22;
   },
 
