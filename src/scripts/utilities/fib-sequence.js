@@ -11,5 +11,6 @@ module.exports = function makeFibonacciSequence(startNumber, sequenceSize) {
     _sequence.push(_newNumber);
   }
   _sequence.shift();
+  console.log('_sequence', _sequence);
   return _sequence;
 };
