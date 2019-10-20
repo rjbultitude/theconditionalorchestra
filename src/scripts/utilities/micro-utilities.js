@@ -7,6 +7,12 @@ module.exports = {
     return window.matchMedia('all and (max-width: ' + maxWidthVal + 'px)');
   },
   mapRange: function mapRange(value, low1, high1, low2, high2) {
+    for (var i = 0; i < arguments.length; i++) {
+      if (typeof arguments[i] !== 'number') {
+        console.warn('map range argument is not typeof number');
+        return false;
+      }
+    }
     var _maxDiff = high2 - low2;
     return low2 + _maxDiff * (value - low1) / (high1 - low1);
   },
