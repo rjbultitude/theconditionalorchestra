@@ -206,17 +206,34 @@ module.exports =  {
   },
 
   isRootNoteGrtrMedian: function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
+    if (typeof rootNote !== 'number') {
+      console.warn('rootNote was not typeof number');
+      return undefined;
+    }
+    if (rootNoteRange.hasOwnProperty('rangeMinus') === false && rootNoteRange.hasOwnProperty('rangePlus') === false) {
+      console.warn('rootNoteRange does not have correct props', rootNoteRange);
+      return undefined;
+    }
     var _totalRange = Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus;
     var _rootNoteMedian = Math.round(_totalRange / 2);
     return rootNote + _rootNoteMedian >= _rootNoteMedian;
   },
 
   getSeqRepeatMaxMult: function getSeqRepeatMaxMult(numChords, avSettings) {
-    //If the number of chords is high
-    //lower the multiplier
+    if (typeof numChords !== 'number') {
+      console.warn('numChords is not typeof number', numChords);
+      return undefined;
+    }
+    if (avSettings.hasOwnProperty('numChordsMin') === false && avSettings.hasOwnProperty('numChordsMax') === false) {
+      console.warn('avSettings does not have expected props', numChords);
+      return undefined;
+    }
+    // If the number of chords is high
+    // lower the multiplier
     var _mean = Math.round((avSettings.numChordsMin + avSettings.numChordsMax) /
       2);
     var _diff = avSettings.numChordsMax - _mean;
+    console.log('_diff', _diff);
     if (numChords > _mean) {
       return avSettings.mainSeqRepeatMax - _diff;
     } else {
