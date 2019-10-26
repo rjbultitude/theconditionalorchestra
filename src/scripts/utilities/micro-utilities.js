@@ -40,9 +40,7 @@ module.exports = {
   },
   addSpacesToString: function addSpacesToString(string) {
     var strWithSpaces = string.replace(/([A-Z][a-z]+)/g, ' ' + '$&');
-    console.log('strWithSpaces', strWithSpaces);
     var strWithNoSpaceAtStart = this.rmSpaceFromStart(strWithSpaces);
-    console.log('strWithNoSpaceAtStart', strWithNoSpaceAtStart);
     return strWithNoSpaceAtStart;
   },
   removeSpacesFromString: function removeSpacesFromString(string) {
