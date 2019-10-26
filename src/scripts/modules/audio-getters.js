@@ -241,32 +241,52 @@ module.exports =  {
     }
   },
 
-  getMainSeqRepeatNum: function getMainSeqRepeatNum(lwData, numChords, upperMult) {
-    //playlogic
+  getMainSeqRepeatNum: function getMainSeqRepeatNum(weatherFacet, numChords, upperMult) {
+    if (weatherFacet.hasOwnProperty('value') === false) {
+      console.warn('weatherFacet does not contain correct props', weatherFacet);
+      return undefined;
+    }
+    if (typeof numChords !== 'number' && typeof upperMult !== 'number') {
+      console.warn('numChords or upperMult were not typeof number', numChords, upperMult);
+      return undefined;
+    }
+    // playlogic
     return Math.round(microU.mapRange(
-      lwData.apparentTemperature.value,
-      lwData.apparentTemperature.min,
-      lwData.apparentTemperature.max,
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
       numChords * upperMult,
       numChords * 1
     ));
   },
 
   getRootNoteRange: function getRootNoteRange(numSemisPerOctave) {
-    //In western scale it will be between + 6 or - 12
+    if (typeof numSemisPerOctave !== 'number') {
+      console.warn('numSemisPerOctave was not typeof number');
+      return undefined;
+    }
+    // In western scale it will be between + 6 or - 12
     return {
       rangePlus: Math.round(numSemisPerOctave / 2),
       rangeMinus: -Math.abs(numSemisPerOctave)
     };
   },
 
-  getRootNote: function getRootNote(lwData, rootNoteRange) {
-    //Pressure determines root note
-    //playlogic
+  getRootNote: function getRootNote(weatherFacet, rootNoteRange) {
+    if (weatherFacet.hasOwnProperty('value') === false) {
+      console.warn('weatherFacet does not contain correct props');
+      return undefined;
+    }
+    if (rootNoteRange.hasOwnProperty('rangeMinus') === false) {
+      console.warn('weatherFacet does not contain correct props');
+      return undefined;
+    }
+    // Pressure determines root note
+    // playlogic
     var _rootNote = Math.round(microU.mapRange(
-      lwData.pressure.value,
-      lwData.pressure.min,
-      lwData.pressure.max,
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
       rootNoteRange.rangeMinus,
       rootNoteRange.rangePlus
     ));

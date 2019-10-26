@@ -264,7 +264,7 @@ module.exports = function() {
     // Root note
     // Is an index rather than a frequency
     var rootNoteRange = audioGets.getRootNoteRange(numSemisPerOctave);
-    var rootNote = audioGets.getRootNote(lwData, rootNoteRange);
+    var rootNote = audioGets.getRootNote(lwData.pressure, rootNoteRange);
     console.log('rootNote', rootNote);
     var rootNoteHigh = audioGets.isRootNoteHigh(rootNote);
     var rootNoteGrtrMedian = audioGets.isRootNoteGrtrMedian(rootNote, rootNoteRange);
@@ -274,7 +274,7 @@ module.exports = function() {
     var chordType = audioGets.getChordType(wCheck, chordSeqKey);
     var isMelodyMajor = audioGets.isMelodyMajor(chordSeqKey, chordType);
     var upperMult = audioGets.getSeqRepeatMaxMult(numChords, avSettings);
-    var seqRepeatNum = audioGets.getMainSeqRepeatNum(lwData, numChords, upperMult);
+    var seqRepeatNum = audioGets.getMainSeqRepeatNum(lwData.apparentTemperature, numChords, upperMult);
     // Precipitation
     // TODO Group these into object
     // and only create it if it's raining

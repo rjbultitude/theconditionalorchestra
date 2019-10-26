@@ -50,3 +50,60 @@ describe('get Sequence Repeat Max Multiplier', function() {
     expect(audioGetters.getSeqRepeatMaxMult(10, 'bad arg')).to.be.an('undefined');
   });
 });
+
+describe('get Main Sequence Repeat Number', function() {
+  this.beforeAll(function() {
+    this.apparentTemperature = {
+      value: 4,
+      min: 2,
+      max: 6
+    }
+  });
+  it('should return a number when weatherFacet arg has correct props and numChords and upperMult args are numbers', function() {
+    expect(audioGetters.getMainSeqRepeatNum(this.apparentTemperature, 2, 4)).to.be.a('number');
+  });
+  it('should return undefined if weatherFacet arg does not contain value prop', function() {
+    expect(audioGetters.getMainSeqRepeatNum({min: 1, max: 2}, 2, 4)).to.be.an('undefined');
+  });
+  it('should return undefined if numChords and upperMult are not typeof number', function() {
+    expect(audioGetters.getMainSeqRepeatNum(this.apparentTemperature, '2', '4')).to.be.an('undefined');
+  });
+});
+
+describe('get Root Note Range', function() {
+  it('should return an object when a number is passed as arg', function() {
+    expect(audioGetters.getRootNoteRange(2)).to.be.an('object');
+  });
+  it('should return a rangePlus prop with value half of the number passed', function() {
+    expect(audioGetters.getRootNoteRange(4).rangePlus).to.equal(2);
+  });
+  it('should return a rangeMinus prop with negative value of the number passed', function() {
+    expect(audioGetters.getRootNoteRange(4).rangeMinus).to.equal(-4);
+  });
+  it('should return undefined when arg is not typeof number', function() {
+    expect(audioGetters.getRootNoteRange('4')).to.be.an('undefined');
+  });
+});
+
+describe('get Root Note', function() {
+  this.beforeAll(function() {
+    this.pressure = {
+      value: 960,
+      min: 800,
+      max: 1080
+    };
+    this.rootNoteRange = {
+      rangeMinus: -4,
+      rangePlus: 4
+    }
+  });
+  it('should return a number when weatherFacet object and rootNoteRange objects are passed', function() {
+    expect(audioGetters.getRootNote(this.pressure, this.rootNoteRange)).to.be.a('number');
+  });
+  it('should return undefined when weatherFacet arg does not contain prop value', function() {
+    expect(audioGetters.getRootNote({max: 1, min: 2}, this.rootNoteRange)).to.be.an('undefined');
+  });
+  it('should return undefined when rootNoteRange arg does not contain prop rangeMinus', function() {
+    expect(audioGetters.getRootNote(this.pressure, {})).to.be.an('undefined');
+  });
+});
