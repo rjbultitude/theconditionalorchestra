@@ -296,7 +296,11 @@ module.exports =  {
     return _rootNote;
   },
 
-  getLongNoteIndex: function getLongNoteIndex(lwData, numNotes) {
+  getLongNoteIndex: function getLongNoteIndex(windBearing, numNotes) {
+    if (windBearing.hasOwnProperty('value') !== true) {
+      console.warn('windBearing does not contain correct prop', windBearing);
+      return undefined;
+    }
     var _longNoteIndex = 0;
     var _timesToDivide = numNotes;
     var _bearingSlice = 360 / _timesToDivide;
@@ -305,8 +309,8 @@ module.exports =  {
     for (var i = 0; i < _timesToDivide; i++) {
       var _mult = i + 1;
       var _currentBearingSlice = _bearingSlice * _mult;
-      if (lwData.windBearing.value <= _currentBearingSlice) {
-        _longNoteIndex = i;
+      if (windBearing.value <= _currentBearingSlice) {
+        _longNoteIndex = _mult;
         break;
       } else {
         _longNoteIndex = _timesToDivide - 1;
@@ -319,9 +323,8 @@ module.exports =  {
     return _longNoteIndex;
   },
 
-  isLongNoteHigh: function isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes) {
-    return rootNoteHigh && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
-    //return rootNoteGrtrMedian && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
+  isLongNoteHigh: function isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes) {
+    return rootNoteHigh && longNoteIndex >= Math.round(numPadNotes / 2);
   },
 
   getLongNoteVolArr: function getLongNoteVolArr(wCheck) {
@@ -348,39 +351,59 @@ module.exports =  {
     }
   },
 
-  getLongNoteFilterFreq: function getLongNoteFilterFreq(lwData, avSettings) {
+  getLongNoteFilterFreq: function getLongNoteFilterFreq(weatherFacet, longNoteFilter) {
+    if (weatherFacet.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', weatherFacet);
+      return undefined;
+    }
+    if (longNoteFilter.hasOwnProperty('min') !== true) {
+      console.warn('longNoteFilter does not contain correct props', longNoteFilter);
+      return undefined;
+    }
     return Math.round(microU.mapRange(
-      lwData.visibility.value,
-      lwData.visibility.min,
-      lwData.visibility.max,
-      avSettings.longNoteFilter.min,
-      avSettings.longNoteFilter.max
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
+      longNoteFilter.min,
+      longNoteFilter.max
     ));
   },
 
-  getBrassVolume: function getBrassVolume(lwData) {
+  getBrassVolume: function getBrassVolume(weatherFacet) {
+    if (weatherFacet.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', weatherFacet);
+      return undefined;
+    }
     return microU.mapRange(
-      lwData.windSpeed.value,
-      lwData.windSpeed.min,
-      lwData.windSpeed.max,
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
       0.6,
       1
     );
   },
 
-  getBrassBpm: function getBrassBpm(lwData) {
+  getBrassBpm: function getBrassBpm(weatherFacet) {
+    if (weatherFacet.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', weatherFacet);
+      return undefined;
+    }
     return Math.round(microU.mapRange(
-      lwData.windSpeed.value,
-      lwData.windSpeed.min,
-      lwData.windSpeed.max,
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
       6,
       12
     ));
   },
 
-  getLeadSoundVolume: function getLeadSoundVolume(wCheck) {
+  getLeadSoundVolume: function getLeadSoundVolume(isSublime) {
+    if (typeof isSublime !== 'boolean') {
+      console.warn('isSublime is not a boolean', isSublime);
+      return undefined;
+    }
     var _leadVolume;
-    if (wCheck.isSublime) {
+    if (isSublime) {
       _leadVolume = 0.8;
     } else {
       _leadVolume = 0.55;

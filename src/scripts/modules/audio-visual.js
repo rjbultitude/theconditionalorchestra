@@ -283,7 +283,7 @@ module.exports = function() {
     var precipArpBps = precipArpBpm / 60;
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var precipArpIntervalType = audioGets.getPrecipArpIntervalType(isMelodyMajor);
-    var leadVolume = audioGets.getLeadSoundVolume(wCheck);
+    var leadVolume = audioGets.getLeadSoundVolume(wCheck.isSublime);
     var padType = audioGets.getPadType(wCheck);
     var padVolume = audioGets.getPadVolume(wCheck, sCheck, padType, avSettings);
     var inversionOffsetType = audioGets.getInversionOffsetKey(wCheck, chordSeqKey);
@@ -296,13 +296,13 @@ module.exports = function() {
     var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, chordSeqKey, isMelodyMajor);
     var harpVolArr = audioGets.getHarpVolArr(wCheck, sCheck);
     // Long note
-    var longNoteIndex = audioGets.getLongNoteIndex(lwData, numPadNotes);
-    var longNoteHigh = audioGets.isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes);
+    var longNoteIndex = audioGets.getLongNoteIndex(lwData.windBearing, numPadNotes);
+    var longNoteHigh = audioGets.isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
     console.log('longNoteHigh', longNoteHigh);
     var longNoteVolArr = audioGets.getLongNoteVolArr(wCheck);
     console.log('longNoteVolArr', longNoteVolArr);
     var longNoteType = audioGets.getLongNoteType(wCheck);
-    var longNoteFilterFreq = audioGets.getLongNoteFilterFreq(lwData, avSettings);
+    var longNoteFilterFreq = audioGets.getLongNoteFilterFreq(lwData.visibility, avSettings.longNoteFilter);
     var padFilterFreq = audioGets.getPadFilterFreq(lwData, avSettings);
     var extraSeqOffset = audioGets.getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
     console.log('extraSeqOffset', extraSeqOffset);
@@ -310,8 +310,8 @@ module.exports = function() {
     console.log('invExtraSeqOffset', invExtraSeqOffset);
     // TODO Group these into object
     // and only create it if it's windy
-    var brassBaritoneVol = audioGets.getBrassVolume(lwData);
-    var brassBaritoneBpm = audioGets.getBrassBpm(lwData);
+    var brassBaritoneVol = audioGets.getBrassVolume(lwData.windSpeed);
+    var brassBaritoneBpm = audioGets.getBrassBpm(lwData.windSpeed);
     var brassBaritoneBps = brassBaritoneBpm / 60;
     var brassBaritoneStepTime = Math.round(appFrameRate / brassBaritoneBps);
     var brassBaritone2StepTime = brassBaritoneStepTime * 2 + 57;
