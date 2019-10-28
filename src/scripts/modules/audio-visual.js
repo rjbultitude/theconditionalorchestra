@@ -278,8 +278,8 @@ module.exports = function() {
     // Precipitation
     // TODO Group these into object
     // and only create it if it's raining
-    var precipCategory = audioGets.getPrecipCategory(lwData);
-    var precipArpBpm = audioGets.getPrecipArpBpm(lwData);
+    var precipCategory = audioGets.getPrecipCategory(lwData.precipType);
+    var precipArpBpm = audioGets.getPrecipArpBpm(lwData.precipIntensity);
     var precipArpBps = precipArpBpm / 60;
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var precipArpIntervalType = audioGets.getPrecipArpIntervalType(isMelodyMajor);
@@ -290,7 +290,7 @@ module.exports = function() {
     // Humidity
     // TODO Group these into object
     // and only create it if it's humid
-    var humidArpBpm = audioGets.getHumidArpBpm(lwData);
+    var humidArpBpm = audioGets.getHumidArpBpm(lwData.humidity);
     var humidArpBps = humidArpBpm / 60;
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
     var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, chordSeqKey, isMelodyMajor);

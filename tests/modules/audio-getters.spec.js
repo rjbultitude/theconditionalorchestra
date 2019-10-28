@@ -245,3 +245,47 @@ describe('get Lead Sound Volume', function() {
     expect(audioGetters.getLeadSoundVolume({})).to.be.an('undefined');
   });
 });
+
+describe('get Precipitation Category', function() {
+  it('should return a string when precipType is a string', function() {
+    expect(audioGetters.getPrecipCategory('')).to.be.a('string');
+  });
+  it('should return "hard" when precipType is "rain"', function() {
+    expect(audioGetters.getPrecipCategory('rain')).to.equal('hard');
+  });
+  it('should return undefined when precipType is not a string', function() {
+    expect(audioGetters.getPrecipCategory({})).to.be.an('undefined');
+  });
+});
+
+describe('get Precip Arp Bpm', function() {
+  this.beforeAll(function() {
+    this.precipIntensity = {
+      value: 0.5,
+      min: 0,
+      max: 1
+    };
+  });
+  it('should return a number when precipIntensity is an object with valid props', function() {
+    expect(audioGetters.getPrecipArpBpm(this.precipIntensity)).to.be.a('number');
+  });
+  it('should return undefined when precipIntensity is not an object with value prop', function() {
+    expect(audioGetters.getPrecipArpBpm({})).to.be.an('undefined');
+  });
+});
+
+describe('get Humid Arp Bpm', function() {
+  this.beforeAll(function() {
+    this.humidity = {
+      value: 0.5,
+      min: 0,
+      max: 1
+    };
+  });
+  it('should return a number when humidity is an object with valid props', function() {
+    expect(audioGetters.getPrecipArpBpm(this.humidity)).to.be.a('number');
+  });
+  it('should return undefined when humidity is not an object with value prop', function() {
+    expect(audioGetters.getPrecipArpBpm({})).to.be.an('undefined');
+  });
+});

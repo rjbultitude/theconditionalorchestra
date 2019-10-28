@@ -411,32 +411,44 @@ module.exports =  {
     return _leadVolume;
   },
 
-  getPrecipCategory: function getPrecipCategory(lwData) {
-    if (lwData.precipType === 'rain') {
+  getPrecipCategory: function getPrecipCategory(precipType) {
+    if (typeof precipType !== 'string') {
+      console.warn('precipType is not typeof string', precipType);
+      return undefined;
+    }
+    if (precipType === 'rain') {
       return 'hard';
-    } else if (lwData.precipType === 'sleet') {
+    } else if (precipType === 'sleet') {
       return 'soft';
     } else {
       return 'light'; //'snow' or undefined
     }
   },
 
-  getPrecipArpBpm: function getPrecipArpBpm(lwData) {
+  getPrecipArpBpm: function getPrecipArpBpm(precipIntensity) {
+    if (precipIntensity.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', precipIntensity);
+      return undefined;
+    }
     // playlogic
     return Math.round(microU.mapRange(
-      lwData.precipIntensity.value,
-      lwData.precipIntensity.min,
-      lwData.precipIntensity.max,
+      precipIntensity.value,
+      precipIntensity.min,
+      precipIntensity.max,
       60,
       150
     ));
   },
 
-  getHumidArpBpm: function getHumidArpBpm(lwData) {
+  getHumidArpBpm: function getHumidArpBpm(humidity) {
+    if (humidity.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', humidity);
+      return undefined;
+    }
     return Math.round(microU.mapRange(
-      lwData.humidity.value,
-      lwData.humidity.min,
-      lwData.humidity.max,
+      humidity.value,
+      humidity.min,
+      humidity.max,
       60,
       120
     ));
