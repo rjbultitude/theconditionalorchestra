@@ -5,7 +5,7 @@
 
 
 
-(function (name, context, definition) {
+(function(name, context, definition) {
   if (typeof define === 'function' && define.amd) {
     define(definition);
   }

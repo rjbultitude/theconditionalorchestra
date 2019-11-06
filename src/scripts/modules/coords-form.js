@@ -1,5 +1,8 @@
 
-
+// TODO. Update to latest version
+// When publshed
+// Else error handling for no proxy
+// won't work
 var Darksky = require('darkskyjs-lite');
 var GoogleMapsLoader = require('google-maps');
 var postal = require('postal');
@@ -210,76 +213,85 @@ module.exports = function(query) {
     summaryIcon.outputSummary(lwData);
   }
 
+  function configureAndUpdate(conditions, newLocation) {
+    // Must make new object at this point
+    var locationData = new LocationData();
+    // Set numerical integer and floating point values
+    for (var key in locationData) {
+      if (locationData.hasOwnProperty(key)) {
+        locationData[key] = new NumericCondition(
+          inferMissingNumValue(conditions, key),
+          maxMin.wParams[key].min,
+          maxMin.wParams[key].max
+        );
+        console.log('locationData keys', locationData[key]);
+      }
+    }
+    // As visibility often returns undefined
+    // infer it from other values
+    locationData.visibility.value = inferVisibility(conditions, locationData);
+    // Error check here
+    locationData = fixlwDataRanges(locationData);
+    // Add the location name
+    Object.defineProperty(locationData, 'name', {
+      value: newLocation.name,
+      writable: true,
+      configurable: true,
+      enumerable: true
+    });
+    // Add string or time values
+    Object.defineProperty(locationData, 'precipType', {
+      writable: true,
+      enumerable: true,
+      value: conditions[0].precipType() || ''
+    });
+    // Add summary
+    Object.defineProperty(locationData, 'summary', {
+      writable: false,
+      enumerable: true,
+      value: conditions[0].summary() || 'no summary'
+    });
+    // Add icon
+    Object.defineProperty(locationData, 'icon', {
+      writable: false,
+      enumerable: true,
+      value: conditions[0].icon() || 'no icon'
+    });
+    // Keep last state for next time
+    // in case user should be offline
+    var locationDataString = JSON.stringify(locationData);
+    storageShim();
+    localStorage.setItem('locationData', locationDataString);
+    // update the url
+    updateURL(locationData.name);
+    // Post the data to rest of app
+    if (conditions.length > 1) {
+      console.log('There seems to be more than one location: ', conditions.length);
+    }
+    updateUISuccess(locationData);
+  }
+
   function getAndLoadConditions(lat, long, name) {
     //Get API wrapper
     var forecast = new Darksky({
       PROXY_SCRIPT: '/proxy.php'
     });
+    // Create an array as DarkSky requires
+    // TODO DarkSky can handle no array
     var newLocation = new Nll(lat, long, name);
     var newLocations = [];
     // Must use array for darksky wrapper
     newLocations.push(newLocation);
     forecast.getCurrentConditions(newLocations, function(conditions) {
+      console.log('raw conditions', conditions);
       // If there's a problem with the darksky service
-      // load the static weather
-      if (conditions === false) {
+      // load the local (or static) weather data
+      if (conditions === false || conditions.length === 0) {
         console.log('There was a problem retrieving data from darksky');
-        conditions = makeRequest('GET', 'data/static-data.json');
+        useLocalStorageData('badConnection');
+        return;
       }
-      //must make new object at this point
-      var locationData = new LocationData();
-      // Set numerical integer and floating point values
-      for (var key in locationData) {
-        if (locationData.hasOwnProperty(key)) {
-          locationData[key] = new NumericCondition(
-            inferMissingNumValue(conditions, key),
-            maxMin.wParams[key].min,
-            maxMin.wParams[key].max
-          );
-        }
-      }
-      //As visibility often returns undefined
-      //infer it from other values
-      locationData.visibility.value = inferVisibility(conditions, locationData);
-      //Error check here
-      locationData = fixlwDataRanges(locationData);
-      //Add the location name
-      Object.defineProperty(locationData, 'name', {
-        value: newLocation.name,
-        writable: true,
-        configurable: true,
-        enumerable: true
-      });
-      // Add string or time values
-      Object.defineProperty(locationData, 'precipType', {
-        writable: true,
-        enumerable: true,
-        value: conditions[0].precipType() || ''
-      });
-      // Add summary
-      Object.defineProperty(locationData, 'summary', {
-        writable: false,
-        enumerable: true,
-        value: conditions[0].summary() || 'no summary'
-      });
-      // Add icon
-      Object.defineProperty(locationData, 'icon', {
-        writable: false,
-        enumerable: true,
-        value: conditions[0].icon() || 'no icon'
-      });
-      // Keep last state for next time
-      // in case user should be offline
-      var locationDataString = JSON.stringify(locationData);
-      storageShim();
-      localStorage.setItem('locationData', locationDataString);
-      // update the url
-      updateURL(locationData.name);
-      // Post the data to rest of app
-      if (conditions.length > 1) {
-        console.log('There seems to be more than one location: ', conditions.length);
-      }
-      updateUISuccess(locationData);
+      configureAndUpdate(conditions, newLocation);
     });
   }
 
@@ -323,8 +335,8 @@ module.exports = function(query) {
     }
     // Set var for use with isPlaying subscriber
     usingStaticData = true;
-    if (Object.keys(window.localStorage).length > 0) {
-      var restoredData = localStorage.getItem('locationData');
+    var restoredData = localStorage.getItem('locationData');
+    if (restoredData !== null) {
       var restoredDataJSON = JSON.parse(restoredData);
       handleNoGeoData(_statusString + lastKnownSuffix, restoredDataJSON);
       updateUISuccess(restoredDataJSON);
@@ -394,7 +406,14 @@ module.exports = function(query) {
    */
   function getPlaces(lat, long) {
     var gpKey = makeRequest('GET', '/gm-key.php');
+    function handleError() {
+      updateStatus('error');
+      updateApp(lat, long, 'unknown');
+    }
     gpKey.then(function success(key) {
+      if (key.indexOf('<') >= 0) {
+        throw new Error;
+      }
       GoogleMapsLoader.KEY = key;
       GoogleMapsLoader.load(function(google) {
         var geocoder = new google.maps.Geocoder();
@@ -442,8 +461,10 @@ module.exports = function(query) {
     }, function failure(rejectObj) {
       console.log(rejectObj.status);
       console.log(rejectObj.statusText);
-      updateStatus('error');
-      updateApp(lat, long, 'unknown');
+      handleError();
+    }).catch(function(e) {
+      console.warn(e, 'error retreiving key');
+      handleError();
     });
   }
 
@@ -497,8 +518,8 @@ module.exports = function(query) {
       }
       updateStatus(statusString);
       useLocalStorageData(statusString);
-      console.error('failure.code', failure.code);
-      console.error('failure.message', failure.message);
+      console.error('No Geo access. Failure.code', failure.code);
+      console.error('No Geo access. Failure.message', failure.message);
     }
 
     if (oldCoords) {

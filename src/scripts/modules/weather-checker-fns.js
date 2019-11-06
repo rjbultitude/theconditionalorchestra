@@ -47,12 +47,13 @@ module.exports = {
   },
 
   isSirocco: function isSirocco(humidity, temperatureInFrnht, windSpeed) {
-    return humidity < this.humidityThresholdLow && frnhtToCelcius(temperatureInFrnht) > 21 && windSpeed > 20;
+    return humidity < this.humidityThresholdLow && frnhtToCelcius(temperatureInFrnht) > 21 && windSpeed > 17;
   },
 
   // @param windSpeed floating point
+  // 17 is twice average in UK
   isWindy: function isWindy(windSpeed) {
-    return windSpeed > 22;
+    return windSpeed > 17;
   },
 
   // @param cloudCover floating point
@@ -124,6 +125,7 @@ module.exports = {
   // @param temperatureInFrnht floating point
   // @param windSpeed floating point
   isBitter: function isBitter(temperatureInFrnht, windSpeed) {
+    console.log('temp', frnhtToCelcius(37.4));
     return frnhtToCelcius(temperatureInFrnht) < 3 && windSpeed > 22;
   },
 

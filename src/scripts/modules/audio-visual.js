@@ -38,7 +38,7 @@ module.exports = function() {
   // bass
   var bass;
   var bass2;
-  // Windy/ Brass
+  // Windy / Brass
   var brassBaritone;
   var brassBaritone2;
   // Percussion
@@ -47,7 +47,7 @@ module.exports = function() {
   var rideCymbal;
   var djembe;
   var djembeVolArr = [0.95, 0.7];
-  // clement / brass
+  // clement
   var harpSound;
   // long notes
   var longNote;
@@ -77,7 +77,6 @@ module.exports = function() {
   var choralScales = [];
   var synchedSoundsChords = [];
   // Lead
-  var leadBarComplete = false;
   var leadSoundIndex = 0;
   // Subscriptions
   var publishBrassOne;
@@ -245,7 +244,7 @@ module.exports = function() {
       isBitter: weatherCheck.isBitter(lwData.temperature.value, lwData.windSpeed.value),
       isStormy: weatherCheck.isStormy(lwData.cloudCover.value, lwData.windSpeed.value, lwData.precipIntensity.value),
       isViolentStorm: weatherCheck.isViolentStorm(lwData.cloudCover.value,lwData.windSpeed.value, lwData.precipIntensity.value),
-      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value),
+      isOminous: weatherCheck.isOminous(lwData.cloudCover.value, lwData.nearestStormDistance.value, lwData.precipProbability.value)
     };
     console.log('wCheck', wCheck);
     // grouped sound booleans
@@ -265,7 +264,7 @@ module.exports = function() {
     // Root note
     // Is an index rather than a frequency
     var rootNoteRange = audioGets.getRootNoteRange(numSemisPerOctave);
-    var rootNote = audioGets.getRootNote(lwData, rootNoteRange);
+    var rootNote = audioGets.getRootNote(lwData.pressure, rootNoteRange);
     console.log('rootNote', rootNote);
     var rootNoteHigh = audioGets.isRootNoteHigh(rootNote);
     var rootNoteGrtrMedian = audioGets.isRootNoteGrtrMedian(rootNote, rootNoteRange);
@@ -274,36 +273,39 @@ module.exports = function() {
     var chordSeqKey = audioGets.getChordSeqKey(wCheck, rootNoteGrtrMedian);
     var chordType = audioGets.getChordType(wCheck, chordSeqKey);
     var isMelodyMajor = audioGets.isMelodyMajor(chordSeqKey, chordType);
+    console.log('chordSeqKey', chordSeqKey);
+    console.log('chordType', chordType);
+    console.log('isMelodyMajor', isMelodyMajor);
     var upperMult = audioGets.getSeqRepeatMaxMult(numChords, avSettings);
-    var seqRepeatNum = audioGets.getMainSeqRepeatNum(lwData, numChords, upperMult);
+    var seqRepeatNum = audioGets.getMainSeqRepeatNum(lwData.apparentTemperature, numChords, upperMult);
     // Precipitation
     // TODO Group these into object
     // and only create it if it's raining
-    var precipCategory = audioGets.getPrecipCategory(lwData);
-    var precipArpBpm = audioGets.getPrecipArpBpm(lwData);
+    var precipCategory = audioGets.getPrecipCategory(lwData.precipType);
+    var precipArpBpm = audioGets.getPrecipArpBpm(lwData.precipIntensity);
     var precipArpBps = precipArpBpm / 60;
     var precipArpStepTime = Math.round(appFrameRate / precipArpBps);
     var precipArpIntervalType = audioGets.getPrecipArpIntervalType(isMelodyMajor);
-    var leadVolume = audioGets.getLeadSoundVolume(wCheck);
+    var leadVolume = audioGets.getLeadSoundVolume(wCheck.isSublime);
     var padType = audioGets.getPadType(wCheck);
     var padVolume = audioGets.getPadVolume(wCheck, sCheck, padType, avSettings);
     var inversionOffsetType = audioGets.getInversionOffsetKey(wCheck, chordSeqKey);
     // Humidity
     // TODO Group these into object
     // and only create it if it's humid
-    var humidArpBpm = audioGets.getHumidArpBpm(lwData);
+    var humidArpBpm = audioGets.getHumidArpBpm(lwData.humidity);
     var humidArpBps = humidArpBpm / 60;
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
-    var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, chordSeqKey, isMelodyMajor);
+    var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, isMelodyMajor);
     var harpVolArr = audioGets.getHarpVolArr(wCheck, sCheck);
     // Long note
-    var longNoteIndex = audioGets.getLongNoteIndex(lwData, numPadNotes);
-    var longNoteHigh = audioGets.isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes);
+    var longNoteIndex = audioGets.getLongNoteIndex(lwData.windBearing, numPadNotes);
+    var longNoteHigh = audioGets.isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
     console.log('longNoteHigh', longNoteHigh);
     var longNoteVolArr = audioGets.getLongNoteVolArr(wCheck);
     console.log('longNoteVolArr', longNoteVolArr);
     var longNoteType = audioGets.getLongNoteType(wCheck);
-    var longNoteFilterFreq = audioGets.getLongNoteFilterFreq(lwData, avSettings);
+    var longNoteFilterFreq = audioGets.getLongNoteFilterFreq(lwData.visibility, avSettings.longNoteFilter);
     var padFilterFreq = audioGets.getPadFilterFreq(lwData, avSettings);
     var extraSeqOffset = audioGets.getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
     console.log('extraSeqOffset', extraSeqOffset);
@@ -311,8 +313,8 @@ module.exports = function() {
     console.log('invExtraSeqOffset', invExtraSeqOffset);
     // TODO Group these into object
     // and only create it if it's windy
-    var brassBaritoneVol = audioGets.getBrassVolume(lwData);
-    var brassBaritoneBpm = audioGets.getBrassBpm(lwData);
+    var brassBaritoneVol = audioGets.getBrassVolume(lwData.windSpeed);
+    var brassBaritoneBpm = audioGets.getBrassBpm(lwData.windSpeed);
     var brassBaritoneBps = brassBaritoneBpm / 60;
     var brassBaritoneStepTime = Math.round(appFrameRate / brassBaritoneBps);
     var brassBaritone2StepTime = brassBaritoneStepTime * 2 + 57;
@@ -412,10 +414,8 @@ module.exports = function() {
       function updateLeadSoundIndex() {
         if (leadSoundIndex === numPadNotes - 1) {
           leadSoundIndex = 0;
-          leadBarComplete = true;
         } else {
           leadSoundIndex++;
-          leadBarComplete = false;
         }
       }
 
@@ -450,14 +450,16 @@ module.exports = function() {
       function moveToNextChord() {
         // increment indices
         setChordIndex();
-        // Start the lead over
-        leadBarComplete = false;
       }
 
-      function playBrassBaritone(scale) {
+      function playBrassBaritone(scale, doublePitch) {
+        var pitchMult = 1;
+        if (doublePitch) {
+          pitchMult = 2;
+        }
         brassBaritone.play();
         brassBaritone.setVolume(brassBaritoneVol, rampTime, timeFromNow, startVol);
-        brassBaritone.rate(scale[brassOneScaleArrayIndex]);
+        brassBaritone.rate(scale[brassOneScaleArrayIndex] * pitchMult);
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
         } else {
@@ -465,7 +467,11 @@ module.exports = function() {
         }
       }
 
-      function playBrassBaritoneTwo(scale) {
+      function playBrassBaritoneTwo(scale, doublePitch) {
+        var pitchMult = 1;
+        if (doublePitch) {
+          pitchMult = 2;
+        }
         var _newScaleArr = scale.slice().reverse();
         var _brassBaritoneTwoRate;
         if (rootNoteGrtrMedian) {
@@ -477,7 +483,7 @@ module.exports = function() {
         }
         brassBaritone2.play();
         brassBaritone2.setVolume(0.4, rampTime, timeFromNow, startVol);
-        brassBaritone2.rate(_brassBaritoneTwoRate);
+        brassBaritone2.rate(_brassBaritoneTwoRate * pitchMult);
         if (brassTwoScaleArrayIndex >= scale.length - 1) {
           brassTwoScaleArrayIndex = 0;
         } else {
@@ -598,7 +604,9 @@ module.exports = function() {
         if (wCheck.isCloudy && !wCheck.isWindy) {
           playBass();
         }
-        playLongNote();
+        if (!wCheck.isWindy) {
+          playLongNote();
+        }
       }
 
       function playChoralSound() {
@@ -636,16 +644,18 @@ module.exports = function() {
           leadSoundReady = true;
         }
         // Play brass
-        publishBrassOne = channel.subscribe('triggerBrassOne', function() {
-          playBrassBaritone(synchedSoundsChords[chordIndex]);
+        publishBrassOne = channel.subscribe('triggerBrassOne', function(data) {
+          console.log('data', data);
+          playBrassBaritone(synchedSoundsChords[chordIndex], data.doublePitch);
         });
-        publishBrassTwo = channel.subscribe('triggerBrassTwo', function() {
-          playBrassBaritoneTwo(synchedSoundsChords[chordIndex]);
+        publishBrassTwo = channel.subscribe('triggerBrassTwo', function(data) {
+          console.log('data', data);
+          playBrassBaritoneTwo(synchedSoundsChords[chordIndex], data.doublePitch);
         });
-        // Pads, long note and bass
+        // SynchedSounds are pads, long note and bass
         // playlogic
-        // Play full length of notes
         if (wCheck.isClement) {
+          // Play full length of notes
           playSynchedSounds(true);
           padReady = false;
         } else {
@@ -1052,17 +1062,14 @@ module.exports = function() {
 
       function updateLeadSound() {
         if (sketch.frameCount === 1 || sketch.frameCount % currLeadLength === 0) {
-          //get the note
+          // Get the note
           var _leadSoundRate = synchedSoundsChords[chordIndex][leadSoundIndex];
           leadSoundReady = false;
-          //If we want to stop the lead
-          //after each play of the notes in chord
-          //if (!leadBarComplete) {
+          // Only lead sound is rhodes
           rhodes.play();
           rhodes.setVolume(leadVolume, rampTime, timeFromNow, startVol);
           rhodes.rate(_leadSoundRate);
           updateLeadSoundIndex();
-          //}
           updateLeadSoundLength();
         }
       }
@@ -1118,12 +1125,12 @@ module.exports = function() {
         uvNoiseAngle += noiseAngleInc;
       }
 
-      function stopBrass() {
-        brassBaritone.setVolume(0, rampTime, timeFromNow, startVol);
-        brassBaritone2.setVolume(0, rampTime, timeFromNow, startVol);
-      }
+      // function stopBrass() {
+      //   brassBaritone.setVolume(0, rampTime, timeFromNow, startVol);
+      //   brassBaritone2.setVolume(0, rampTime, timeFromNow, startVol);
+      // }
 
-      function updateBrass() {
+      function updateBrass(doublePitch) {
         if (brassPanAngle > 360) {
           brassPanAngle = 0;
         }
@@ -1132,10 +1139,20 @@ module.exports = function() {
         brassBaritone.pan(brassSinVal);
         brassBaritone2.pan(brassCosVal);
         if (sketch.frameCount % brassBaritoneStepTime === 0) {
-          channel.publish('triggerBrassOne');
+          channel.publish({
+            topic: 'triggerBrassOne',
+            data: {
+              doublePitch: doublePitch
+            }
+          });
         }
         if (sketch.frameCount % brassBaritone2StepTime === 0) {
-          channel.publish('triggerBrassTwo');
+          channel.publish({
+            topic: 'triggerBrassTwo',
+            data: {
+              doublePitch: doublePitch
+            }
+          });
         }
         brassPanAngle += brassAngleInc;
       }
@@ -1241,9 +1258,10 @@ module.exports = function() {
         }
         if (wCheck.isWindy) {
           if (!extraSeqPlaying) {
-            updateBrass();
+            updateBrass(false);
           } else {
-            stopBrass();
+            // stopBrass();
+            updateBrass(true);
           }
         }
         if (wCheck.isPrecip) {
@@ -1297,7 +1315,7 @@ module.exports = function() {
         for (var j = 0; j < 2; j++) {
           choralSounds.push(sketch.loadSound('/audio/choral.mp3'));
         }
-        //TODO only load these if conditions are so
+        // TODO only load these if conditions are so
         bass = sketch.loadSound('/audio/bass.mp3');
         bass2 = sketch.loadSound('/audio/bass.mp3');
         brassBaritone = sketch.loadSound('/audio/brass-baritone.mp3');

@@ -186,6 +186,7 @@ module.exports =  {
     } else {
       _chordType = 'majorSeventhIntervals';
     }
+    console.log('_chordType', _chordType);
     return _chordType;
   },
 
@@ -206,17 +207,34 @@ module.exports =  {
   },
 
   isRootNoteGrtrMedian: function isRootNoteGrtrMedian(rootNote, rootNoteRange) {
+    if (typeof rootNote !== 'number') {
+      console.warn('rootNote was not typeof number');
+      return undefined;
+    }
+    if (rootNoteRange.hasOwnProperty('rangeMinus') === false && rootNoteRange.hasOwnProperty('rangePlus') === false) {
+      console.warn('rootNoteRange does not have correct props', rootNoteRange);
+      return undefined;
+    }
     var _totalRange = Math.abs(rootNoteRange.rangeMinus) + rootNoteRange.rangePlus;
     var _rootNoteMedian = Math.round(_totalRange / 2);
     return rootNote + _rootNoteMedian >= _rootNoteMedian;
   },
 
   getSeqRepeatMaxMult: function getSeqRepeatMaxMult(numChords, avSettings) {
-    //If the number of chords is high
-    //lower the multiplier
+    if (typeof numChords !== 'number') {
+      console.warn('numChords is not typeof number', numChords);
+      return undefined;
+    }
+    if (avSettings.hasOwnProperty('numChordsMin') === false && avSettings.hasOwnProperty('numChordsMax') === false) {
+      console.warn('avSettings does not have expected props', numChords);
+      return undefined;
+    }
+    // If the number of chords is high
+    // lower the multiplier
     var _mean = Math.round((avSettings.numChordsMin + avSettings.numChordsMax) /
       2);
     var _diff = avSettings.numChordsMax - _mean;
+    console.log('_diff', _diff);
     if (numChords > _mean) {
       return avSettings.mainSeqRepeatMax - _diff;
     } else {
@@ -224,32 +242,52 @@ module.exports =  {
     }
   },
 
-  getMainSeqRepeatNum: function getMainSeqRepeatNum(lwData, numChords, upperMult) {
-    //playlogic
+  getMainSeqRepeatNum: function getMainSeqRepeatNum(weatherFacet, numChords, upperMult) {
+    if (weatherFacet.hasOwnProperty('value') === false) {
+      console.warn('weatherFacet does not contain correct props', weatherFacet);
+      return undefined;
+    }
+    if (typeof numChords !== 'number' && typeof upperMult !== 'number') {
+      console.warn('numChords or upperMult were not typeof number', numChords, upperMult);
+      return undefined;
+    }
+    // playlogic
     return Math.round(microU.mapRange(
-      lwData.apparentTemperature.value,
-      lwData.apparentTemperature.min,
-      lwData.apparentTemperature.max,
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
       numChords * upperMult,
       numChords * 1
     ));
   },
 
   getRootNoteRange: function getRootNoteRange(numSemisPerOctave) {
-    //In western scale it will be between + 6 or - 12
+    if (typeof numSemisPerOctave !== 'number') {
+      console.warn('numSemisPerOctave was not typeof number');
+      return undefined;
+    }
+    // In western scale it will be between + 6 or - 12
     return {
       rangePlus: Math.round(numSemisPerOctave / 2),
       rangeMinus: -Math.abs(numSemisPerOctave)
     };
   },
 
-  getRootNote: function getRootNote(lwData, rootNoteRange) {
-    //Pressure determines root note
-    //playlogic
+  getRootNote: function getRootNote(weatherFacet, rootNoteRange) {
+    if (weatherFacet.hasOwnProperty('value') === false) {
+      console.warn('weatherFacet does not contain correct props');
+      return undefined;
+    }
+    if (rootNoteRange.hasOwnProperty('rangeMinus') === false) {
+      console.warn('weatherFacet does not contain correct props');
+      return undefined;
+    }
+    // Pressure determines root note
+    // playlogic
     var _rootNote = Math.round(microU.mapRange(
-      lwData.pressure.value,
-      lwData.pressure.min,
-      lwData.pressure.max,
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
       rootNoteRange.rangeMinus,
       rootNoteRange.rangePlus
     ));
@@ -259,7 +297,11 @@ module.exports =  {
     return _rootNote;
   },
 
-  getLongNoteIndex: function getLongNoteIndex(lwData, numNotes) {
+  getLongNoteIndex: function getLongNoteIndex(windBearing, numNotes) {
+    if (windBearing.hasOwnProperty('value') !== true) {
+      console.warn('windBearing does not contain correct prop', windBearing);
+      return undefined;
+    }
     var _longNoteIndex = 0;
     var _timesToDivide = numNotes;
     var _bearingSlice = 360 / _timesToDivide;
@@ -268,8 +310,8 @@ module.exports =  {
     for (var i = 0; i < _timesToDivide; i++) {
       var _mult = i + 1;
       var _currentBearingSlice = _bearingSlice * _mult;
-      if (lwData.windBearing.value <= _currentBearingSlice) {
-        _longNoteIndex = i;
+      if (windBearing.value <= _currentBearingSlice) {
+        _longNoteIndex = _mult;
         break;
       } else {
         _longNoteIndex = _timesToDivide - 1;
@@ -282,9 +324,8 @@ module.exports =  {
     return _longNoteIndex;
   },
 
-  isLongNoteHigh: function isLongNoteHigh(rootNoteGrtrMedian, rootNoteHigh, longNoteIndex, numPadNotes) {
-    return rootNoteHigh && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
-    //return rootNoteGrtrMedian && longNoteIndex + 1 >= Math.round(numPadNotes / 2);
+  isLongNoteHigh: function isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes) {
+    return rootNoteHigh && longNoteIndex >= Math.round(numPadNotes / 2);
   },
 
   getLongNoteVolArr: function getLongNoteVolArr(wCheck) {
@@ -311,39 +352,59 @@ module.exports =  {
     }
   },
 
-  getLongNoteFilterFreq: function getLongNoteFilterFreq(lwData, avSettings) {
+  getLongNoteFilterFreq: function getLongNoteFilterFreq(weatherFacet, longNoteFilter) {
+    if (weatherFacet.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', weatherFacet);
+      return undefined;
+    }
+    if (longNoteFilter.hasOwnProperty('min') !== true) {
+      console.warn('longNoteFilter does not contain correct props', longNoteFilter);
+      return undefined;
+    }
     return Math.round(microU.mapRange(
-      lwData.visibility.value,
-      lwData.visibility.min,
-      lwData.visibility.max,
-      avSettings.longNoteFilter.min,
-      avSettings.longNoteFilter.max
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
+      longNoteFilter.min,
+      longNoteFilter.max
     ));
   },
 
-  getBrassVolume: function getBrassVolume(lwData) {
+  getBrassVolume: function getBrassVolume(weatherFacet) {
+    if (weatherFacet.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', weatherFacet);
+      return undefined;
+    }
     return microU.mapRange(
-      lwData.windSpeed.value,
-      lwData.windSpeed.min,
-      lwData.windSpeed.max,
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
       0.6,
       1
     );
   },
 
-  getBrassBpm: function getBrassBpm(lwData) {
+  getBrassBpm: function getBrassBpm(weatherFacet) {
+    if (weatherFacet.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', weatherFacet);
+      return undefined;
+    }
     return Math.round(microU.mapRange(
-      lwData.windSpeed.value,
-      lwData.windSpeed.min,
-      lwData.windSpeed.max,
+      weatherFacet.value,
+      weatherFacet.min,
+      weatherFacet.max,
       6,
       12
     ));
   },
 
-  getLeadSoundVolume: function getLeadSoundVolume(wCheck) {
+  getLeadSoundVolume: function getLeadSoundVolume(isSublime) {
+    if (typeof isSublime !== 'boolean') {
+      console.warn('isSublime is not a boolean', isSublime);
+      return undefined;
+    }
     var _leadVolume;
-    if (wCheck.isSublime) {
+    if (isSublime) {
       _leadVolume = 0.8;
     } else {
       _leadVolume = 0.55;
@@ -351,32 +412,44 @@ module.exports =  {
     return _leadVolume;
   },
 
-  getPrecipCategory: function getPrecipCategory(lwData) {
-    if (lwData.precipType === 'rain') {
+  getPrecipCategory: function getPrecipCategory(precipType) {
+    if (typeof precipType !== 'string') {
+      console.warn('precipType is not typeof string', precipType);
+      return undefined;
+    }
+    if (precipType === 'rain') {
       return 'hard';
-    } else if (lwData.precipType === 'sleet') {
+    } else if (precipType === 'sleet') {
       return 'soft';
     } else {
       return 'light'; //'snow' or undefined
     }
   },
 
-  getPrecipArpBpm: function getPrecipArpBpm(lwData) {
+  getPrecipArpBpm: function getPrecipArpBpm(precipIntensity) {
+    if (precipIntensity.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', precipIntensity);
+      return undefined;
+    }
     // playlogic
     return Math.round(microU.mapRange(
-      lwData.precipIntensity.value,
-      lwData.precipIntensity.min,
-      lwData.precipIntensity.max,
+      precipIntensity.value,
+      precipIntensity.min,
+      precipIntensity.max,
       60,
       150
     ));
   },
 
-  getHumidArpBpm: function getHumidArpBpm(lwData) {
+  getHumidArpBpm: function getHumidArpBpm(humidity) {
+    if (humidity.hasOwnProperty('value') !== true) {
+      console.warn('weatherFacet does not contain correct props', humidity);
+      return undefined;
+    }
     return Math.round(microU.mapRange(
-      lwData.humidity.value,
-      lwData.humidity.min,
-      lwData.humidity.max,
+      humidity.value,
+      humidity.min,
+      humidity.max,
       60,
       120
     ));

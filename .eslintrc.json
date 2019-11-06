@@ -1,9 +1,12 @@
 {
-  "extends": ["airbnb-base"],
   "env": {
     "browser": true,
     "mocha": true,
     "serviceworker": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
   },
   "rules": {
     "indent": "off",

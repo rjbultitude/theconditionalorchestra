@@ -1,5 +1,3 @@
-
-
 var postal = require('postal');
 var channel = postal.channel();
 

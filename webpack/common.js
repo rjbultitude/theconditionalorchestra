@@ -1,7 +1,6 @@
 const path = require('path');
 const {prod_Path, src_Path} = require('./path');
 const distDir = path.resolve(__dirname, prod_Path);
-const rootDir = path.resolve(__dirname);
 const copyPluginConfig = [
   { from: './img', to: `${distDir}/img` },
   { from: './audio', to: `${distDir}/audio` },
@@ -27,10 +26,9 @@ const splitChunksConfig = {
 };
 
 module.exports = {
-  rootDir: rootDir,
-  prod_Path: prod_Path,
-  src_Path: src_Path,
-  distDir: distDir,
-  copyPluginConfig: copyPluginConfig,
-  splitChunksConfig: splitChunksConfig
+  prod_Path,
+  src_Path,
+  distDir,
+  copyPluginConfig,
+  splitChunksConfig
 }

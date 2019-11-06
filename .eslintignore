@@ -1,5 +1,5 @@
 # Dist
-dist/**/*.js
+dist/
 
 # Webpack
 webpack.config.js
