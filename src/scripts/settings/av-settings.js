@@ -11,7 +11,7 @@ module.exports = {
     light: 0.7
   },
   volume: 0.75,
-  //padSounds
+  // padSounds
   aeroflute: {volume : 0.65},
   guitar: {volume : 0.65},
   harmonium: {volume : 0.55},

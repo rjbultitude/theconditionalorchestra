@@ -164,13 +164,13 @@ describe('isSirocco', function() {
 });
 
 describe('isWindy', function() {
-  it('should return true if wind speed is greater than 22', function() {
+  it('should return true if wind speed is greater than 17', function() {
     expect(weatherChecker.isWindy(32)).to.be.true;
   });
-  it('should return false if wind speed is equal to 22', function() {
-    expect(weatherChecker.isWindy(22)).to.be.false;
+  it('should return false if wind speed is equal to 17', function() {
+    expect(weatherChecker.isWindy(17)).to.be.false;
   });
-  it('should return false if wind speed is less than 22', function() {
+  it('should return false if wind speed is less than 17', function() {
     expect(weatherChecker.isWindy(12)).to.be.false;
   });
 });

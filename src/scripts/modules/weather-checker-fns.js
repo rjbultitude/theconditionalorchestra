@@ -51,8 +51,9 @@ module.exports = {
   },
 
   // @param windSpeed floating point
+  // 17 is twice average in UK
   isWindy: function isWindy(windSpeed) {
-    return windSpeed > 22;
+    return windSpeed > 17;
   },
 
   // @param cloudCover floating point

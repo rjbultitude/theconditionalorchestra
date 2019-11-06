@@ -518,8 +518,8 @@ module.exports = function(query) {
       }
       updateStatus(statusString);
       useLocalStorageData(statusString);
-      console.error('failure.code', failure.code);
-      console.error('failure.message', failure.message);
+      console.error('No Geo access. Failure.code', failure.code);
+      console.error('No Geo access. Failure.message', failure.message);
     }
 
     if (oldCoords) {
