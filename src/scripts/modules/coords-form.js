@@ -34,6 +34,8 @@ module.exports = function(query) {
   var usingStaticData = false;
   // Gmaps
   var gmapVersion = 'weekly';
+  // search done via URL
+  var isURLSearch = false;
 
   function formatQueryString(queryString) {
     var queryNoSpaces = microU.removeSpacesFromString(queryString);
@@ -264,10 +266,11 @@ module.exports = function(query) {
     localStorage.setItem('locationData', locationDataString);
     // update the url
     updateURL(locationData.name);
-    // Post the data to rest of app
+    // TODO not needed
     if (conditions.length > 1) {
       console.log('There seems to be more than one location: ', conditions.length);
     }
+    // Post the data to rest of app
     updateUISuccess(locationData);
   }
 
@@ -631,7 +634,8 @@ module.exports = function(query) {
     if (typeof queryString === 'string' && queryString.length >= 1) {
       disableControls();
       updateStatus('location');
-      getLatLong(queryString, true);
+      isURLSearch = true;
+      getLatLong(queryString, isURLSearch);
     }
   }
 
