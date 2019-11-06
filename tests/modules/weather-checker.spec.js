@@ -138,27 +138,27 @@ describe('isCrisp', function() {
 describe('isSirocco', function() {
   this.beforeAll(function() {
     this.tempInFrnht = 69.8;
-    this.windSpeed = 20;
+    this.windSpeed = 17;
   });
-  it('should return true if humidity is lower than humidity threshold (low) and temp is greater than 21 (in Celcius) and wind speed is greater than 20', function() {
+  it('should return true if humidity is lower than humidity threshold (low) and temp is greater than 21 (in Celcius) and wind speed is greater than 17', function() {
     expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht + 10, this.windSpeed + 1)).to.be.true;
   });
-  it('should return false if humidity is lower than humidity threshold (low), temp is greater than 21 (in Celcius) and wind speed is equal to 20', function() {
+  it('should return false if humidity is lower than humidity threshold (low), temp is greater than 21 (in Celcius) and wind speed is equal to 17', function() {
     expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht + 10), this.windSpeed).to.be.false;
   });
-  it('should return false if humidity is lower than humidity threshold (low), temp is greater than 21 (in Celcius) and wind speed is less than 20', function() {
-    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht + 10, 19)).to.be.false;
+  it('should return false if humidity is lower than humidity threshold (low), temp is greater than 21 (in Celcius) and wind speed is less than 17', function() {
+    expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht + 10, this.windSpeed - 1)).to.be.false;
   });
-  it('should return false if humidity is lower humidity threshold (low), temp is equal to 21 (in Celcius) and wind speed is greater than 20', function() {
+  it('should return false if humidity is lower humidity threshold (low), temp is equal to 21 (in Celcius) and wind speed is greater than 17', function() {
     expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht, this.windSpeed + 1)).to.be.false;
   });
-  it('should return false if humidity is lower than humidity threshold (mid), temp is less than 21 (in Celcius) and wind speed is greater than 20', function() {
+  it('should return false if humidity is lower than humidity threshold (mid), temp is less than 21 (in Celcius) and wind speed is greater than 17', function() {
     expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow - 1, this.tempInFrnht - 10, this.windSpeed + 1)).to.be.false;
   });
-  it('should return false if humidity is equal than humidity threshold (mid), temp is greater than 21 (in Celcius) and wind speed is greater than 20', function() {
+  it('should return false if humidity is equal than humidity threshold (mid), temp is greater than 21 (in Celcius) and wind speed is greater than 17', function() {
     expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow , this.tempInFrnht + 10, this.windSpeed + 1)).to.be.false;
   });
-  it('should return false if humidity is equal than humidity threshold (mid), temp is equal to 21 (in Celcius) and wind speed is equal to 20', function() {
+  it('should return false if humidity is equal than humidity threshold (mid), temp is equal to 21 (in Celcius) and wind speed is equal to 17', function() {
     expect(weatherChecker.isSirocco(weatherChecker.humidityThresholdLow , this.tempInFrnht, this.windSpeed)).to.be.false;
   });
 });

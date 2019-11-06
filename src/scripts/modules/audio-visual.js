@@ -273,6 +273,9 @@ module.exports = function() {
     var chordSeqKey = audioGets.getChordSeqKey(wCheck, rootNoteGrtrMedian);
     var chordType = audioGets.getChordType(wCheck, chordSeqKey);
     var isMelodyMajor = audioGets.isMelodyMajor(chordSeqKey, chordType);
+    console.log('chordSeqKey', chordSeqKey);
+    console.log('chordType', chordType);
+    console.log('isMelodyMajor', isMelodyMajor);
     var upperMult = audioGets.getSeqRepeatMaxMult(numChords, avSettings);
     var seqRepeatNum = audioGets.getMainSeqRepeatNum(lwData.apparentTemperature, numChords, upperMult);
     // Precipitation
@@ -293,7 +296,7 @@ module.exports = function() {
     var humidArpBpm = audioGets.getHumidArpBpm(lwData.humidity);
     var humidArpBps = humidArpBpm / 60;
     var humidArpStepTime = Math.round(appFrameRate / humidArpBps);
-    var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, chordSeqKey, isMelodyMajor);
+    var humidArpIntervalsKey = audioGets.getHumidArpIntervals(lwData, isMelodyMajor);
     var harpVolArr = audioGets.getHarpVolArr(wCheck, sCheck);
     // Long note
     var longNoteIndex = audioGets.getLongNoteIndex(lwData.windBearing, numPadNotes);

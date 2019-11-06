@@ -47,7 +47,7 @@ module.exports = {
   },
 
   isSirocco: function isSirocco(humidity, temperatureInFrnht, windSpeed) {
-    return humidity < this.humidityThresholdLow && frnhtToCelcius(temperatureInFrnht) > 21 && windSpeed > 20;
+    return humidity < this.humidityThresholdLow && frnhtToCelcius(temperatureInFrnht) > 21 && windSpeed > 17;
   },
 
   // @param windSpeed floating point

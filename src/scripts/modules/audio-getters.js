@@ -186,6 +186,7 @@ module.exports =  {
     } else {
       _chordType = 'majorSeventhIntervals';
     }
+    console.log('_chordType', _chordType);
     return _chordType;
   },
 
