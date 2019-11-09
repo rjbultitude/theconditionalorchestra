@@ -78,7 +78,7 @@ module.exports = function(query) {
     resetModState();
     updateStatus('start');
     userLocBtnEl.innerText = 'Play my weather';
-    customLocSubmitBtnEl.innerHTML = 'Play';
+    customLocSubmitBtnEl.innerText = 'Play';
     mapEl.classList.remove('active');
     summaryIcon.hideSummary();
   }
