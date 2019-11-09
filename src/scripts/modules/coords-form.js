@@ -77,7 +77,7 @@ module.exports = function(query) {
   function resetAppState() {
     resetModState();
     updateStatus('start');
-    userLocBtnEl.innerHTML = 'Play my weather';
+    userLocBtnEl.innerText = 'Play my weather';
     customLocSubmitBtnEl.innerHTML = 'Play';
     mapEl.classList.remove('active');
     summaryIcon.hideSummary();
@@ -576,7 +576,7 @@ module.exports = function(query) {
 
   function setStopState() {
     isPlaying = true;
-    userLocBtnEl.innerHTML = 'Stop orchestra';
+    userLocBtnEl.innerText = 'Stop orchestra';
   }
 
   function customLocationSubmit(e) {
