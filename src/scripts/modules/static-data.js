@@ -8,7 +8,7 @@ module.exports = {
     max:1
   },
   windSpeed:{
-    value:26,
+    value:2,
     min:0,
     max:75
   },

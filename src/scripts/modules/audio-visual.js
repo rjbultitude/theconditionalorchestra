@@ -498,7 +498,6 @@ module.exports = function() {
         } else {
           _longNoteVol = sketch.random(longNoteVolArr);
         }
-        console.log('long note playing at volume ', _longNoteVol);
         // Lower by one octave
         // if the lower chords are playing
         // TODO add wCheck.isFreezing? So flute isnt so ugly
@@ -520,26 +519,13 @@ module.exports = function() {
         longNote.rate(_longNoteRate);
       }
 
-      function bassCallback(bassRate) {
-        bass2.playMode('restart');
-        bass2.play();
-        bass2.setVolume(0.5, rampTime, timeFromNow, startVol);
-        bass2.rate(bassRate * 2);
-      }
-
-      function playBass(playFullNotes) {
-        //Play 1st note of each chord
+      function playBass() {
+        // Play 1st note of each chord
         var _bassRate = synchedSoundsChords[chordIndex][0];
         bass.playMode('restart');
         bass.play();
         bass.setVolume(1, rampTime, timeFromNow, startVol);
         bass.rate(_bassRate);
-        // playlogic
-        if (playFullNotes) {
-          bass.onended(function() {
-            bassCallback(_bassRate);
-          });
-        }
       }
 
       function padCallBack() {
@@ -558,6 +544,7 @@ module.exports = function() {
         console.log('playFullNotes?', playFullNotes);
         for (var i = 0, length = padSounds.length; i < length; i++) {
           // TODO can we connect in setup?
+          // padVolume = 0.01;
           padSounds[i].disconnect();
           padSounds[i].connect(padFilter);
           padSounds[i].pan(panArr[panIndex]);
@@ -599,10 +586,10 @@ module.exports = function() {
         // playlogic
         // Avoid sound clash with Brass
         if (wCheck.isCloudy && !wCheck.isWindy) {
-          playBass(playFullNotes);
+          playBass();
         }
         if (!wCheck.isWindy) {
-          playLongNote(playFullNotes);
+          playLongNote();
         }
       }
 
