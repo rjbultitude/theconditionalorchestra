@@ -34,8 +34,7 @@ module.exports = function(query) {
   var usingStaticData = false;
   // Gmaps
   var gmapVersion = 'weekly';
-  // search done via URL
-  var isURLSearch = false;
+
 
   function formatQueryString(queryString) {
     var queryNoSpaces = microU.removeSpacesFromString(queryString);
@@ -471,13 +470,18 @@ module.exports = function(query) {
     });
   }
 
-  function showForm() {
+  function showForm(queryString) {
     classListChain(coordsFormEl).remove('inactive').add('active');
     coordsFormInputEl.focus();
     coordsFormEl.tabIndex = 0;
     coordsFormInputEl.tabIndex = 0;
     coordsFormCloseBtnEl.tabIndex = 0;
     customLocSubmitBtnEl.tabIndex = 0;
+    if (queryString) {
+      const queryNoHyphens = microU.replaceHyphensForSpaces(queryString);
+      const queryWithSpaces = microU.addSpacesToString(queryNoHyphens);
+      coordsFormInputEl.value = queryWithSpaces;
+    }
   }
 
   function hideForm() {
@@ -632,10 +636,10 @@ module.exports = function(query) {
   function loadLocFromURL(queryString) {
     // run search if there's a query string
     if (typeof queryString === 'string' && queryString.length >= 1) {
-      disableControls();
+      // disableControls();
       updateStatus('location');
-      isURLSearch = true;
-      getLatLong(queryString, isURLSearch);
+      showForm(queryString);
+      // getLatLong(queryString, isURLSearch);
     }
   }
 

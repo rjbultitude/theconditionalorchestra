@@ -49,6 +49,9 @@ module.exports = {
   replaceCommasForHyphens: function replaceCommasForHyphens(string) {
     return string.replace(/(,+)/g, '-', '$&');
   },
+  replaceHyphensForSpaces: function replaceHyphensForSpaces(string) {
+    return string.replace(/(-+)/g, ' ', '$&');
+  },
   containsWord: function containsWord(string, word) {
     return new RegExp('(?:[^.\w]|^|^\\W+)' + word +
       '(?:[^.\w]|\\W(?=\\W+|$)|$)').test(string);
