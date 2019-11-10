@@ -114,7 +114,7 @@ describe('remove spaces from a string', function() {
 });
 
 describe('replace commas for hyphens', function() {
-  it('should a string with hyphens when passed one that has commas', function() {
+  it('should return a string with hyphens when passed one that has commas', function() {
     expect(microUtils.replaceCommasForHyphens('this,is,comma,separated')).to.equal('this-is-comma-separated');
   });
   it('should throw when an array is passed', function() {
@@ -130,6 +130,27 @@ describe('replace commas for hyphens', function() {
   it('should throw when a number is passed', function() {
     expect(function() {
       microUtils.replaceCommasForHyphens(10);
+    }).to.throw();
+  });
+});
+
+describe('replace hyphens for spaces', function() {
+  it('should return a string with spaces when passed one that has hyphens', function() {
+    expect(microUtils.replaceHyphensForSpaces('this-is-hyphenated')).to.equal('this is hyphenated');
+  });
+  it('should throw when an array is passed', function() {
+    expect(function() {
+      microUtils.replaceHyphensForSpaces([0,1,2]);
+    }).to.throw();
+  });
+  it('should throw when an object is passed', function() {
+    expect(function() {
+      microUtils.replaceHyphensForSpaces({});
+    }).to.throw();
+  });
+  it('should throw when a number is passed', function() {
+    expect(function() {
+      microUtils.replaceHyphensForSpaces(10);
     }).to.throw();
   });
 });
