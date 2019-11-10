@@ -355,15 +355,10 @@ module.exports = function(query) {
    * @param  {String} placeString A custom user location
    * @return {Boolean}
    */
-  function getLatLong(placeString, urlSearch) {
-    if (!navigator.onLine && urlSearch) {
+  function getLatLong(placeString) {
+    if (!navigator.onLine) {
       updateStatus('badConnectionLastKnown');
       useLocalStorageData('badConnection');
-      return;
-    } else if (!navigator.onLine) {
-      console.log('offline');
-      updateStatus('errorNoConnLocSearch');
-      enableControls();
       return;
     }
     var gpKey = makeRequest('GET', '/gm-key.php');
@@ -634,12 +629,10 @@ module.exports = function(query) {
   });
 
   function loadLocFromURL(queryString) {
-    // run search if there's a query string
+    // Populate search if there's a query string
     if (typeof queryString === 'string' && queryString.length >= 1) {
-      // disableControls();
       updateStatus('location');
       showForm(queryString);
-      // getLatLong(queryString, isURLSearch);
     }
   }
 
