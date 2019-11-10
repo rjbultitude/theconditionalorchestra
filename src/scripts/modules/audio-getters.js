@@ -311,7 +311,7 @@ module.exports =  {
       var _mult = i + 1;
       var _currentBearingSlice = _bearingSlice * _mult;
       if (windBearing.value <= _currentBearingSlice) {
-        _longNoteIndex = _mult;
+        _longNoteIndex = _mult - 1;
         break;
       } else {
         _longNoteIndex = _timesToDivide - 1;

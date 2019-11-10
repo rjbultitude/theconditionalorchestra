@@ -129,14 +129,14 @@ describe('get Long Note Index', function() {
   it('should return a number when windBearing object and numNotes number is passed', function() {
     expect(audioGetters.getLongNoteIndex(this.windBearing, 6)).to.be.a('number');
   });
-  it('should return 1 when windBearing is less than 60 (degrees) and number of notes is 6 (360 / 6)', function() {
-    expect(audioGetters.getLongNoteIndex(this.windBearing, 6)).to.equal(1);
+  it('should return 0 when windBearing is less than 60 (degrees) and number of notes is 6 (360 / 6)', function() {
+    expect(audioGetters.getLongNoteIndex(this.windBearing, 6)).to.equal(0);
   });
-  it('should return 3 when windBearing is less than 180 (degrees) and number of notes is 6 (360 / 6)', function() {
-    expect(audioGetters.getLongNoteIndex(this.windBearingMid, 6)).to.equal(3);
+  it('should return 2 when windBearing is less than 180 (degrees) and number of notes is 6 (360 / 6)', function() {
+    expect(audioGetters.getLongNoteIndex(this.windBearingMid, 6)).to.equal(2);
   });
-  it('should return 6 when windBearing is greater than 300 (degrees) and number of notes is 6 (360 / 6)', function() {
-    expect(audioGetters.getLongNoteIndex(this.windBearingHigh, 6)).to.equal(6);
+  it('should return 5 when windBearing is greater than 300 (degrees) and number of notes is 6 (360 / 6)', function() {
+    expect(audioGetters.getLongNoteIndex(this.windBearingHigh, 6)).to.equal(5);
   });
   it('should return undefined when windBearing arg does not contain prop value', function() {
     expect(audioGetters.getLongNoteIndex({}, 6)).to.be.an('undefined');

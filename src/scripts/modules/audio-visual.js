@@ -493,6 +493,9 @@ module.exports = function() {
 
       function playLongNote() {
         //playlogic
+        console.log('longNoteIndex', longNoteIndex);
+        console.log('synchedSoundsChords[chordIndex]', synchedSoundsChords[chordIndex]);
+        console.log('synchedSoundsChords[chordIndex][longNoteIndex]', synchedSoundsChords[chordIndex][longNoteIndex]);
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         var _longNoteVol;
         // playlogic
