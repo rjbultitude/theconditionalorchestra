@@ -225,7 +225,6 @@ module.exports = function(query) {
           maxMin.wParams[key].min,
           maxMin.wParams[key].max
         );
-        console.log('locationData keys', locationData[key]);
       }
     }
     // As visibility often returns undefined

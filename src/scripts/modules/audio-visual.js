@@ -268,7 +268,6 @@ module.exports = function() {
     console.log('rootNote', rootNote);
     var rootNoteHigh = audioGets.isRootNoteHigh(rootNote);
     var rootNoteGrtrMedian = audioGets.isRootNoteGrtrMedian(rootNote, rootNoteRange);
-    console.log('rootNoteGrtrMedian', rootNoteGrtrMedian);
     // Chord seq or inversion types
     var chordSeqKey = audioGets.getChordSeqKey(wCheck, rootNoteGrtrMedian);
     var chordType = audioGets.getChordType(wCheck, chordSeqKey);
@@ -301,16 +300,13 @@ module.exports = function() {
     // Long note
     var longNoteIndex = audioGets.getLongNoteIndex(lwData.windBearing, numPadNotes);
     var longNoteHigh = audioGets.isLongNoteHigh(rootNoteHigh, longNoteIndex, numPadNotes);
-    console.log('longNoteHigh', longNoteHigh);
     var longNoteVolArr = audioGets.getLongNoteVolArr(wCheck);
-    console.log('longNoteVolArr', longNoteVolArr);
     var longNoteType = audioGets.getLongNoteType(wCheck);
+    console.log('longNoteType', longNoteType);
     var longNoteFilterFreq = audioGets.getLongNoteFilterFreq(lwData.visibility, avSettings.longNoteFilter);
     var padFilterFreq = audioGets.getPadFilterFreq(lwData, avSettings);
     var extraSeqOffset = audioGets.getExtraChordsOffset(rootNoteGrtrMedian, numSemisPerOctave);
-    console.log('extraSeqOffset', extraSeqOffset);
     var invExtraSeqOffset = numSemisPerOctave - extraSeqOffset;
-    console.log('invExtraSeqOffset', invExtraSeqOffset);
     // TODO Group these into object
     // and only create it if it's windy
     var brassBaritoneVol = audioGets.getBrassVolume(lwData.windSpeed);
@@ -336,7 +332,6 @@ module.exports = function() {
     var choralExtraDenominator = rootNoteGrtrMedian ? 2 : 1;
     // noise
     var uvNoiseMaxVol = audioGets.getUvNoiseMaxVol(lwData);
-    console.log('uvNoiseMaxVol', uvNoiseMaxVol);
     //Set initial note lengths for use in draw
     var currNoteLength = noteLengths[0];
     var currLeadLength = leadNoteLengths[0];
@@ -493,9 +488,6 @@ module.exports = function() {
 
       function playLongNote() {
         //playlogic
-        console.log('longNoteIndex', longNoteIndex);
-        console.log('synchedSoundsChords[chordIndex]', synchedSoundsChords[chordIndex]);
-        console.log('synchedSoundsChords[chordIndex][longNoteIndex]', synchedSoundsChords[chordIndex][longNoteIndex]);
         var _longNoteRate = synchedSoundsChords[chordIndex][longNoteIndex];
         var _longNoteVol;
         // playlogic
@@ -506,6 +498,7 @@ module.exports = function() {
         } else {
           _longNoteVol = sketch.random(longNoteVolArr);
         }
+        console.log('long note playing at volume ', _longNoteVol);
         // Lower by one octave
         // if the lower chords are playing
         // TODO add wCheck.isFreezing? So flute isnt so ugly
@@ -534,15 +527,15 @@ module.exports = function() {
         bass2.rate(bassRate * 2);
       }
 
-      function playBass() {
+      function playBass(playFullNotes) {
         //Play 1st note of each chord
         var _bassRate = synchedSoundsChords[chordIndex][0];
         bass.playMode('restart');
         bass.play();
         bass.setVolume(1, rampTime, timeFromNow, startVol);
         bass.rate(_bassRate);
-        //playlogic
-        if (wCheck.isClement) {
+        // playlogic
+        if (playFullNotes) {
           bass.onended(function() {
             bassCallback(_bassRate);
           });
@@ -562,6 +555,7 @@ module.exports = function() {
       }
 
       function playPad(playFullNotes) {
+        console.log('playFullNotes?', playFullNotes);
         for (var i = 0, length = padSounds.length; i < length; i++) {
           // TODO can we connect in setup?
           padSounds[i].disconnect();
@@ -605,10 +599,10 @@ module.exports = function() {
         // playlogic
         // Avoid sound clash with Brass
         if (wCheck.isCloudy && !wCheck.isWindy) {
-          playBass();
+          playBass(playFullNotes);
         }
         if (!wCheck.isWindy) {
-          playLongNote();
+          playLongNote(playFullNotes);
         }
       }
 

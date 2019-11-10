@@ -21,8 +21,10 @@ module.exports =  {
       _longNoteType = 'shiney';
     } else if (wCheck.isCrisp || wCheck.isWayBelowFreezing) {
       _longNoteType = 'string';
-    } else {
+    } else if (wCheck.isMild) {
       _longNoteType = 'flute';
+    } else {
+      _longNoteType = 'piano';
     }
     return _longNoteType;
   },
