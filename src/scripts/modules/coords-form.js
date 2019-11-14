@@ -631,7 +631,8 @@ module.exports = function(query) {
     // Populate search if there's a query string
     if (typeof queryString === 'string' && queryString.length >= 1) {
       updateStatus('location');
-      showForm(queryString);
+      var decodedQueryStr = decodeURI(queryString);
+      showForm(decodedQueryStr);
     }
   }
 
