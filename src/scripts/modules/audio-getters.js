@@ -509,7 +509,7 @@ module.exports =  {
       lwData.nearestStormBearing.min,
       lwData.nearestStormBearing.max,
       0.5,
-      1.2
+      1.5
     );
   },
 
