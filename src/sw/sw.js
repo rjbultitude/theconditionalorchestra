@@ -1,10 +1,11 @@
 /* eslint-disable no-undef, no-restricted-globals */
 
-var CACHE_STATIC_NAME = 'static-v9h';
+var CACHE_STATIC_NAME = 'static-v9i';
 var CACHE_DYNAMIC_NAME = 'dynamic-v5j';
 
 var staticCacheAssets = [
   'https://fonts.googleapis.com/css?family=Libre+Baskerville|Lora',
+  'img/error-icon.svg',
   'vendor.js'
 ];
 var dynamicCacheAssets = [
