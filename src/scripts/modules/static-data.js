@@ -3,12 +3,12 @@ module.exports = {
   summary: 'Foggy',
   icon: 'partly-cloudy-night',
   cloudCover:{
-    value:0.9,
+    value:1,
     min:0,
     max:1
   },
   windSpeed:{
-    value:2,
+    value:32,
     min:0,
     max:75
   },
@@ -18,48 +18,48 @@ module.exports = {
     max:10
   },
   pressure:{
-    value:990,
+    value:986,
     min:980,
     max:1050
   },
   precipIntensity:{
-    value:0,
+    value:0.5,
     min:0,
     max:0.5
   },
   precipProbability:{
-    value:0,
+    value:1,
     min:0,
     max:1
   },
   precipType: '',
   temperature:{
-    value:42.2,
+    value:53.2,
     min:-35,
     max:120
   },
   humidity:{
-    value:0.3,
+    value:0.85,
     min:0,
     max:1
   },
   windBearing:{
-    value:12,
+    value:235,
     min:0,
     max:360
   },
   ozone:{
-    value:361,
+    value:285,
     min:230,
     max:500
   },
   dewPoint:{
-    value:22.66,
+    value:48.66,
     min:-20,
     max:72
   },
   apparentTemperature:{
-    value:42.2,
+    value:53.2,
     min:-35,
     max:120
   },
@@ -69,12 +69,12 @@ module.exports = {
     max:360
   },
   nearestStormDistance:{
-    value:14,
+    value:0,
     min:0,
     max:200
   },
   uvIndex: {
-    value: 4,
+    value: 0,
     min: 0,
     max: 12
   }

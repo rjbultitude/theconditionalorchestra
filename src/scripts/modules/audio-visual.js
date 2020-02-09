@@ -458,7 +458,7 @@ module.exports = function() {
         if (brassOneScaleArrayIndex >= 1) {
           brassOneScaleArrayIndex = 0;
         } else {
-          brassOneScaleArrayIndex++;
+          brassOneScaleArrayIndex += 1;
         }
       }
 
@@ -468,6 +468,9 @@ module.exports = function() {
           pitchMult = 2;
         }
         var _newScaleArr = scale.slice().reverse();
+        if (brassTwoScaleArrayIndex >= _newScaleArr.length - 1) {
+          brassTwoScaleArrayIndex = 0;
+        }
         var _brassBaritoneTwoRate;
         if (rootNoteGrtrMedian) {
           var _rateMultArr = [1, 2];
@@ -479,11 +482,7 @@ module.exports = function() {
         brassBaritone2.play();
         brassBaritone2.setVolume(0.4, rampTime, timeFromNow, startVol);
         brassBaritone2.rate(_brassBaritoneTwoRate * pitchMult);
-        if (brassTwoScaleArrayIndex >= scale.length - 1) {
-          brassTwoScaleArrayIndex = 0;
-        } else {
-          brassTwoScaleArrayIndex++;
-        }
+        brassTwoScaleArrayIndex += 1;
       }
 
       function playLongNote() {
@@ -629,11 +628,9 @@ module.exports = function() {
         }
         // Play brass
         publishBrassOne = channel.subscribe('triggerBrassOne', function(data) {
-          console.log('data', data);
           playBrassBaritone(synchedSoundsChords[chordIndex], data.doublePitch);
         });
         publishBrassTwo = channel.subscribe('triggerBrassTwo', function(data) {
-          console.log('data', data);
           playBrassBaritoneTwo(synchedSoundsChords[chordIndex], data.doublePitch);
         });
         // SynchedSounds are pads, long note and bass
@@ -690,7 +687,6 @@ module.exports = function() {
 
       function getInversionOffsetArr(numChords) {
         var _chordInversionOffSetArr = intervals[inversionOffsetType];
-        console.log('_chordInversionOffSetArr', _chordInversionOffSetArr);
         var _diff;
         if (numChords > _chordInversionOffSetArr.length) {
           _diff = numChords - _chordInversionOffSetArr.length;
@@ -986,7 +982,6 @@ module.exports = function() {
           var WebWorker = require('./display.worker.js');
           var displayWorker = new WebWorker();
           displayWorker.addEventListener('message', function(result) {
-            console.log('result', result);
             buildDisplay(result.data);
             displayWorker.terminate();
             if (_firstLoad) {
