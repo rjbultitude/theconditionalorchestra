@@ -43,7 +43,7 @@ module.exports = {
         use: [
           {
             loader: "html-loader",
-            options: { minimize: true }
+            options: { minimize: false }
           }
         ]
       },
@@ -80,6 +80,7 @@ module.exports = {
       extractComments: true,
       terserOptions: {
         extractComments: 'all',
+        exclude: /\.(html|.ejs)/,
         compress: {
           drop_console: true,
         },
