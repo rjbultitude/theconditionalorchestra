@@ -35,7 +35,7 @@ self.addEventListener('install', function install(event) {
       cache.addAll(staticCacheAssets).catch(function(e) {
         console.warn('Error with', e);
       });
-    }));
+  }));
 });
 
 // Delete old cache on activation
