@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-restricted-globals */
 
-var CACHE_STATIC_NAME = 'static-v9i';
+var CACHE_STATIC_NAME = 'static-v9j';
 var CACHE_DYNAMIC_NAME = 'dynamic-v5j';
 
 var staticCacheAssets = [
