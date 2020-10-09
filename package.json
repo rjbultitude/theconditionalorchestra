@@ -26,7 +26,7 @@
     "lint:js": "eslint .",
     "test:all": "npm run test && npm run test:security",
     "test:with-coverage": "nyc --reporter=lcov --reporter=text --all --include \"src/**\" npm run test -- -R spec && cat ./coverage/lcov.info | codacy-coverage && rm -rf ./coverage",
-    "test": "snyk test && cross-env NODE_ENV=test mocha --env.dev --opts ./mocha.opts",
+    "test": "cross-env NODE_ENV=test mocha --env.dev --opts ./mocha.opts",
     "test:security": "snyk test",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
