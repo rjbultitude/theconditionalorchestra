@@ -6,6 +6,7 @@
 
 // 3rd party
 var P5 = require('p5');
+window.p5 = P5;
 require('p5/lib/addons/p5.sound');
 var freqi = require('freqi');
 var postal = require('postal');
