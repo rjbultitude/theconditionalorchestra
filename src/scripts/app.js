@@ -4,17 +4,23 @@ var Tabs = require('./modules/tabs.js');
 var jsLoad = require('./utilities/js-load.js');
 var updateStatus = require('./modules/update-status.js');
 require('./utilities/browser-tab-visibility.js');
-// var swReg = true;
 
-// Register service worker
-// if ('serviceWorker' in navigator && swReg) {
-//   navigator.serviceWorker.register('./sw.js')
-//     .then(function() {
-//       console.log('Service worker registered!');
-//     }).catch(function(err) {
-//       console.log(err);
-//     });
-// }
+navigator.serviceWorker.getRegistrations()
+  .then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister()
+        .then(function() {
+          return self.clients.matchAll();
+        })
+        .then(function(clients) {
+          clients.forEach(client => {
+            if (client.url && "navigate" in client) {
+              client.navigate(client.url);
+            }
+          });
+        })
+    }
+  });
 
 // Web audio support?
 if (!window.AudioContext && !window.webkitAudioContext) {
