@@ -12,10 +12,8 @@ module.exports = {
     main: src_Path + '/scripts/app.js'
   },
   output: {
-    filename: (data) => {
-      return data.chunk.name === 'vendor' ? '[name].js' : '[name].[chunkhash:8].js';
-    },
-    chunkFilename: '[name].js',
+    filename: '[name].[chunkhash:8].js',
+    chunkFilename: '[name].[chunkhash:8].js',
     path: distDir
   },
   module: {

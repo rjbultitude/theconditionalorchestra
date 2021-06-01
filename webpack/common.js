@@ -7,7 +7,7 @@ const copyPluginConfig = [
   { from: './proxy.php', to: distDir },
   { from: './gm-key.php', to: distDir },
   { from: './favicon.ico', to: distDir },
-  { from: './src/sw/sw.js', to: distDir },
+  // { from: './src/sw/sw.js', to: distDir },
   { from: './manifest.json', to: distDir },
   { from: './403.html', to: distDir },
   { from: './404.html', to: distDir },
