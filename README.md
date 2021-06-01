@@ -25,9 +25,11 @@ Before running any of the standard tasks be sure to run `gulp templates` which w
 
 to run in production mode
 
-`npm run build:production`
+`npm run build:prod`
 
 Webpack will create, clean and manage the `dist` folder.
+
+Currently uses Node 12
 
 ### Test
 

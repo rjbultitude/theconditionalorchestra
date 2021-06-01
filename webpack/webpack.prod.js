@@ -94,7 +94,7 @@ module.exports = {
       filename: 'style.[contenthash].css'
     }),
     new HtmlWebpackPlugin({
-      hash: true,
+      hash: false,
       template: './index.ejs',
       filename: 'index.html',
       svgoConfig: {removeViewBox: false, cleanupAttrs: false, removeAttrs: false}
