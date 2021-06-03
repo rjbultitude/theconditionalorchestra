@@ -5,6 +5,13 @@ var jsLoad = require('./utilities/js-load.js');
 var updateStatus = require('./modules/update-status.js');
 require('./utilities/browser-tab-visibility.js');
 
+function deleteCookies() {
+  var theCookies = document.cookie.split(';');
+  for (var i = 0 ; i < theCookies.length; i++) {
+    document.cookie = theCookies[i].split('=')[0] + '=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+}
+
 navigator.serviceWorker.getRegistrations()
   .then(function(registrations) {
     for(let registration of registrations) {
@@ -32,6 +39,7 @@ navigator.serviceWorker.getRegistrations()
 //     });
 // }
 
+deleteCookies();
 // Web audio support?
 if (!window.AudioContext && !window.webkitAudioContext) {
   updateStatus('noAudio');
