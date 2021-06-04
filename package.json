@@ -26,14 +26,14 @@
     "lint:js": "eslint .",
     "test:all": "npm run test && npm run test:security",
     "test:with-coverage": "nyc --reporter=lcov --reporter=text --all --include \"src/**\" npm run test -- -R spec && cat ./coverage/lcov.info | codacy-coverage && rm -rf ./coverage",
-    "test": "cross-env NODE_ENV=test mocha --env.dev --opts ./mocha.opts",
+    "test": "NODE_ENV=test mocha --recursive **/*.spec.js",
     "test:security": "snyk test",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
   },
   "license": "MIT",
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "clean-webpack-plugin": "^3.0.0",
     "codacy-coverage": "^3.4.0",
     "copy-webpack-plugin": "^5.0.4",
@@ -51,9 +51,9 @@
     "husky": "^3.0.4",
     "install": "^0.13.0",
     "mini-css-extract-plugin": "^0.8.0",
-    "mocha": "^6.2.0",
+    "mocha": "^8.4.0",
     "node-sass": "^4.12.0",
-    "nyc": "^14.1.1",
+    "nyc": "^15.1.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^7.3.1",
@@ -77,6 +77,11 @@
   "browserslist": [
     "last 4 versions"
   ],
+  "mocha": {
+    "reporter": "spec",
+    "ignore": ["node_modules/**/*"],
+    "watch-ignore": ["node_modules/**/*"]
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint:js",
