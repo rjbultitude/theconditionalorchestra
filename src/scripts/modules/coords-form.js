@@ -287,7 +287,7 @@ module.exports = function(query) {
       console.log('raw conditions', conditions);
       // If there's a problem with the darksky service
       // load the local (or static) weather data
-      if (conditions === false || conditions.length === 0) {
+      if (conditions.error || conditions.length === 0) {
         console.log('There was a problem retrieving data from darksky');
         useLocalStorageData('badConnection');
         return;
