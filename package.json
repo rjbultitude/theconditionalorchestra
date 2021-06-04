@@ -67,7 +67,6 @@
   },
   "dependencies": {
     "darkskyjs-lite": "^0.1.6",
-    "es6-promise": "^4.2.8",
     "freqi": "^1.0.3",
     "google-maps": "^3.3.0",
     "handlebars": "^4.5.3",
@@ -76,8 +75,7 @@
     "postal": "^2.0.5"
   },
   "browserslist": [
-    "last 4 versions",
-    "IE 11"
+    "last 4 versions"
   ],
   "husky": {
     "hooks": {
