@@ -37,7 +37,6 @@
     "clean-webpack-plugin": "^3.0.0",
     "codacy-coverage": "^3.4.0",
     "copy-webpack-plugin": "^5.0.4",
-    "cross-env": "^5.2.0",
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.10",
     "eslint": "^6.5.1",
@@ -67,9 +66,9 @@
   },
   "dependencies": {
     "darkskyjs-lite": "^0.1.6",
-    "freqi": "^1.0.3",
+    "freqi": "^1.4.0",
     "google-maps": "^3.3.0",
-    "handlebars": "^4.5.3",
+    "handlebars": "^4.7.7",
     "he": "^1.2.0",
     "p5": "^0.10.0",
     "postal": "^2.0.5"
