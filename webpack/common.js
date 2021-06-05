@@ -1,7 +1,7 @@
 const path = require('path');
 const {prod_Path, src_Path} = require('./path');
 const distDir = path.resolve(__dirname, prod_Path);
-const copyPluginConfig = [
+const copyPluginConfig = {patterns:[
   { from: './img', to: `${distDir}/img` },
   { from: './audio', to: `${distDir}/audio` },
   { from: './proxy.php', to: distDir },
@@ -13,7 +13,7 @@ const copyPluginConfig = [
   { from: './404.html', to: distDir },
   { from: './robots.txt', to: distDir },
   { from: './browserconfig.xml', to: distDir }
-];
+]};
 const splitChunksConfig = {
   cacheGroups: {
     commons: {

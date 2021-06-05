@@ -80,10 +80,10 @@ module.exports = {
       }
     ]
   },
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: splitChunksConfig
-	},
+  // optimization: {
+  //   runtimeChunk: 'single',
+  //   splitChunks: splitChunksConfig
+	// },
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
