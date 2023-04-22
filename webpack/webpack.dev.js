@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const os = require("os");
+const userHomeDir = os.homedir();
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackInlineSVGPlugin = require('html-webpack-inline-svg-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -16,6 +20,11 @@ module.exports = {
     path: distDir,
   },
   devtool: 'source-map',
+  devServer: {
+    https: true,
+    key : fs.readFileSync(path.join(userHomeDir, '/cert/CA/localhost/localhost.decrypted.key')),
+    cert : fs.readFileSync(path.join(userHomeDir, '/cert/CA/localhost/localhost.crt'))
+  },
   module: {
     rules: [
       {
